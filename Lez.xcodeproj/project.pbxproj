@@ -7,8 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		45DBE120DB2CF8134A7D2A64 /* Pods_LezTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5479534E8388BF74902A4ED8 /* Pods_LezTests.framework */; };
+		4A69DF7863C96848F113BED7 /* Pods_LezUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C3787C470D6FE1A11C36B5D /* Pods_LezUITests.framework */; };
+		76A37FD28C40794876C735BB /* Pods_Lez.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DE15551B494E8923BB00C37 /* Pods_Lez.framework */; };
+		CF04FAE3204161A7001CB034 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF04FAE2204161A7001CB034 /* User.swift */; };
 		CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF206203C13170054CC1A /* AppDelegate.swift */; };
-		CF2DF209203C13170054CC1A /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF208203C13170054CC1A /* ViewController.swift */; };
+		CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF208203C13170054CC1A /* MatchViewController.swift */; };
 		CF2DF20C203C13170054CC1A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20A203C13170054CC1A /* Main.storyboard */; };
 		CF2DF20E203C13170054CC1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20D203C13170054CC1A /* Assets.xcassets */; };
 		CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */; };
@@ -34,9 +38,18 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0CEEFFD2B876F695EC5904DC /* Pods-LezTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.release.xcconfig"; sourceTree = "<group>"; };
+		1DE15551B494E8923BB00C37 /* Pods_Lez.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Lez.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3C3787C470D6FE1A11C36B5D /* Pods_LezUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LezUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		5479534E8388BF74902A4ED8 /* Pods_LezTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LezTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6289310B6DFC1BDE0DC30898 /* Pods-LezUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		8DF45BE7B5A2CA91BE149655 /* Pods-Lez.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lez.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Lez/Pods-Lez.debug.xcconfig"; sourceTree = "<group>"; };
+		BC9ED1411460FBB7A8608D91 /* Pods-LezUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests.release.xcconfig"; sourceTree = "<group>"; };
+		BE9A5EDDC73AC30B43C2E7F1 /* Pods-Lez.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lez.release.xcconfig"; path = "Pods/Target Support Files/Pods-Lez/Pods-Lez.release.xcconfig"; sourceTree = "<group>"; };
+		CF04FAE2204161A7001CB034 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CF2DF203203C13170054CC1A /* Lez.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lez.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF2DF206203C13170054CC1A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CF2DF208203C13170054CC1A /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		CF2DF208203C13170054CC1A /* MatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController.swift; sourceTree = "<group>"; };
 		CF2DF20B203C13170054CC1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CF2DF20D203C13170054CC1A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CF2DF210203C13170054CC1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -47,6 +60,7 @@
 		CF2DF222203C13180054CC1A /* LezUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LezUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF2DF226203C13180054CC1A /* LezUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezUITests.swift; sourceTree = "<group>"; };
 		CF2DF228203C13180054CC1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -54,6 +68,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				76A37FD28C40794876C735BB /* Pods_Lez.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -61,6 +76,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				45DBE120DB2CF8134A7D2A64 /* Pods_LezTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -68,6 +84,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				4A69DF7863C96848F113BED7 /* Pods_LezUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -81,6 +98,8 @@
 				CF2DF21A203C13180054CC1A /* LezTests */,
 				CF2DF225203C13180054CC1A /* LezUITests */,
 				CF2DF204203C13170054CC1A /* Products */,
+				FA0C79B57EDC3F3B603E17B2 /* Pods */,
+				D0CF37AAC26CFC2A18C5A98F /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -98,11 +117,12 @@
 			isa = PBXGroup;
 			children = (
 				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
-				CF2DF208203C13170054CC1A /* ViewController.swift */,
+				CF2DF208203C13170054CC1A /* MatchViewController.swift */,
 				CF2DF20A203C13170054CC1A /* Main.storyboard */,
 				CF2DF20D203C13170054CC1A /* Assets.xcassets */,
 				CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */,
 				CF2DF212203C13170054CC1A /* Info.plist */,
+				CF04FAE2204161A7001CB034 /* User.swift */,
 			);
 			path = Lez;
 			sourceTree = "<group>";
@@ -125,6 +145,29 @@
 			path = LezUITests;
 			sourceTree = "<group>";
 		};
+		D0CF37AAC26CFC2A18C5A98F /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1DE15551B494E8923BB00C37 /* Pods_Lez.framework */,
+				5479534E8388BF74902A4ED8 /* Pods_LezTests.framework */,
+				3C3787C470D6FE1A11C36B5D /* Pods_LezUITests.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FA0C79B57EDC3F3B603E17B2 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8DF45BE7B5A2CA91BE149655 /* Pods-Lez.debug.xcconfig */,
+				BE9A5EDDC73AC30B43C2E7F1 /* Pods-Lez.release.xcconfig */,
+				DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */,
+				0CEEFFD2B876F695EC5904DC /* Pods-LezTests.release.xcconfig */,
+				6289310B6DFC1BDE0DC30898 /* Pods-LezUITests.debug.xcconfig */,
+				BC9ED1411460FBB7A8608D91 /* Pods-LezUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -132,9 +175,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF2DF22B203C13180054CC1A /* Build configuration list for PBXNativeTarget "Lez" */;
 			buildPhases = (
+				5B6B181FEAA1AE7C548057B1 /* [CP] Check Pods Manifest.lock */,
 				CF2DF1FF203C13170054CC1A /* Sources */,
 				CF2DF200203C13170054CC1A /* Frameworks */,
 				CF2DF201203C13170054CC1A /* Resources */,
+				C25547941FA7A89D98F58EEB /* [CP] Embed Pods Frameworks */,
+				6EE821AEFB6B08319E37D766 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -149,9 +195,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF2DF22E203C13180054CC1A /* Build configuration list for PBXNativeTarget "LezTests" */;
 			buildPhases = (
+				6E7912947BA80633995C7269 /* [CP] Check Pods Manifest.lock */,
 				CF2DF213203C13180054CC1A /* Sources */,
 				CF2DF214203C13180054CC1A /* Frameworks */,
 				CF2DF215203C13180054CC1A /* Resources */,
+				5E5B4C7C4C54DC592E72F084 /* [CP] Embed Pods Frameworks */,
+				87CE6F25528B5121626D1831 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -167,9 +216,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF2DF231203C13180054CC1A /* Build configuration list for PBXNativeTarget "LezUITests" */;
 			buildPhases = (
+				15FC2768116E9FE27E5A42D8 /* [CP] Check Pods Manifest.lock */,
 				CF2DF21E203C13180054CC1A /* Sources */,
 				CF2DF21F203C13180054CC1A /* Frameworks */,
 				CF2DF220203C13180054CC1A /* Resources */,
+				4A082588B021E790F2A32337 /* [CP] Embed Pods Frameworks */,
+				897734E08DAA0F5DFB2CA6E2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -254,13 +306,164 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		15FC2768116E9FE27E5A42D8 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LezUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		4A082588B021E790F2A32337 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5B6B181FEAA1AE7C548057B1 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Lez-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		5E5B4C7C4C54DC592E72F084 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LezTests/Pods-LezTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6E7912947BA80633995C7269 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LezTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		6EE821AEFB6B08319E37D766 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		87CE6F25528B5121626D1831 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LezTests/Pods-LezTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		897734E08DAA0F5DFB2CA6E2 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C25547941FA7A89D98F58EEB /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/AnimatedCollectionViewLayout/AnimatedCollectionViewLayout.framework",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/AnimatedCollectionViewLayout.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		CF2DF1FF203C13170054CC1A /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CF2DF209203C13170054CC1A /* ViewController.swift in Sources */,
+				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,
 				CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */,
+				CF04FAE3204161A7001CB034 /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -424,10 +627,11 @@
 		};
 		CF2DF22C203C13180054CC1A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8DF45BE7B5A2CA91BE149655 /* Pods-Lez.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = HSQYH8DFLS;
+				DEVELOPMENT_TEAM = WNU245KFYF;
 				INFOPLIST_FILE = Lez/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.antonijapek.Lez;
@@ -439,10 +643,11 @@
 		};
 		CF2DF22D203C13180054CC1A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BE9A5EDDC73AC30B43C2E7F1 /* Pods-Lez.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
-				DEVELOPMENT_TEAM = HSQYH8DFLS;
+				DEVELOPMENT_TEAM = WNU245KFYF;
 				INFOPLIST_FILE = Lez/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.antonijapek.Lez;
@@ -454,6 +659,7 @@
 		};
 		CF2DF22F203C13180054CC1A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -471,6 +677,7 @@
 		};
 		CF2DF230203C13180054CC1A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 0CEEFFD2B876F695EC5904DC /* Pods-LezTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -488,6 +695,7 @@
 		};
 		CF2DF232203C13180054CC1A /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 6289310B6DFC1BDE0DC30898 /* Pods-LezUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -504,6 +712,7 @@
 		};
 		CF2DF233203C13180054CC1A /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC9ED1411460FBB7A8608D91 /* Pods-LezUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
