@@ -21,7 +21,7 @@ class MatchViewController: UIViewController {
     
     // MARK: - Variables
     let layout = AnimatedCollectionViewLayout()
-
+    var animator: (LayoutAttributesAnimator, Bool, Int, Int)?
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -58,7 +58,8 @@ extension MatchViewController: UICollectionViewDataSource, UICollectionViewDeleg
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: 300, height: 600)
+        guard let animator = animator else { return view.bounds.size }
+        return CGSize(width: view.bounds.width / CGFloat(animator.2), height: view.bounds.height / CGFloat(animator.3))
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
