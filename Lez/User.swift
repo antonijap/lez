@@ -13,7 +13,7 @@ struct MatchingPreferences {
     var preferedAge: (Int, Int)?
 }
 
-class User: ListDiffable {
+class User {
     var id: Int
     var name: String?
     var email: String?
@@ -22,17 +22,6 @@ class User: ListDiffable {
     var isOnboarded = false
     var isPremium = false
     var matchingPreferences: MatchingPreferences?
-    
-    func diffIdentifier() -> NSObjectProtocol {
-        return id as NSObjectProtocol
-    }
-    
-    func isEqual(toDiffableObject object: ListDiffable?) -> Bool {
-        if let object = object as? User {
-            return name == object.name
-        }
-        return false
-    }
     
     init(id: Int, name: String, email: String, age: Int, location: String, isOnboarded: Bool, isPremium: Bool, matchingPreferences: MatchingPreferences) {
         self.id = id

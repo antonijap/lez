@@ -22,7 +22,7 @@
                                 <rect key="frame" x="0.0" y="63" width="375" height="540"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <color key="backgroundColor" cocoaTouchSystemColor="groupTableViewBackgroundColor"/>
-                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="xXs-Oc-i7x">
+                                <collectionViewFlowLayout key="collectionViewLayout" scrollDirection="horizontal" minimumLineSpacing="10" minimumInteritemSpacing="10" id="xXs-Oc-i7x" customClass="CenterCellCollectionViewFlowLayout" customModule="Lez" customModuleProvider="target">
                                     <size key="itemSize" width="71" height="71"/>
                                     <size key="headerReferenceSize" width="0.0" height="0.0"/>
                                     <size key="footerReferenceSize" width="0.0" height="0.0"/>

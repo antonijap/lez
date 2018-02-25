@@ -12,27 +12,13 @@ class MatchCollectionViewCell: UICollectionViewCell {
     var helloWorld = "Hello World"
 }
 
-//class LabelSectionController: ListSectionController {
-//    override func sizeForItem(at index: Int) -> CGSize {
-//        return CGSize(width: collectionContext!.containerSize.width, height: 55)
-//    }
-//
-//    override func cellForItem(at index: Int) -> UICollectionViewCell {
-//        return collectionContext!.dequeueReusableCell(of: MatchCollectionViewCell.self, for: self, at: index)
-//    }
-//}
-
 class MatchViewController: UIViewController {
     
     // MARK: - Outlets
     @IBOutlet weak var matchCollectionView: UICollectionView!
     
-    
     // MARK: - Variables
-    let layout = UICollectionViewFlowLayout()
-//    lazy var adapter: ListAdapter = {
-//        return ListAdapter(updater: ListAdapterUpdater(), viewController: self, workingRangeSize: 0)
-//    }()
+    let layout = CenterCellCollectionViewFlowLayout()
     var users: [User] = []
     
     // MARK: - Lifecycle
@@ -40,10 +26,8 @@ class MatchViewController: UIViewController {
         super.viewDidLoad()
         matchCollectionView.dataSource = self
         matchCollectionView.delegate = self
-        matchCollectionView.isPagingEnabled = true
         layout.minimumInteritemSpacing = 8
         layout.minimumLineSpacing = 16
-        layout.scrollDirection = .horizontal
         
         for i in 1...10 {
             let newMatchingPreferences = MatchingPreferences(preferedAge: (23, 33))
@@ -52,39 +36,21 @@ class MatchViewController: UIViewController {
         }
     }
     
+    // the controller that has a reference to the collection view
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        var insets = self.matchCollectionView.contentInset
+        let value = (self.view.frame.size.width - (self.matchCollectionView.collectionViewLayout as! UICollectionViewFlowLayout).itemSize.width) * 0.5
+        insets.left = value
+        insets.right = value
+        self.matchCollectionView.contentInset = insets
+        self.matchCollectionView.decelerationRate = UIScrollViewDecelerationRateFast;
+    }
+    
     // MARK: - Actions
     
     // MARK: - Methods
-    func snapToNearestCell(_ collectionView: UICollectionView) {
-        for i in 0..<matchCollectionView.numberOfItems(inSection: 0) {
-            
-            let itemWithSpaceWidth = layout.itemSize.width + layout.minimumLineSpacing
-            let itemWidth = layout.itemSize.width
-            
-            if matchCollectionView.contentOffset.x <= CGFloat(i) * itemWithSpaceWidth + itemWidth / 2 {
-                let indexPath = IndexPath(item: i, section: 0)
-                matchCollectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
-                break
-            }
-        }
-    }
 }
-
-//extension MatchViewController: ListAdapterDataSource {
-//    func objects(for listAdapter: ListAdapter) -> [ListDiffable] {
-//        return self.users
-//    }
-//    
-//    func listAdapter(_ listAdapter: ListAdapter, sectionControllerFor object: Any) -> ListSectionController {
-//        return LabelSectionController()
-//    }
-//    
-//    func emptyView(for listAdapter: ListAdapter) -> UIView? {
-//        let view = UIView()
-//        view.backgroundColor = .lightGray
-//        return view
-//    }
-//}
 
 extension MatchViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
     func numberOfSections(in collectionView: UICollectionView) -> Int {
@@ -97,7 +63,6 @@ extension MatchViewController: UICollectionViewDataSource, UICollectionViewDeleg
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = matchCollectionView.dequeueReusableCell(withReuseIdentifier: "MatchCell", for: indexPath) as! MatchCollectionViewCell
-        print(cell.helloWorld)
         return cell
     }
     
@@ -113,13 +78,64 @@ extension MatchViewController: UICollectionViewDataSource, UICollectionViewDeleg
         return 16
     }
     
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        let cellWidth: CGFloat = view.bounds.width * 0.8
-        
-        let numberOfCells = floor(self.view.frame.size.width / cellWidth)
-        let edgeInsets = (self.view.frame.size.width - (numberOfCells * cellWidth)) / (numberOfCells + 1)
-        
-        return UIEdgeInsetsMake(16, edgeInsets, 0, edgeInsets)
-    }
-
+//    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+//        let cellWidth: CGFloat = view.bounds.width * 0.8
+//
+//        let numberOfCells = floor(self.view.frame.size.width / cellWidth)
+//        let edgeInsets = (self.view.frame.size.width - (numberOfCells * cellWidth)) / (numberOfCells + 1)
+//
+//        return UIEdgeInsetsMake(16, edgeInsets, 0, edgeInsets)
+//    }
 }
+
+class CenterCellCollectionViewFlowLayout: UICollectionViewFlowLayout {
+    var mostRecentOffset : CGPoint = CGPoint()
+    
+    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
+        
+        if velocity.x == 0 {
+            return mostRecentOffset
+        }
+        
+        if let cv = self.collectionView {
+            
+            let cvBounds = cv.bounds
+            let halfWidth = cvBounds.size.width * 0.5;
+            
+            
+            if let attributesForVisibleCells = self.layoutAttributesForElements(in: cvBounds) {
+                
+                var candidateAttributes : UICollectionViewLayoutAttributes?
+                for attributes in attributesForVisibleCells {
+                    
+                    // == Skip comparison with non-cell items (headers and footers) == //
+                    if attributes.representedElementCategory != UICollectionElementCategory.cell {
+                        continue
+                    }
+                    
+                    if (attributes.center.x == 0) || (attributes.center.x > (cv.contentOffset.x + halfWidth) && velocity.x < 0) {
+                        continue
+                    }
+                    candidateAttributes = attributes
+                }
+                
+                // Beautification step , I don't know why it works!
+                if(proposedContentOffset.x == -(cv.contentInset.left)) {
+                    return proposedContentOffset
+                }
+                
+                guard let _ = candidateAttributes else {
+                    return mostRecentOffset
+                }
+                mostRecentOffset = CGPoint(x: floor(candidateAttributes!.center.x - halfWidth), y: proposedContentOffset.y)
+                return mostRecentOffset
+                
+            }
+        }
+        
+        // fallback
+        mostRecentOffset = super.targetContentOffset(forProposedContentOffset: proposedContentOffset)
+        return mostRecentOffset
+    }
+}
+
