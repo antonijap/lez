@@ -4,28 +4,28 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>IGListKit.xcscheme</key>
+		<key>Pods-Lez.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
 			<integer>0</integer>
 		</dict>
-		<key>Pods-Lez.xcscheme</key>
+		<key>Pods-LezTests.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
 			<integer>1</integer>
 		</dict>
-		<key>Pods-LezTests.xcscheme</key>
+		<key>Pods-LezUITests.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>
 			<key>orderHint</key>
 			<integer>2</integer>
 		</dict>
-		<key>Pods-LezUITests.xcscheme</key>
+		<key>SnapKit.xcscheme</key>
 		<dict>
 			<key>isShown</key>
 			<false/>

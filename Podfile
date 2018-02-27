@@ -6,9 +6,8 @@ target 'Lez' do
   use_frameworks!
 
   # Pods for Lez
-  pod 'IGListKit', '~> 3.0'
-#  pod 'SnapKit', '~> 4.0.0'
-  
+  pod 'SnapKit', '~> 4.0.0'
+
   target 'LezTests' do
     inherit! :search_paths
     # Pods for testing

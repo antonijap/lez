@@ -7,7 +7,6 @@
 //
 
 import Foundation
-import IGListKit
 
 struct MatchingPreferences {
     var preferedAge: (Int, Int)?
