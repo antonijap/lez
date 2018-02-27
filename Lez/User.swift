@@ -20,9 +20,10 @@ class User {
     var location: String?
     var isOnboarded = false
     var isPremium = false
+    var imageURL: String?
     var matchingPreferences: MatchingPreferences?
     
-    init(id: Int, name: String, email: String, age: Int, location: String, isOnboarded: Bool, isPremium: Bool, matchingPreferences: MatchingPreferences) {
+    init(id: Int, name: String, email: String, age: Int, location: String, isOnboarded: Bool, isPremium: Bool, imageURL: String, matchingPreferences: MatchingPreferences) {
         self.id = id
         self.name = name
         self.email = email
@@ -30,6 +31,7 @@ class User {
         self.location = location
         self.isOnboarded = isOnboarded
         self.isPremium = isPremium
+        self.imageURL = imageURL
         self.matchingPreferences = matchingPreferences
     }
 }

@@ -7,6 +7,7 @@ target 'Lez' do
 
   # Pods for Lez
   pod 'SnapKit', '~> 4.0.0'
+  pod 'moa', '~> 9.0'
 
   target 'LezTests' do
     inherit! :search_paths
