@@ -1,4 +1,5 @@
 PODS:
+  - Hero (1.1.0)
   - Koloda (4.3.1):
     - pop (~> 1.0)
   - moa (9.0.2)
@@ -6,16 +7,18 @@ PODS:
   - SnapKit (4.0.0)
 
 DEPENDENCIES:
+  - Hero
   - Koloda (~> 4.3.1)
   - moa (~> 9.0)
   - SnapKit (~> 4.0.0)
 
 SPEC CHECKSUMS:
+  Hero: ce59e81c79390613d97b43da7179e2c5e1017e04
   Koloda: 0d39b2aa188ccd1fac48d752acaf9802e683c625
   moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
   pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
 
-PODFILE CHECKSUM: 1d0faa90810731d12708e6b9b29c77eb250c31e6
+PODFILE CHECKSUM: 75ba0b76c435ca6ad0badc5edc4069b2bf9aaa92
 
 COCOAPODS: 1.4.0

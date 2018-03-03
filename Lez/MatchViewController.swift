@@ -10,6 +10,7 @@ import UIKit
 import SnapKit
 import moa
 import Koloda
+import Hero
 
 class Like: UIView {
     override func draw(_ rect: CGRect) {
@@ -102,6 +103,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     var users: [User] = []
     var superview = UIView()
     let like = Like()
+    let demoView = UIView()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -110,11 +112,12 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         
         superview.addSubview(like)
         like.snp.makeConstraints { (make) in
-            make.width.equalTo(70)
-            make.height.equalTo(70)
+            make.width.equalTo(80)
+            make.height.equalTo(80)
             make.left.equalTo(10)
             make.top.equalTo(10)
         }
+        like.backgroundColor = .clear
         
         for i in 1...10 {
             let newMatchingPreferences = MatchingPreferences(preferedAge: (23, 33))
@@ -123,6 +126,18 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         }
 
         setupKoloda()
+        
+        superview.addSubview(demoView)
+        demoView.snp.makeConstraints { (make) in
+            make.right.equalTo(0)
+            make.height.equalTo(10)
+            make.left.equalTo(0)
+            make.bottom.equalTo(0)
+        }
+        demoView.backgroundColor = .black
+        
+        demoView.hero.id = "goFullscreen"
+        demoView.hero.isEnabled = true
     }
     
     // MARK: - Methods
@@ -156,7 +171,7 @@ extension MatchViewController {
     }
     
     func kolodaShouldTransparentizeNextCard(_ koloda: KolodaView) -> Bool {
-        return true
+        return false
     }
     
     func kolodaShouldMoveBackgroundCard(_ koloda: KolodaView) -> Bool {
@@ -169,6 +184,20 @@ extension MatchViewController {
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
         print("Expand view.")
+        let storyboardName = "Main"
+        let vc = viewController(forStoryboardName: storyboardName)
+        
+//        let controller = self.storyboard!.instantiateViewController(withIdentifier: "CardFullscreenViewController")
+//        controller.hero.modalAnimationType = HeroDefaultAnimationType.zoom
+//        hero.replaceViewController(with: vc)
+        
+        DispatchQueue.main.async {
+            self.present(vc, animated: true, completion: nil)
+        }
+    }
+    
+    func viewController(forStoryboardName: String) -> UIViewController {
+        return UIStoryboard(name: forStoryboardName, bundle: nil).instantiateInitialViewController()!
     }
     
     func kolodaNumberOfCards(_ koloda: KolodaView) -> Int {
@@ -176,10 +205,18 @@ extension MatchViewController {
     }
     
     func kolodaSpeedThatCardShouldDrag(_ koloda: KolodaView) -> DragSpeed {
-        return .default
+        return .fast
     }
     
     func koloda(_ koloda: KolodaView, draggedCardWithPercentage finishPercentage: CGFloat, in direction: SwipeResultDirection) {
         print("Card dragged: \(finishPercentage), \(direction)")
+        
+        if direction == .right {
+            
+        } else if direction == .left {
+            if finishPercentage >= 50 {
+
+            }
+        }
     }
 }
