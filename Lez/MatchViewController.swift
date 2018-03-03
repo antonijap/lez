@@ -9,28 +9,38 @@
 import UIKit
 import SnapKit
 import moa
+import Koloda
 
-class MatchCollectionViewCell: UICollectionViewCell {
+class Like: UIView {
+    override func draw(_ rect: CGRect) {
+        let rect = CGRect(x: 0.0, y: 0.0, width: 70, height: 70)
+        LezIcons.drawLike(frame: rect, resizing: .aspectFit)
+    }
+}
+
+class KolodaCardView: UIView {
     var helloWorld = "Hello World"
     var userImage = UIImageView()
     var userName = UILabel()
+    var userLocation = UILabel()
     var parent = UIView()
+    var gradientLayer = CAGradientLayer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        parent = self.contentView
-        setupUserImage()
+        parent = self
+        parent.backgroundColor = .clear
+        parent.layer.cornerRadius = 16
+        parent.clipsToBounds = true
         
-        parent.addSubview(userName)
-        userName.snp.makeConstraints { (make) in
-            make.left.equalTo(parent)
-            make.right.equalTo(parent)
-            make.height.equalTo(20)
-            make.bottom.equalTo(-150)
-        }
-        userName.text = helloWorld
-        userName.textColor = UIColor.red
-        userName.textAlignment = .center
+        setupUserImage()
+        setupUserName()
+        setupLocation()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        gradientLayer.frame = userImage.bounds
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -41,31 +51,70 @@ class MatchCollectionViewCell: UICollectionViewCell {
         parent.addSubview(userImage)
         userImage.snp.makeConstraints { make in
             make.top.equalTo(parent)
-            make.bottom.equalTo(parent).offset(-200)
+            make.bottom.equalTo(parent)
             make.left.equalTo(parent)
             make.right.equalTo(parent)
         }
-        userImage.image = UIImage(named: "Taylor")
         userImage.contentMode = .scaleAspectFill
         userImage.clipsToBounds = true
+        userImage.layer.cornerRadius = 16
+    }
+    
+    func setupUserName() {
+        parent.addSubview(userName)
+        userName.snp.makeConstraints { (make) in
+            make.left.equalTo(parent).offset(16)
+            make.right.equalTo(parent)
+            make.height.equalTo(20)
+            make.bottom.equalTo(-38)
+        }
+        userName.textColor = .white
+        userName.textAlignment = .left
+    }
+    
+    func setupLocation() {
+        parent.addSubview(userLocation)
+        userLocation.snp.makeConstraints { (make) in
+            make.left.equalTo(parent).offset(16)
+            make.right.equalTo(parent)
+            make.height.equalTo(20)
+            make.bottom.equalTo(-16)
+        }
+        userLocation.textColor = UIColor.white.withAlphaComponent(0.7)
+        userLocation.textAlignment = .left
+    }
+    
+    func activateShadow() {
+        userImage.layer.addSublayer(gradientLayer)
+        let black = UIColor.black.withAlphaComponent(0.5).cgColor
+        gradientLayer.colors = [black, UIColor.clear.cgColor]
+        gradientLayer.endPoint = CGPoint(x: 0.0, y: 0.7)
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
+        gradientLayer.opacity = 1
     }
 }
 
-class MatchViewController: UIViewController {
-    
-    // MARK: - Outlets
-    var collectionView: UICollectionView!
+class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource {
     
     // MARK: - Variables
-    let collectionViewLayout = CenteredCellCollectionViewFlowLayout()
+    var kolodaView = KolodaView()
     let userImage = UIImageView()
     var users: [User] = []
     var superview = UIView()
+    let like = Like()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         superview = self.view
+        
+        superview.addSubview(like)
+        like.snp.makeConstraints { (make) in
+            make.width.equalTo(70)
+            make.height.equalTo(70)
+            make.left.equalTo(10)
+            make.top.equalTo(10)
+        }
         
         for i in 1...10 {
             let newMatchingPreferences = MatchingPreferences(preferedAge: (23, 33))
@@ -73,107 +122,64 @@ class MatchViewController: UIViewController {
             users.append(newUser)
         }
 
-        setupCollectionViewLayout()
-        setupCollectionView()
-    }
-    
-    // MARK: - Actions
-    func setupCollectionViewLayout() {
-        collectionViewLayout.sectionHeadersPinToVisibleBounds = false
-        collectionViewLayout.scrollDirection = .horizontal
-        collectionViewLayout.minimumInteritemSpacing = 8
-        collectionViewLayout.minimumLineSpacing = 16
-        collectionViewLayout.headerReferenceSize = CGSize(width: 0, height: 0.0)
-        collectionViewLayout.footerReferenceSize = CGSize(width: 0, height: 0.0)
-    }
-    
-    func setupCollectionView() {
-        collectionView = UICollectionView(frame: view.bounds, collectionViewLayout: collectionViewLayout)
-        collectionView.dataSource = self
-        collectionView.delegate = self
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.decelerationRate = UIScrollViewDecelerationRateFast
-        collectionView.backgroundColor = UIColor.yellow // Remove this
-        collectionView.translatesAutoresizingMaskIntoConstraints = false
-        collectionView.scrollIndicatorInsets = .zero
-        collectionView.showsVerticalScrollIndicator = false
-        collectionView.showsHorizontalScrollIndicator = false
-        collectionView.alwaysBounceVertical = false
-        collectionView.alwaysBounceHorizontal = true
-        collectionView.register(MatchCollectionViewCell.self, forCellWithReuseIdentifier: "MatchCell")
-        
-        view.addSubview(collectionView)
-        
-        collectionView.snp.makeConstraints { (make) -> Void in
-            make.width.equalTo(superview)
-            make.height.equalTo(550)
-            make.center.equalTo(superview)
-        }
+        setupKoloda()
     }
     
     // MARK: - Methods
-
-}
-
-extension MatchViewController: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "MatchCell", for: indexPath) as! MatchCollectionViewCell
-        cell.backgroundColor = .clear
-        cell.userImage.moa.url = users[indexPath.row].imageURL
-        cell.userName.text = users[indexPath.row].name
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
-        print("IndexPath \(indexPath.row)")
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return CGSize(width: view.bounds.width * 0.8, height: view.bounds.height)
-    }
-
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
-        let cellWidth: CGFloat = view.bounds.width * 0.8 // 300
-        let numberOfCells = floor(view.frame.size.width / cellWidth)  // In my case it will be 1.0
-        let edgeInsets = (view.frame.size.width - (numberOfCells * cellWidth)) / (numberOfCells + 1)
-        return UIEdgeInsetsMake(16, edgeInsets, 0, edgeInsets)
-    }
-    
-    func scrollViewDidEndDragging(_ scrollView: UIScrollView, willDecelerate decelerate: Bool) {
-        if scrollView.bounds.minX > (view.bounds.width / 2) * 0.3  {
-            print("Scroll.")
+    func setupKoloda() {
+        kolodaView.dataSource = self
+        kolodaView.delegate = self
+        kolodaView.countOfVisibleCards = 1
+        
+        view.addSubview(kolodaView)
+        
+        kolodaView.snp.makeConstraints { (make) in
+            make.left.equalTo(32)
+            make.right.equalTo(-32)
+            make.top.equalTo(67)
+            make.bottom.equalTo(-64)
         }
     }
 }
 
-final class CenteredCellCollectionViewFlowLayout: UICollectionViewFlowLayout {
-    var mostRecentOffset = CGPoint()
-    override func targetContentOffset(forProposedContentOffset proposedContentOffset: CGPoint, withScrollingVelocity velocity: CGPoint) -> CGPoint {
-        guard velocity.x != 0.0 else { return mostRecentOffset }
-        guard let collectionView = self.collectionView,
-            let attributesForVisibleCells = layoutAttributesForElements(in: collectionView.bounds) else {
-                mostRecentOffset = super.targetContentOffset(forProposedContentOffset: proposedContentOffset)
-                return mostRecentOffset
+extension MatchViewController {
+    func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
+        let view = KolodaCardView()
+        view.userImage.moa.url = users[index].imageURL
+        view.userImage.moa.onSuccess = { image in
+            view.activateShadow()
+            view.userName.text = "\(self.users[index].name!), \(self.users[index].age!)"
+            view.userLocation.text = self.users[index].location
+            return image
         }
-        let halvedWidth = collectionView.bounds.size.width / 2
-        var candidateAttributes: UICollectionViewLayoutAttributes?
-        for attributes in attributesForVisibleCells {
-            guard attributes.representedElementCategory == .cell else { continue }
-            if attributes.center.x == 0.0 ||
-                (attributes.center.x > (collectionView.contentOffset.x + halvedWidth) && velocity.x < 0.0) { continue }
-            candidateAttributes = attributes
-        }
-        if proposedContentOffset.x == -collectionView.contentInset.left { return proposedContentOffset }
-        guard candidateAttributes != nil else { return mostRecentOffset }
-        mostRecentOffset = CGPoint(x: floor(candidateAttributes!.center.x - halvedWidth), y: proposedContentOffset.y)
-        return mostRecentOffset
+        return view
+    }
+    
+    func kolodaShouldTransparentizeNextCard(_ koloda: KolodaView) -> Bool {
+        return true
+    }
+    
+    func kolodaShouldMoveBackgroundCard(_ koloda: KolodaView) -> Bool {
+        return true
+    }
+    
+    func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
+        koloda.reloadData()
+    }
+    
+    func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
+        print("Expand view.")
+    }
+    
+    func kolodaNumberOfCards(_ koloda: KolodaView) -> Int {
+        return users.count
+    }
+    
+    func kolodaSpeedThatCardShouldDrag(_ koloda: KolodaView) -> DragSpeed {
+        return .default
+    }
+    
+    func koloda(_ koloda: KolodaView, draggedCardWithPercentage finishPercentage: CGFloat, in direction: SwipeResultDirection) {
+        print("Card dragged: \(finishPercentage), \(direction)")
     }
 }

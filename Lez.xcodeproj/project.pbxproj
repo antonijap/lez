@@ -18,6 +18,7 @@
 		CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */; };
 		CF2DF21C203C13180054CC1A /* LezTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF21B203C13180054CC1A /* LezTests.swift */; };
 		CF2DF227203C13180054CC1A /* LezUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF226203C13180054CC1A /* LezUITests.swift */; };
+		CF4D8481204A89D50060F1D4 /* LezIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4D8480204A89D50060F1D4 /* LezIcons.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 		CF2DF222203C13180054CC1A /* LezUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LezUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF2DF226203C13180054CC1A /* LezUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezUITests.swift; sourceTree = "<group>"; };
 		CF2DF228203C13180054CC1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		CF4D8480204A89D50060F1D4 /* LezIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezIcons.swift; sourceTree = "<group>"; };
 		DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -123,6 +125,7 @@
 				CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */,
 				CF2DF212203C13170054CC1A /* Info.plist */,
 				CF04FAE2204161A7001CB034 /* User.swift */,
+				CF4D8480204A89D50060F1D4 /* LezIcons.swift */,
 			);
 			path = Lez;
 			sourceTree = "<group>";
@@ -443,13 +446,17 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-frameworks.sh",
+				"${BUILT_PRODUCTS_DIR}/Koloda/Koloda.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/moa/moa.framework",
+				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Koloda.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/moa.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -466,6 +473,7 @@
 				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,
 				CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */,
 				CF04FAE3204161A7001CB034 /* User.swift in Sources */,
+				CF4D8481204A89D50060F1D4 /* LezIcons.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
