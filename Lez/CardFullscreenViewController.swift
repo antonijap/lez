@@ -19,8 +19,7 @@ class CardFullscreenViewController: UIViewController {
     var url = String()
     var scrollView = UIScrollView()
     var tableView = UITableView()
-    var tableFakeView = UIView()
-    
+    var fakeTableView = UIView()
     
     // MARK: - Lifecycle
     
@@ -30,7 +29,6 @@ class CardFullscreenViewController: UIViewController {
         setupScrollView()
         setupUserImage()
         setupFakeTableView()
-//        viewDidLayoutSubviews()
     }
     
     
@@ -44,24 +42,28 @@ class CardFullscreenViewController: UIViewController {
     func setupScrollView() {
         self.view.addSubview(scrollView)
         scrollView.snp.makeConstraints { (make) in
-            make.top.equalTo(0)
-            make.width.equalToSuperview()
+            make.edges.equalTo(view)
         }
-        scrollView.contentSize = CGSize(width: view.bounds.width, height: 2000)
         scrollView.backgroundColor = .yellow
         scrollView.isDirectionalLockEnabled = true
         scrollView.isScrollEnabled = true
     }
     
+    func contentHeight() -> CGFloat {
+        let result = userImageView.frame.height + tableView.frame.height
+        print("Height will be: \(userImageView.frame.height)")
+        return result
+    }
+    
     func setupFakeTableView() {
-        self.view.addSubview(scrollView)
-        tableFakeView.snp.makeConstraints { (make) in
-            make.right.equalTo(0)
+        scrollView.addSubview(fakeTableView)
+        fakeTableView.snp.makeConstraints { (make) in
             make.top.equalTo(userImageView.snp.bottom)
-            make.left.equalTo(0)
+            make.width.equalToSuperview()
             make.height.equalTo(700)
+            make.bottom.equalTo(scrollView)
         }
-        tableFakeView.backgroundColor = .purple
+        fakeTableView.backgroundColor = .purple
     }
     
     func setupUserImage() {
@@ -70,7 +72,7 @@ class CardFullscreenViewController: UIViewController {
         userImageView.snp.makeConstraints { (make) in
             make.top.equalTo(0)
             make.width.equalToSuperview()
-            make.bottom.equalTo(-100)
+            make.height.equalTo(userImageView.snp.width).multipliedBy(1.4)
         }
         userImageView.image = image
         userImageView.hero.id = "goFullscreen"
