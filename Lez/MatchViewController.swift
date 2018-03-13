@@ -37,6 +37,7 @@ class KolodaCardView: UIView {
         setupUserImage()
         setupUserName()
         setupLocation()
+        setupHero()
     }
     
     override func layoutSubviews() {
@@ -46,6 +47,12 @@ class KolodaCardView: UIView {
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupHero() {
+        self.hero.id = "goFullscreen"
+        self.hero.isEnabled = true
+        self.hero.modifiers = [.fade]
     }
     
     func setupUserImage() {
@@ -103,41 +110,28 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     var users: [User] = []
     var superview = UIView()
     let like = Like()
-    let demoView = UIView()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         superview = self.view
         
-        superview.addSubview(like)
-        like.snp.makeConstraints { (make) in
-            make.width.equalTo(80)
-            make.height.equalTo(80)
-            make.left.equalTo(10)
-            make.top.equalTo(10)
-        }
-        like.backgroundColor = .clear
+//        superview.addSubview(like)
+//        like.snp.makeConstraints { (make) in
+//            make.width.equalTo(80)
+//            make.height.equalTo(80)
+//            make.left.equalTo(10)
+//            make.top.equalTo(10)
+//        }
+//        like.backgroundColor = .clear
         
         for i in 1...10 {
             let newMatchingPreferences = MatchingPreferences(preferedAge: (23, 33))
-            let newUser = User(id: i, name: "User \(i)", email: "user@gmail.com", age: 27, location: "New York", isOnboarded: true, isPremium: true, imageURL: "https://lorempixel.com/1000/1000/people/", matchingPreferences: newMatchingPreferences)
+            let newUser = User(id: i, name: "User \(i)", email: "user@gmail.com", age: 27, location: "New York", isOnboarded: true, isPremium: true, imageURL: "https://beebom.com/wp-content/uploads/2016/01/Reverse-Image-Search-Engines-Apps-And-Its-Uses-2016.jpg", matchingPreferences: newMatchingPreferences)
             users.append(newUser)
         }
 
         setupKoloda()
-        
-        superview.addSubview(demoView)
-        demoView.snp.makeConstraints { (make) in
-            make.right.equalTo(0)
-            make.height.equalTo(10)
-            make.left.equalTo(0)
-            make.bottom.equalTo(0)
-        }
-        demoView.backgroundColor = .black
-        
-        demoView.hero.id = "goFullscreen"
-        demoView.hero.isEnabled = true
     }
     
     // MARK: - Methods
@@ -183,16 +177,15 @@ extension MatchViewController {
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
-        print("Expand view.")
-        let storyboardName = "Main"
-        let vc = viewController(forStoryboardName: storyboardName)
-        
-//        let controller = self.storyboard!.instantiateViewController(withIdentifier: "CardFullscreenViewController")
-//        controller.hero.modalAnimationType = HeroDefaultAnimationType.zoom
-//        hero.replaceViewController(with: vc)
-        
-        DispatchQueue.main.async {
-            self.present(vc, animated: true, completion: nil)
+        performSegue(withIdentifier: "GoToProfile", sender: koloda)
+    }
+    
+    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
+        if segue.identifier == "GoToProfile" {
+            if let destination = segue.destination as? CardFullscreenViewController {
+                let indexPath = self.kolodaView.currentCardIndex
+                destination.url = users[indexPath].imageURL!
+            }
         }
     }
     
