@@ -73,7 +73,6 @@ class KolodaCardView: UIView {
         userName.snp.makeConstraints { (make) in
             make.left.equalTo(parent).offset(16)
             make.right.equalTo(parent)
-            make.height.equalTo(20)
             make.bottom.equalTo(-38)
         }
         userName.textColor = .white
@@ -85,8 +84,7 @@ class KolodaCardView: UIView {
         userLocation.snp.makeConstraints { (make) in
             make.left.equalTo(parent).offset(16)
             make.right.equalTo(parent)
-            make.height.equalTo(20)
-            make.bottom.equalTo(-16)
+            make.top.equalTo(userName.snp.bottom)
         }
         userLocation.textColor = UIColor.white.withAlphaComponent(0.7)
         userLocation.textAlignment = .left
@@ -127,7 +125,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         
         for i in 1...10 {
             let newMatchingPreferences = MatchingPreferences(preferedAge: (23, 33))
-            let newUser = User(id: i, name: "User \(i)", email: "user@gmail.com", age: 27, location: "New York", isOnboarded: true, isPremium: true, imageURL: "https://beebom.com/wp-content/uploads/2016/01/Reverse-Image-Search-Engines-Apps-And-Its-Uses-2016.jpg", matchingPreferences: newMatchingPreferences)
+            let newUser = User(id: i, name: "User \(i)", email: "user@gmail.com", age: 27, location: "New York", isOnboarded: true, isPremium: true, imageURL: "https://beebom.com/wp-content/uploads/2016/01/Reverse-Image-Search-Engines-Apps-And-Its-Uses-2016.jpg", matchingPreferences: newMatchingPreferences, userData: UserData(description: "I love IT, design and my wife and a cat.", dealBreakers: "Donald Trump supporter"))
             users.append(newUser)
         }
 
@@ -185,6 +183,7 @@ extension MatchViewController {
             if let destination = segue.destination as? CardFullscreenViewController {
                 let indexPath = self.kolodaView.currentCardIndex
                 destination.url = users[indexPath].imageURL!
+                destination.user = users[indexPath]
             }
         }
     }
