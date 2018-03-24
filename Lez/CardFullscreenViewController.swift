@@ -188,15 +188,15 @@ class CardFullscreenViewController: UIViewController {
     
     // MARK: - Variables
     let tableView = UITableView()
-    let sections: [Sections] = [.profileImages, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .iconMenu, .simpleMenu]
+    let sections: [Sections] = [.profileImages, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .iconMenu, .simpleMenu, .simpleMenu]
     var user: User?
     let closeButton = UIButton()
+    let tabBar = UITabBar()
 
     // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
     }
     
     override func viewDidLoad() {
@@ -311,6 +311,11 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
                 let simpleMenuCell = tableView.dequeueReusableCell(withIdentifier: SimpleMenuCell.reuseID) as! SimpleMenuCell
                 if indexPath.section == 6 {
                     simpleMenuCell.titleLabel.text = "Report"
+                    simpleMenuCell.titleLabel.textColor = .red
+                }
+                if indexPath.section == 7 {
+                    simpleMenuCell.titleLabel.text = "Block User"
+                    simpleMenuCell.titleLabel.textColor = .black
                 }
                 cell = simpleMenuCell
         }
@@ -321,6 +326,9 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
         print(indexPath)
         if indexPath == [6, 0] {
             showReportActionSheet()
+        }
+        if indexPath == [7, 0] {
+            showBlockActionSheet()
         }
     }
 }

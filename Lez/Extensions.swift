@@ -15,12 +15,12 @@ extension UIViewController: UIActionSheetDelegate {
         
         let action1 = UIAlertAction(title: "Fake Profile", style: .default) { (action) in
             print("1 is pressed.....")
-            self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+            self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
                 // Send message to backend
             })
         }
         let action2 = UIAlertAction(title: "Not Female", style: .default) { (action) in
-            self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+            self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
                 // Send message to backend
             })
         }
@@ -31,6 +31,26 @@ extension UIViewController: UIActionSheetDelegate {
         alertController.addAction(action1)
         alertController.addAction(action2)
         alertController.addAction(action3)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func showBlockActionSheet() {
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        
+        let action1 = UIAlertAction(title: "Block Profile", style: .default) { (action) in
+            print("1 is pressed.....")
+            self.showOkayModal(messageTitle: "Profile Blocked", messageAlert: "You won't see or hear from this user anymore.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+                // Send message to backend
+            })
+        }
+
+        let action2 = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
+            print("Cancel is pressed......")
+        }
+        
+        alertController.addAction(action1)
+        alertController.addAction(action2)
         
         self.present(alertController, animated: true, completion: nil)
     }

@@ -43,8 +43,6 @@ class LezKolodaView: KolodaView {
             make.bottom.equalTo(locationLabel.snp.top).offset(-3)
         }
         nameAndAgeLabel.textColor = .white
-        
-//        addShadow()
     }
     
     override func layoutSubviews() {
@@ -64,19 +62,5 @@ class LezKolodaView: KolodaView {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
-//    override func frameForCard(at index: Int) -> CGRect {
-//        if index == 0 {
-//            let topOffset: CGFloat = defaultTopOffset
-//            let xOffset: CGFloat = defaultHorizontalOffset
-//            let width = (self.frame).width - 2 * defaultHorizontalOffset
-//            let height = self.bounds.height
-//            let yOffset: CGFloat = topOffset
-//            let frame = CGRect(x: xOffset, y: yOffset, width: width, height: height)
-//            return frame
-//        }
-//        return CGRect.zero
-//    }
-    
 }
 

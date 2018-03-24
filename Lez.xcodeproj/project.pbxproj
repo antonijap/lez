@@ -20,6 +20,7 @@
 		CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */; };
 		CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */; };
 		CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C12066B15900114EC4 /* Extensions.swift */; };
+		CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +65,7 @@
 		CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFullscreenViewController.swift; sourceTree = "<group>"; };
 		CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezKolodaView.swift; sourceTree = "<group>"; };
 		CFB7C4C12066B15900114EC4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
 		DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -129,6 +131,7 @@
 				CF04FAE2204161A7001CB034 /* User.swift */,
 				CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */,
 				CFB7C4C12066B15900114EC4 /* Extensions.swift */,
+				CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */,
 			);
 			path = Lez;
 			sourceTree = "<group>";
@@ -476,6 +479,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */,
 				CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */,
 				CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */,
 				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,

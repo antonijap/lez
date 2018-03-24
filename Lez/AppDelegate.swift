@@ -8,6 +8,25 @@
 
 import UIKit
 
+class CustomTabBarController: UITabBarController {
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        let loveRoomController = UINavigationController(rootViewController: MatchViewController())
+        loveRoomController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Heart"), tag: 0)
+        loveRoomController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
+        
+        let chatController = UINavigationController(rootViewController: MatchViewController())
+        chatController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Chat"), tag: 1)
+        chatController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
+        
+        let profileController = UINavigationController(rootViewController: MatchViewController())
+        profileController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Profile"), tag: 2)
+        profileController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
+        
+        viewControllers = [loveRoomController, chatController, profileController]
+    }
+}
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -15,12 +34,22 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        UITabBar.appearance().shadowImage = UIImage()
+        UITabBar.appearance().backgroundImage = UIImage()
+        UITabBar.appearance().tintColor = UIColor(red:0.48, green:0.09, blue:0.68, alpha:1.00)
+        UITabBar.appearance().layer.borderColor = UIColor.clear.cgColor
+        UITabBar.appearance().layer.borderWidth = 0.0
+        
         window = UIWindow(frame: UIScreen.main.bounds)
         if let window = window {
             window.backgroundColor = UIColor.white
-            window.rootViewController = MatchViewController()
+//            window.rootViewController = MatchViewController()
+            window.rootViewController = CustomTabBarController()
             window.makeKeyAndVisible()
         }
+        
+        
         return true
     }
 
