@@ -12,32 +12,21 @@ import moa
 import Koloda
 import Hero
 
-class Like: UIView {
-    override func draw(_ rect: CGRect) {
-        let rect = CGRect(x: 0.0, y: 0.0, width: 70, height: 70)
-        LezIcons.drawLike(frame: rect, resizing: .aspectFit)
-    }
-}
-
-class KolodaCardView: UIView {
-    var helloWorld = "Hello World"
+class KolodaImage: UIImageView {
     var userImage = UIImageView()
     var userName = UILabel()
     var userLocation = UILabel()
-    var parent = UIView()
     var gradientLayer = CAGradientLayer()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        parent = self
-        parent.backgroundColor = .clear
-        parent.layer.cornerRadius = 16
-        parent.clipsToBounds = true
+        backgroundColor = .clear
+        layer.cornerRadius = 16
+        clipsToBounds = true
         
         setupUserImage()
         setupUserName()
         setupLocation()
-        setupHero()
     }
     
     override func layoutSubviews() {
@@ -49,19 +38,10 @@ class KolodaCardView: UIView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    func setupHero() {
-        self.hero.id = "goFullscreen"
-        self.hero.isEnabled = true
-        self.hero.modifiers = [.fade]
-    }
-    
     func setupUserImage() {
-        parent.addSubview(userImage)
+        addSubview(userImage)
         userImage.snp.makeConstraints { make in
-            make.top.equalTo(parent)
-            make.bottom.equalTo(parent)
-            make.left.equalTo(parent)
-            make.right.equalTo(parent)
+            make.edges.equalToSuperview()
         }
         userImage.contentMode = .scaleAspectFill
         userImage.clipsToBounds = true
@@ -69,21 +49,21 @@ class KolodaCardView: UIView {
     }
     
     func setupUserName() {
-        parent.addSubview(userName)
+        addSubview(userName)
+        userName.snp.setLabel("USERNAME_LABEL")
         userName.snp.makeConstraints { (make) in
-            make.left.equalTo(parent).offset(16)
-            make.right.equalTo(parent)
-            make.bottom.equalTo(-38)
+            make.left.right.equalToSuperview().inset(16)
+            make.bottom.equalToSuperview().inset(38)
         }
         userName.textColor = .white
         userName.textAlignment = .left
     }
     
     func setupLocation() {
-        parent.addSubview(userLocation)
+        addSubview(userLocation)
+        userLocation.snp.setLabel("LOCATION_LABEL")
         userLocation.snp.makeConstraints { (make) in
-            make.left.equalTo(parent).offset(16)
-            make.right.equalTo(parent)
+            make.left.right.equalTo(userName)
             make.top.equalTo(userName.snp.bottom)
         }
         userLocation.textColor = UIColor.white.withAlphaComponent(0.7)
@@ -103,29 +83,18 @@ class KolodaCardView: UIView {
 class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource {
     
     // MARK: - Variables
-    var kolodaView = KolodaView()
+    var kolodaView = LezKolodaView()
     let userImage = UIImageView()
     var users: [User] = []
     var superview = UIView()
-    let like = Like()
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
-        superview = self.view
-        
-//        superview.addSubview(like)
-//        like.snp.makeConstraints { (make) in
-//            make.width.equalTo(80)
-//            make.height.equalTo(80)
-//            make.left.equalTo(10)
-//            make.top.equalTo(10)
-//        }
-//        like.backgroundColor = .clear
         
         for i in 1...10 {
             let newMatchingPreferences = MatchingPreferences(preferedAge: (23, 33))
-            let newUser = User(id: i, name: "User \(i)", email: "user@gmail.com", age: 27, location: "New York", isOnboarded: true, isPremium: true, imageURL: "https://beebom.com/wp-content/uploads/2016/01/Reverse-Image-Search-Engines-Apps-And-Its-Uses-2016.jpg", matchingPreferences: newMatchingPreferences, userData: UserData(description: "I love IT, design and my wife and a cat.", dealBreakers: "Donald Trump supporter"))
+            let newUser = User(id: i, name: "Antonija Pek \(i)", email: "user@gmail.com", age: 27, location: "New York", isOnboarded: true, isPremium: true, imageURL: "https://api.adorable.io/avatars/285/abott@adorable.png", matchingPreferences: newMatchingPreferences, userData: UserData(description: "I love IT, design and my wife and a cat.", dealBreakers: "Donald Trump supporter"))
             users.append(newUser)
         }
 
@@ -136,34 +105,33 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     func setupKoloda() {
         kolodaView.dataSource = self
         kolodaView.delegate = self
-        kolodaView.countOfVisibleCards = 1
+        kolodaView.countOfVisibleCards = 3
         
         view.addSubview(kolodaView)
         
         kolodaView.snp.makeConstraints { (make) in
-            make.left.equalTo(32)
-            make.right.equalTo(-32)
-            make.top.equalTo(67)
-            make.bottom.equalTo(-64)
+            make.edges.equalToSuperview().inset(UIEdgeInsets(top: 64, left: 32, bottom: 64, right: 32))
         }
+        kolodaView.snp.setLabel("KOLODA_VIEW")
+        kolodaView.hero.id = "GoFullscreen"
     }
 }
 
 extension MatchViewController {
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
-        let view = KolodaCardView()
-        view.userImage.moa.url = users[index].imageURL
-        view.userImage.moa.onSuccess = { image in
-            view.activateShadow()
-            view.userName.text = "\(self.users[index].name!), \(self.users[index].age!)"
-            view.userLocation.text = self.users[index].location
+        let view = LezKolodaView()
+        view.imageView.moa.url = users[index].imageURL
+        view.imageView.moa.onSuccess = { image in
+            view.locationLabel.text = self.users[index].location
+            view.nameAndAgeLabel.text = "\(self.users[index].name!), \(self.users[index].age!)"
+            view.addShadow()
             return image
         }
         return view
     }
     
     func kolodaShouldTransparentizeNextCard(_ koloda: KolodaView) -> Bool {
-        return false
+        return true
     }
     
     func kolodaShouldMoveBackgroundCard(_ koloda: KolodaView) -> Bool {
@@ -175,21 +143,10 @@ extension MatchViewController {
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
-        performSegue(withIdentifier: "GoToProfile", sender: koloda)
-    }
-    
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if segue.identifier == "GoToProfile" {
-            if let destination = segue.destination as? CardFullscreenViewController {
-                let indexPath = self.kolodaView.currentCardIndex
-                destination.url = users[indexPath].imageURL!
-                destination.user = users[indexPath]
-            }
-        }
-    }
-    
-    func viewController(forStoryboardName: String) -> UIViewController {
-        return UIStoryboard(name: forStoryboardName, bundle: nil).instantiateInitialViewController()!
+        let nextViewController = CardFullscreenViewController()
+//        self.navigationController?.push(nextViewController)
+        nextViewController.user = self.users[index]
+        self.present(nextViewController, animated: true, completion: nil)
     }
     
     func kolodaNumberOfCards(_ koloda: KolodaView) -> Int {
@@ -197,11 +154,15 @@ extension MatchViewController {
     }
     
     func kolodaSpeedThatCardShouldDrag(_ koloda: KolodaView) -> DragSpeed {
-        return .fast
+        return .default
     }
     
+    func koloda(_ koloda: KolodaView, didShowCardAt index: Int) {
+        print("Card \(index), \(String(describing: users[index].name))")
+    }
+
     func koloda(_ koloda: KolodaView, draggedCardWithPercentage finishPercentage: CGFloat, in direction: SwipeResultDirection) {
-        print("Card dragged: \(finishPercentage), \(direction)")
+//        print("Card dragged: \(finishPercentage), \(direction)")
         
         if direction == .right {
             

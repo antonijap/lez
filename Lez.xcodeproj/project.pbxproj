@@ -13,13 +13,12 @@
 		CF04FAE3204161A7001CB034 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF04FAE2204161A7001CB034 /* User.swift */; };
 		CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF206203C13170054CC1A /* AppDelegate.swift */; };
 		CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF208203C13170054CC1A /* MatchViewController.swift */; };
-		CF2DF20C203C13170054CC1A /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20A203C13170054CC1A /* Main.storyboard */; };
 		CF2DF20E203C13170054CC1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20D203C13170054CC1A /* Assets.xcassets */; };
 		CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */; };
 		CF2DF21C203C13180054CC1A /* LezTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF21B203C13180054CC1A /* LezTests.swift */; };
 		CF2DF227203C13180054CC1A /* LezUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF226203C13180054CC1A /* LezUITests.swift */; };
 		CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */; };
-		CF4D8481204A89D50060F1D4 /* LezIcons.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF4D8480204A89D50060F1D4 /* LezIcons.swift */; };
+		CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,7 +51,6 @@
 		CF2DF203203C13170054CC1A /* Lez.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lez.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF2DF206203C13170054CC1A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		CF2DF208203C13170054CC1A /* MatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController.swift; sourceTree = "<group>"; };
-		CF2DF20B203C13170054CC1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		CF2DF20D203C13170054CC1A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CF2DF210203C13170054CC1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CF2DF212203C13170054CC1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -63,7 +61,7 @@
 		CF2DF226203C13180054CC1A /* LezUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezUITests.swift; sourceTree = "<group>"; };
 		CF2DF228203C13180054CC1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFullscreenViewController.swift; sourceTree = "<group>"; };
-		CF4D8480204A89D50060F1D4 /* LezIcons.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezIcons.swift; sourceTree = "<group>"; };
+		CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezKolodaView.swift; sourceTree = "<group>"; };
 		DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -120,15 +118,14 @@
 		CF2DF205203C13170054CC1A /* Lez */ = {
 			isa = PBXGroup;
 			children = (
-				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
-				CF2DF208203C13170054CC1A /* MatchViewController.swift */,
-				CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */,
-				CF2DF20A203C13170054CC1A /* Main.storyboard */,
 				CF2DF20D203C13170054CC1A /* Assets.xcassets */,
 				CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */,
 				CF2DF212203C13170054CC1A /* Info.plist */,
+				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
+				CF2DF208203C13170054CC1A /* MatchViewController.swift */,
+				CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */,
 				CF04FAE2204161A7001CB034 /* User.swift */,
-				CF4D8480204A89D50060F1D4 /* LezIcons.swift */,
+				CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */,
 			);
 			path = Lez;
 			sourceTree = "<group>";
@@ -292,7 +289,6 @@
 			files = (
 				CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */,
 				CF2DF20E203C13170054CC1A /* Assets.xcassets in Resources */,
-				CF2DF20C203C13170054CC1A /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -475,11 +471,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */,
 				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,
 				CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */,
 				CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */,
 				CF04FAE3204161A7001CB034 /* User.swift in Sources */,
-				CF4D8481204A89D50060F1D4 /* LezIcons.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -515,14 +511,6 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		CF2DF20A203C13170054CC1A /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				CF2DF20B203C13170054CC1A /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (

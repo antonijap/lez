@@ -12,62 +12,72 @@ import moa
 
 enum Sections {
     case titleWithDescription
-    case titleWithIcon
+    case profileImages
 }
 
-class UserImages: UITableViewCell {
-//    let imageView: UIImageView?
+protocol ReuseIdentifiable {
+    static var reuseID: String { get }
+}
+
+extension ProfileImagesCell: ReuseIdentifiable {
+    static var reuseID: String { return String(describing: self) }
+}
+
+extension TitleWithDescriptionCell: ReuseIdentifiable {
+    static var reuseID: String { return String(describing: self) }
+}
+
+class ProfileImagesCell: UITableViewCell {
+    var profileImageView = UIImageView()
     
-//    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier)
-//        imageView.image = image
-//        imageView.hero.id = "goFullscreen"
-//        imageView.hero.isEnabled = true
-//        imageView.hero.modifiers = [.zPosition(0)]
-//        imageView.contentMode = .scaleAspectFill
-//        imageView.clipsToBounds = true
-//    }
-//    func setupUserImage() {
-//        imageView.moa.url = url
-//        imageView.snp.makeConstraints { (make) in
-//            make.top.equalTo(0)
-//            make.width.equalToSuperview()
-//            make.height.equalTo(imageView.snp.width).multipliedBy(1.4)
-//        }
-//
-//    }
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupUserImage()
+    }
+    
+    private func setupUserImage() {
+        addSubview(profileImageView)
+        profileImageView.snp.setLabel("PROFILE_IMAGE_VIEW")
+        profileImageView.snp.makeConstraints { (make) in
+            make.top.left.right.equalToSuperview()
+            make.height.equalTo(500)
+            make.bottom.equalToSuperview().inset(16)
+        }
+        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.clipsToBounds = true
+        selectionStyle = .none
+        profileImageView.hero.id = "GoFullscreen"
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 class TitleWithDescriptionCell: UITableViewCell {
-    let reuseID = "TitleWithDescriptionCell"
     var titleLabel = UILabel()
     var bodyLabel = UILabel()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
 
-        self.backgroundColor = UIColor.cyan
-        self.isUserInteractionEnabled = false
-    
-        self.contentView.addSubview(titleLabel)
+        self.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(16)
-            make.left.equalTo(8)
-            make.right.equalTo(-8)
+            make.top.left.right.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 32, bottom: 0, right: 32))
         }
         titleLabel.textColor = .black
-        titleLabel.isUserInteractionEnabled = false
-        titleLabel.text = "Title"
+        titleLabel.text = "Title not set."
+        titleLabel.textColor = UIColor(red:0.59, green:0.59, blue:0.59, alpha:1.00)
         
-        self.contentView.addSubview(bodyLabel)
+        addSubview(bodyLabel)
         bodyLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(8)
-            make.right.equalTo(-8)
+            make.left.right.equalToSuperview().inset(32)
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
+            make.bottom.equalToSuperview().offset(-16)
         }
-        bodyLabel.backgroundColor = .yellow
         bodyLabel.numberOfLines = 5
-        bodyLabel.text = "The code above is pretty straightforward: you dequeue a cell, set its information and a text color, and then return the cell."
+        bodyLabel.text = "Ooops. Not set."
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -78,45 +88,62 @@ class TitleWithDescriptionCell: UITableViewCell {
 class CardFullscreenViewController: UIViewController {
     
     // MARK: - Variables
-    
-    let userImageView = UIImageView()
-    var image = UIImage()
-    var url = String()
-    var tableView = UITableView()
-    var sections: [Sections] = []
+    let tableView = UITableView()
+    let sections: [Sections] = [.profileImages, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription]
     var user: User?
+    let closeButton = UIButton()
     
+
     // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        sections = [.titleWithDescription, .titleWithDescription]
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        Hero.shared.defaultAnimation = .zoom
+//        hero.isEnabled = true
         setupTableView()
+        setupCloseButton()
+        let images: [UIImage] = [UIImage(named: "Taylor")!, UIImage(named: "Taylor")!, UIImage(named: "Taylor")!]
     }
     
     
     // MARK: - Methods
     
+    func setupCloseButton() {
+        view.insertSubview(closeButton, aboveSubview: tableView)
+        closeButton.snp.makeConstraints { (make) in
+            make.width.equalTo(32)
+            make.height.equalTo(32)
+            make.right.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(32)
+        }
+        let image = UIImage(named: "Close")
+        closeButton.setImage(image, for: .normal)
+        closeButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for:.touchUpInside)
+    }
+    
+    @objc func closeButtonTapped(_ sender:UIButton) {
+        dismiss(animated: true, completion: nil)
+    }
+    
     func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.register(TitleWithDescriptionCell.self, forCellReuseIdentifier: "TitleWithDescriptionCell")
-        self.view.addSubview(tableView)
+
+        view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
             make.size.equalToSuperview()
         }
         tableView.backgroundColor = .white
-        tableView.separatorColor = .black
+        tableView.separatorColor = .clear
         tableView.isUserInteractionEnabled = true
-        tableView.rowHeight = UITableViewAutomaticDimension
-//        tableView.rowHeight = 140
-        tableView.estimatedRowHeight = 140
+        
+        tableView.register(ProfileImagesCell.self, forCellReuseIdentifier: "ProfileImagesCell")
+        tableView.register(TitleWithDescriptionCell.self, forCellReuseIdentifier: "TitleWithDescriptionCell")
     }
+    
 }
 
 extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSource {
@@ -128,18 +155,43 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
         return 1
     }
     
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
+    }
+    
+    func tableView(_ tableView: UITableView, estimatedHeightForRowAt indexPath: IndexPath) -> CGFloat {
+        return UITableViewAutomaticDimension
+    }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "TitleWithDescriptionCell") as! TitleWithDescriptionCell
+        let cell: UITableViewCell
         switch sections[indexPath.section] {
             case .titleWithDescription:
-                print("titleWithDescription")
-                if indexPath.section == 0 {
-                    cell.bodyLabel.text = "Lorem ipsum dolor sit amet."
+                let titleWithDescriptionCell = tableView.dequeueReusableCell(withIdentifier: TitleWithDescriptionCell.reuseID) as! TitleWithDescriptionCell
+                if indexPath.section == 1 {
+                    titleWithDescriptionCell.titleLabel.textColor = .black
+                    titleWithDescriptionCell.titleLabel.font = UIFont.systemFont(ofSize: 21.0)
+                    titleWithDescriptionCell.titleLabel.text = user!.name! + ", " + "\(user?.age ?? 0)"
+                    titleWithDescriptionCell.bodyLabel.text = "\(user!.location ?? "No Data")"
                 }
-                return cell
-            case .titleWithIcon:
-                print("titleWithDescription")
-                return cell
+                if indexPath.section == 2 {
+                    titleWithDescriptionCell.titleLabel.text = "I am here for"
+                    titleWithDescriptionCell.bodyLabel.text = "Relationship, Friendship"
+                }
+                if indexPath.section == 3 {
+                    titleWithDescriptionCell.titleLabel.text = "About"
+                    titleWithDescriptionCell.bodyLabel.text = "I am this and that. More about me goes here. Hope you have fun."
+                }
+                if indexPath.section == 4 {
+                    titleWithDescriptionCell.titleLabel.text = "Dealbreakers"
+                    titleWithDescriptionCell.bodyLabel.text = "Dicks and Trump"
+                }
+                cell = titleWithDescriptionCell
+            case .profileImages:
+                let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
+                profileImagesCell.profileImageView.moa.url = user?.imageURL
+                cell = profileImagesCell
         }
+        return cell
     }
 }

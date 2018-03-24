@@ -7,6 +7,7 @@
 //
 
 import Foundation
+import UIKit
 
 struct MatchingPreferences {
     var preferedAge: (Int, Int)?
@@ -15,6 +16,10 @@ struct MatchingPreferences {
 struct UserData {
     var description: String?
     var dealBreakers: String?
+}
+
+struct UserImages {
+    var images: [UIImage]?
 }
 
 class User {
