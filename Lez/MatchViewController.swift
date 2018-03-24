@@ -91,12 +91,15 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     // MARK: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
+    
+        let user1 = User(id: 334, name: "Antonija Pek", email: "user@gmail.com", age: 27, location: "New York", isOnboarded: true, isPremium: true, matchingPreferences: MatchingPreferences(preferedAge: (23, 33)), userData: UserData(about: "I love IT, design and my wife and a cat.", dealBreakers: "When people interrupt me."), userImages: UserImages(imageURLs: ["https://picsum.photos/1000/700/?random", "https://picsum.photos/1000/700/?random", "https://picsum.photos/1000/700/?random"]))
+        users.append(user1)
         
-        for i in 1...10 {
-            let newMatchingPreferences = MatchingPreferences(preferedAge: (23, 33))
-            let newUser = User(id: i, name: "Antonija Pek \(i)", email: "user@gmail.com", age: 27, location: "New York", isOnboarded: true, isPremium: true, imageURL: "https://api.adorable.io/avatars/285/abott@adorable.png", matchingPreferences: newMatchingPreferences, userData: UserData(description: "I love IT, design and my wife and a cat.", dealBreakers: "Donald Trump supporter"))
-            users.append(newUser)
-        }
+        let user2 = User(id: 334, name: "Antonija Kasum", email: "user@gmail.com", age: 30, location: "New York", isOnboarded: true, isPremium: true, matchingPreferences: MatchingPreferences(preferedAge: (23, 33)), userData: UserData(about: "I like nails!", dealBreakers: "When people are stupid and loud."), userImages: UserImages(imageURLs: ["https://picsum.photos/1000/700/?random", "https://picsum.photos/1000/700/?random", "https://picsum.photos/1000/700/?random"]))
+        users.append(user2)
+        
+        let user3 = User(id: 334, name: "Mimi Kasum-Pek", email: "user@gmail.com", age: 27, location: "New York", isOnboarded: true, isPremium: true, matchingPreferences: MatchingPreferences(preferedAge: (23, 33)), userData: UserData(about: "Meee meee meeeeeeee", dealBreakers: "Me me"), userImages: UserImages(imageURLs: ["https://picsum.photos/1000/700/?random", "https://picsum.photos/1000/700/?random", "https://picsum.photos/1000/700/?random"]))
+        users.append(user3)
 
         setupKoloda()
     }
@@ -120,7 +123,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
 extension MatchViewController {
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
         let view = LezKolodaView()
-        view.imageView.moa.url = users[index].imageURL
+        view.imageView.moa.url = users[index].userImages?.imageURLs?.first
         view.imageView.moa.onSuccess = { image in
             view.locationLabel.text = self.users[index].location
             view.nameAndAgeLabel.text = "\(self.users[index].name!), \(self.users[index].age!)"

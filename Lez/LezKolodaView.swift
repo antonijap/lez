@@ -65,18 +65,18 @@ class LezKolodaView: KolodaView {
         fatalError("init(coder:) has not been implemented")
     }
     
-    override func frameForCard(at index: Int) -> CGRect {
-        if index == 0 {
-            let topOffset: CGFloat = defaultTopOffset
-            let xOffset: CGFloat = defaultHorizontalOffset
-            let width = (self.frame).width - 2 * defaultHorizontalOffset
-            let height = self.bounds.height
-            let yOffset: CGFloat = topOffset
-            let frame = CGRect(x: xOffset, y: yOffset, width: width, height: height)
-            return frame
-        }
-        return CGRect.zero
-    }
+//    override func frameForCard(at index: Int) -> CGRect {
+//        if index == 0 {
+//            let topOffset: CGFloat = defaultTopOffset
+//            let xOffset: CGFloat = defaultHorizontalOffset
+//            let width = (self.frame).width - 2 * defaultHorizontalOffset
+//            let height = self.bounds.height
+//            let yOffset: CGFloat = topOffset
+//            let frame = CGRect(x: xOffset, y: yOffset, width: width, height: height)
+//            return frame
+//        }
+//        return CGRect.zero
+//    }
     
 }
 

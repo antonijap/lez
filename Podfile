@@ -10,6 +10,7 @@ target 'Lez' do
   pod 'moa', '~> 9.0'
   pod 'Koloda', '~> 4.3.1'
   pod 'Hero'
+  pod 'Auk', '~> 8.0'
 
   target 'LezTests' do
     inherit! :search_paths

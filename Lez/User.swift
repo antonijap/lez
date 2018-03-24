@@ -14,12 +14,12 @@ struct MatchingPreferences {
 }
 
 struct UserData {
-    var description: String?
+    var about: String?
     var dealBreakers: String?
 }
 
 struct UserImages {
-    var images: [UIImage]?
+    var imageURLs: [String]?
 }
 
 class User {
@@ -30,11 +30,11 @@ class User {
     var location: String?
     var isOnboarded = false
     var isPremium = false
-    var imageURL: String?
     var matchingPreferences: MatchingPreferences?
     var userData: UserData?
+    var userImages: UserImages?
     
-    init(id: Int, name: String, email: String, age: Int, location: String, isOnboarded: Bool, isPremium: Bool, imageURL: String, matchingPreferences: MatchingPreferences, userData: UserData) {
+    init(id: Int, name: String, email: String, age: Int, location: String, isOnboarded: Bool, isPremium: Bool, matchingPreferences: MatchingPreferences, userData: UserData, userImages: UserImages) {
         self.id = id
         self.name = name
         self.email = email
@@ -42,8 +42,8 @@ class User {
         self.location = location
         self.isOnboarded = isOnboarded
         self.isPremium = isPremium
-        self.imageURL = imageURL
         self.matchingPreferences = matchingPreferences
         self.userData = userData
+        self.userImages = userImages
     }
 }
