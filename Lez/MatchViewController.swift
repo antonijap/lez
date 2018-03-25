@@ -10,7 +10,8 @@ import UIKit
 import SnapKit
 import moa
 import Koloda
-import Hero
+import Lottie
+import Jelly
 
 class KolodaImage: UIImageView {
     var userImage = UIImageView()
@@ -88,6 +89,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     var users: [User] = []
     var superview = UIView()
     let likeImageView = UIImageView()
+    var jellyAnimator: JellyAnimator?
     
     // MARK: - Lifecycle
     override func viewDidLoad() {
@@ -132,12 +134,33 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
             make.centerX.equalToSuperview()
         }
         kolodaView.snp.setLabel("KOLODA_VIEW")
-        kolodaView.hero.id = "GoFullscreen"
+    }
+    
+    func playMatchAnimation() {
+        kolodaView.layer.opacity = 0.2
+        let animationView = LOTAnimationView(name: "MatchAnimation")
+        animationView.contentMode = .scaleAspectFit
+        view.addSubview(animationView)
+        animationView.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+            make.size.equalToSuperview()
+        }
+        animationView.play()
+        DispatchQueue.main.asyncAfter(deadline: .now() + .seconds(2), execute: {
+            animationView.stop()
+            animationView.isHidden = true
+            self.kolodaView.layer.opacity = 1.0
+        })
     }
     
     @objc func showFilters() {
-        print("Filters")
         let nextViewController = FilterViewController()
+//        let presentation = JellySlideInPresentation()
+        let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
+                                                                   presentationCurve: .easeInEaseOut,
+                                                                   backgroundStyle: .blur(effectStyle: .light))
+        self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+        self.jellyAnimator?.prepare(viewController: nextViewController)
         present(nextViewController, animated: true, completion: nil)
     }
 }
@@ -163,6 +186,12 @@ extension MatchViewController {
         return true
     }
     
+    func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
+        if direction == .right {
+            playMatchAnimation()
+        }
+    }
+    
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
         kolodaView.reloadData()
     }
@@ -171,6 +200,11 @@ extension MatchViewController {
         let nextViewController = CardFullscreenViewController()
 //        self.navigationController?.push(nextViewController)
         nextViewController.user = self.users[index]
+        let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
+                                                                   presentationCurve: .easeInEaseOut,
+                                                                   backgroundStyle: .blur(effectStyle: .light))
+        self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+        self.jellyAnimator?.prepare(viewController: nextViewController)
         present(nextViewController, animated: true, completion: nil)
     }
     
@@ -184,16 +218,6 @@ extension MatchViewController {
     
     func koloda(_ koloda: KolodaView, didShowCardAt index: Int) {
         print("Card \(index), \(String(describing: users[index].name))")
-    }
-
-    func koloda(_ koloda: KolodaView, draggedCardWithPercentage finishPercentage: CGFloat, in direction: SwipeResultDirection) {
-        if direction == .right {
-            
-        } else if direction == .left {
-            if finishPercentage >= 50 {
-
-            }
-        }
     }
     
     func koloda(_ koloda: KolodaView, viewForCardOverlayAt index: Int) -> OverlayView? {

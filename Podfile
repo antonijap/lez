@@ -9,8 +9,10 @@ target 'Lez' do
   pod 'SnapKit', '~> 4.0.0'
   pod 'moa', '~> 9.0'
   pod 'Koloda', '~> 4.3.1'
-  pod 'Hero'
   pod 'Auk', '~> 8.0'
+  pod 'lottie-ios'
+  pod 'Jelly'
+  pod 'SwiftForms'
 
   target 'LezTests' do
     inherit! :search_paths

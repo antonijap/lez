@@ -15,7 +15,7 @@ class CustomTabBarController: UITabBarController {
         loveRoomController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Heart"), tag: 0)
         loveRoomController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
         
-        let chatController = UINavigationController(rootViewController: MatchViewController())
+        let chatController = UINavigationController(rootViewController: SetupProfileViewController())
         chatController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Chat"), tag: 1)
         chatController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
         

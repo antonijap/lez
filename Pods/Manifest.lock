@@ -1,28 +1,34 @@
 PODS:
   - Auk (8.0.2):
     - moa
-  - Hero (1.1.0)
+  - Jelly (1.2.4)
   - Koloda (4.3.1):
     - pop (~> 1.0)
+  - lottie-ios (2.5.0)
   - moa (9.0.2)
   - pop (1.0.10)
   - SnapKit (4.0.0)
+  - SwiftForms (1.8.2)
 
 DEPENDENCIES:
   - Auk (~> 8.0)
-  - Hero
+  - Jelly
   - Koloda (~> 4.3.1)
+  - lottie-ios
   - moa (~> 9.0)
   - SnapKit (~> 4.0.0)
+  - SwiftForms
 
 SPEC CHECKSUMS:
   Auk: 82be62a2cf650437fe745c81b12ac2440a0f682c
-  Hero: ce59e81c79390613d97b43da7179e2c5e1017e04
+  Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
   Koloda: 0d39b2aa188ccd1fac48d752acaf9802e683c625
+  lottie-ios: d699fdee68d7b63e721d949388b015fef1aaa4ac
   moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
   pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
+  SwiftForms: f0d4d30401e21de87d9b7b63a4691a3d4e22bab5
 
-PODFILE CHECKSUM: cffebeb14e22d354664e837b305c43e00fe744f9
+PODFILE CHECKSUM: 705739324bb67740a9199731ceef76409dfa8c56
 
 COCOAPODS: 1.4.0
