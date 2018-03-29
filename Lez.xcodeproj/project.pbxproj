@@ -129,15 +129,11 @@
 				CF2DF20D203C13170054CC1A /* Assets.xcassets */,
 				CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */,
 				CF2DF212203C13170054CC1A /* Info.plist */,
-				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
-				CF2DF208203C13170054CC1A /* MatchViewController.swift */,
-				CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */,
-				CF04FAE2204161A7001CB034 /* User.swift */,
-				CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */,
+				CF425B472067EA3F00D6A1FE /* Controllers */,
+				CF425B482067EA4E00D6A1FE /* Models */,
+				CF425B492067EA6000D6A1FE /* Trash Candidate */,
 				CF0C3F042066F57D0033ECCA /* MatchAnimation.json */,
-				CFB7C4C12066B15900114EC4 /* Extensions.swift */,
-				CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */,
-				CF425B4520679D8F00D6A1FE /* SetupProfileViewController.swift */,
+				CF425B4A2067EA6E00D6A1FE /* Util */,
 			);
 			path = Lez;
 			sourceTree = "<group>";
@@ -158,6 +154,42 @@
 				CF2DF228203C13180054CC1A /* Info.plist */,
 			);
 			path = LezUITests;
+			sourceTree = "<group>";
+		};
+		CF425B472067EA3F00D6A1FE /* Controllers */ = {
+			isa = PBXGroup;
+			children = (
+				CF2DF208203C13170054CC1A /* MatchViewController.swift */,
+				CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */,
+				CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */,
+				CF425B4520679D8F00D6A1FE /* SetupProfileViewController.swift */,
+			);
+			path = Controllers;
+			sourceTree = "<group>";
+		};
+		CF425B482067EA4E00D6A1FE /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				CF04FAE2204161A7001CB034 /* User.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
+		CF425B492067EA6000D6A1FE /* Trash Candidate */ = {
+			isa = PBXGroup;
+			children = (
+				CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */,
+			);
+			path = "Trash Candidate";
+			sourceTree = "<group>";
+		};
+		CF425B4A2067EA6E00D6A1FE /* Util */ = {
+			isa = PBXGroup;
+			children = (
+				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
+				CFB7C4C12066B15900114EC4 /* Extensions.swift */,
+			);
+			path = Util;
 			sourceTree = "<group>";
 		};
 		D0CF37AAC26CFC2A18C5A98F /* Frameworks */ = {
@@ -459,10 +491,11 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Auk/Auk.framework",
+				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
+				"${BUILT_PRODUCTS_DIR}/GooglePlacesRow/GooglePlacesRow.framework",
 				"${BUILT_PRODUCTS_DIR}/Jelly/Jelly.framework",
 				"${BUILT_PRODUCTS_DIR}/Koloda/Koloda.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
-				"${BUILT_PRODUCTS_DIR}/SwiftForms/SwiftForms.framework",
 				"${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework",
 				"${BUILT_PRODUCTS_DIR}/moa/moa.framework",
 				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
@@ -470,10 +503,11 @@
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Auk.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GooglePlacesRow.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Jelly.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Koloda.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftForms.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Lottie.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/moa.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",

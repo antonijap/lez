@@ -1,6 +1,9 @@
 PODS:
   - Auk (8.0.2):
     - moa
+  - Eureka (4.1.1)
+  - GooglePlacesRow (3.0.0):
+    - Eureka (~> 4.0)
   - Jelly (1.2.4)
   - Koloda (4.3.1):
     - pop (~> 1.0)
@@ -8,27 +11,27 @@ PODS:
   - moa (9.0.2)
   - pop (1.0.10)
   - SnapKit (4.0.0)
-  - SwiftForms (1.8.2)
 
 DEPENDENCIES:
   - Auk (~> 8.0)
+  - GooglePlacesRow
   - Jelly
   - Koloda (~> 4.3.1)
   - lottie-ios
   - moa (~> 9.0)
   - SnapKit (~> 4.0.0)
-  - SwiftForms
 
 SPEC CHECKSUMS:
   Auk: 82be62a2cf650437fe745c81b12ac2440a0f682c
+  Eureka: b88fb930e42c79f8c03c373d0fcdc28c1d6c50ed
+  GooglePlacesRow: c0bb6bc0acf8b2ab690986ef5c5ecb1085dd1d9e
   Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
   Koloda: 0d39b2aa188ccd1fac48d752acaf9802e683c625
   lottie-ios: d699fdee68d7b63e721d949388b015fef1aaa4ac
   moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
   pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
-  SwiftForms: f0d4d30401e21de87d9b7b63a4691a3d4e22bab5
 
-PODFILE CHECKSUM: 705739324bb67740a9199731ceef76409dfa8c56
+PODFILE CHECKSUM: 4a04e8e70005c0134dd494ec83a6da00cfa8a92f
 
 COCOAPODS: 1.4.0

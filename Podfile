@@ -12,7 +12,10 @@ target 'Lez' do
   pod 'Auk', '~> 8.0'
   pod 'lottie-ios'
   pod 'Jelly'
-  pod 'SwiftForms'
+#  pod 'Eureka'
+  pod 'GooglePlacesRow'
+#  pod 'GooglePlaces'
+#  pod 'GoogleMaps'
 
   target 'LezTests' do
     inherit! :search_paths
