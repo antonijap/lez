@@ -12,6 +12,8 @@ import moa
 import Koloda
 import Lottie
 import Jelly
+import Firebase
+import FBSDKLoginKit
 
 class KolodaImage: UIImageView {
     var userImage = UIImageView()
@@ -91,22 +93,48 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     var superview = UIView()
     let likeImageView = UIImageView()
     var jellyAnimator: JellyAnimator?
-    var currentUser: User?
     
     // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if !currentUser!.isOnboarded {
-            let setupProfileViewController = SetupProfileViewController()
-            let navigationController = UINavigationController(rootViewController: setupProfileViewController)
-            present(navigationController, animated: true, completion: nil)
+        
+        // Check if user is signed-in
+        Auth.auth().addStateDidChangeListener { auth, user in
+            if let user = user {
+                // User is signed in. Show home screen
+                print(user.displayName)
+                let firebaseAuth = Auth.auth()
+                do {
+                    try firebaseAuth.signOut()
+                } catch let signOutError as NSError {
+                    print ("Error signing out: %@", signOutError)
+                }
+            } else {
+                // No User is signed in. Show user the login screen
+                print("Will show login screen")
+                let registerViewController = RegisterViewController()
+                self.present(registerViewController, animated: false, completion: nil)
+            }
         }
+        
+        let ageRange = AgeRange(from: 21, to: 32)
+        let details = Details(about: "Hello this is about.", dealBreakers: "This is my dealbreaker.", diet: .vegan)
+        let preferences = Preferences(ageRange: ageRange, lookingFor: [.friendship, .relationship])
+        let user = User(id: 00001, name: "Somename", email: "some@email.com", age: 32, location: Location(city: "Zagreb", country: "Croatia"), preferences: preferences, details: details)
+        user.images = Images(imageURLs: ["https://picsum.photos/200/300/?random", "https://picsum.photos/200/300/?random", "https://picsum.photos/200/300/?random"])
+        users.append(user)
+        users.append(user)
+        users.append(user)
+        users.append(user)
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        setupKoloda()
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
         navigationItem.title = "Love Room"
         let filterButton = UIButton(type: .custom)
         filterButton.setImage(UIImage(named: "Filter"), for: .normal)
@@ -117,28 +145,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
-                
-        let matchingPreferences = MatchingPreferences(ageRange: (21, 34), location: "Helsinki", lookingFor: [LookingFor.friendship])
-        let details = Details(about: "Hello, I am from Croatia but I live in Finland.", dealBreakers: "Loud and rude people. Just can't stand it.", diet: Diet.vegan)
-        let images = Images(imageURLs:["https://picsum.photos/1000/1000", "https://picsum.photos/1000/1000", "https://picsum.photos/1000/1000"])
-        let user1 = User(id: 000001, name: "Antonija", email: "antonija@gmail.com", age: 28, location: "Helsinki", matchingPreferences: matchingPreferences, details: details, images: images)
-        currentUser = user1
-        currentUser?.isOnboarded = false
-        users.append(user1)
-//
-//        let matchingPreferences1 = MatchingPreferences(ageRange: ["from": 21, "to": 34], location: "Helsinki", diet: Diet(vegan: true, vegetarian: false, omnivore: false, other: false))
-//        let details1 = Details(about: "Hello, I am from Croatia but I live in Finland.", dealBreakers: "Loud and rude people. Just can't stand it.")
-//        let images1 = Images(imageURLs:["https://picsum.photos/1000/1000", "https://picsum.photos/1000/1000", "https://picsum.photos/1000/1000"])
-//        let user2 = User(id: 01, name: "Antonija", email: "antonija@gmail.com", age: 28, location: "Helsinki", matchingPreferences: matchingPreferences1, details: details1, images: images1)
-//        users.append(user2)
-//
-//        let matchingPreferences2 = MatchingPreferences(ageRange: ["from": 21, "to": 34], location: "Helsinki", diet: Diet(vegan: true, vegetarian: false, omnivore: false, other: false))
-//        let details2 = Details(about: "Hello, I am from Croatia but I live in Finland.", dealBreakers: "Loud and rude people. Just can't stand it.")
-//        let images2 = Images(imageURLs:["https://picsum.photos/1000/1000", "https://picsum.photos/1000/1000", "https://picsum.photos/1000/1000"])
-//        let user3 = User(id: 01, name: "Antonija", email: "antonija@gmail.com", age: 28, location: "Helsinki", matchingPreferences: matchingPreferences2, details: details2, images: images2)
-//        users.append(user3)
-
-        setupKoloda()
     }
     
     // MARK: - Methods
@@ -146,16 +152,14 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         kolodaView.dataSource = self
         kolodaView.delegate = self
         kolodaView.countOfVisibleCards = 3
-        
         view.addSubview(kolodaView)
-        
+        kolodaView.snp.setLabel("KOLODA_VIEW")
         kolodaView.snp.makeConstraints { (make) in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).inset(24)
             make.width.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8))
             make.centerX.equalToSuperview()
         }
-        kolodaView.snp.setLabel("KOLODA_VIEW")
     }
     
     func playMatchAnimation() {
@@ -177,7 +181,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     
     @objc func showFilters() {
         let nextViewController = FilterViewController()
-//        let presentation = JellySlideInPresentation()
         let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
                                                                    presentationCurve: .easeInEaseOut,
                                                                    backgroundStyle: .blur(effectStyle: .light))
@@ -189,10 +192,11 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
 
 extension MatchViewController {
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
+        print("Render KolodaCard")
         let view = LezKolodaView()
         view.imageView.moa.url = users[index].images?.imageURLs.first
         view.imageView.moa.onSuccess = { image in
-            view.locationLabel.text = self.users[index].location
+            view.locationLabel.text = self.users[index].location.city
             view.nameAndAgeLabel.text = "\(self.users[index].name), \(self.users[index].age)"
             view.addShadow()
             return image

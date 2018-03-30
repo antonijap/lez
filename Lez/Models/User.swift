@@ -9,55 +9,63 @@
 import Foundation
 import UIKit
 
-enum LookingFor: String {
-    case relationship, friendship, sex
+enum LookingFor: String, Codable {
+    case relationship = "Relationship", friendship = "Friendship", sex = "Sex"
 }
 
-enum Diet: String {
-    case vegan
-    case vegetarian
-    case omnivore
-    case other
+enum Diet: String, Codable {
+    case vegan = "Vegan"
+    case vegetarian = "Vegetarian"
+    case omnivore = "Omnivore"
+    case other = "Other"
 }
 
-struct MatchingPreferences {
-    var ageRange: (Int, Int)
-    var location: String
-    var lookingFor: [LookingFor]
-}
-
-struct Details {
-    var about: String
-    var dealBreakers: String
-    var diet: Diet
-}
-
-struct Images {
-    var imageURLs: [String]
-}
-
-class User {
+class User: Codable {
     var id: Int
     var name: String
     var email: String
     var age: Int
-    var location: String
+    var location: Location
     var isOnboarded = false
     var isPremium = false
     var isBanned = false
     var isHidden = false
-    var matchingPreferences: MatchingPreferences
+    var preferences: Preferences
     var details: Details
     var images: Images?
     
-    init(id: Int, name: String, email: String, age: Int, location: String, matchingPreferences: MatchingPreferences, details: Details, images: Images) {
+    init(id: Int, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details) {
         self.id = id
         self.name = name
         self.email = email
         self.age = age
         self.location = location
-        self.matchingPreferences = matchingPreferences
+        self.preferences = preferences
         self.details = details
-        self.images = images
     }
+}
+
+struct Location: Codable {
+    var city: String
+    var country: String
+}
+
+struct AgeRange: Codable {
+    var from: Int
+    var to: Int
+}
+
+struct Preferences: Codable {
+    var ageRange: AgeRange
+    var lookingFor: [LookingFor]
+}
+
+struct Details: Codable {
+    var about: String
+    var dealBreakers: String
+    var diet: Diet
+}
+
+struct Images: Codable {
+    var imageURLs: [String]
 }

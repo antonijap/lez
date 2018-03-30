@@ -9,6 +9,7 @@
 import UIKit
 import Koloda
 
+
 let defaultTopOffset: CGFloat = 0
 let defaultHorizontalOffset: CGFloat = 0
 let defaultHeightRatio: CGFloat = 1.90

@@ -23,6 +23,8 @@
 		CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */; };
 		CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C12066B15900114EC4 /* Extensions.swift */; };
 		CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */; };
+		CFE1E4EB206EB88D00A51D7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */; };
+		CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,6 +72,8 @@
 		CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezKolodaView.swift; sourceTree = "<group>"; };
 		CFB7C4C12066B15900114EC4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
+		CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -163,6 +167,7 @@
 				CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */,
 				CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */,
 				CF425B4520679D8F00D6A1FE /* SetupProfileViewController.swift */,
+				CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -186,6 +191,7 @@
 		CF425B4A2067EA6E00D6A1FE /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */,
 				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
 				CFB7C4C12066B15900114EC4 /* Extensions.swift */,
 			);
@@ -287,7 +293,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0920;
-				LastUpgradeCheck = 0920;
+				LastUpgradeCheck = 0930;
 				ORGANIZATIONNAME = "Antonija Pek";
 				TargetAttributes = {
 					CF2DF202203C13170054CC1A = {
@@ -332,6 +338,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF0C3F052066F57D0033ECCA /* MatchAnimation.json in Resources */,
+				CFE1E4EB206EB88D00A51D7A /* GoogleService-Info.plist in Resources */,
 				CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */,
 				CF2DF20E203C13170054CC1A /* Assets.xcassets in Resources */,
 			);
@@ -491,25 +498,37 @@
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-frameworks.sh",
 				"${BUILT_PRODUCTS_DIR}/Auk/Auk.framework",
+				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
+				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
+				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GooglePlacesRow/GooglePlacesRow.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
 				"${BUILT_PRODUCTS_DIR}/Jelly/Jelly.framework",
 				"${BUILT_PRODUCTS_DIR}/Koloda/Koloda.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/lottie-ios/Lottie.framework",
 				"${BUILT_PRODUCTS_DIR}/moa/moa.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 				"${BUILT_PRODUCTS_DIR}/pop/pop.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Auk.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GooglePlacesRow.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Jelly.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Koloda.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Lottie.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/moa.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/pop.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -524,6 +543,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */,
 				CF425B4620679D8F00D6A1FE /* SetupProfileViewController.swift in Sources */,
 				CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */,
 				CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */,
@@ -592,6 +612,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -599,6 +620,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
@@ -649,6 +671,7 @@
 				CLANG_WARN_BOOL_CONVERSION = YES;
 				CLANG_WARN_COMMA = YES;
 				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_EMPTY_BODY = YES;
@@ -656,6 +679,7 @@
 				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
 				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
 				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;

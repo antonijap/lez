@@ -271,7 +271,7 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
                     titleWithDescriptionCell.titleLabel.textColor = .black
                     titleWithDescriptionCell.titleLabel.font = UIFont.systemFont(ofSize: 21.0)
                     titleWithDescriptionCell.titleLabel.text = user!.name + ", " + "\(user?.age ?? 0)"
-                    titleWithDescriptionCell.bodyLabel.text = "\(user!.location)"
+                    titleWithDescriptionCell.bodyLabel.text = "\(user!.location.city)"
                     titleWithDescriptionCell.bodyLabel.snp.remakeConstraints({ (make) in
                         make.left.right.equalToSuperview().inset(32)
                         make.top.equalTo(titleWithDescriptionCell.titleLabel.snp.bottom)
