@@ -14,15 +14,16 @@ import FBSDKLoginKit
 class CustomTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         let loveRoomController = UINavigationController(rootViewController: MatchViewController())
         loveRoomController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Heart"), tag: 0)
         loveRoomController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
         
-        let chatController = UINavigationController(rootViewController: SetupProfileViewController())
+        let chatController = UINavigationController(rootViewController: ChatViewController())
         chatController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Chat"), tag: 1)
         chatController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
         
-        let profileController = UINavigationController(rootViewController: MatchViewController())
+        let profileController = UINavigationController(rootViewController: ProfileViewController())
         profileController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Profile"), tag: 2)
         profileController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
         
@@ -54,7 +55,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let apiKey = "***REMOVED***"
         GMSPlacesClient.provideAPIKey(apiKey)
-        
+ 
         return true
     }
 

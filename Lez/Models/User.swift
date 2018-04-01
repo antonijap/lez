@@ -9,19 +9,19 @@
 import Foundation
 import UIKit
 
-enum LookingFor: String, Codable {
+enum LookingFor: String {
     case relationship = "Relationship", friendship = "Friendship", sex = "Sex"
 }
 
-enum Diet: String, Codable {
+enum Diet: String {
     case vegan = "Vegan"
     case vegetarian = "Vegetarian"
     case omnivore = "Omnivore"
     case other = "Other"
 }
 
-class User: Codable {
-    var id: Int
+class User {
+    var uid: String
     var name: String
     var email: String
     var age: Int
@@ -32,10 +32,10 @@ class User: Codable {
     var isHidden = false
     var preferences: Preferences
     var details: Details
-    var images: Images?
+    var images: [String]?
     
-    init(id: Int, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details) {
-        self.id = id
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details) {
+        self.uid = uid
         self.name = name
         self.email = email
         self.age = age
@@ -45,27 +45,23 @@ class User: Codable {
     }
 }
 
-struct Location: Codable {
+struct Location {
     var city: String
     var country: String
 }
 
-struct AgeRange: Codable {
+struct AgeRange {
     var from: Int
     var to: Int
 }
 
-struct Preferences: Codable {
+struct Preferences {
     var ageRange: AgeRange
-    var lookingFor: [LookingFor]
+    var lookingFor: [String]
 }
 
-struct Details: Codable {
+struct Details {
     var about: String
     var dealBreakers: String
     var diet: Diet
-}
-
-struct Images: Codable {
-    var imageURLs: [String]
 }

@@ -13,8 +13,17 @@ target 'Lez' do
   pod 'lottie-ios'
   pod 'Jelly'
   pod 'GooglePlacesRow'
-  pod 'Firebase/Auth'
   pod 'FBSDKLoginKit'
+  pod 'PromisesSwift', '~> 1.0'
+  pod 'Firebase/Core'
+  pod 'Firebase/Firestore'
+  pod 'Firebase/Auth'
+  pod 'Firebase/Storage'
+  pod 'ImagePicker'
+  pod 'Lightbox'
+  pod 'Alertift', '~> 3.0'
+  pod 'JGProgressHUD'
+#  pod 'PromiseKit', '~> 6.0'
 
   target 'LezTests' do
     inherit! :search_paths

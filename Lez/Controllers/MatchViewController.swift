@@ -101,36 +101,25 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         
         // Check if user is signed-in
         Auth.auth().addStateDidChangeListener { auth, user in
-            if let user = user {
-                // User is signed in. Show home screen
-                print(user.displayName)
-                let firebaseAuth = Auth.auth()
-                do {
-                    try firebaseAuth.signOut()
-                } catch let signOutError as NSError {
-                    print ("Error signing out: %@", signOutError)
-                }
+            if let _ = user {
+//               let isOnboarded = DefaultsManager.sharedInstance.isCurrentUserOnboarded()
+//
+//                if !isOnboarded {
+//                    let setupProfileViewController = SetupProfileViewController()
+//                    setupProfileViewController.name = user?.displayName!
+//                    setupProfileViewController.email = user?.email!
+//                    let navigationController = UINavigationController(rootViewController: setupProfileViewController)
+//                    self.present(navigationController, animated: false, completion: nil)
+//                }
+                
+                
             } else {
                 // No User is signed in. Show user the login screen
-                print("Will show login screen")
                 let registerViewController = RegisterViewController()
-                self.present(registerViewController, animated: false, completion: nil)
+                let navigationController = UINavigationController(rootViewController: registerViewController)
+                self.present(navigationController, animated: false, completion: nil)
             }
         }
-        
-        let ageRange = AgeRange(from: 21, to: 32)
-        let details = Details(about: "Hello this is about.", dealBreakers: "This is my dealbreaker.", diet: .vegan)
-        let preferences = Preferences(ageRange: ageRange, lookingFor: [.friendship, .relationship])
-        let user = User(id: 00001, name: "Somename", email: "some@email.com", age: 32, location: Location(city: "Zagreb", country: "Croatia"), preferences: preferences, details: details)
-        user.images = Images(imageURLs: ["https://picsum.photos/200/300/?random", "https://picsum.photos/200/300/?random", "https://picsum.photos/200/300/?random"])
-        users.append(user)
-        users.append(user)
-        users.append(user)
-        users.append(user)
-    }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        setupKoloda()
     }
     
     override func viewDidLoad() {
@@ -145,6 +134,17 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
+        
+        let ageRange = AgeRange(from: 21, to: 32)
+        let details = Details(about: "Hello this is about.", dealBreakers: "This is my dealbreaker.", diet: .vegan)
+        let preferences = Preferences(ageRange: ageRange, lookingFor: [LookingFor.friendship.rawValue, LookingFor.relationship.rawValue])
+        let user = User(uid: "e4sds23492", name: "Somename", email: "some@email.com", age: 32, location: Location(city: "Zagreb", country: "Croatia"), preferences: preferences, details: details)
+        user.images = ["https://picsum.photos/200/300/?random", "https://picsum.photos/200/300/?random", "https://picsum.photos/200/300/?random"]
+        users.append(user)
+        users.append(user)
+        users.append(user)
+        users.append(user)
+        setupKoloda()
     }
     
     // MARK: - Methods
@@ -192,9 +192,8 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
 
 extension MatchViewController {
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
-        print("Render KolodaCard")
         let view = LezKolodaView()
-        view.imageView.moa.url = users[index].images?.imageURLs.first
+        view.imageView.moa.url = users[index].images!.first
         view.imageView.moa.onSuccess = { image in
             view.locationLabel.text = self.users[index].location.city
             view.nameAndAgeLabel.text = "\(self.users[index].name), \(self.users[index].age)"

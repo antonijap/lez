@@ -10,28 +10,31 @@ import UIKit
 import Eureka
 import GooglePlacesRow
 import GooglePlaces
+import Alertift
 
 class SetupProfileViewController: FormViewController {
     
-    var placesClient: GMSPlacesClient!
     var location: Location!
+    var name: String?
+    var email: String?
+    var uid: String?
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        placesClient = GMSPlacesClient.shared()
-//        hideKeyboardWhenTappedAround()
         setupForm()
         setupNavigationBar()
     }
     
     func setupNavigationBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(self.submit))
-        navigationItem.title = "Setup Your Profile"
+        navigationItem.title = "Setup Your Profile 1/2"
     }
     
     @objc func submit() {
         if form.validate().count > 0 {
-            self.showOkayModal(messageTitle: "Please check all fields", messageAlert: "", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+            Alertift.alert(title: "Ooopsie", message: "Check what fields are missiong or inacurrate.")
+                .action(.default("Okay"))
+                .show()
         } else {
             guard let nameRow: NameRow = form.rowBy(tag: "name") else { return }
             guard let name = nameRow.value else { return }
@@ -50,14 +53,14 @@ class SetupProfileViewController: FormViewController {
             
             guard let lookingForRow: MultipleSelectorRow<String> = form.rowBy(tag: "lookingFor") else { return }
             guard let lookingFor = lookingForRow.value else { return }
-            var lookingForArray: [LookingFor] = []
+            var lookingForArray: [String] = []
             for l in lookingFor {
                 if l == LookingFor.friendship.rawValue {
-                    lookingForArray.append(LookingFor.friendship)
+                    lookingForArray.append(LookingFor.friendship.rawValue)
                 } else if l == LookingFor.relationship.rawValue {
-                    lookingForArray.append(LookingFor.relationship)
+                    lookingForArray.append(LookingFor.relationship.rawValue)
                 } else if l == LookingFor.sex.rawValue {
-                    lookingForArray.append(LookingFor.sex)
+                    lookingForArray.append(LookingFor.sex.rawValue)
                 }
             }
             
@@ -73,11 +76,11 @@ class SetupProfileViewController: FormViewController {
             let ageRange = AgeRange(from: from, to: to)
             let details = Details(about: about, dealBreakers: dealbreakers, diet: Diet(rawValue: diet)!)
             let preferences = Preferences(ageRange: ageRange, lookingFor: lookingForArray)
-            let user = User(id: 00001, name: name, email: email, age: age, location: location, preferences: preferences, details: details)
-            print(user)
-            self.dismiss(animated: true) {
-                // Update Data
-            }
+            let user = User(uid: uid!, name: name, email: email, age: age, location: location, preferences: preferences, details: details)
+            
+            let imageGalleryViewController = ImageGalleryViewController()
+            imageGalleryViewController.user = user
+            self.navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }
     }
     
@@ -92,7 +95,8 @@ class SetupProfileViewController: FormViewController {
             <<< NameRow() { row in
                 row.title = "Name"
                 row.tag = "name"
-                row.value = "Antonija"
+                guard let name = name else { return }
+                row.value = name
                 row.add(ruleSet: rules)
                 row.validationOptions = .validatesOnChangeAfterBlurred
             }
@@ -105,7 +109,8 @@ class SetupProfileViewController: FormViewController {
             <<< EmailRow() { row in
                 row.title = "Email"
                 row.tag = "email"
-                row.value = "antonija@gmail.com"
+                guard let email = email else { return }
+                row.value = email
                 row.add(ruleSet: rules)
                 row.add(rule: RuleEmail())
                 row.validationOptions = .validatesOnChangeAfterBlurred
@@ -126,12 +131,8 @@ class SetupProfileViewController: FormViewController {
             <<< TextRow() { row in
                 row.title = "About"
                 row.tag = "about"
-                row.value = "About"
-                }.onChange({ (row) in
-                    row.value.map({ (about) in
-                        print(about)
-                    })
-                })
+                row.value = "I am from Croatia and I like cats."
+            }
             
             <<< GooglePlacesTableRow() { row in
                 row.title = "Location"
@@ -153,7 +154,7 @@ class SetupProfileViewController: FormViewController {
                 row.title = "Diet"
                 row.options = [Diet.vegan.rawValue, Diet.vegetarian.rawValue, Diet.omnivore.rawValue, Diet.other.rawValue]
                 row.tag = "diet"
-                row.value = "Vegan"
+                row.value = Diet.vegan.rawValue
             }
         
             +++ Section("Matching Preferences")
@@ -161,18 +162,15 @@ class SetupProfileViewController: FormViewController {
             <<< MultipleSelectorRow<String>() { row in
                 row.title = "Looking for"
                 row.options = [LookingFor.relationship.rawValue, LookingFor.friendship.rawValue, LookingFor.sex.rawValue]
-                row.value = [LookingFor.relationship.rawValue, LookingFor.friendship.rawValue]
                 row.tag = "lookingFor"
-            }.onChange({ data in
-                let data = data.value!
-                print(data)
-            })
+                row.value = [LookingFor.relationship.rawValue, LookingFor.friendship.rawValue]
+            }
             
             
             <<< TextRow() { row in
                 row.title = "Dealbreakers"
                 row.tag = "dealbreakers"
-                row.value = "Dealbreakers"
+                row.value = "Stupid people"
             }
         
             +++ Section("Prefered Age Range")
@@ -181,15 +179,15 @@ class SetupProfileViewController: FormViewController {
                 row.title = "From age"
                 row.placeholder = ""
                 row.tag = "from"
-                row.value = 21
+                row.value = 28
             }
             
             <<< IntRow() { row in
                 row.title = "To age"
                 row.placeholder = ""
                 row.tag = "to"
-                row.value = 30
+                row.value = 33
             }
-        
     }
+    
 }
