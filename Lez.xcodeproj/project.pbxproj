@@ -16,7 +16,7 @@
 		CF1C6C55206F68650018DCD9 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C54206F68650018DCD9 /* ChatViewController.swift */; };
 		CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */; };
 		CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF206203C13170054CC1A /* AppDelegate.swift */; };
-		CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF208203C13170054CC1A /* MatchViewController.swift */; };
+		CF2DF209203C13170054CC1A /* LoveRoomController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF208203C13170054CC1A /* LoveRoomController.swift */; };
 		CF2DF20E203C13170054CC1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20D203C13170054CC1A /* Assets.xcassets */; };
 		CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */; };
 		CF2DF21C203C13180054CC1A /* LezTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF21B203C13180054CC1A /* LezTests.swift */; };
@@ -27,6 +27,7 @@
 		CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C12066B15900114EC4 /* Extensions.swift */; };
 		CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */; };
 		CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */; };
+		CFC4E8FE207232BB00D8B8FA /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */; };
 		CFE1E4EB206EB88D00A51D7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */; };
 		CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */; };
 		CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */; };
@@ -65,7 +66,7 @@
 		CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CF2DF203203C13170054CC1A /* Lez.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lez.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF2DF206203C13170054CC1A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CF2DF208203C13170054CC1A /* MatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController.swift; sourceTree = "<group>"; };
+		CF2DF208203C13170054CC1A /* LoveRoomController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoveRoomController.swift; sourceTree = "<group>"; };
 		CF2DF20D203C13170054CC1A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CF2DF210203C13170054CC1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CF2DF212203C13170054CC1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -81,6 +82,8 @@
 		CFB7C4C12066B15900114EC4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
 		CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
+		CFC4E8FC207232B200D8B8FA /* Lez.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Lez.entitlements; sourceTree = "<group>"; };
+		CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManager.swift; sourceTree = "<group>"; };
@@ -93,6 +96,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				76A37FD28C40794876C735BB /* Pods_Lez.framework in Frameworks */,
+				CFC4E8FE207232BB00D8B8FA /* StoreKit.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -140,6 +144,7 @@
 		CF2DF205203C13170054CC1A /* Lez */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4E8FC207232B200D8B8FA /* Lez.entitlements */,
 				CF2DF20D203C13170054CC1A /* Assets.xcassets */,
 				CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */,
 				CF2DF212203C13170054CC1A /* Info.plist */,
@@ -174,7 +179,7 @@
 		CF425B472067EA3F00D6A1FE /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				CF2DF208203C13170054CC1A /* MatchViewController.swift */,
+				CF2DF208203C13170054CC1A /* LoveRoomController.swift */,
 				CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */,
 				CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */,
 				CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */,
@@ -224,6 +229,7 @@
 		D0CF37AAC26CFC2A18C5A98F /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */,
 				1DE15551B494E8923BB00C37 /* Pods_Lez.framework */,
 				5479534E8388BF74902A4ED8 /* Pods_LezTests.framework */,
 				3C3787C470D6FE1A11C36B5D /* Pods_LezUITests.framework */,
@@ -317,6 +323,14 @@
 					CF2DF202203C13170054CC1A = {
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.InAppPurchase = {
+								enabled = 1;
+							};
+							com.apple.Push = {
+								enabled = 1;
+							};
+						};
 					};
 					CF2DF216203C13180054CC1A = {
 						CreatedOnToolsVersion = 9.2;
@@ -461,6 +475,7 @@
 				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/PromisesSwift/Promises.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/SkeletonView/SkeletonView.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC-Core/grpc.framework",
@@ -495,6 +510,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Promises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SkeletonView.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/grpc.framework",
@@ -528,7 +544,7 @@
 				CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */,
 				CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */,
 				CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */,
-				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,
+				CF2DF209203C13170054CC1A /* LoveRoomController.swift in Sources */,
 				CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */,
 				CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */,
 				CF04FAE3204161A7001CB034 /* User.swift in Sources */,
@@ -696,6 +712,7 @@
 			baseConfigurationReference = 8DF45BE7B5A2CA91BE149655 /* Pods-Lez.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Lez/Lez.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WNU245KFYF;
 				INFOPLIST_FILE = Lez/Info.plist;
@@ -712,6 +729,7 @@
 			baseConfigurationReference = BE9A5EDDC73AC30B43C2E7F1 /* Pods-Lez.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_ENTITLEMENTS = Lez/Lez.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = WNU245KFYF;
 				INFOPLIST_FILE = Lez/Info.plist;

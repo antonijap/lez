@@ -83,7 +83,8 @@ class KolodaImage: UIImageView {
     }
 }
 
-class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource {
+
+class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSource {
     
     // MARK: - Variables
     
@@ -139,11 +140,12 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         let details = Details(about: "Hello this is about.", dealBreakers: "This is my dealbreaker.", diet: .vegan)
         let preferences = Preferences(ageRange: ageRange, lookingFor: [LookingFor.friendship.rawValue, LookingFor.relationship.rawValue])
         let user = User(uid: "e4sds23492", name: "Somename", email: "some@email.com", age: 32, location: Location(city: "Zagreb", country: "Croatia"), preferences: preferences, details: details)
-        user.images = ["https://picsum.photos/200/300/?random", "https://picsum.photos/200/300/?random", "https://picsum.photos/200/300/?random"]
-        users.append(user)
-        users.append(user)
-        users.append(user)
-        users.append(user)
+        user.images = ["https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6"]
+        
+        for _ in 1...100 {
+            users.append(user)
+        }
+        
         setupKoloda()
     }
     
@@ -190,7 +192,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     }
 }
 
-extension MatchViewController {
+extension LoveRoomController {
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
         let view = LezKolodaView()
         view.imageView.moa.url = users[index].images!.first

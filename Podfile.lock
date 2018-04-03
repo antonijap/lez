@@ -111,6 +111,7 @@ PODS:
   - PromisesSwift (1.0.8):
     - PromisesObjC (= 1.0.8)
   - Protobuf (3.5.0)
+  - SkeletonView (1.1.1)
   - SnapKit (4.0.0)
 
 DEPENDENCIES:
@@ -130,6 +131,7 @@ DEPENDENCIES:
   - lottie-ios
   - moa (~> 9.0)
   - PromisesSwift (~> 1.0)
+  - SkeletonView
   - SnapKit (~> 4.0.0)
 
 SPEC REPOS:
@@ -171,6 +173,7 @@ SPEC REPOS:
     - PromisesObjC
     - PromisesSwift
     - Protobuf
+    - SkeletonView
     - SnapKit
 
 SPEC CHECKSUMS:
@@ -211,8 +214,9 @@ SPEC CHECKSUMS:
   PromisesObjC: 51435f4ea6fb4ad2f1684cd59aeda60f3c274f4a
   PromisesSwift: 3e2db3a3bee4c7df64ebac32541cd69d4a47c6a3
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
+  SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
 
-PODFILE CHECKSUM: de554452622a2139f0c236e9b1f01d4665176216
+PODFILE CHECKSUM: 60b2594395226a1a5baf78e82e69f912934d06a8
 
 COCOAPODS: 1.5.0.beta.1

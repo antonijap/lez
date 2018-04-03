@@ -8,33 +8,21 @@
 
 import Foundation
 
-class DefaultsManager {
+final class DefaultsManager {
     
-    static let sharedInstance = DefaultsManager()
+    private init() { }
+    
+    static let shared = DefaultsManager()
     
     let defaults = UserDefaults.standard
     
-    func saveUser(user: User) {
-        let encodedData: Data = NSKeyedArchiver.archivedData(withRootObject: user)
-        defaults.set(encodedData, forKey: "user")
-        defaults.synchronize()
+    func saveUid(uid: String) {
+        defaults.set(uid, forKey: "uid")
     }
     
-    func fetchCurrentUser() -> User? {
-        let user = defaults.object(forKey: "user") as? User
+    func fetchUID() -> String? {
+        let user = defaults.object(forKey: "uid") as? String
         return user
-    }
-    
-    func isCurrentUserOnboarded() -> Bool {
-        if let user = fetchCurrentUser() {
-            if user.isOnboarded {
-                return true
-            } else {
-                return false
-            }
-        } else {
-            return false
-        }
     }
     
 }

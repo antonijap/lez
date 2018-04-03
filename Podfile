@@ -23,7 +23,7 @@ target 'Lez' do
   pod 'Lightbox'
   pod 'Alertift', '~> 3.0'
   pod 'JGProgressHUD'
-#  pod 'PromiseKit', '~> 6.0'
+  pod 'SkeletonView'
 
   target 'LezTests' do
     inherit! :search_paths

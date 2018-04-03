@@ -43,6 +43,17 @@ class User {
         self.preferences = preferences
         self.details = details
     }
+    
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]) {
+        self.uid = uid
+        self.name = name
+        self.email = email
+        self.age = age
+        self.location = location
+        self.preferences = preferences
+        self.details = details
+        self.images = images
+    }
 }
 
 struct Location {

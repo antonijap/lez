@@ -98,85 +98,143 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
         imageGalleryPickerController.imageLimit = 2
     }
     
+    var finalImages: [UIImage] = []
+    var finalFilenames: [String] = []
+    var imageURLs: [String] = []
+    
+    func checkImageOne() -> Bool {
+        if imageView.image != UIImage(named: "Add Image") {
+            finalImages.append(imageView.image!)
+            finalFilenames.append("Image1")
+            return true
+        }
+        return false
+    }
+    
+    func checkImageTwo() -> Bool {
+        if imageView2.image != UIImage(named: "Add Image") {
+            finalImages.append(imageView2.image!)
+            finalFilenames.append("Image1")
+            return true
+        }
+        return false
+    }
+    
+    func startSpinner() {
+        // Start Animating
+        let hud = JGProgressHUD(style: .dark)
+        hud.textLabel.text = "Uploading Images"
+        hud.vibrancyEnabled = true
+        hud.interactionType = .blockAllTouches
+        hud.show(in: view)
+    }
+    
+    func stopSpinner() {
+        // Start Animating
+        let hud = JGProgressHUD(style: .dark)
+        hud.textLabel.text = "Uploading Images"
+        hud.vibrancyEnabled = true
+        hud.interactionType = .blockAllTouches
+        hud.show(in: view)
+    }
+    
+    func writeUserData(images: [String]) {
+        let data: [String: Any] = [
+            "uid": self.user.uid,
+            "name": self.user.name,
+            "email": self.user.email,
+            "age": self.user.age,
+            "location": [
+                "city": self.user.location.city,
+                "country": self.user.location.country
+            ],
+            "preferences": [
+                "ageRange": [
+                    "from": self.user.preferences.ageRange.from,
+                    "to": self.user.preferences.ageRange.to
+                ],
+                "lookingFor": self.user.preferences.lookingFor
+            ],
+            "details": [
+                "about": self.user.details.about,
+                "dealbreakers": self.user.details.dealBreakers,
+                "diet": self.user.details.diet.rawValue
+            ],
+            "images": self.imageURLs,
+            "isOnboarded": true,
+            "isPremium": false,
+            "isBanned": false,
+            "isHidden": false
+        ]
+        FirestoreManager.shared.addUser(uid: self.user.uid, data: data).then { (success) in
+            if success {
+                // Dismiss onboarding
+                self.stopSpinner()
+                DefaultsManager.shared.saveUid(uid: self.user.uid)
+                self.dismiss(animated: true, completion: nil)
+            } else {
+                self.showOkayModal(messageTitle: "Profile Image", messageAlert: "All profiles must have at least a profile image.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+            }
+        }
+    }
+
     @objc func buttonTapped(_ sender: CustomButton) {
         if profileImageView.image != UIImage(named: "Add Image") {
-            
-            var finalImages: [UIImage] = []
-            var finalFilenames: [String] = []
-            
             finalImages.append(profileImageView.image!)
             finalFilenames.append("Profile")
-            
-            if imageView.image != UIImage(named: "Add Image") {
-                finalImages.append(imageView.image!)
-                finalFilenames.append("Image1")
+            startSpinner()
+            // 1. Upload Profile Image
+            let ref = storage.reference().child("images").child(user.uid).child("profile.jpg")
+            guard let data = UIImageJPEGRepresentation(profileImageView.image!, 90.00) else {
+                print("Error happened")
+                return
             }
-            
-            if imageView2.image != UIImage(named: "Add Image") {
-                finalImages.append(imageView2.image!)
-                finalFilenames.append("Image1")
-            }
-            
-            // Start Animating
-            let hud = JGProgressHUD(style: .dark)
-            hud.textLabel.text = "Uploading Images"
-            hud.vibrancyEnabled = true
-            hud.interactionType = .blockAllTouches
-            hud.show(in: view)
-
-            var imageURLs: [String] = []
-            for (index, image) in finalImages.enumerated() {
-                let ref = storage.reference().child("images").child(user.uid).child("\(finalFilenames[index]).jpg")
-                guard let data = UIImageJPEGRepresentation(image, 90.00) else {
-                    print("Error happened")
-                    return
+            let uploadTask = ref.putData(data, metadata: nil) { (metadata, error) in
+                if let error = error {
+                    print(error)
                 }
-                print("Index is \(index)")
-                if index == finalImages.count - 1 {
-                    FirestoreManager.sharedInstance.uploadImage(user: user, data: data, reference: ref).then { (url) in
-                        imageURLs.append(url)
-                        }.then {_ in
-                            let data: [String: Any] = [
-                                "first": self.user.name,
-                                "email": self.user.email,
-                                "age": self.user.age,
-                                "location": [
-                                    "city": self.user.location.city,
-                                    "country": self.user.location.country
-                                ],
-                                "preferences": [
-                                    "ageRange": [
-                                        "from": self.user.preferences.ageRange.from,
-                                        "to": self.user.preferences.ageRange.to
-                                    ],
-                                    "lookingFor": self.user.preferences.lookingFor
-                                ],
-                                "details": [
-                                    "about": self.user.details.about,
-                                    "dealbreakers": self.user.details.dealBreakers,
-                                    "diet": self.user.details.diet.rawValue
-                                ],
-                                "images": imageURLs,
-                                "isOnboarded": true
-                            ]
-                            
-                            FirestoreManager.sharedInstance.addUser(uid: self.user.uid, data: data).then { (success) in
-                                if success {
-                                    // Dismiss onboarding
-                                    hud.dismiss(animated: true)
-                                    self.profileViewController?.passUser(image: self.profileImageView.image!)
-                                    self.dismiss(animated: true, completion: nil)
-                                } else {
-                                    Alertift.alert(title: "Something happened", message: "We couldn't save your data. Please try again.")
-                                        .action(.default("Okay"))
-                                        .show()
+            }
+            uploadTask.observe(.success) { snapshot in
+                self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
+                // 2. Check if there is first image and upload it
+                if self.checkImageOne() {
+                    let ref = self.storage.reference().child("images").child(self.user.uid).child("image_1.jpg")
+                    guard let data = UIImageJPEGRepresentation(self.imageView.image!, 90.00) else {
+                        print("Error happened")
+                        return
+                    }
+                    let uploadTask = ref.putData(data, metadata: nil) { (metadata, error) in
+                        if let error = error {
+                            print(error)
+                        }
+                    }
+                    uploadTask.observe(.success) { snapshot in
+                        self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
+                        // 3. Check if there is second image and upload it
+                        if self.checkImageTwo() {
+                            let ref = self.storage.reference().child("images").child(self.user.uid).child("image_2.jpg")
+                            guard let data = UIImageJPEGRepresentation(self.imageView2.image!, 90.00) else {
+                                print("Error happened")
+                                return
+                            }
+                            let uploadTask = ref.putData(data, metadata: nil) { (metadata, error) in
+                                if let error = error {
+                                    print(error)
                                 }
                             }
+                            uploadTask.observe(.success) { snapshot in
+                                self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
+                                // 4. Write user data to Firestore
+                                self.writeUserData(images: self.imageURLs)
+                            }
+                        } else {
+                            // 4. Write user data to Firestore
+                            self.writeUserData(images: self.imageURLs)
+                        }
                     }
-                    break
-                }
-                FirestoreManager.sharedInstance.uploadImage(user: user, data: data, reference: ref).then { (url) in
-                    imageURLs.append(url)
+                } else {
+                    // 4. Write user data to Firestore
+                    self.writeUserData(images: self.imageURLs)
                 }
             }
         } else {
