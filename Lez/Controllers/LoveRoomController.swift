@@ -225,7 +225,6 @@ extension LoveRoomController {
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
         let nextViewController = CardFullscreenViewController()
-//        self.navigationController?.push(nextViewController)
         nextViewController.user = self.users[index]
         let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
                                                                    presentationCurve: .easeInEaseOut,

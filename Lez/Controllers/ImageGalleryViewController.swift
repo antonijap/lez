@@ -71,7 +71,7 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
     var imageView: CustomImageView!
     var imageView2: CustomImageView!
     let storage = Storage.storage()
-    weak var profileViewController: ProfileViewController?
+    let hud = JGProgressHUD(style: .dark)
     
     public var imageAssets: [UIImage] {
         return AssetManager.resolveAssets(imageGalleryPickerController.stack.assets)
@@ -121,8 +121,6 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
     }
     
     func startSpinner() {
-        // Start Animating
-        let hud = JGProgressHUD(style: .dark)
         hud.textLabel.text = "Uploading Images"
         hud.vibrancyEnabled = true
         hud.interactionType = .blockAllTouches
@@ -130,12 +128,7 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
     }
     
     func stopSpinner() {
-        // Start Animating
-        let hud = JGProgressHUD(style: .dark)
-        hud.textLabel.text = "Uploading Images"
-        hud.vibrancyEnabled = true
-        hud.interactionType = .blockAllTouches
-        hud.show(in: view)
+        hud.dismiss(animated: true)
     }
     
     func writeUserData(images: [String]) {

@@ -28,6 +28,7 @@
 		CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */; };
 		CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */; };
 		CFC4E8FE207232BB00D8B8FA /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */; };
+		CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE0BD662073DD810055FC73 /* CustomCells.swift */; };
 		CFE1E4EB206EB88D00A51D7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */; };
 		CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */; };
 		CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */; };
@@ -84,6 +85,7 @@
 		CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		CFC4E8FC207232B200D8B8FA /* Lez.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Lez.entitlements; sourceTree = "<group>"; };
 		CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		CFE0BD662073DD810055FC73 /* CustomCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCells.swift; sourceTree = "<group>"; };
 		CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManager.swift; sourceTree = "<group>"; };
@@ -187,6 +189,7 @@
 				CF1C6C52206F631A0018DCD9 /* ImageGalleryViewController.swift */,
 				CF1C6C54206F68650018DCD9 /* ChatViewController.swift */,
 				CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */,
+				CFE0BD662073DD810055FC73 /* CustomCells.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -541,6 +544,7 @@
 				CF1C6C53206F631A0018DCD9 /* ImageGalleryViewController.swift in Sources */,
 				CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */,
 				CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */,
+				CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */,
 				CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */,
 				CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */,
 				CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */,
