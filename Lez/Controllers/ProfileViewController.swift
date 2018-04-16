@@ -15,22 +15,25 @@ import JGProgressHUD
 import Alertift
 
 class ProfileViewController: UIViewController {
-    
+
     // MARK: - Variables
     let tableView = UITableView()
     let sections: [Sections] = [.profileImages, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .premiumMenu, .simpleMenu, .simpleMenu, .simpleMenu]
     var user: User?
-    let closeButton = UIButton()
     let tabBar = UITabBar()
     let hud = JGProgressHUD(style: .dark)
-    // Old
-    var profileImageView: UIImageView!
-    var label: UILabel!
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
-        // Fetch current user
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+        startSpinner(title: "Loading Profile")
+        guard let uid = DefaultsManager.shared.fetchUID() else { return }
+        FirestoreManager.shared.fetchCurrentUser(uid: uid).then { (user) in
+            self.user = user
+            }.then { _ in
+                self.setupTableView()
+                self.stopSpinner()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -45,15 +48,6 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        startSpinner(title: "Loading Profile")
-        guard let uid = DefaultsManager.shared.fetchUID() else { return }
-        FirestoreManager.shared.fetchCurrentUser(uid: uid).then { (user) in
-            self.user = user
-            }.then { _ in
-                self.setupTableView()
-                self.setupCloseButton()
-                self.stopSpinner()
-        }
     }
     
     @objc func logoutTapped(_ sender: UIButton) {
@@ -68,10 +62,6 @@ class ProfileViewController: UIViewController {
         } catch let signOutError as NSError {
             print ("Error signing out: %@", signOutError)
         }
-    }
-    
-    @objc func closeButtonTapped(_ sender:UIButton) {
-        dismiss(animated: true, completion: nil)
     }
     
     func setupTableView() {
@@ -93,19 +83,6 @@ class ProfileViewController: UIViewController {
         tableView.register(SimpleMenuCell.self, forCellReuseIdentifier: "SimpleMenuCell")
         tableView.register(IconMenuCell.self, forCellReuseIdentifier: "IconMenuCell")
         tableView.register(PremiumMenuCell.self, forCellReuseIdentifier: "PremiumMenuCell")
-    }
-    
-    func setupCloseButton() {
-        view.insertSubview(closeButton, aboveSubview: tableView)
-        closeButton.snp.makeConstraints { (make) in
-            make.width.equalTo(32)
-            make.height.equalTo(32)
-            make.right.equalToSuperview().inset(16)
-            make.top.equalToSuperview().inset(32)
-        }
-        let image = UIImage(named: "Close")
-        closeButton.setImage(image, for: .normal)
-        closeButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for:.touchUpInside)
     }
     
     func startSpinner(title: String) {
@@ -176,6 +153,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             guard let user = user else { return UITableViewCell() }
             let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
             let url = user.images
+            profileImagesCell.scrollView.auk.removeAll()
             for u in url! {
                 profileImagesCell.scrollView.auk.show(url: u)
             }
@@ -201,19 +179,22 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let premiumMenuCell = tableView.dequeueReusableCell(withIdentifier: PremiumMenuCell.reuseID) as! PremiumMenuCell
             cell = premiumMenuCell
         }
-        print(indexPath)
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath)
         if indexPath == [6, 0] {
+            
         }
         if indexPath == [7, 0] {
-            
+            let imageGalleryViewController = ImageGalleryViewController()
+            guard let user = user else { return }
+            imageGalleryViewController.user = user
+            imageGalleryViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }
         if indexPath == [8, 0] {
-            
+            self.showSignoutAlert(CTA: "Sign out")
         }
     }
 }

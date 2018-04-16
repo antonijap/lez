@@ -51,28 +51,41 @@ final class FirestoreManager {
         }
     }
     
+    func updateImages(uid: String, urls: [String]) -> Promise<Bool>  {
+        return Promise { fulfill, reject in
+            let updateImagesRef = self.db.collection("users").document(uid)
+            updateImagesRef.updateData([
+                "images": urls
+            ]) { err in
+                if let err = err {
+                    print("Error updating document: \(err)")
+                    reject(err)
+                } else {
+                    print("Document successfully updated")
+                    fulfill(true)
+                }
+            }
+        }
+    }
+    
     func parseFirebaseUser(document: DocumentSnapshot) -> User? {
         guard let data = document.data() else { return nil }
         guard let uid = data["uid"] as? String else {
             print("Problem with parsing uid.")
             return nil
         }
-        print(uid)
         guard let name = data["name"] as? String else {
             print("Problem with parsing name.")
             return nil
         }
-        print(name)
         guard let email = data["email"] as? String else {
             print("Problem with parsing email.")
             return nil
         }
-        print(email)
         guard let age = data["age"] as? Int else {
             print("Problem with parsing age.")
             return nil
         }
-        print(age)
         guard let locationDict = data["location"] as? [String: String] else {
             print("Problem with parsing locationDict.")
             return nil
@@ -85,28 +98,22 @@ final class FirestoreManager {
             print("Problem with parsing country.")
             return nil
         }
-        print(city)
-        print(country)
         guard let isOnboarded = data["isOnboarded"] as? Bool else {
             print("Problem with parsing isOnboarded.")
             return nil
         }
-        print(isOnboarded)
         guard let isPremium = data["isPremium"] as? Bool else {
             print("Problem with parsing isPremium.")
             return nil
         }
-        print(isPremium)
         guard let isBanned = data["isBanned"] as? Bool else {
             print("Problem with parsing isBanned.")
             return nil
         }
-        print(isBanned)
         guard let isHidden = data["isHidden"] as? Bool else {
             print("Problem with parsing isHidden.")
             return nil
         }
-        print(isHidden)
         guard let preferencesDict = data["preferences"] as? [String: Any] else {
             print("Problem with parsing preferences.")
             return nil
@@ -123,13 +130,10 @@ final class FirestoreManager {
             print("Problem with parsing ageRange.")
             return nil
         }
-        print(from)
-        print(to)
         guard let lookingFor = preferencesDict["lookingFor"] as? [String] else {
             print("Problem with parsing lookingFor.")
             return nil
         }
-        print(lookingFor)
         guard let detailsDict = data["details"] as? [String: String] else {
             print("Problem with parsing details")
             return nil
@@ -138,17 +142,14 @@ final class FirestoreManager {
             print("Problem with parsing about.")
             return nil
         }
-        print(about)
         guard let dealBreakers = detailsDict["dealbreakers"] else {
             print("Problem with parsing dealbreakers.")
             return nil
         }
-        print(dealBreakers)
         guard let diet = detailsDict["diet"] else {
             print("Problem with parsing diet.")
             return nil
         }
-        print(diet)
         guard let images = data["images"] as? [String] else {
             print("Problem with parsing images.")
             return nil
@@ -157,7 +158,7 @@ final class FirestoreManager {
         let newLocation = Location(city: city, country: country)
         let newPreferences = Preferences(ageRange: AgeRange(from: from, to: to), lookingFor: lookingFor)
         let newDetails = Details(about: about, dealBreakers: dealBreakers, diet: Diet(rawValue: diet)!)
-        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images)
+        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden)
         return newUser
     }
 }

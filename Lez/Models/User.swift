@@ -26,15 +26,17 @@ class User {
     var email: String
     var age: Int
     var location: Location
-    var isOnboarded = false
-    var isPremium = false
-    var isBanned = false
-    var isHidden = false
+    var isOnboarded: Bool
+    var isPremium: Bool
+    var isBanned: Bool
+    var isHidden: Bool
     var preferences: Preferences
     var details: Details
     var images: [String]?
     
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details) {
+    // Initial user cration, no images, flags are false
+    convenience init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details) {
+        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: nil, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false)
         self.uid = uid
         self.name = name
         self.email = email
@@ -44,7 +46,8 @@ class User {
         self.details = details
     }
     
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]) {
+    // With everything
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]?, isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool) {
         self.uid = uid
         self.name = name
         self.email = email
@@ -53,6 +56,10 @@ class User {
         self.preferences = preferences
         self.details = details
         self.images = images
+        self.isOnboarded = isOnboarded
+        self.isPremium = isPremium
+        self.isBanned = isBanned
+        self.isHidden = isHidden
     }
 }
 

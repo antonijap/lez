@@ -55,6 +55,21 @@ extension UIViewController: UIActionSheetDelegate {
         self.present(alertController, animated: true, completion: nil)
     }
     
+    func showSignoutAlert(CTA: String) {
+        let alertController = UIAlertController(title: "Are you sure?", message: nil, preferredStyle: .alert)
+
+        let action1 = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        
+        let action2 = UIAlertAction(title: CTA, style: .destructive) { (action) in
+            print("Signout")
+        }
+        
+        alertController.addAction(action1)
+        alertController.addAction(action2)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
     func showOkayModal(messageTitle: String, messageAlert: String, messageBoxStyle: UIAlertControllerStyle, alertActionStyle: UIAlertActionStyle, completionHandler: @escaping () -> Void) {
         let alert = UIAlertController(title: messageTitle, message: messageAlert, preferredStyle: messageBoxStyle)
         
@@ -121,9 +136,7 @@ extension UIImage {
         }
         return nil
     }
-}
-
-extension UIImage {
+    
     func resize(percentage: CGFloat) -> UIImage? {
         let imageView = UIImageView(frame: CGRect(origin: .zero, size: CGSize(width: size.width * percentage, height: size.height * percentage)))
         imageView.contentMode = .scaleAspectFit

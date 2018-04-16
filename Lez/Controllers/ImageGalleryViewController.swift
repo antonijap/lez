@@ -56,7 +56,6 @@ class CustomButton: UIButton {
         layer.backgroundColor = UIColor(red:0.35, green:0.06, blue:0.68, alpha:1.00).cgColor
         layer.cornerRadius = 8
         for state: UIControlState in [.normal, .highlighted, .disabled, .selected, .focused, .application, .reserved] {
-            setTitle("Complete Profile", for: state)
             setTitleColor(.white, for: state)
         }
     }
@@ -129,6 +128,18 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
     
     func stopSpinner() {
         hud.dismiss(animated: true)
+    }
+    
+    func updateImages(images: [String]) {
+        FirestoreManager.shared.updateImages(uid: user.uid, urls: imageURLs).then { success in
+            if success {
+                self.stopSpinner()
+                // Refresh table in ProfileViewController
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                self.showOkayModal(messageTitle: "Error Happened", messageAlert: "Something went wrong with saving images. Try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+            }
+        }
     }
     
     func writeUserData(images: [String]) {
@@ -218,16 +229,28 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
                             uploadTask.observe(.success) { snapshot in
                                 self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
                                 // 4. Write user data to Firestore
-                                self.writeUserData(images: self.imageURLs)
+                                if self.user.isOnboarded {
+                                    self.updateImages(images: self.imageURLs)
+                                } else {
+                                    self.writeUserData(images: self.imageURLs)
+                                }
                             }
                         } else {
                             // 4. Write user data to Firestore
-                            self.writeUserData(images: self.imageURLs)
+                            if self.user.isOnboarded {
+                                self.updateImages(images: self.imageURLs)
+                            } else {
+                                self.writeUserData(images: self.imageURLs)
+                            }
                         }
                     }
                 } else {
                     // 4. Write user data to Firestore
-                    self.writeUserData(images: self.imageURLs)
+                    if self.user.isOnboarded {
+                        self.updateImages(images: self.imageURLs)
+                    } else {
+                        self.writeUserData(images: self.imageURLs)
+                    }
                 }
             }
         } else {
@@ -286,7 +309,11 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
     }
     
     func setupView() {
-        navigationItem.title = "Setup Your Profile 2/2"
+        if user.isOnboarded {
+            navigationItem.title = "Update Images"
+        } else {
+            navigationItem.title = "Setup Your Profile 2/2"
+        }
         view.backgroundColor = UIColor(red:0.96, green:0.97, blue:0.97, alpha:1.00)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(self.imageGalleryTapped(_:)))
@@ -310,7 +337,11 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
         }
         profileImageView.isUserInteractionEnabled = true
         profileImageView.addGestureRecognizer(tap)
-        
+        if let imagesURLs = user.images {
+            profileImageView.contentMode = .scaleAspectFill
+            profileImageView.moa.url = imagesURLs.first
+        }
+
         let imageGalleryLabel = UILabel()
         view.addSubview(imageGalleryLabel)
         imageGalleryLabel.snp.makeConstraints { (make) in
@@ -340,6 +371,12 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
             make.centerY.equalToSuperview()
             make.left.equalToSuperview()
         }
+        if let imagesURLs = user.images {
+            imageView.contentMode = .scaleAspectFill
+            if imagesURLs.count > 1 {
+                imageView.moa.url = imagesURLs[1]
+            }
+        }
 
         imageView2 = CustomImageView()
         container.addSubview(imageView2)
@@ -348,6 +385,12 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
             make.height.equalToSuperview()
             make.centerY.equalToSuperview()
             make.right.equalToSuperview()
+        }
+        if let imagesURLs = user.images {
+            imageView2.contentMode = .scaleAspectFill
+            if imagesURLs.count > 2 {
+                imageView2.moa.url = imagesURLs[2]
+            }
         }
         
         let button = CustomButton()
@@ -359,7 +402,11 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
             make.bottom.equalToSuperview().inset(32)
             make.centerX.equalToSuperview()
         }
-        button.setTitle("Complete Profile", for: .normal)
+        if user.isOnboarded {
+            button.setTitle("Update", for: .normal)
+        } else {
+            button.setTitle("Complete Profile", for: .normal)
+        }
         button.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
         button.addGestureRecognizer(buttonTap)
     }
