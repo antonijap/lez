@@ -19,6 +19,7 @@ enum Sections {
     case simpleMenu
     case iconMenu
     case premiumMenu
+    case headerCell
 }
 
 protocol ReuseIdentifiable {
@@ -30,6 +31,10 @@ extension ProfileImagesCell: ReuseIdentifiable {
 }
 
 extension TitleWithDescriptionCell: ReuseIdentifiable {
+    static var reuseID: String { return String(describing: self) }
+}
+
+extension HeaderCell: ReuseIdentifiable {
     static var reuseID: String { return String(describing: self) }
 }
 
@@ -181,6 +186,38 @@ class TitleWithDescriptionCell: UITableViewCell {
             make.left.right.equalToSuperview().inset(32)
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.bottom.equalToSuperview().offset(-16)
+        }
+        bodyLabel.numberOfLines = 5
+        bodyLabel.text = "Ooops. Not set."
+    }
+    
+    required init(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)!
+    }
+}
+
+class HeaderCell: UITableViewCell {
+    var titleLabel = UILabel()
+    var bodyLabel = UILabel()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        self.selectionStyle = .none
+        
+        self.addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { (make) in
+            make.top.left.right.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 32, bottom: 0, right: 32))
+        }
+        titleLabel.textColor = .black
+        titleLabel.text = "Title not set."
+        titleLabel.textColor = UIColor(red:0.59, green:0.59, blue:0.59, alpha:1.00)
+        titleLabel.font = UIFont.systemFont(ofSize: 21.0)
+        
+        addSubview(bodyLabel)
+        bodyLabel.snp.makeConstraints { (make) in
+            make.left.right.equalToSuperview().inset(32)
+            make.top.equalTo(titleLabel.snp.bottom).offset(4)
+            make.bottom.equalToSuperview().offset(8)
         }
         bodyLabel.numberOfLines = 5
         bodyLabel.text = "Ooops. Not set."
