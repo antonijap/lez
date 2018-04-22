@@ -13,14 +13,14 @@ enum LookingFor: String {
     case relationship = "Relationship", friendship = "Friendship", sex = "Sex"
 }
 
-enum Diet: String {
+enum Diet: String, Encodable {
     case vegan = "Vegan"
     case vegetarian = "Vegetarian"
     case omnivore = "Omnivore"
     case other = "Other"
 }
 
-class User {
+class User: Encodable {
     var uid: String
     var name: String
     var email: String
@@ -63,22 +63,22 @@ class User {
     }
 }
 
-struct Location {
+struct Location: Encodable {
     var city: String
     var country: String
 }
 
-struct AgeRange {
+struct AgeRange: Encodable {
     var from: Int
     var to: Int
 }
 
-struct Preferences {
+struct Preferences: Encodable {
     var ageRange: AgeRange
     var lookingFor: [String]
 }
 
-struct Details {
+struct Details: Encodable {
     var about: String
     var dealBreakers: String
     var diet: Diet

@@ -25,7 +25,6 @@ class ProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("ViewWillAppear")
         guard let uid = DefaultsManager.shared.fetchUID() else { return }
         FirestoreManager.shared.fetchCurrentUser(uid: uid).then { (user) in
             self.user = user
@@ -41,7 +40,6 @@ class ProfileViewController: UIViewController {
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-//        view.showAnimatedSkeleton()
         navigationController?.setNavigationBarHidden(true, animated: animated)
         startSpinner(title: "Loading Profile")
         guard let uid = DefaultsManager.shared.fetchUID() else { return }
@@ -138,8 +136,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             case .titleWithDescription:
                 let titleWithDescriptionCell = tableView.dequeueReusableCell(withIdentifier: TitleWithDescriptionCell.reuseID) as! TitleWithDescriptionCell
                 if indexPath.section == 2 {
+                    guard let user = user else { return UITableViewCell() }
                     titleWithDescriptionCell.titleLabel.text = "I am here for"
-                    titleWithDescriptionCell.bodyLabel.text = "Relationship, Friendship"
+                    let string = user.preferences.lookingFor.joined(separator: ", ")
+                    titleWithDescriptionCell.bodyLabel.text = string
                 }
                 if indexPath.section == 3 {
                     guard let user = user else { return UITableViewCell() }
@@ -190,8 +190,17 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        if indexPath == [5, 0] {
+            Alertift.alert(title: "Get Premium", message: "Building...")
+                .action(.default("Okay"))
+                .show()
+        }
         if indexPath == [6, 0] {
-            
+            let setupProfileViewController = SetupProfileViewController()
+            guard let user = user else { return }
+            setupProfileViewController.currentUser = user
+            setupProfileViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(setupProfileViewController, animated: true)
         }
         if indexPath == [7, 0] {
             let imageGalleryViewController = ImageGalleryViewController()

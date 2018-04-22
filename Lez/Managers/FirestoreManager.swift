@@ -51,6 +51,21 @@ final class FirestoreManager {
         }
     }
     
+    func updateCurrentUser(uid: String, data: [String: Any]) -> Promise<Bool> {
+        return Promise { fulfill, reject in
+            let docRef = self.db.collection("users").document(uid)
+            docRef.updateData(data) { err in
+                if let err = err {
+                    print("Error updating document: \(err)")
+                    reject(err)
+                } else {
+                    print("Document successfully updated")
+                    fulfill(true)
+                }
+            }
+        }
+    }
+    
     func updateImages(uid: String, urls: [String]) -> Promise<Bool>  {
         return Promise { fulfill, reject in
             let updateImagesRef = self.db.collection("users").document(uid)

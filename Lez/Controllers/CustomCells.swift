@@ -178,7 +178,6 @@ class TitleWithDescriptionCell: UITableViewCell {
             make.top.left.right.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 32, bottom: 0, right: 32))
         }
         titleLabel.textColor = .black
-        titleLabel.text = "Title not set."
         titleLabel.textColor = UIColor(red:0.59, green:0.59, blue:0.59, alpha:1.00)
         
         addSubview(bodyLabel)
@@ -188,7 +187,6 @@ class TitleWithDescriptionCell: UITableViewCell {
             make.bottom.equalToSuperview().offset(-16)
         }
         bodyLabel.numberOfLines = 5
-        bodyLabel.text = "Ooops. Not set."
     }
     
     required init(coder aDecoder: NSCoder) {
@@ -209,7 +207,6 @@ class HeaderCell: UITableViewCell {
             make.top.left.right.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 32, bottom: 0, right: 32))
         }
         titleLabel.textColor = .black
-        titleLabel.text = "Title not set."
         titleLabel.textColor = UIColor(red:0.59, green:0.59, blue:0.59, alpha:1.00)
         titleLabel.font = UIFont.systemFont(ofSize: 21.0)
         
@@ -217,10 +214,9 @@ class HeaderCell: UITableViewCell {
         bodyLabel.snp.makeConstraints { (make) in
             make.left.right.equalToSuperview().inset(32)
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
-            make.bottom.equalToSuperview().offset(8)
+            make.bottom.equalToSuperview().inset(16)
         }
         bodyLabel.numberOfLines = 5
-        bodyLabel.text = "Ooops. Not set."
     }
     
     required init(coder aDecoder: NSCoder) {
