@@ -12,10 +12,14 @@ import Promises
 
 final class FirestoreManager {
     
-    private init() { }
-    
     let db = Firestore.firestore()
     static let shared = FirestoreManager()
+    
+    private init() {
+        let settings = db.settings
+        settings.areTimestampsInSnapshotsEnabled = true
+        db.settings = settings
+    }
     
     func addUser(uid: String, data: [String: Any]) -> Promise<Bool> {
         return Promise { fulfill, reject in
@@ -31,8 +35,53 @@ final class FirestoreManager {
         }
     }
 
-    func fetchPotentialMatches() {
+    func fetchPotentialMatches(user: User) {
+        let from = user.preferences.ageRange.from
+        let to = user.preferences.ageRange.to
+        let suitableAges = Array(from...to)
+        if suitableAges.contains(27) {
+            print("Match")
+        } else {
+            print("Ignore")
+        }
         
+        var allUsers: [User] = []
+        
+        let potentialMatchesRef = db.collection("users")
+                                    .whereField("isBanned", isEqualTo: false)
+                                    .whereField("isHidden", isEqualTo: false)
+                                    .whereField("location.country", isEqualTo: user.location.country)
+
+        potentialMatchesRef.getDocuments { (querySnapshot, err) in
+            if let err = err {
+                print("Error getting documents: \(err)")
+            } else {
+                for document in querySnapshot!.documents {
+//                    print("\(document.documentID) => \(document.data())")
+                    let user = FirestoreManager.shared.parseFirebaseUser(document: document)
+                    allUsers.append(user!)
+                }
+            }
+            
+            // Get rid of all users outside suitable ages
+            var filteredAge: [User] = []
+            for match in allUsers {
+                if suitableAges.contains(match.age) {
+                    filteredAge.append(match)
+                }
+            }
+            
+            // Get the ones with the same preferences.lookingFor
+            var filteredLookingFor: [User] = []
+            for match in filteredAge {
+                for lookingFor in user.preferences.lookingFor {
+                    if match.preferences.lookingFor.contains(lookingFor) {
+                        filteredLookingFor.append(match)
+                    }
+                }
+            }
+            print(Array(Set(filteredLookingFor)))
+        }
     }
     
     func fetchCurrentUser(uid: String) -> Promise<User> {
@@ -142,7 +191,7 @@ final class FirestoreManager {
             return nil
         }
         guard let to = ageRangeDict["to"] else {
-            print("Problem with parsing ageRange.")
+            print("Problem with parsing to.")
             return nil
         }
         guard let lookingFor = preferencesDict["lookingFor"] as? [String] else {

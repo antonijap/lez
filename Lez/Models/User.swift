@@ -20,7 +20,8 @@ enum Diet: String, Encodable {
     case other = "Other"
 }
 
-class User: Encodable {
+class User: Encodable, Hashable {
+    var hashValue: Int { get { return uid.hashValue } }
     var uid: String
     var name: String
     var email: String
@@ -60,6 +61,10 @@ class User: Encodable {
         self.isPremium = isPremium
         self.isBanned = isBanned
         self.isHidden = isHidden
+    }
+    
+    static func ==(left:User, right:User) -> Bool {
+        return left.uid == right.uid
     }
 }
 

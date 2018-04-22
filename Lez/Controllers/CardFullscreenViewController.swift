@@ -14,7 +14,7 @@ class CardFullscreenViewController: UIViewController {
     
     // MARK: - Variables
     let tableView = UITableView()
-    let sections: [Sections] = [.profileImages, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu]
+    let sections: [Sections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu]
     var user: User?
     let closeButton = UIButton()
     let tabBar = UITabBar()
@@ -68,6 +68,7 @@ class CardFullscreenViewController: UIViewController {
         tableView.register(TitleWithDescriptionCell.self, forCellReuseIdentifier: "TitleWithDescriptionCell")
         tableView.register(SimpleMenuCell.self, forCellReuseIdentifier: "SimpleMenuCell")
         tableView.register(IconMenuCell.self, forCellReuseIdentifier: "IconMenuCell")
+        tableView.register(HeaderCell.self, forCellReuseIdentifier: "HeaderCell")
     }
 }
 
@@ -91,12 +92,12 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
         switch sections[indexPath.section] {
-        case.headerCell:
-            let headerCell = tableView.dequeueReusableCell(withIdentifier: HeaderCell.reuseID) as! HeaderCell
-            guard let user = user else { return UITableViewCell() }
-            headerCell.titleLabel.text = user.name + ", " + "\(user.age)"
-            headerCell.bodyLabel.text = "\(user.location.city)"
-            cell = headerCell
+            case.headerCell:
+                let headerCell = tableView.dequeueReusableCell(withIdentifier: HeaderCell.reuseID) as! HeaderCell
+                guard let user = user else { return UITableViewCell() }
+                headerCell.titleLabel.text = user.name + ", " + "\(user.age)"
+                headerCell.bodyLabel.text = "\(user.location.city)"
+                cell = headerCell
             
             case .titleWithDescription:
                 let titleWithDescriptionCell = tableView.dequeueReusableCell(withIdentifier: TitleWithDescriptionCell.reuseID) as! TitleWithDescriptionCell

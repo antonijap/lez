@@ -146,6 +146,11 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
             users.append(user)
         }
         
+        FirestoreManager.shared.fetchCurrentUser(uid: DefaultsManager.shared.fetchUID()!).then { (usr) in
+            FirestoreManager.shared.fetchPotentialMatches(user: usr)
+        }
+        
+        
         setupKoloda()
     }
     
