@@ -99,8 +99,11 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         
-        // Check if user is signed-in
         Auth.auth().addStateDidChangeListener { auth, user in
             if let _ = user {
 //               let isOnboarded = DefaultsManager.sharedInstance.isCurrentUserOnboarded()
@@ -112,8 +115,33 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
 //                    let navigationController = UINavigationController(rootViewController: setupProfileViewController)
 //                    self.present(navigationController, animated: false, completion: nil)
 //                }
+                self.navigationItem.title = "Love Room"
+                let filterButton = UIButton(type: .custom)
+                filterButton.setImage(UIImage(named: "Filter"), for: .normal)
+                filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+                filterButton.addTarget(self, action: #selector(self.showFilters), for: .touchUpInside)
+                let rightItem = UIBarButtonItem(customView: filterButton)
+                self.navigationItem.setRightBarButtonItems([rightItem], animated: true)
+                self.navigationController?.navigationBar.backgroundColor = .white
+                self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+                self.navigationController?.navigationBar.shadowImage = UIImage()
                 
+                let ageRange = AgeRange(from: 21, to: 32)
+                let details = Details(about: "Hello this is about.", dealBreakers: "This is my dealbreaker.", diet: .vegan)
+                let preferences = Preferences(ageRange: ageRange, lookingFor: [LookingFor.friendship.rawValue, LookingFor.relationship.rawValue])
+                let user = User(uid: "e4sds23492", name: "Somename", email: "some@email.com", age: 32, location: Location(city: "Zagreb", country: "Croatia"), preferences: preferences, details: details)
+                user.images = ["https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6"]
                 
+                for _ in 1...100 {
+                    self.users.append(user)
+                }
+                if let cu =  Auth.auth().currentUser {
+                    FirestoreManager.shared.fetchUser(uid: cu.uid).then { (usr) in
+                        FirestoreManager.shared.fetchPotentialMatches(user: usr)
+                    }
+                }
+                
+                self.setupKoloda()
             } else {
                 // No User is signed in. Show user the login screen
                 let registerViewController = RegisterViewController()
@@ -121,37 +149,8 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
                 self.present(navigationController, animated: false, completion: nil)
             }
         }
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        navigationItem.title = "Love Room"
-        let filterButton = UIButton(type: .custom)
-        filterButton.setImage(UIImage(named: "Filter"), for: .normal)
-        filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        filterButton.addTarget(self, action: #selector(self.showFilters), for: .touchUpInside)
-        let rightItem = UIBarButtonItem(customView: filterButton)
-        navigationItem.setRightBarButtonItems([rightItem], animated: true)
-        navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        navigationController?.navigationBar.shadowImage = UIImage()
+
         
-        let ageRange = AgeRange(from: 21, to: 32)
-        let details = Details(about: "Hello this is about.", dealBreakers: "This is my dealbreaker.", diet: .vegan)
-        let preferences = Preferences(ageRange: ageRange, lookingFor: [LookingFor.friendship.rawValue, LookingFor.relationship.rawValue])
-        let user = User(uid: "e4sds23492", name: "Somename", email: "some@email.com", age: 32, location: Location(city: "Zagreb", country: "Croatia"), preferences: preferences, details: details)
-        user.images = ["https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6"]
-        
-        for _ in 1...100 {
-            users.append(user)
-        }
-        
-        FirestoreManager.shared.fetchCurrentUser(uid: DefaultsManager.shared.fetchUID()!).then { (usr) in
-            FirestoreManager.shared.fetchPotentialMatches(user: usr)
-        }
-        
-        
-        setupKoloda()
     }
     
     // MARK: - Methods
@@ -220,7 +219,30 @@ extension LoveRoomController {
     
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
         if direction == .right {
-            playMatchAnimation()
+            print("Right")
+            var previousLikes: [String] = []
+            let currentUser = Auth.auth().currentUser!.uid
+            FirestoreManager.shared.fetchUser(uid: currentUser).then { (user) in
+                previousLikes = user.likes!
+                previousLikes.append(self.users[index].uid)
+                let data = [
+                    "likes": previousLikes
+                ]
+                FirestoreManager.shared.updateCurrentUser(uid: currentUser, data: data).then({ (success) in
+                    if success {
+                        print("Like added")
+                        // Check if it's a match
+                        FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: currentUser, likedUserUid: self.users[index].uid).then({ (success) in
+                            if success {
+                                print("Ok, now that this user is a match let's open a chat!")
+                                self.playMatchAnimation()
+                            }
+                        })
+                    } else {
+                        print("Error happened.")
+                    }
+                })
+            }
         }
     }
     
@@ -269,8 +291,6 @@ class CardOverlay: OverlayView {
         overlayView.backgroundColor = UIColor.green.withAlphaComponent(0.2)
         overlayView.layer.cornerRadius = 16
         overlayView.clipsToBounds = true
-        
-        
     }
     
     required init?(coder aDecoder: NSCoder) {

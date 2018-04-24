@@ -58,12 +58,12 @@ class RegisterViewController: UIViewController, FBSDKLoginButtonDelegate {
         
         let credential = FacebookAuthProvider.credential(withAccessToken: FBSDKAccessToken.current().tokenString)
         Auth.auth().signIn(with: credential) { (user, error) in
-            print("Facebook DONE")
             if let error = error {
                 print(error)
                 return
             }
             // User is signed in
+            print(user!)
             guard let usr = user else { return }
             let setupProfileViewController = SetupProfileViewController()
             setupProfileViewController.name = usr.displayName!

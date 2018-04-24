@@ -209,6 +209,7 @@ class HeaderCell: UITableViewCell {
         titleLabel.textColor = .black
         titleLabel.textColor = UIColor(red:0.59, green:0.59, blue:0.59, alpha:1.00)
         titleLabel.font = UIFont.systemFont(ofSize: 21.0)
+        titleLabel.numberOfLines = 2
         
         addSubview(bodyLabel)
         bodyLabel.snp.makeConstraints { (make) in

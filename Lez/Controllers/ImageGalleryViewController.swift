@@ -168,13 +168,14 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
             "isOnboarded": true,
             "isPremium": false,
             "isBanned": false,
-            "isHidden": false
+            "isHidden": false,
+            "likes": [],
+            "dislikes": []
         ]
         FirestoreManager.shared.addUser(uid: self.user.uid, data: data).then { (success) in
             if success {
                 // Dismiss onboarding
                 self.stopSpinner()
-                DefaultsManager.shared.saveUid(uid: self.user.uid)
                 self.dismiss(animated: true, completion: nil)
             } else {
                 self.showOkayModal(messageTitle: "Profile Image", messageAlert: "All profiles must have at least a profile image.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})

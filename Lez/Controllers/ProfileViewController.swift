@@ -25,8 +25,8 @@ class ProfileViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        guard let uid = DefaultsManager.shared.fetchUID() else { return }
-        FirestoreManager.shared.fetchCurrentUser(uid: uid).then { (user) in
+        guard let currentUser = Auth.auth().currentUser else { return }
+        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
             self.user = user
             }.then { _ in
                 self.tableView.reloadData()
@@ -42,8 +42,8 @@ class ProfileViewController: UIViewController {
         super.viewDidAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
         startSpinner(title: "Loading Profile")
-        guard let uid = DefaultsManager.shared.fetchUID() else { return }
-        FirestoreManager.shared.fetchCurrentUser(uid: uid).then { (user) in
+        guard let currentUser = Auth.auth().currentUser else { return }
+        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
             self.user = user
             }.then { _ in
                 self.setupTableView()
@@ -53,20 +53,6 @@ class ProfileViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-    }
-    
-    @objc func logoutTapped(_ sender: UIButton) {
-        let firebaseAuth = Auth.auth()
-        do { 
-            // Add Facebook logout
-            try firebaseAuth.signOut()
-            print("Signed out")
-            let registerViewController = RegisterViewController()
-            let navigationController = UINavigationController(rootViewController: registerViewController)
-            self.present(navigationController, animated: false, completion: nil)
-        } catch let signOutError as NSError {
-            print ("Error signing out: %@", signOutError)
-        }
     }
     
     func setupTableView() {
@@ -210,7 +196,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }
         if indexPath == [8, 0] {
-            self.showSignoutAlert(CTA: "Sign out")
+            self.showSignoutAlert(CTA: "Sign out")  
         }
     }
 }

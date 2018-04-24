@@ -205,6 +205,7 @@
 		CF425B492067EA6000D6A1FE /* Trash Candidate */ = {
 			isa = PBXGroup;
 			children = (
+				CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */,
 				CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */,
 			);
 			path = "Trash Candidate";
@@ -223,7 +224,6 @@
 		CFC4E8F92070ED6900D8B8FA /* Managers */ = {
 			isa = PBXGroup;
 			children = (
-				CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */,
 				CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */,
 			);
 			path = Managers;

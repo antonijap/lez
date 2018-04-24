@@ -80,11 +80,20 @@ final class FirestoreManager {
                     }
                 }
             }
-            print(Array(Set(filteredLookingFor)))
+            
+            // Remove yourself
+            var filteredMe: [User] = []
+            guard let currentUser = Auth.auth().currentUser else { return }
+            for match in filteredLookingFor {
+                if match.uid != currentUser.uid {
+                    filteredMe.append(match)
+                }
+            }
+            print(Array(Set(filteredMe)))
         }
     }
     
-    func fetchCurrentUser(uid: String) -> Promise<User> {
+    func fetchUser(uid: String) -> Promise<User> {
         return Promise { fulfill, reject in
             let docRef = self.db.collection("users").document(uid)
             docRef.getDocument { (document, error) in
@@ -112,6 +121,18 @@ final class FirestoreManager {
                     fulfill(true)
                 }
             }
+        }
+    }
+    
+    func checkIfLikedUserIsMatch(currentUserUid: String, likedUserUid: String) -> Promise<Bool> {
+        return Promise { fulfill, reject in
+            self.fetchUser(uid: likedUserUid).then({ (user) in
+                guard let likes = user.likes else { return }
+                if likes.contains(currentUserUid) {
+                    print("It's a MATCH!")
+                    fulfill(true)
+                }
+            })
         }
     }
     
@@ -219,10 +240,15 @@ final class FirestoreManager {
             return nil
         }
         
+        guard let likes = data["likes"] as? [String] else {
+            print("Problem with parsing likes.")
+            return nil
+        }
+        
         let newLocation = Location(city: city, country: country)
         let newPreferences = Preferences(ageRange: AgeRange(from: from, to: to), lookingFor: lookingFor)
         let newDetails = Details(about: about, dealBreakers: dealBreakers, diet: Diet(rawValue: diet)!)
-        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden)
+        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes)
         return newUser
     }
 }

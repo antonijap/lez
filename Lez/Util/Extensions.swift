@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Firebase
 
 extension UIViewController: UIActionSheetDelegate {
     func showReportActionSheet() {
@@ -57,11 +58,16 @@ extension UIViewController: UIActionSheetDelegate {
     
     func showSignoutAlert(CTA: String) {
         let alertController = UIAlertController(title: "Are you sure?", message: nil, preferredStyle: .alert)
-
         let action1 = UIAlertAction(title: "Cancel", style: .default, handler: nil)
-        
         let action2 = UIAlertAction(title: CTA, style: .destructive) { (action) in
-            print("Signout")
+            do {
+                try Auth.auth().signOut()
+                let registerViewController = RegisterViewController()
+                let navigationController = UINavigationController(rootViewController: registerViewController)
+                self.present(navigationController, animated: false, completion: nil)
+            } catch let signOutError as NSError {
+                print ("Error signing out: %@", signOutError)
+            }
         }
         
         alertController.addAction(action1)
