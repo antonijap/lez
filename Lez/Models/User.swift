@@ -35,10 +35,11 @@ class User: Encodable, Hashable {
     var details: Details
     var images: [String]?
     var likes: [String]?
+    var dislikes: [String]?
     
     // Initial user cration, no images, flags are false
     convenience init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details) {
-        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: nil, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [])
+        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: nil, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], dislikes: [])
         self.uid = uid
         self.name = name
         self.email = email
@@ -49,7 +50,7 @@ class User: Encodable, Hashable {
     }
     
     // With everything
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]?, isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String]) {
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]?, isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], dislikes: [String]) {
         self.uid = uid
         self.name = name
         self.email = email
@@ -63,6 +64,7 @@ class User: Encodable, Hashable {
         self.isBanned = isBanned
         self.isHidden = isHidden
         self.likes = likes
+        self.dislikes = dislikes
     }
     
     static func ==(left:User, right:User) -> Bool {

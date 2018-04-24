@@ -131,17 +131,16 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
                 let preferences = Preferences(ageRange: ageRange, lookingFor: [LookingFor.friendship.rawValue, LookingFor.relationship.rawValue])
                 let user = User(uid: "e4sds23492", name: "Somename", email: "some@email.com", age: 32, location: Location(city: "Zagreb", country: "Croatia"), preferences: preferences, details: details)
                 user.images = ["https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6"]
-                
-                for _ in 1...100 {
-                    self.users.append(user)
-                }
-                if let cu =  Auth.auth().currentUser {
-                    FirestoreManager.shared.fetchUser(uid: cu.uid).then { (usr) in
-                        FirestoreManager.shared.fetchPotentialMatches(user: usr)
+
+                if let currentUser =  Auth.auth().currentUser {
+                    FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                        FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
+                            self.users = users
+                            self.setupKoloda()
+                        })
                     }
                 }
-                
-                self.setupKoloda()
+    
             } else {
                 // No User is signed in. Show user the login screen
                 let registerViewController = RegisterViewController()
@@ -219,7 +218,6 @@ extension LoveRoomController {
     
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
         if direction == .right {
-            print("Right")
             var previousLikes: [String] = []
             let currentUser = Auth.auth().currentUser!.uid
             FirestoreManager.shared.fetchUser(uid: currentUser).then { (user) in
@@ -238,6 +236,23 @@ extension LoveRoomController {
                                 self.playMatchAnimation()
                             }
                         })
+                    } else {
+                        print("Error happened.")
+                    }
+                })
+            }
+        } else if direction == .left {
+            var previousDislikes: [String] = []
+            let currentUser = Auth.auth().currentUser!.uid
+            FirestoreManager.shared.fetchUser(uid: currentUser).then { (user) in
+                previousDislikes = user.dislikes!
+                previousDislikes.append(self.users[index].uid)
+                let data = [
+                    "dislikes": previousDislikes
+                ]
+                FirestoreManager.shared.updateCurrentUser(uid: currentUser, data: data).then({ (success) in
+                    if success {
+                        print("Dislike added")
                     } else {
                         print("Error happened.")
                     }

@@ -35,61 +35,64 @@ final class FirestoreManager {
         }
     }
 
-    func fetchPotentialMatches(user: User) {
-        let from = user.preferences.ageRange.from
-        let to = user.preferences.ageRange.to
-        let suitableAges = Array(from...to)
-        if suitableAges.contains(27) {
-            print("Match")
-        } else {
-            print("Ignore")
-        }
-        
-        var allUsers: [User] = []
-        
-        let potentialMatchesRef = db.collection("users")
-                                    .whereField("isBanned", isEqualTo: false)
-                                    .whereField("isHidden", isEqualTo: false)
-                                    .whereField("location.country", isEqualTo: user.location.country)
-
-        potentialMatchesRef.getDocuments { (querySnapshot, err) in
-            if let err = err {
-                print("Error getting documents: \(err)")
+    func fetchPotentialMatches(for user: User) -> Promise<[User]> {
+        return Promise { fulfill, reject in
+            let from = user.preferences.ageRange.from
+            let to = user.preferences.ageRange.to
+            let suitableAges = Array(from...to)
+            if suitableAges.contains(27) {
+                print("Match")
             } else {
-                for document in querySnapshot!.documents {
-//                    print("\(document.documentID) => \(document.data())")
-                    let user = FirestoreManager.shared.parseFirebaseUser(document: document)
-                    allUsers.append(user!)
-                }
+                print("Ignore")
             }
             
-            // Get rid of all users outside suitable ages
-            var filteredAge: [User] = []
-            for match in allUsers {
-                if suitableAges.contains(match.age) {
-                    filteredAge.append(match)
-                }
-            }
+            var allUsers: [User] = []
             
-            // Get the ones with the same preferences.lookingFor
-            var filteredLookingFor: [User] = []
-            for match in filteredAge {
-                for lookingFor in user.preferences.lookingFor {
-                    if match.preferences.lookingFor.contains(lookingFor) {
-                        filteredLookingFor.append(match)
+            let potentialMatchesRef = self.db.collection("users")
+                .whereField("isBanned", isEqualTo: false)
+                .whereField("isHidden", isEqualTo: false)
+                .whereField("location.country", isEqualTo: user.location.country)
+            
+            potentialMatchesRef.getDocuments { (querySnapshot, err) in
+                if let err = err {
+                    print("Error getting documents: \(err)")
+                } else {
+                    for document in querySnapshot!.documents {
+                        //                    print("\(document.documentID) => \(document.data())")
+                        let user = FirestoreManager.shared.parseFirebaseUser(document: document)
+                        allUsers.append(user!)
                     }
                 }
-            }
-            
-            // Remove yourself
-            var filteredMe: [User] = []
-            guard let currentUser = Auth.auth().currentUser else { return }
-            for match in filteredLookingFor {
-                if match.uid != currentUser.uid {
-                    filteredMe.append(match)
+                
+                // Get rid of all users outside suitable ages
+                var filteredAge: [User] = []
+                for match in allUsers {
+                    if suitableAges.contains(match.age) {
+                        filteredAge.append(match)
+                    }
                 }
+                
+                // Get the ones with the same preferences.lookingFor
+                var filteredLookingFor: [User] = []
+                for match in filteredAge {
+                    for lookingFor in user.preferences.lookingFor {
+                        if match.preferences.lookingFor.contains(lookingFor) {
+                            filteredLookingFor.append(match)
+                        }
+                    }
+                }
+                
+                // Remove yourself
+                var filteredMe: [User] = []
+                guard let currentUser = Auth.auth().currentUser else { return }
+                for match in filteredLookingFor {
+                    if match.uid != currentUser.uid {
+                        filteredMe.append(match)
+                    }
+                }
+                print(Array(Set(filteredMe)))
+                fulfill(filteredMe)
             }
-            print(Array(Set(filteredMe)))
         }
     }
     
@@ -245,10 +248,15 @@ final class FirestoreManager {
             return nil
         }
         
+        guard let dislikes = data["dislikes"] as? [String] else {
+            print("Problem with parsing dislikes.")
+            return nil
+        }
+        
         let newLocation = Location(city: city, country: country)
         let newPreferences = Preferences(ageRange: AgeRange(from: from, to: to), lookingFor: lookingFor)
         let newDetails = Details(about: about, dealBreakers: dealBreakers, diet: Diet(rawValue: diet)!)
-        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes)
+        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, dislikes: dislikes)
         return newUser
     }
 }
