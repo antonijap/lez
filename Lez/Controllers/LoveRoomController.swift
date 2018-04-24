@@ -14,6 +14,7 @@ import Lottie
 import Jelly
 import Firebase
 import FBSDKLoginKit
+import Alertift
 
 class KolodaImage: UIImageView {
     var userImage = UIImageView()
@@ -125,17 +126,16 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
                 self.navigationController?.navigationBar.backgroundColor = .white
                 self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
                 self.navigationController?.navigationBar.shadowImage = UIImage()
-                
-                let ageRange = AgeRange(from: 21, to: 32)
-                let details = Details(about: "Hello this is about.", dealBreakers: "This is my dealbreaker.", diet: .vegan)
-                let preferences = Preferences(ageRange: ageRange, lookingFor: [LookingFor.friendship.rawValue, LookingFor.relationship.rawValue])
-                let user = User(uid: "e4sds23492", name: "Somename", email: "some@email.com", age: 32, location: Location(city: "Zagreb", country: "Croatia"), preferences: preferences, details: details)
-                user.images = ["https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6", "https://firebasestorage.googleapis.com/v0/b/lesbian-dating-app.appspot.com/o/images%2F79KDD7K1uUVfIGgToQcQ7WjsIMW2%2Fprofile.jpg?alt=media&token=ed53df00-51aa-4369-a43d-8766bc9e1cf6"]
 
                 if let currentUser =  Auth.auth().currentUser {
                     FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                         FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                             self.users = users
+                            if self.users.isEmpty {
+                                Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
+                                    .action(.default("Okay"))
+                                    .show()
+                            }
                             self.setupKoloda()
                         })
                     }

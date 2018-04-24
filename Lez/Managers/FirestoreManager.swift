@@ -108,9 +108,7 @@ final class FirestoreManager {
                         }
                     }
                 }
-
-                print(Array(Set(finalArray)))
-                fulfill(finalArray)
+                fulfill(Array(Set(finalArray)))
             }
         }
     }
