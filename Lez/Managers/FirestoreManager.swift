@@ -40,11 +40,6 @@ final class FirestoreManager {
             let from = user.preferences.ageRange.from
             let to = user.preferences.ageRange.to
             let suitableAges = Array(from...to)
-            if suitableAges.contains(27) {
-                print("Match")
-            } else {
-                print("Ignore")
-            }
             
             var allUsers: [User] = []
             
@@ -90,8 +85,32 @@ final class FirestoreManager {
                         filteredMe.append(match)
                     }
                 }
-                print(Array(Set(filteredMe)))
-                fulfill(filteredMe)
+                
+                var finalArray: [User] = filteredMe
+                
+                // Remove all liked users
+                for match in filteredMe {
+                    for like in user.likes! {
+                        if let index = finalArray.index(where: { _ in like == match.uid }) {
+                            finalArray.remove(at: index)
+                            print("User liked, removing...")
+                        }
+                    }
+                }
+
+                
+                // Remove all disliked users
+                for match in filteredMe {
+                    for dislike in user.dislikes! {
+                        if let index = finalArray.index(where: { _ in dislike == match.uid }) {
+                            finalArray.remove(at: index)
+                            print("User disliked, removing...")
+                        }
+                    }
+                }
+
+                print(Array(Set(finalArray)))
+                fulfill(finalArray)
             }
         }
     }
