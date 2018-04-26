@@ -9,6 +9,7 @@
 import UIKit
 import moa
 import Auk
+import Firebase
 
 class CardFullscreenViewController: UIViewController {
     
@@ -161,7 +162,9 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         print(indexPath)
         if indexPath == [5, 0] {
-            showReportActionSheet()
+            guard let user = user else { return }
+            guard let currentUser = Auth.auth().currentUser else { return }
+            showReportActionSheet(report: user, reportOwner: currentUser.uid)
         }
         if indexPath == [6, 0] {
             showBlockActionSheet()

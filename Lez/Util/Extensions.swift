@@ -10,19 +10,24 @@ import Foundation
 import UIKit
 import Firebase
 
+enum ReportType: String {
+    case fake
+    case notFemale
+}
+
 extension UIViewController: UIActionSheetDelegate {
-    func showReportActionSheet() {
+    func showReportActionSheet(report user: User, reportOwner: String) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
         let action1 = UIAlertAction(title: "Fake Profile", style: .default) { (action) in
             print("1 is pressed.....")
             self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                // Send message to backend
+                self.report(type: .fake, reportedUser: user.uid, reportOwner: reportOwner)
             })
         }
         let action2 = UIAlertAction(title: "Not Female", style: .default) { (action) in
             self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                // Send message to backend
+                self.report(type: .notFemale, reportedUser: user.uid, reportOwner: reportOwner)
             })
         }
         let action3 = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
@@ -34,6 +39,22 @@ extension UIViewController: UIActionSheetDelegate {
         alertController.addAction(action3)
         
         self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func report(type: ReportType, reportedUser: String, reportOwner: String) {
+        let data: [String: Any] = [
+            "reported": reportedUser,
+            "reportOwner": reportOwner,
+            "type": type.rawValue,
+            "created": FieldValue.serverTimestamp()
+        ]
+        FirestoreManager.shared.addReport(data: data).then { (success) in
+            if success {
+                self.dismiss(animated: true, completion: nil)
+            } else {
+                self.showOkayModal(messageTitle: "Error happened", messageAlert: "Reporting failed. Please, try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+            }
+        }
     }
     
     func showBlockActionSheet() {

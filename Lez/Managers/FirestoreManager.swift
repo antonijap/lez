@@ -21,6 +21,20 @@ final class FirestoreManager {
         db.settings = settings
     }
     
+    func addReport(data: [String: Any]) -> Promise<Bool> {
+        return Promise { fulfill, reject in
+            self.db.collection("reports").addDocument(data: data, completion: { (err) in
+                if let err = err {
+                    print("Error creating report: \(err)")
+                    reject(err)
+                } else {
+                    print("Reported!")
+                    fulfill(true)
+                }
+            })
+        }
+    }
+    
     func addUser(uid: String, data: [String: Any]) -> Promise<Bool> {
         return Promise { fulfill, reject in
             self.db.collection("users").document(uid).setData(data) { err in
