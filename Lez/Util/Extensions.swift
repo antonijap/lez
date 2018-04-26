@@ -57,13 +57,26 @@ extension UIViewController: UIActionSheetDelegate {
         }
     }
     
-    func showBlockActionSheet() {
+    func showBlockActionSheet(currentUser: User, blockedUser: String,  completion: @escaping () -> Void) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
         
-        let action1 = UIAlertAction(title: "Block Profile", style: .default) { (action) in
-            print("1 is pressed.....")
+        let action1 = UIAlertAction(title: "Block User", style: .default) { (action) in
             self.showOkayModal(messageTitle: "Profile Blocked", messageAlert: "You won't see or hear from this user anymore.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                // Send message to backend
+                
+                var blockedUsersArray: [String] = currentUser.blockedUsers!
+                blockedUsersArray.append(blockedUser)
+                let data: [String: Any] = [
+                    "blockedUsers": blockedUsersArray
+                ]
+                FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).then({ (success) in
+                    if success {
+                        self.dismiss(animated: true, completion: nil)
+                        completion()
+                    } else {
+                        self.showOkayModal(messageTitle: "Error happened", messageAlert: "Blocking failed. Please, try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+                    }
+                })
+                
             })
         }
 

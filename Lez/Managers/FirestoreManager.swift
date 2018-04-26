@@ -63,6 +63,8 @@ final class FirestoreManager {
                 .whereField("location.country", isEqualTo: user.location.country)
             
             potentialMatchesRef.getDocuments { (querySnapshot, err) in
+                guard let currentUser = Auth.auth().currentUser else { return }
+
                 if let err = err {
                     print("Error getting documents: \(err)")
                 } else {
@@ -93,7 +95,6 @@ final class FirestoreManager {
                 
                 // Remove yourself
                 var filteredMe: [User] = []
-                guard let currentUser = Auth.auth().currentUser else { return }
                 for match in filteredLookingFor {
                     if match.uid != currentUser.uid {
                         filteredMe.append(match)
@@ -103,7 +104,7 @@ final class FirestoreManager {
                 var finalArray: [User] = filteredMe
                 
                 // Remove all liked users
-                for match in filteredMe {
+                for match in finalArray {
                     for like in user.likes! {
                         if let index = finalArray.index(where: { _ in like == match.uid }) {
                             finalArray.remove(at: index)
@@ -114,7 +115,7 @@ final class FirestoreManager {
 
                 
                 // Remove all disliked users
-                for match in filteredMe {
+                for match in finalArray {
                     for dislike in user.dislikes! {
                         if let index = finalArray.index(where: { _ in dislike == match.uid }) {
                             finalArray.remove(at: index)
@@ -122,6 +123,17 @@ final class FirestoreManager {
                         }
                     }
                 }
+                
+                // Remove blocked users
+                for match in finalArray {
+                    for blocked in user.blockedUsers! {
+                        if let index = finalArray.index(where: { _ in blocked == match.uid }) {
+                            finalArray.remove(at: index)
+                            print("User blocked, removing...")
+                        }
+                    }
+                }
+                
                 fulfill(Array(Set(finalArray)))
             }
         }
@@ -143,7 +155,7 @@ final class FirestoreManager {
         }
     }
     
-    func updateCurrentUser(uid: String, data: [String: Any]) -> Promise<Bool> {
+    func updateUser(uid: String, data: [String: Any]) -> Promise<Bool> {
         return Promise { fulfill, reject in
             let docRef = self.db.collection("users").document(uid)
             docRef.updateData(data) { err in
@@ -284,10 +296,15 @@ final class FirestoreManager {
             return nil
         }
         
+        guard let blockedUsers = data["blockedUsers"] as? [String] else {
+            print("Problem with parsing blocked users.")
+            return nil
+        }
+        
         let newLocation = Location(city: city, country: country)
         let newPreferences = Preferences(ageRange: AgeRange(from: from, to: to), lookingFor: lookingFor)
         let newDetails = Details(about: about, dealBreakers: dealBreakers, diet: Diet(rawValue: diet)!)
-        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, dislikes: dislikes)
+        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, dislikes: dislikes, blockedUsers: blockedUsers)
         return newUser
     }
 }

@@ -85,7 +85,7 @@ class KolodaImage: UIImageView {
 }
 
 
-class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate {
+class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate, CardFullscreenDelegate {
     
     // MARK: - Variables
     
@@ -215,6 +215,10 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
         }
         
     }
+    
+    func dislikeUser() {
+        kolodaView.swipe(.left)
+    }
 }
 
 extension LoveRoomController {
@@ -248,7 +252,7 @@ extension LoveRoomController {
                 let data = [
                     "likes": previousLikes
                 ]
-                FirestoreManager.shared.updateCurrentUser(uid: currentUser, data: data).then({ (success) in
+                FirestoreManager.shared.updateUser(uid: currentUser, data: data).then({ (success) in
                     if success {
                         print("Like added")
                         // Check if it's a match
@@ -272,7 +276,7 @@ extension LoveRoomController {
                 let data = [
                     "dislikes": previousDislikes
                 ]
-                FirestoreManager.shared.updateCurrentUser(uid: currentUser, data: data).then({ (success) in
+                FirestoreManager.shared.updateUser(uid: currentUser, data: data).then({ (success) in
                     if success {
                         print("Dislike added")
                     } else {
@@ -289,6 +293,7 @@ extension LoveRoomController {
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
         let nextViewController = CardFullscreenViewController()
+        nextViewController.delegate = self
         nextViewController.user = self.users[index]
         let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
                                                                    presentationCurve: .easeInEaseOut,

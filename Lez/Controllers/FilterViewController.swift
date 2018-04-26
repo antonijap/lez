@@ -88,7 +88,7 @@ class FilterViewController: FormViewController {
             ]
         ]
         
-        FirestoreManager.shared.updateCurrentUser(uid: uid!, data: data).then { (success) in
+        FirestoreManager.shared.updateUser(uid: uid!, data: data).then { (success) in
             if success {
                 self.navigationController?.popViewController(animated: true)
             } else {

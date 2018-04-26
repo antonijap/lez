@@ -121,7 +121,7 @@ class SetupProfileViewController: FormViewController {
                     ]
                 ]
 
-                FirestoreManager.shared.updateCurrentUser(uid: cu.uid, data: data).then { (success) in
+                FirestoreManager.shared.updateUser(uid: cu.uid, data: data).then { (success) in
                     if success {
                         self.navigationController?.popViewController(animated: true)
                     } else {

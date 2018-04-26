@@ -11,6 +11,10 @@ import moa
 import Auk
 import Firebase
 
+protocol CardFullscreenDelegate {
+    func dislikeUser()
+}
+
 class CardFullscreenViewController: UIViewController {
     
     // MARK: - Variables
@@ -19,7 +23,8 @@ class CardFullscreenViewController: UIViewController {
     var user: User?
     let closeButton = UIButton()
     let tabBar = UITabBar()
-
+    var delegate: CardFullscreenDelegate?
+    
     // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
@@ -92,10 +97,10 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: UITableViewCell
+        guard let user = user else { return UITableViewCell() }
         switch sections[indexPath.section] {
             case.headerCell:
                 let headerCell = tableView.dequeueReusableCell(withIdentifier: HeaderCell.reuseID) as! HeaderCell
-                guard let user = user else { return UITableViewCell() }
                 headerCell.titleLabel.text = user.name + ", " + "\(user.age)"
                 headerCell.bodyLabel.text = "\(user.location.city)"
                 cell = headerCell
@@ -103,7 +108,6 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
             case .titleWithDescription:
                 let titleWithDescriptionCell = tableView.dequeueReusableCell(withIdentifier: TitleWithDescriptionCell.reuseID) as! TitleWithDescriptionCell
                 if indexPath.section == 1 {
-                    guard let user = user else { return UITableViewCell() }
                     titleWithDescriptionCell.titleLabel.textColor = .black
                     titleWithDescriptionCell.titleLabel.font = UIFont.systemFont(ofSize: 21.0)
                     titleWithDescriptionCell.titleLabel.text = user.name + ", " + "\(user.age)"
@@ -119,19 +123,16 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
                     titleWithDescriptionCell.bodyLabel.text = "Relationship, Friendship"
                 }
                 if indexPath.section == 3 {
-                    guard let user = user else { return UITableViewCell() }
                     titleWithDescriptionCell.titleLabel.text = "About"
                     titleWithDescriptionCell.bodyLabel.text = user.details.about
                 }
                 if indexPath.section == 4 {
-                    guard let user = user else { return UITableViewCell() }
                     titleWithDescriptionCell.titleLabel.text = "Dealbreakers"
                     titleWithDescriptionCell.bodyLabel.text = user.details.dealBreakers
                 }
                 cell = titleWithDescriptionCell
             
             case .profileImages:
-                guard let user = user else { return UITableViewCell() }
                 let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
                 let url = user.images
                 for u in url! {
@@ -160,14 +161,18 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        print(indexPath)
+        guard let currentUser = Auth.auth().currentUser else { return }
+        guard let fullscreenUser = user else { return }
+
         if indexPath == [5, 0] {
-            guard let user = user else { return }
-            guard let currentUser = Auth.auth().currentUser else { return }
-            showReportActionSheet(report: user, reportOwner: currentUser.uid)
+            showReportActionSheet(report: fullscreenUser, reportOwner: currentUser.uid)
         }
         if indexPath == [6, 0] {
-            showBlockActionSheet()
+            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                self.showBlockActionSheet(currentUser: user, blockedUser: fullscreenUser.uid, completion: {
+                    self.delegate?.dislikeUser()
+                })
+            }
         }
     }
 }
