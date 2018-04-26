@@ -85,7 +85,7 @@ class KolodaImage: UIImageView {
 }
 
 
-class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSource {
+class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate {
     
     // MARK: - Variables
     
@@ -185,13 +185,35 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
     }
     
     @objc func showFilters() {
-        let nextViewController = FilterViewController()
-        let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
-                                                                   presentationCurve: .easeInEaseOut,
-                                                                   backgroundStyle: .blur(effectStyle: .light))
-        self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
-        self.jellyAnimator?.prepare(viewController: nextViewController)
-        present(nextViewController, animated: true, completion: nil)
+//        let nextViewController = FilterViewController()
+//        let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
+//                                                                   presentationCurve: .easeInEaseOut,
+//                                                                   backgroundStyle: .blur(effectStyle: .light))
+//        self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+//        self.jellyAnimator?.prepare(viewController: nextViewController)
+//        present(nextViewController, animated: true, completion: nil)
+        
+        let filterViewController = FilterViewController()
+        filterViewController.delegate = self
+        let navigationController = UINavigationController(rootViewController: filterViewController)
+        self.present(navigationController, animated: false, completion: nil)
+    }
+    
+    func refreshKolodaData() {
+        print("Reloading users")
+        guard let currentUserUid = Auth.auth().currentUser?.uid else { return }
+        FirestoreManager.shared.fetchUser(uid: currentUserUid).then { (user) in
+            FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
+                self.users = users
+                if self.users.isEmpty {
+                    Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
+                        .action(.default("Okay"))
+                        .show()
+                }
+                self.kolodaView.reloadData()
+            })
+        }
+        
     }
 }
 
