@@ -85,7 +85,7 @@ class KolodaImage: UIImageView {
 }
 
 
-class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate, CardFullscreenDelegate {
+class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate, CardFullscreenDelegate {
     
     // MARK: - Variables
     
@@ -95,6 +95,7 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
     var superview = UIView()
     let likeImageView = UIImageView()
     var jellyAnimator: JellyAnimator?
+    var user: User?
     
     // MARK: - Lifecycle
     
@@ -116,7 +117,7 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
 //                    let navigationController = UINavigationController(rootViewController: setupProfileViewController)
 //                    self.present(navigationController, animated: false, completion: nil)
 //                }
-                self.navigationItem.title = "Love Room"
+                self.navigationItem.title = "Match Room"
                 let filterButton = UIButton(type: .custom)
                 filterButton.setImage(UIImage(named: "Filter"), for: .normal)
                 filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
@@ -129,6 +130,7 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
 
                 if let currentUser =  Auth.auth().currentUser {
                     FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                        self.user = user
                         FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                             self.users = users
                             if self.users.isEmpty {
@@ -221,7 +223,7 @@ class LoveRoomController: UIViewController, KolodaViewDelegate, KolodaViewDataSo
     }
 }
 
-extension LoveRoomController {
+extension MatchViewController {
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
         let view = LezKolodaView()
         view.imageView.moa.url = users[index].images!.first
@@ -245,21 +247,32 @@ extension LoveRoomController {
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
         if direction == .right {
             var previousLikes: [String] = []
-            let currentUser = Auth.auth().currentUser!.uid
-            FirestoreManager.shared.fetchUser(uid: currentUser).then { (user) in
+            guard let user = user else { return }
+            FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
                 previousLikes = user.likes!
                 previousLikes.append(self.users[index].uid)
                 let data = [
                     "likes": previousLikes
                 ]
-                FirestoreManager.shared.updateUser(uid: currentUser, data: data).then({ (success) in
+                FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
                     if success {
-                        print("Like added")
-                        // Check if it's a match
-                        FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: currentUser, likedUserUid: self.users[index].uid).then({ (success) in
+                        FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
                             if success {
-                                print("Ok, now that this user is a match let's open a chat!")
-                                self.playMatchAnimation()
+                                var participants: [String] = []
+                                participants.append(user.uid)
+                                participants.append(self.users[index].uid)
+                                let data: [String: Any] = [
+                                    "created": FieldValue.serverTimestamp(),
+                                    "participants": participants,
+                                    "lastUpdated": FieldValue.serverTimestamp()
+                                ]
+                                FirestoreManager.shared.addEmptyChat(data: data, for: user.uid).then({ (success) in
+                                    if success {
+                                        self.playMatchAnimation()
+                                        print("Chat Added")
+                                        // Offer to open chat or keep playing
+                                    }
+                                })
                             }
                         })
                     } else {

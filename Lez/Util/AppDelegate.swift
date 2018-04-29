@@ -15,7 +15,7 @@ class CustomTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let loveRoomController = UINavigationController(rootViewController: LoveRoomController())
+        let loveRoomController = UINavigationController(rootViewController: MatchViewController())
         loveRoomController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Heart"), tag: 0)
         loveRoomController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
         

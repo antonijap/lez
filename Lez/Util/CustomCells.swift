@@ -13,7 +13,7 @@ import moa
 import SkeletonView
 import JGProgressHUD
 
-enum Sections {
+enum MenuSections {
     case titleWithDescription
     case profileImages
     case simpleMenu
@@ -22,8 +22,33 @@ enum Sections {
     case headerCell
 }
 
+enum ChatSections {
+    case newChat
+    case chat
+}
+enum MessagesSections {
+    case myMessageCell
+    case herMessageCell
+}
+
 protocol ReuseIdentifiable {
     static var reuseID: String { get }
+}
+
+extension MyMessageCell: ReuseIdentifiable {
+    static var reuseID: String { return String(describing: self) }
+}
+
+extension HerMessageCell: ReuseIdentifiable {
+    static var reuseID: String { return String(describing: self) }
+}
+
+extension NewChatCell: ReuseIdentifiable {
+    static var reuseID: String { return String(describing: self) }
+}
+
+extension ChatCell: ReuseIdentifiable {
+    static var reuseID: String { return String(describing: self) }
 }
 
 extension ProfileImagesCell: ReuseIdentifiable {
@@ -48,6 +73,238 @@ extension IconMenuCell: ReuseIdentifiable {
 
 extension PremiumMenuCell: ReuseIdentifiable {
     static var reuseID: String { return String(describing: self) }
+}
+
+class MyMessageCell: UITableViewCell {
+    var messageLabel = UILabel()
+    var bubbleView = UIView()
+
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
+        setupBubbleView()
+        layoutIfNeeded()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupBubbleView() {
+        addSubview(bubbleView)
+        bubbleView.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().inset(4)
+            make.right.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview()
+            make.left.equalToSuperview().inset(70)
+        }
+        bubbleView.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
+        bubbleView.layer.cornerRadius = 10
+        
+        setupMessage()
+    }
+    
+    func setupMessage() {
+        bubbleView.addSubview(messageLabel)
+        messageLabel.snp.makeConstraints { (make) in
+            make.top.bottom.left.right.equalToSuperview().inset(8)
+        }
+        messageLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
+        messageLabel.numberOfLines = 100
+    }
+}
+
+class HerMessageCell: UITableViewCell {
+    var messageLabel = UILabel()
+    var bubbleView = UIView()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
+        setupBubbleView()
+        layoutIfNeeded()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupBubbleView() {
+        addSubview(bubbleView)
+        bubbleView.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().inset(4)
+            make.left.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview()
+            make.right.equalToSuperview().inset(70)
+        }
+        bubbleView.backgroundColor = UIColor(red:0.91, green:1.00, blue:0.94, alpha:1.00)
+        bubbleView.layer.cornerRadius = 10
+        
+        setupMessage()
+    }
+    
+    func setupMessage() {
+        bubbleView.addSubview(messageLabel)
+        messageLabel.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(16)
+        }
+        messageLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
+        messageLabel.numberOfLines = 100
+    }
+}
+
+class NewChatCell: UITableViewCell {
+    var userPictureView = UIImageView()
+    var titleLabel = UILabel()
+    let separatorView = UIView()
+    let ctaButton = UIButton()
+    let newTag = UIButton()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
+        setupUserPictureView()
+        setupNameLabel()
+        setupSeparatorView()
+        setupCtaButton()
+        setupNewTag()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupUserPictureView() {
+        addSubview(userPictureView)
+        userPictureView.snp.makeConstraints { (make) in
+            make.size.equalTo(64)
+            make.left.equalToSuperview().inset(24)
+            make.top.equalToSuperview().offset(24)
+        }
+        userPictureView.makeOvalWithImage(UIImage(named: "Taylor")!)
+    }
+    
+    func setupNameLabel() {
+        addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(userPictureView.snp.right).offset(16)
+            make.top.equalTo(userPictureView.snp.top).inset(8)
+            make.right.equalToSuperview().inset(65)
+        }
+        titleLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .bold)
+    }
+    
+    func setupSeparatorView() {
+        addSubview(separatorView)
+        separatorView.snp.makeConstraints { (make) in
+            make.right.equalToSuperview()
+            make.left.equalToSuperview().inset(24)
+            make.bottom.equalToSuperview()
+            make.height.equalTo(1)
+            make.top.equalTo(userPictureView.snp.bottom).offset(16)
+        }
+        separatorView.backgroundColor = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00)
+    }
+    
+    func setupCtaButton() {
+        addSubview(ctaButton)
+        ctaButton.snp.makeConstraints { (make) in
+            make.left.equalTo(titleLabel.snp.left)
+            make.bottom.equalTo(userPictureView.snp.bottom).inset(8)
+        }
+        ctaButton.setTitle("Start Chat", for: .normal)
+        ctaButton.setTitleColor(.purple, for: .normal)
+        ctaButton.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
+    }
+    
+    func setupNewTag() {
+        addSubview(newTag)
+        newTag.snp.makeConstraints { (make) in
+            make.centerY.equalTo(userPictureView.snp.centerY)
+            make.right.equalToSuperview().inset(16)
+        }
+        newTag.setTitle("NEW", for: .normal)
+        newTag.setTitleColor(.white, for: .normal)
+        newTag.titleLabel?.font = UIFont.systemFont(ofSize: 12.0, weight: .bold)
+        newTag.backgroundColor = .purple
+        newTag.isUserInteractionEnabled = false
+        newTag.layer.cornerRadius = 10
+        newTag.contentEdgeInsets = UIEdgeInsets(top: 4, left: 8, bottom: 4, right: 8)
+    }
+}
+
+class ChatCell: UITableViewCell {
+    var userPictureView = UIImageView()
+    var titleLabel = UILabel()
+    let separatorView = UIView()
+    var messageLabel = UILabel()
+    var timeLabel = UILabel()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        selectionStyle = .none
+        setupUserPictureView()
+        setupNameLabel()
+        setupSeparatorView()
+        setupMessageLabel()
+        setupTimeLabel()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupUserPictureView() {
+        addSubview(userPictureView)
+        userPictureView.snp.makeConstraints { (make) in
+            make.size.equalTo(64)
+            make.left.equalToSuperview().inset(24)
+            make.top.equalToSuperview().offset(24)
+        }
+        userPictureView.makeOvalWithImage(UIImage(named: "Taylor")!)
+    }
+    
+    func setupNameLabel() {
+        addSubview(titleLabel)
+        titleLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(userPictureView.snp.right).offset(16)
+            make.top.equalTo(userPictureView.snp.top).inset(11)
+            make.right.equalToSuperview().inset(80)
+        }
+        titleLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .bold)
+    }
+    
+    func setupSeparatorView() {
+        addSubview(separatorView)
+        separatorView.snp.makeConstraints { (make) in
+            make.right.equalToSuperview()
+            make.left.equalToSuperview().inset(24)
+            make.bottom.equalToSuperview()
+            make.height.equalTo(1)
+            make.top.equalTo(userPictureView.snp.bottom).offset(16)
+        }
+        separatorView.backgroundColor = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00)
+    }
+    
+    func setupMessageLabel() {
+        addSubview(messageLabel)
+        messageLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(titleLabel.snp.left)
+            make.bottom.equalTo(userPictureView.snp.bottom).inset(11)
+            make.right.equalToSuperview().inset(16)
+        }
+        messageLabel.textColor = .gray
+    }
+    func setupTimeLabel() {
+        addSubview(timeLabel)
+        timeLabel.snp.makeConstraints { (make) in
+            make.right.equalToSuperview().inset(16)
+            make.top.equalTo(titleLabel.snp.top)
+        }
+        timeLabel.text = "Yesterday"
+        timeLabel.textColor = .gray
+        timeLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+    }
 }
 
 class IconMenuCell: UITableViewCell {
@@ -265,7 +522,6 @@ class PremiumMenuCell: UITableViewCell {
         premiumButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
         premiumButton.layer.cornerRadius = 10
         premiumButton.setTitle("2.99", for: .normal)
-        
     }
     
     func setupSeparatorView() {

@@ -200,3 +200,74 @@ extension UIImage {
         return result
     }
 }
+
+extension UIImageView {
+    public func makeOvalWithImage(_ anyImage: UIImage) {
+        self.contentMode = UIViewContentMode.scaleAspectFill
+        self.layer.cornerRadius = 64 / 2
+        self.layer.masksToBounds = false
+        self.clipsToBounds = true
+        
+        // make square(* must to make circle),
+        // resize(reduce the kilobyte) and
+        // fix rotation.
+        self.image = anyImage
+    }
+}
+
+extension Date {
+    func toString( dateFormat format  : String ) -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: self)
+    }
+}
+
+//MARK: - Observers
+extension UIViewController {
+    
+    func addObserverForNotification(_ notificationName: Notification.Name, actionBlock: @escaping (Notification) -> Void) {
+        NotificationCenter.default.addObserver(forName: notificationName, object: nil, queue: OperationQueue.main, using: actionBlock)
+    }
+    
+    func removeObserver(_ observer: AnyObject, notificationName: Notification.Name) {
+        NotificationCenter.default.removeObserver(observer, name: notificationName, object: nil)
+    }
+}
+
+//MARK: - Keyboard handling
+extension UIViewController {
+    
+    typealias KeyboardHeightClosure = (CGFloat) -> ()
+    
+    func addKeyboardChangeFrameObserver(willShow willShowClosure: KeyboardHeightClosure?,
+                                        willHide willHideClosure: KeyboardHeightClosure?) {
+        NotificationCenter.default.addObserver(forName: NSNotification.Name.UIKeyboardWillChangeFrame,
+                                               object: nil, queue: OperationQueue.main, using: { [weak self](notification) in
+                                                if let userInfo = notification.userInfo,
+                                                    let frame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
+                                                    let duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? Double,
+                                                    let c = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? UInt,
+                                                    let kFrame = self?.view.convert(frame, from: nil),
+                                                    let kBounds = self?.view.bounds {
+                                                    
+                                                    let animationType = UIViewAnimationOptions(rawValue: c)
+                                                    let kHeight = kFrame.size.height
+                                                    UIView.animate(withDuration: duration, delay: 0, options: animationType, animations: {
+                                                        if kBounds.intersects(kFrame) { // keyboard will be shown
+                                                            willShowClosure?(kHeight)
+                                                        } else { // keyboard will be hidden
+                                                            willHideClosure?(kHeight)
+                                                        }
+                                                    }, completion: nil)
+                                                } else {
+                                                    print("Invalid conditions for UIKeyboardWillChangeFrameNotification")
+                                                }
+        })
+    }
+    
+    func removeKeyboardObserver() {
+        removeObserver(self, notificationName: NSNotification.Name.UIKeyboardWillChangeFrame)
+    }
+}
+

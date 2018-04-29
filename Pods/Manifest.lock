@@ -15,6 +15,7 @@ PODS:
     - BoringSSL/Interface (= 10.0.2)
   - BoringSSL/Interface (10.0.2)
   - Cache (4.2.0)
+  - Chatto (3.3.1)
   - Eureka (4.1.1)
   - FBSDKCoreKit (4.32.0):
     - Bolts (~> 1.7)
@@ -35,14 +36,14 @@ PODS:
   - FirebaseAnalytics (4.2.0):
     - FirebaseCore (~> 4.0)
     - FirebaseInstanceID (~> 2.0)
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
     - nanopb (~> 0.3)
   - FirebaseAuth (4.6.1):
     - FirebaseAnalytics (~> 4.2)
-    - GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)
+    - "GoogleToolboxForMac/NSDictionary+URLArguments (~> 2.1)"
     - GTMSessionFetcher/Core (~> 1.1)
   - FirebaseCore (4.0.20):
-    - GoogleToolboxForMac/NSData+zlib (~> 2.1)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
   - FirebaseFirestore (0.11.0):
     - FirebaseAnalytics (~> 4.1)
     - FirebaseCore (~> 4.0)
@@ -60,13 +61,13 @@ PODS:
   - GoogleToolboxForMac/DebugUtils (2.1.4):
     - GoogleToolboxForMac/Defines (= 2.1.4)
   - GoogleToolboxForMac/Defines (2.1.4)
-  - GoogleToolboxForMac/NSData+zlib (2.1.4):
+  - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
     - GoogleToolboxForMac/Defines (= 2.1.4)
-  - GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4):
+  - "GoogleToolboxForMac/NSDictionary+URLArguments (2.1.4)":
     - GoogleToolboxForMac/DebugUtils (= 2.1.4)
     - GoogleToolboxForMac/Defines (= 2.1.4)
-    - GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)
-  - GoogleToolboxForMac/NSString+URLArguments (2.1.4)
+    - "GoogleToolboxForMac/NSString+URLArguments (= 2.1.4)"
+  - "GoogleToolboxForMac/NSString+URLArguments (2.1.4)"
   - gRPC (1.11.0):
     - gRPC-RxLibrary (= 1.11.0)
     - gRPC/Main (= 1.11.0)
@@ -107,9 +108,9 @@ PODS:
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - pop (1.0.10)
-  - PromisesObjC (1.1.0)
-  - PromisesSwift (1.1.0):
-    - PromisesObjC (= 1.1.0)
+  - PromisesObjC (1.1.1)
+  - PromisesSwift (1.1.1):
+    - PromisesObjC (= 1.1.1)
   - Protobuf (3.5.0)
   - SkeletonView (1.1.1)
   - SnapKit (4.0.0)
@@ -117,6 +118,7 @@ PODS:
 DEPENDENCIES:
   - Alertift (~> 3.0)
   - Auk (~> 8.0)
+  - Chatto (= 3.3.1)
   - FBSDKLoginKit
   - Firebase/Auth
   - Firebase/Core
@@ -134,12 +136,56 @@ DEPENDENCIES:
   - SkeletonView
   - SnapKit (~> 4.0.0)
 
+SPEC REPOS:
+  https://github.com/CocoaPods/Specs.git:
+    - Alertift
+    - Auk
+    - Bolts
+    - BoringSSL
+    - Cache
+    - Chatto
+    - Eureka
+    - FBSDKCoreKit
+    - FBSDKLoginKit
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseAuth
+    - FirebaseCore
+    - FirebaseFirestore
+    - FirebaseInstanceID
+    - FirebaseStorage
+    - GooglePlacesRow
+    - GoogleToolboxForMac
+    - gRPC
+    - gRPC-Core
+    - gRPC-ProtoRPC
+    - gRPC-RxLibrary
+    - GTMSessionFetcher
+    - Hue
+    - ImagePicker
+    - Imaginary
+    - Jelly
+    - JGProgressHUD
+    - Koloda
+    - leveldb-library
+    - Lightbox
+    - lottie-ios
+    - moa
+    - nanopb
+    - pop
+    - PromisesObjC
+    - PromisesSwift
+    - Protobuf
+    - SkeletonView
+    - SnapKit
+
 SPEC CHECKSUMS:
   Alertift: df0df24a557e47360180092f5f3fceb675c96b51
   Auk: 82be62a2cf650437fe745c81b12ac2440a0f682c
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
+  Chatto: 24a6c9b0c91b08130466888b8b61563b90191c6f
   Eureka: b88fb930e42c79f8c03c373d0fcdc28c1d6c50ed
   FBSDKCoreKit: 55d7f2ac45d9c4b9b6119f4e43900fe84b9b7b1b
   FBSDKLoginKit: 32ac05c2a59952c363c2e85aafa8f73ba93bcbad
@@ -169,12 +215,12 @@ SPEC CHECKSUMS:
   moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
-  PromisesObjC: 9ee393d5fb075baf186b99a00608f5ce3fb341fd
-  PromisesSwift: 057256ad36b989ff105c1b748afb3a3d57f3dd29
+  PromisesObjC: c6ea89661f018e55cd83dd7d0b5a7751f5e63c23
+  PromisesSwift: 23ae4ad1c81963d35a37a98b83dd1e63403c54b8
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
 
-PODFILE CHECKSUM: 97e2d7653a2bdf5bf003b25cba18b600837fa213
+PODFILE CHECKSUM: 82f8c80b7bdeedf392b580c9156b320c6228f87b
 
-COCOAPODS: 1.4.0
+COCOAPODS: 1.5.0.beta.1

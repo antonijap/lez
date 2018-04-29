@@ -19,7 +19,7 @@ class CardFullscreenViewController: UIViewController {
     
     // MARK: - Variables
     let tableView = UITableView()
-    let sections: [Sections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu]
+    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu]
     var user: User?
     let closeButton = UIButton()
     let tabBar = UITabBar()
@@ -120,7 +120,8 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
                 }
                 if indexPath.section == 2 {
                     titleWithDescriptionCell.titleLabel.text = "I am here for"
-                    titleWithDescriptionCell.bodyLabel.text = "Relationship, Friendship"
+                    let string = user.preferences.lookingFor.joined(separator: ", ")
+                    titleWithDescriptionCell.bodyLabel.text = string
                 }
                 if indexPath.section == 3 {
                     titleWithDescriptionCell.titleLabel.text = "About"

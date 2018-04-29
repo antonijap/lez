@@ -16,7 +16,7 @@
 		CF1C6C55206F68650018DCD9 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C54206F68650018DCD9 /* ChatViewController.swift */; };
 		CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */; };
 		CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF206203C13170054CC1A /* AppDelegate.swift */; };
-		CF2DF209203C13170054CC1A /* LoveRoomController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF208203C13170054CC1A /* LoveRoomController.swift */; };
+		CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF208203C13170054CC1A /* MatchViewController.swift */; };
 		CF2DF20E203C13170054CC1A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20D203C13170054CC1A /* Assets.xcassets */; };
 		CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */; };
 		CF2DF21C203C13180054CC1A /* LezTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF21B203C13180054CC1A /* LezTests.swift */; };
@@ -24,6 +24,8 @@
 		CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */; };
 		CF425B4620679D8F00D6A1FE /* SetupProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF425B4520679D8F00D6A1FE /* SetupProfileViewController.swift */; };
 		CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */; };
+		CF8C5DFE2094C08C00538C67 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */; };
+		CF8C5E002094C84F00538C67 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C5DFF2094C84F00538C67 /* Chat.swift */; };
 		CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C12066B15900114EC4 /* Extensions.swift */; };
 		CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */; };
 		CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */; };
@@ -67,7 +69,7 @@
 		CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CF2DF203203C13170054CC1A /* Lez.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lez.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF2DF206203C13170054CC1A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CF2DF208203C13170054CC1A /* LoveRoomController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoveRoomController.swift; sourceTree = "<group>"; };
+		CF2DF208203C13170054CC1A /* MatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController.swift; sourceTree = "<group>"; };
 		CF2DF20D203C13170054CC1A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CF2DF210203C13170054CC1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CF2DF212203C13170054CC1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -80,6 +82,8 @@
 		CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFullscreenViewController.swift; sourceTree = "<group>"; };
 		CF425B4520679D8F00D6A1FE /* SetupProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupProfileViewController.swift; sourceTree = "<group>"; };
 		CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezKolodaView.swift; sourceTree = "<group>"; };
+		CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
+		CF8C5DFF2094C84F00538C67 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		CFB7C4C12066B15900114EC4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
 		CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
@@ -181,15 +185,15 @@
 		CF425B472067EA3F00D6A1FE /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				CF2DF208203C13170054CC1A /* LoveRoomController.swift */,
+				CF2DF208203C13170054CC1A /* MatchViewController.swift */,
 				CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */,
 				CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */,
 				CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */,
 				CF425B4520679D8F00D6A1FE /* SetupProfileViewController.swift */,
 				CF1C6C52206F631A0018DCD9 /* ImageGalleryViewController.swift */,
-				CF1C6C54206F68650018DCD9 /* ChatViewController.swift */,
 				CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */,
-				CFE0BD662073DD810055FC73 /* CustomCells.swift */,
+				CF1C6C54206F68650018DCD9 /* ChatViewController.swift */,
+				CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -198,6 +202,7 @@
 			isa = PBXGroup;
 			children = (
 				CF04FAE2204161A7001CB034 /* User.swift */,
+				CF8C5DFF2094C84F00538C67 /* Chat.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -217,6 +222,7 @@
 				CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */,
 				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
 				CFB7C4C12066B15900114EC4 /* Extensions.swift */,
+				CFE0BD662073DD810055FC73 /* CustomCells.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -265,7 +271,6 @@
 				CF2DF200203C13170054CC1A /* Frameworks */,
 				CF2DF201203C13170054CC1A /* Resources */,
 				C25547941FA7A89D98F58EEB /* [CP] Embed Pods Frameworks */,
-				AC12F7D7089969BF81CBB72E /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -284,8 +289,6 @@
 				CF2DF213203C13180054CC1A /* Sources */,
 				CF2DF214203C13180054CC1A /* Frameworks */,
 				CF2DF215203C13180054CC1A /* Resources */,
-				EB74DE7F6C3D724735F65BC6 /* [CP] Embed Pods Frameworks */,
-				5DA18A9120F35C8B128E1D8A /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -305,8 +308,6 @@
 				CF2DF21E203C13180054CC1A /* Sources */,
 				CF2DF21F203C13180054CC1A /* Frameworks */,
 				CF2DF220203C13180054CC1A /* Resources */,
-				4C55E94FAA91AFADCF2AAEB7 /* [CP] Embed Pods Frameworks */,
-				7CF9BF5D7DB9AD39116463E0 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -419,21 +420,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4C55E94FAA91AFADCF2AAEB7 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		5B6B181FEAA1AE7C548057B1 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -450,21 +436,6 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5DA18A9120F35C8B128E1D8A /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LezTests/Pods-LezTests-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		6E7912947BA80633995C7269 /* [CP] Check Pods Manifest.lock */ = {
@@ -485,36 +456,6 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		7CF9BF5D7DB9AD39116463E0 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		AC12F7D7089969BF81CBB72E /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 		C25547941FA7A89D98F58EEB /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -527,6 +468,7 @@
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
 				"${BUILT_PRODUCTS_DIR}/Cache/Cache.framework",
+				"${BUILT_PRODUCTS_DIR}/Chatto/Chatto.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
@@ -562,6 +504,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Cache.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Chatto.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
@@ -595,21 +538,6 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		EB74DE7F6C3D724735F65BC6 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-LezTests/Pods-LezTests-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -619,6 +547,7 @@
 			files = (
 				CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */,
 				CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */,
+				CF8C5E002094C84F00538C67 /* Chat.swift in Sources */,
 				CF425B4620679D8F00D6A1FE /* SetupProfileViewController.swift in Sources */,
 				CF1C6C55206F68650018DCD9 /* ChatViewController.swift in Sources */,
 				CF1C6C53206F631A0018DCD9 /* ImageGalleryViewController.swift in Sources */,
@@ -628,9 +557,10 @@
 				CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */,
 				CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */,
 				CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */,
-				CF2DF209203C13170054CC1A /* LoveRoomController.swift in Sources */,
+				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,
 				CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */,
 				CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */,
+				CF8C5DFE2094C08C00538C67 /* MessagesViewController.swift in Sources */,
 				CF04FAE3204161A7001CB034 /* User.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

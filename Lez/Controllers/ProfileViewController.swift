@@ -18,7 +18,7 @@ class ProfileViewController: UIViewController {
 
     // MARK: - Variables
     let tableView = UITableView()
-    let sections: [Sections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .premiumMenu, .simpleMenu, .simpleMenu, .simpleMenu]
+    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .premiumMenu, .simpleMenu, .simpleMenu, .simpleMenu]
     var user: User?
     let tabBar = UITabBar()
     let hud = JGProgressHUD(style: .dark)
