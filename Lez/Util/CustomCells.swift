@@ -262,7 +262,7 @@ class ChatCell: UITableViewCell {
             make.top.equalToSuperview().inset(16)
         }
         userPictureView.backgroundColor = .gray
-        userPictureView.layer.cornerRadius = userPictureView.frame.height / 2
+        userPictureView.layer.cornerRadius = 48 / 2
         userPictureView.clipsToBounds = true
     }
     
