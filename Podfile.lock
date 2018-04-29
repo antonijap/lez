@@ -15,7 +15,6 @@ PODS:
     - BoringSSL/Interface (= 10.0.2)
   - BoringSSL/Interface (10.0.2)
   - Cache (4.2.0)
-  - Chatto (3.3.1)
   - Eureka (4.1.1)
   - FBSDKCoreKit (4.32.0):
     - Bolts (~> 1.7)
@@ -114,11 +113,11 @@ PODS:
   - Protobuf (3.5.0)
   - SkeletonView (1.1.1)
   - SnapKit (4.0.0)
+  - SwiftDate (4.5.1)
 
 DEPENDENCIES:
   - Alertift (~> 3.0)
   - Auk (~> 8.0)
-  - Chatto (= 3.3.1)
   - FBSDKLoginKit
   - Firebase/Auth
   - Firebase/Core
@@ -135,6 +134,7 @@ DEPENDENCIES:
   - PromisesSwift (~> 1.0)
   - SkeletonView
   - SnapKit (~> 4.0.0)
+  - SwiftDate (~> 4.0)
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
@@ -143,7 +143,6 @@ SPEC REPOS:
     - Bolts
     - BoringSSL
     - Cache
-    - Chatto
     - Eureka
     - FBSDKCoreKit
     - FBSDKLoginKit
@@ -178,6 +177,7 @@ SPEC REPOS:
     - Protobuf
     - SkeletonView
     - SnapKit
+    - SwiftDate
 
 SPEC CHECKSUMS:
   Alertift: df0df24a557e47360180092f5f3fceb675c96b51
@@ -185,7 +185,6 @@ SPEC CHECKSUMS:
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
-  Chatto: 24a6c9b0c91b08130466888b8b61563b90191c6f
   Eureka: b88fb930e42c79f8c03c373d0fcdc28c1d6c50ed
   FBSDKCoreKit: 55d7f2ac45d9c4b9b6119f4e43900fe84b9b7b1b
   FBSDKLoginKit: 32ac05c2a59952c363c2e85aafa8f73ba93bcbad
@@ -220,7 +219,8 @@ SPEC CHECKSUMS:
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   SkeletonView: 041053e904504e7d8db83df166e599be75659fe1
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
+  SwiftDate: 7b56d42a221f582047287deb256b23fc5ed49a60
 
-PODFILE CHECKSUM: 82f8c80b7bdeedf392b580c9156b320c6228f87b
+PODFILE CHECKSUM: 0d1cd221309738dd6c31f59ee0ba373a2b5b2ffe
 
 COCOAPODS: 1.5.0.beta.1

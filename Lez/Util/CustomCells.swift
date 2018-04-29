@@ -244,8 +244,8 @@ class ChatCell: UITableViewCell {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
         setupUserPictureView()
-        setupNameLabel()
         setupSeparatorView()
+        setupNameLabel()
         setupMessageLabel()
         setupTimeLabel()
     }
@@ -257,21 +257,33 @@ class ChatCell: UITableViewCell {
     func setupUserPictureView() {
         addSubview(userPictureView)
         userPictureView.snp.makeConstraints { (make) in
-            make.size.equalTo(64)
-            make.left.equalToSuperview().inset(24)
-            make.top.equalToSuperview().offset(24)
+            make.size.equalTo(48)
+            make.left.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(16)
         }
-        userPictureView.makeOvalWithImage(UIImage(named: "Taylor")!)
+        userPictureView.backgroundColor = .gray
+        userPictureView.layer.cornerRadius = userPictureView.frame.height / 2
+        userPictureView.clipsToBounds = true
     }
     
     func setupNameLabel() {
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints { (make) in
             make.left.equalTo(userPictureView.snp.right).offset(16)
-            make.top.equalTo(userPictureView.snp.top).inset(11)
+            make.top.equalTo(userPictureView.snp.top)
             make.right.equalToSuperview().inset(80)
         }
         titleLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .bold)
+    }
+    
+    func setupMessageLabel() {
+        addSubview(messageLabel)
+        messageLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(titleLabel.snp.left)
+            make.right.equalToSuperview().inset(8)
+            make.bottom.equalTo(userPictureView.snp.bottom)
+        }
+        messageLabel.textColor = .gray
     }
     
     func setupSeparatorView() {
@@ -286,22 +298,12 @@ class ChatCell: UITableViewCell {
         separatorView.backgroundColor = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00)
     }
     
-    func setupMessageLabel() {
-        addSubview(messageLabel)
-        messageLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(titleLabel.snp.left)
-            make.bottom.equalTo(userPictureView.snp.bottom).inset(11)
-            make.right.equalToSuperview().inset(16)
-        }
-        messageLabel.textColor = .gray
-    }
     func setupTimeLabel() {
         addSubview(timeLabel)
         timeLabel.snp.makeConstraints { (make) in
             make.right.equalToSuperview().inset(16)
             make.top.equalTo(titleLabel.snp.top)
         }
-        timeLabel.text = "Yesterday"
         timeLabel.textColor = .gray
         timeLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
     }

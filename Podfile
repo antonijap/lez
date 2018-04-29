@@ -24,7 +24,7 @@ target 'Lez' do
   pod 'Alertift', '~> 3.0'
   pod 'JGProgressHUD'
   pod 'SkeletonView'
-  pod 'Chatto', '= 3.3.1'
+  pod 'SwiftDate', '~> 4.0'
 
   target 'LezTests' do
     inherit! :search_paths

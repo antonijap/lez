@@ -9,6 +9,8 @@
 import UIKit
 import Firebase
 import Promises
+import SwiftDate
+import moa
 
 class ChatViewController: UIViewController {
     
@@ -137,12 +139,16 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath.section == 0 {
             let newChatCell = tableView.dequeueReusableCell(withIdentifier: NewChatCell.reuseID) as! NewChatCell
             var notMe: User?
+            var her: User?
             for participant in emptyChats[indexPath.row].participants {
                 if participant.uid != myUid {
                     notMe = participant
+                } else {
+                    her = participant
                 }
             }
             newChatCell.titleLabel.text = notMe?.name
+            newChatCell.userPictureView.moa.url = her?.images?.first
             cell = newChatCell
         } else {
             let chatCell = tableView.dequeueReusableCell(withIdentifier: ChatCell.reuseID) as! ChatCell
@@ -154,32 +160,10 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             }
             chatCell.titleLabel.text = notMe?.name
             chatCell.messageLabel.text = existingChats[indexPath.row].messages?.last?.message
-            chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.dateValue().toString(dateFormat: "dd/MM")
+            chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.dateValue().colloquialSinceNow()
+            chatCell.userPictureView.moa.url = notMe?.images?.first
             cell = chatCell
         }
-        
-//        if chats[indexPath.row].messages == nil {
-//            let newChatCell = tableView.dequeueReusableCell(withIdentifier: NewChatCell.reuseID) as! NewChatCell
-//            var notMe: User?
-//            for participant in chats[indexPath.row].participants {
-//                if participant.uid != myUid {
-//                    notMe = participant
-//                }
-//            }
-//            newChatCell.titleLabel.text = notMe?.name
-//            cell = newChatCell
-//        } else {
-//            let chatCell = tableView.dequeueReusableCell(withIdentifier: ChatCell.reuseID) as! ChatCell
-//            var notMe: User?
-//            for participant in chats[indexPath.row].participants {
-//                if participant.uid != myUid {
-//                    notMe = participant
-//                }
-//            }
-//            chatCell.titleLabel.text = notMe?.name
-//            chatCell.messageLabel.text = chats[indexPath.row].messages?.last?.message
-//            cell = chatCell
-//        }
 
         return cell
     }
