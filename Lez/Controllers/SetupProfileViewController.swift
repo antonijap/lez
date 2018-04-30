@@ -97,7 +97,7 @@ class SetupProfileViewController: FormViewController {
     @objc func submit() {
         if let cu = currentUser {
             if form.validate().count > 0 {
-                Alertift.alert(title: "Ooopsie", message: "Check what fields are missiong or inacurrate.")
+                Alertift.alert(title: "Ooopsie", message: "Check what fields are missing or inacurrate.")
                     .action(.default("Okay"))
                     .show()
             } else {
@@ -151,7 +151,6 @@ class SetupProfileViewController: FormViewController {
     }
     
     func setupForm() {
-        print("setupForm")
         var rules = RuleSet<String>()
         rules.add(rule: RuleRequired())
 
@@ -199,6 +198,7 @@ class SetupProfileViewController: FormViewController {
             <<< IntRow() { row in
                 row.title = "Age"
                 row.tag = "age"
+                row.add(rule: RuleRequired())
                 if let cu = currentUser {
                     row.value = cu.age
                 }
@@ -208,6 +208,7 @@ class SetupProfileViewController: FormViewController {
             <<< TextRow() { row in
                 row.title = "About"
                 row.tag = "about"
+                row.add(rule: RuleRequired())
                 if let cu = currentUser {
                     row.value = cu.details.about
                 }
@@ -236,6 +237,7 @@ class SetupProfileViewController: FormViewController {
                 row.title = "Diet"
                 row.options = [Diet.vegan.rawValue, Diet.vegetarian.rawValue, Diet.omnivore.rawValue, Diet.other.rawValue]
                 row.tag = "diet"
+                row.add(rule: RuleRequired())
                 if let cu = currentUser {
                     row.value = cu.details.diet.rawValue
                 }
@@ -245,6 +247,7 @@ class SetupProfileViewController: FormViewController {
         
             <<< MultipleSelectorRow<String>() { row in
                 row.title = "Looking for"
+                row.add(rule: RuleRequired())
                 row.options = [LookingFor.relationship.rawValue, LookingFor.friendship.rawValue, LookingFor.sex.rawValue]
                 row.tag = "lookingFor"
                 if let cu = currentUser {
@@ -256,6 +259,7 @@ class SetupProfileViewController: FormViewController {
             <<< TextRow() { row in
                 row.title = "Dealbreakers"
                 row.tag = "dealbreakers"
+                row.add(rule: RuleRequired())
                 if let cu = currentUser {
                     row.value = cu.details.dealBreakers
                 }
@@ -267,6 +271,7 @@ class SetupProfileViewController: FormViewController {
                 row.title = "From age"
                 row.placeholder = ""
                 row.tag = "from"
+                row.add(rule: RuleRequired())
                 if let cu = currentUser {
                     row.value = cu.preferences.ageRange.from
                 }
@@ -276,6 +281,7 @@ class SetupProfileViewController: FormViewController {
                 row.title = "To age"
                 row.placeholder = ""
                 row.tag = "to"
+                row.add(rule: RuleRequired())
                 if let cu = currentUser {
                     row.value = cu.preferences.ageRange.to
                 }
