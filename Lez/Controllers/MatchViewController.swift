@@ -133,6 +133,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
 
                 if let currentUser =  Auth.auth().currentUser {
                     FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                        print(user)
                         self.user = user
                         FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                             self.users = users
