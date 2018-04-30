@@ -76,8 +76,6 @@ class RegisterViewController: UIViewController {
                     guard let current = user else { return }
 
                     FirestoreManager.shared.fetchUser(uid: current.uid).then { (user) in
-                        print(user.name)
-                        print(user.isOnboarded)
                         if user.isOnboarded {
                             self.dismiss(animated: true, completion: nil)
                         } else {

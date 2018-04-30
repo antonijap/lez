@@ -95,6 +95,7 @@ extension UIViewController: UIActionSheetDelegate {
         let action1 = UIAlertAction(title: "Cancel", style: .default, handler: nil)
         let action2 = UIAlertAction(title: CTA, style: .destructive) { (action) in
             do {
+                self.tabBarController?.selectedIndex = 0
                 try Auth.auth().signOut()
                 let registerViewController = RegisterViewController()
                 let navigationController = UINavigationController(rootViewController: registerViewController)
