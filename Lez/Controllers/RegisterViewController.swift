@@ -28,15 +28,7 @@ class RegisterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupLoginButter()
-//        loginButton = FBSDKLoginButton()
-//        loginButton.readPermissions = ["public_profile", "email"]
-//        loginButton.delegate = self
-//        view.addSubview(loginButton)
-//        loginButton.snp.makeConstraints { (make) in
-//            make.centerX.equalToSuperview()
-//            make.centerY.equalToSuperview().inset(90)
-//        }
+        setupLoginButter() 
     }
     
     func setupLoginButter() {
@@ -59,14 +51,15 @@ class RegisterViewController: UIViewController {
     
     @objc func facebookButtonTapped() {
         let loginManager = LoginManager()
+        loginManager.logOut()
         loginManager.logIn(readPermissions: [.email, .publicProfile], viewController: self) { (result) in
             switch result {
             case .failed(let error):
+                print("Error")
                 print(error)
             case .cancelled:
                 print("User cancelled login.")
             case .success(_, _, let accessToken):
-                
                 print("Logged in!")
                 let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
                 Auth.auth().signIn(with: credential) { (user, error) in
@@ -76,11 +69,24 @@ class RegisterViewController: UIViewController {
                     }
                     // User is signed in
                     guard let current = user else { return }
-
-                    FirestoreManager.shared.fetchUser(uid: current.uid).then { (user) in
-                        if user.isOnboarded {
-                            self.dismiss(animated: true, completion: nil)
+                    print(current.uid)
+                    FirestoreManager.shared.checkIfUserExists(uid: current.uid).then({ (exists) in
+                        if exists {
+                            print("User exists")
+                            FirestoreManager.shared.fetchUser(uid: current.uid).then { (user) in
+                                if user.isOnboarded {
+                                    self.dismiss(animated: true, completion: nil)
+                                } else {
+                                    let setupProfileViewController = SetupProfileViewController()
+                                    setupProfileViewController.name = current.displayName!
+                                    setupProfileViewController.email = current.email!
+                                    setupProfileViewController.uid = current.uid
+                                    self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                                    self.navigationItem.setHidesBackButton(true, animated: true)
+                                }
+                            }
                         } else {
+                            print("User doesn't exist")
                             let setupProfileViewController = SetupProfileViewController()
                             setupProfileViewController.name = current.displayName!
                             setupProfileViewController.email = current.email!
@@ -88,7 +94,8 @@ class RegisterViewController: UIViewController {
                             self.navigationController?.pushViewController(setupProfileViewController, animated: true)
                             self.navigationItem.setHidesBackButton(true, animated: true)
                         }
-                    }
+                    })
+                    
                 }
             }
         }

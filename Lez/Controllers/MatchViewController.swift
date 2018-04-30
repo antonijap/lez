@@ -108,7 +108,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+//        try! Auth.auth().signOut()
         Auth.auth().addStateDidChangeListener { auth, user in
             if let _ = user {
 //               let isOnboarded = DefaultsManager.sharedInstance.isCurrentUserOnboarded()

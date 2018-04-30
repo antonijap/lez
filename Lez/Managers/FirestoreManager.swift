@@ -205,6 +205,24 @@ final class FirestoreManager {
         }
     }
     
+    func checkIfUserExists(uid: String) -> Promise<Bool> {
+        return Promise { fulfill, reject in
+            let docRef = self.db.collection("users").document(uid)
+            docRef.getDocument { (document, error) in
+                if let document = document {
+                    if document.data() == nil {
+                       fulfill(false)
+                    } else {
+                        reject(error!)
+                    }
+                } else {
+                    print("Document does not exist")
+                    fulfill(false)
+                }
+            }
+        }
+    }
+    
     func updateUser(uid: String, data: [String: Any]) -> Promise<Bool> {
         return Promise { fulfill, reject in
             let docRef = self.db.collection("users").document(uid)
