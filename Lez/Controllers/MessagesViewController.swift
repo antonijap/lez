@@ -78,13 +78,17 @@ class MessagesViewController: UIViewController {
                 })
             }
             group.notify(queue: .main, execute: {
-                print("Will refresh messages")
-                self.messages.removeAll()
-                self.messages = messages
-                self.tableView.reloadData()
-                self.tableView.setNeedsLayout()
-                let indexPath = IndexPath(row: messages.count - 1, section: 0)
-                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                if messages.isEmpty {
+                    
+                } else {
+                    print("Will refresh messages")
+                    self.messages.removeAll()
+                    self.messages = messages
+                    self.tableView.reloadData()
+                    self.tableView.setNeedsLayout()
+                    let indexPath = IndexPath(row: messages.count - 1, section: 0)
+                    self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                }
             })
         }
     }
