@@ -15,6 +15,7 @@ import Jelly
 import Firebase
 import FBSDKLoginKit
 import Alertift
+import JGProgressHUD
 
 class KolodaImage: UIImageView {
     var userImage = UIImageView()
@@ -96,11 +97,13 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     let likeImageView = UIImageView()
     var jellyAnimator: JellyAnimator?
     var user: User?
+    let hud = JGProgressHUD(style: .dark)
     
     // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        startSpinner()
     }
     
     override func viewDidLoad() {
@@ -139,6 +142,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                                     .show()
                             }
                             self.setupKoloda()
+                            self.stopSpinner()
                         })
                     }
                 }
@@ -155,6 +159,15 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     }
     
     // MARK: - Methods
+    func startSpinner() {
+        hud.textLabel.text = "Loading"
+        hud.show(in: self.view)
+    }
+    
+    func stopSpinner() {
+        hud.dismiss(animated: true)
+    }
+    
     func setupKoloda() {
         kolodaView.dataSource = self
         kolodaView.delegate = self
@@ -266,10 +279,9 @@ extension MatchViewController {
                                     "participants": participants,
                                     "lastUpdated": FieldValue.serverTimestamp()
                                 ]
-                                FirestoreManager.shared.addEmptyChat(data: data, for: user.uid).then({ (success) in
+                                FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
                                     if success {
                                         self.playMatchAnimation()
-                                        print("Chat Added")
                                         // Offer to open chat or keep playing
                                     }
                                 })

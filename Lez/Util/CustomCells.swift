@@ -78,16 +78,28 @@ extension PremiumMenuCell: ReuseIdentifiable {
 class MyMessageCell: UITableViewCell {
     var messageLabel = UILabel()
     var bubbleView = UIView()
-
+    var timeLabel = UILabel()
+    
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
+        setupTimeLabel()
         setupBubbleView()
-        layoutIfNeeded()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupTimeLabel() {
+        addSubview(timeLabel)
+        timeLabel.snp.makeConstraints { (make) in
+            make.right.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview().inset(8)
+        }
+        timeLabel.textColor = .gray
+        timeLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        timeLabel.text = "Time"
     }
     
     func setupBubbleView() {
@@ -95,10 +107,10 @@ class MyMessageCell: UITableViewCell {
         bubbleView.snp.makeConstraints { (make) in
             make.top.equalToSuperview().inset(4)
             make.right.equalToSuperview().inset(8)
-            make.bottom.equalToSuperview()
+            make.bottom.equalTo(timeLabel.snp.top).inset(-4)
             make.left.equalToSuperview().inset(70)
         }
-        bubbleView.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
+        bubbleView.backgroundColor = UIColor(red:0.22, green:0.25, blue:0.28, alpha:1.00)
         bubbleView.layer.cornerRadius = 10
         
         setupMessage()
@@ -111,22 +123,44 @@ class MyMessageCell: UITableViewCell {
         }
         messageLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         messageLabel.numberOfLines = 100
+        messageLabel.textColor = .white
     }
 }
 
 class HerMessageCell: UITableViewCell {
     var messageLabel = UILabel()
     var bubbleView = UIView()
+    var timeLabel = UILabel()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         selectionStyle = .none
+        setupTimeLabel()
         setupBubbleView()
-        layoutIfNeeded()
     }
     
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    func setupTimeLabel() {
+        addSubview(timeLabel)
+        timeLabel.snp.makeConstraints { (make) in
+            make.left.equalToSuperview().inset(8)
+            make.bottom.equalToSuperview().inset(8)
+        }
+        timeLabel.textColor = .gray
+        timeLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        timeLabel.text = "Time"
+    }
+    
+    func setupMessage() {
+        bubbleView.addSubview(messageLabel)
+        messageLabel.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview().inset(8)
+        }
+        messageLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
+        messageLabel.numberOfLines = 100
     }
     
     func setupBubbleView() {
@@ -134,22 +168,14 @@ class HerMessageCell: UITableViewCell {
         bubbleView.snp.makeConstraints { (make) in
             make.top.equalToSuperview().inset(4)
             make.left.equalToSuperview().inset(8)
-            make.bottom.equalToSuperview()
+            make.bottom.equalTo(timeLabel.snp.top).inset(-4)
             make.right.equalToSuperview().inset(70)
         }
-        bubbleView.backgroundColor = UIColor(red:0.91, green:1.00, blue:0.94, alpha:1.00)
+        bubbleView.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
         bubbleView.layer.cornerRadius = 10
         
         setupMessage()
-    }
-    
-    func setupMessage() {
-        bubbleView.addSubview(messageLabel)
-        messageLabel.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview().inset(16)
-        }
-        messageLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
-        messageLabel.numberOfLines = 100
+        
     }
 }
 
@@ -177,19 +203,22 @@ class NewChatCell: UITableViewCell {
     func setupUserPictureView() {
         addSubview(userPictureView)
         userPictureView.snp.makeConstraints { (make) in
-            make.size.equalTo(64)
-            make.left.equalToSuperview().inset(24)
-            make.top.equalToSuperview().offset(24)
+            make.size.equalTo(48)
+            make.left.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(16)
         }
-        userPictureView.makeOvalWithImage(UIImage(named: "Taylor")!)
+        userPictureView.backgroundColor = .gray
+        userPictureView.layer.cornerRadius = 48 / 2
+        userPictureView.clipsToBounds = true
+        userPictureView.contentMode = .scaleAspectFill
     }
     
     func setupNameLabel() {
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints { (make) in
             make.left.equalTo(userPictureView.snp.right).offset(16)
-            make.top.equalTo(userPictureView.snp.top).inset(8)
-            make.right.equalToSuperview().inset(65)
+            make.top.equalTo(userPictureView.snp.top)
+            make.right.equalToSuperview().inset(80)
         }
         titleLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .bold)
     }
@@ -210,7 +239,7 @@ class NewChatCell: UITableViewCell {
         addSubview(ctaButton)
         ctaButton.snp.makeConstraints { (make) in
             make.left.equalTo(titleLabel.snp.left)
-            make.bottom.equalTo(userPictureView.snp.bottom).inset(8)
+            make.bottom.equalTo(userPictureView.snp.bottom)
         }
         ctaButton.setTitle("Start Chat", for: .normal)
         ctaButton.setTitleColor(.purple, for: .normal)
@@ -264,6 +293,7 @@ class ChatCell: UITableViewCell {
         userPictureView.backgroundColor = .gray
         userPictureView.layer.cornerRadius = 48 / 2
         userPictureView.clipsToBounds = true
+        userPictureView.contentMode = .scaleAspectFill
     }
     
     func setupNameLabel() {

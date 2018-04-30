@@ -33,29 +33,10 @@ class MessagesViewController: UIViewController {
         
         setupTextField()
         setupTableView()
-        populateMessages()
-//        Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created").addSnapshotListener { (snapshot, error) in
-//            messages.removeAll()
-//            print("Detected updates")
-//            guard let document = snapshot else {
-//                print("Error fetching document: \(error!)")
-//                return
-//            }
-//            for message in document.documents {
-//                group.enter()
-//                FirestoreManager.shared.parseMessage(document: message).then({ (message) in
-//                    messages.append(message)
-//                    group.leave()
-//                })
-//            }
-//            group.notify(queue: .main, execute: {
-//                print("Will refresh messages")
-//                self.messages.removeAll()
-//                self.messages = messages
-//                self.tableView.reloadData()
-//                self.tableView.setNeedsLayout()
-//            })
-//        }
+        
+        Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created").addSnapshotListener { (snapshot, error) in
+            self.populateMessages()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -102,6 +83,8 @@ class MessagesViewController: UIViewController {
                 self.messages = messages
                 self.tableView.reloadData()
                 self.tableView.setNeedsLayout()
+                let indexPath = IndexPath(row: messages.count - 1, section: 0)
+                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
             })
         }
     }
@@ -168,11 +151,13 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
             // MyCell
             let myCell = tableView.dequeueReusableCell(withIdentifier: MyMessageCell.reuseID) as! MyMessageCell
             myCell.messageLabel.text = message.message
+            myCell.timeLabel.text = message.created.dateValue().string(format: .custom("EEE"))
             cell = myCell
         } else {
             // HerCell
             let herCell = tableView.dequeueReusableCell(withIdentifier: HerMessageCell.reuseID) as! HerMessageCell
             herCell.messageLabel.text = message.message
+            herCell.timeLabel.text = message.created.dateValue().string(format: .custom("EEE"))
             cell = herCell
         }
         return cell
@@ -224,21 +209,23 @@ extension MessagesViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         // called when 'return' key pressed. return NO to ignore.
 //        print("TextField should return method called")
-        if let text = textField.text {
-            let data: [String: Any] = [
-                "created": FieldValue.serverTimestamp(),
-                "from": myUid,
-                "message": text
-            ]
-            FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
-                print("Message added.")
-                self.populateMessages()
-                textField.text = ""
-                textField.resignFirstResponder()
+        if textField.text != "" {
+            if let text = textField.text {
+                let data: [String: Any] = [
+                    "created": FieldValue.serverTimestamp(),
+                    "from": myUid,
+                    "message": text
+                ]
+                FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
+                    print("Message added.")
+                    self.populateMessages()
+                    textField.text = ""
+                    textField.resignFirstResponder()
+                }
+                return true
             }
         }
-        
-        return true
+        return false
     }
     
 }

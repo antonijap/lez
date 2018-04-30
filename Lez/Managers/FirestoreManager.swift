@@ -517,7 +517,7 @@ final class FirestoreManager {
         }
     }
     
-    func addEmptyChat(data: [String: Any], for uid: String) -> Promise<Bool> {
+    func addEmptyChat(data: [String: Any], for uid: String, herUid: String) -> Promise<Bool> {
         return Promise { fulfill, reject in
             let group = DispatchGroup()
             let newChatRef = self.db.collection("chats").addDocument(data: data, completion: { (err) in
@@ -553,8 +553,21 @@ final class FirestoreManager {
                                     print("Error updating document: \(err)")
                                     reject(err)
                                 } else {
-                                    print("Document successfully updated")
-                                    fulfill(true)
+                                    self.fetchUser(uid: herUid).then({ (her) in
+                                        var chats: [String] = []
+                                        for chat in her.chats! {
+                                            chats.append(chat)
+                                        }
+                                        chats.append(newChatRef.documentID)
+                                        let data: [String: Any] = [
+                                            "chats": chats
+                                        ]
+                                        self.updateUser(uid: herUid, data: data).then({ (success) in
+                                            if success {
+                                                fulfill(true)
+                                            }
+                                        })
+                                    })
                                 }
                             }
                         }
