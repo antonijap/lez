@@ -12,6 +12,10 @@ import GooglePlacesRow
 import GooglePlaces
 import Alertift
 
+protocol ProfileViewDelegate {
+    func refreshProfile()
+}
+
 class SetupProfileViewController: FormViewController {
     
     var loc: Location?
@@ -19,6 +23,7 @@ class SetupProfileViewController: FormViewController {
     var email: String?
     var uid: String?
     var currentUser: User?
+    var delegate: ProfileViewDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()

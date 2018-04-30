@@ -7,8 +7,8 @@
 //
 
 import UIKit
-import FBSDKCoreKit
-import FBSDKLoginKit
+import FacebookCore
+import FacebookLogin
 import Firebase
 import JGProgressHUD
 
@@ -53,6 +53,7 @@ class RegisterViewController: UIViewController, FBSDKLoginButtonDelegate {
         hud.textLabel.text = "Please wait"
         hud.vibrancyEnabled = true
         hud.show(in: view)
+        
         // Hide Button
         loginButton.isHidden = true
         

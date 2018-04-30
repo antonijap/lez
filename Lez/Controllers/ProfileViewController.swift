@@ -14,7 +14,7 @@ import SkeletonView
 import JGProgressHUD
 import Alertift
 
-class ProfileViewController: UIViewController {
+class ProfileViewController: UIViewController, ImageGalleryDelegate, ProfileViewDelegate {
 
     // MARK: - Variables
     let tableView = UITableView()
@@ -22,16 +22,7 @@ class ProfileViewController: UIViewController {
     var user: User?
     let tabBar = UITabBar()
     let hud = JGProgressHUD(style: .dark)
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        guard let currentUser = Auth.auth().currentUser else { return }
-        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
-            self.user = user
-            }.then { _ in
-                self.tableView.reloadData()
-        }
-    }
+    var shouldRefresh = false
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -41,6 +32,29 @@ class ProfileViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        print("viewDidAppear")
+        print(shouldRefresh)
+        if shouldRefresh {
+            print("Refresh happened")
+            startSpinner(title: "Loading Profile")
+            guard let currentUser = Auth.auth().currentUser else { return }
+            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                self.user = user
+                }.then { _ in
+                    self.tableView.reloadData()
+                    self.stopSpinner()
+            }
+            shouldRefresh = false
+        }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
         startSpinner(title: "Loading Profile")
         guard let currentUser = Auth.auth().currentUser else { return }
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
@@ -51,8 +65,15 @@ class ProfileViewController: UIViewController {
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
+    func refreshProfile() {
+        startSpinner(title: "Loading Profile")
+        guard let currentUser = Auth.auth().currentUser else { return }
+        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+            self.user = user
+            }.then { _ in
+                self.tableView.reloadData()
+                self.stopSpinner()
+        }
     }
     
     func setupTableView() {
@@ -140,6 +161,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 cell = titleWithDescriptionCell
             
             case .profileImages:
+                print("Messing with profile image")
                 guard let user = user else { return UITableViewCell() }
                 let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
                 let url = user.images
@@ -185,6 +207,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let setupProfileViewController = SetupProfileViewController()
             guard let user = user else { return }
             setupProfileViewController.currentUser = user
+            setupProfileViewController.delegate = self
             setupProfileViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(setupProfileViewController, animated: true)
         }
@@ -192,6 +215,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let imageGalleryViewController = ImageGalleryViewController()
             guard let user = user else { return }
             imageGalleryViewController.user = user
+            imageGalleryViewController.delegate = self
             imageGalleryViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }

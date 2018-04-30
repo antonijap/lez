@@ -16,7 +16,6 @@ protocol FiltersDelegate {
     func refreshKolodaData()
 }
 
-
 class FilterViewController: FormViewController {
     
     let closeButton = UIButton()

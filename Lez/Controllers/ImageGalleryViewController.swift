@@ -61,8 +61,12 @@ class CustomButton: UIButton {
     }
 }
 
-class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
+protocol ImageGalleryDelegate {
+    var shouldRefresh: Bool { get set }
+}
 
+class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
+    
     var user: User!
     var profileImagePickerController: ImagePickerController!
     var imageGalleryPickerController: ImagePickerController!
@@ -71,6 +75,7 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
     var imageView2: CustomImageView!
     let storage = Storage.storage()
     let hud = JGProgressHUD(style: .dark)
+    var delegate: ImageGalleryDelegate?
     
     public var imageAssets: [UIImage] {
         return AssetManager.resolveAssets(imageGalleryPickerController.stack.assets)
@@ -134,7 +139,7 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
         FirestoreManager.shared.updateImages(uid: user.uid, urls: imageURLs).then { success in
             if success {
                 self.stopSpinner()
-                // Refresh table in ProfileViewController
+                self.delegate?.shouldRefresh = true
                 self.navigationController?.popViewController(animated: true)
             } else {
                 self.showOkayModal(messageTitle: "Error Happened", messageAlert: "Something went wrong with saving images. Try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
@@ -175,7 +180,6 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
         ]
         FirestoreManager.shared.addUser(uid: self.user.uid, data: data).then { (success) in
             if success {
-                // Dismiss onboarding
                 self.stopSpinner()
                 self.dismiss(animated: true, completion: nil)
             } else {
@@ -201,6 +205,7 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
                 }
             }
             uploadTask.observe(.success) { snapshot in
+                
                 self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
                 // 2. Check if there is first image and upload it
                 if self.checkImageOne() {
