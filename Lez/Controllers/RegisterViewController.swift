@@ -41,7 +41,6 @@ class RegisterViewController: UIViewController {
     
     func setupLoginButter() {
         // Add a custom login button to your app
-        facebookLoginButton.backgroundColor = .blue
         facebookLoginButton.setTitle("Login with Facebook", for: .normal)
         
         // Handle clicks on the button
@@ -52,7 +51,10 @@ class RegisterViewController: UIViewController {
         facebookLoginButton.snp.makeConstraints { (make) in
             make.left.right.equalToSuperview().inset(48)
             make.bottom.equalToSuperview().inset(100)
+            make.height.equalTo(48)
         }
+        facebookLoginButton.backgroundColor = UIColor(red:0.28, green:0.37, blue:0.60, alpha:1.00)
+        facebookLoginButton.layer.cornerRadius = 48 / 2
     }
     
     @objc func facebookButtonTapped() {
