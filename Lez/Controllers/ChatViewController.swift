@@ -57,6 +57,8 @@ class ChatViewController: UIViewController {
                     self.tableView.reloadData()
                     self.stopSpinner()
                 })
+            } else {
+                self.stopSpinner()
             }
         }
     }
