@@ -16,10 +16,25 @@ PODS:
   - BoringSSL/Interface (10.0.2)
   - Cache (4.2.0)
   - Eureka (4.1.1)
+  - FacebookCore (0.3.0):
+    - Bolts (~> 1.8)
+    - FBSDKCoreKit (~> 4.27)
+  - FacebookLogin (0.3.0):
+    - Bolts (~> 1.8)
+    - FacebookCore (~> 0.3)
+    - FBSDKCoreKit (~> 4.27)
+    - FBSDKLoginKit (~> 4.27)
+  - FacebookShare (0.3.0):
+    - Bolts (~> 1.8)
+    - FacebookCore (~> 0.3)
+    - FBSDKCoreKit (~> 4.27)
+    - FBSDKShareKit (~> 4.27)
   - FBSDKCoreKit (4.32.0):
     - Bolts (~> 1.7)
   - FBSDKLoginKit (4.32.0):
     - FBSDKCoreKit
+  - FBSDKShareKit (4.32.0):
+    - FBSDKCoreKit (~> 4.32.0)
   - Firebase/Auth (4.13.0):
     - Firebase/Core
     - FirebaseAuth (= 4.6.1)
@@ -118,7 +133,9 @@ PODS:
 DEPENDENCIES:
   - Alertift (~> 3.0)
   - Auk (~> 8.0)
-  - FBSDKLoginKit
+  - FacebookCore
+  - FacebookLogin
+  - FacebookShare
   - Firebase/Auth
   - Firebase/Core
   - Firebase/Firestore
@@ -144,8 +161,12 @@ SPEC REPOS:
     - BoringSSL
     - Cache
     - Eureka
+    - FacebookCore
+    - FacebookLogin
+    - FacebookShare
     - FBSDKCoreKit
     - FBSDKLoginKit
+    - FBSDKShareKit
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
@@ -186,8 +207,12 @@ SPEC CHECKSUMS:
   BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
   Cache: f28f8dd64b632155aabf9b3906b036a659048251
   Eureka: b88fb930e42c79f8c03c373d0fcdc28c1d6c50ed
+  FacebookCore: 3ffa190a3f1f96cec0e44d3fc221bc322c595ffa
+  FacebookLogin: 0af839ea858faef99550d16596b87b4a8e8906e6
+  FacebookShare: 0469964297ebd75f052be2c5083389a4208e82b7
   FBSDKCoreKit: 55d7f2ac45d9c4b9b6119f4e43900fe84b9b7b1b
   FBSDKLoginKit: 32ac05c2a59952c363c2e85aafa8f73ba93bcbad
+  FBSDKShareKit: 658780d0d108b8ad590a54afb5ac1427bdc8de28
   Firebase: 5ec5e863d269d82d66b4bf56856726f8fb8f0fb3
   FirebaseAnalytics: 7ef69e76a5142f643aeb47c780e1cdce4e23632e
   FirebaseAuth: bf22cacf22c60ab454bf2636f556d8892b10b53f
@@ -221,6 +246,6 @@ SPEC CHECKSUMS:
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   SwiftDate: 7b56d42a221f582047287deb256b23fc5ed49a60
 
-PODFILE CHECKSUM: 0d1cd221309738dd6c31f59ee0ba373a2b5b2ffe
+PODFILE CHECKSUM: 4500cd6f86086fcb69e1b055cc8b32cf435a5439
 
 COCOAPODS: 1.5.0.beta.1
