@@ -179,7 +179,6 @@ final class FirestoreManager {
 //                }
                 
                 if let i = finalArray.index(where: { user.blockedUsers!.contains($0.uid) }) {
-                    print(i)
                     print("User blocked, removing...")
                     finalArray.remove(at: i)
                 }
@@ -212,8 +211,10 @@ final class FirestoreManager {
                 if let document = document {
                     if document.data() == nil {
                        fulfill(false)
+                    } else if let error = error {
+                        reject(error)
                     } else {
-                        reject(error!)
+                        fulfill(true)
                     }
                 } else {
                     print("Document does not exist")

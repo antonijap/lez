@@ -32,10 +32,7 @@ class ProfileViewController: UIViewController, ImageGalleryDelegate, ProfileView
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
-        print("viewDidAppear")
-        print(shouldRefresh)
         if shouldRefresh {
-            print("Refresh happened")
             startSpinner(title: "Loading Profile")
             guard let currentUser = Auth.auth().currentUser else { return }
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
@@ -46,11 +43,6 @@ class ProfileViewController: UIViewController, ImageGalleryDelegate, ProfileView
             }
             shouldRefresh = false
         }
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
     }
     
     override func viewDidLoad() {
@@ -161,7 +153,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 cell = titleWithDescriptionCell
             
             case .profileImages:
-                print("Messing with profile image")
                 guard let user = user else { return UITableViewCell() }
                 let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
                 let url = user.images

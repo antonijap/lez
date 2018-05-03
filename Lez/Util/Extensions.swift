@@ -95,14 +95,32 @@ extension UIViewController: UIActionSheetDelegate {
         let action1 = UIAlertAction(title: "Cancel", style: .default, handler: nil)
         let action2 = UIAlertAction(title: CTA, style: .destructive) { (action) in
             do {
-                self.tabBarController?.selectedIndex = 0
+                Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                    AnalyticsParameterItemID: "id-\(String(describing: Auth.auth().currentUser?.uid))",
+                    AnalyticsParameterItemName: "Log Out",
+                    AnalyticsParameterContentType: "action"
+                    ])
                 try Auth.auth().signOut()
+                self.tabBarController?.selectedIndex = 0
                 let registerViewController = RegisterViewController()
                 let navigationController = UINavigationController(rootViewController: registerViewController)
                 self.present(navigationController, animated: false, completion: nil)
             } catch let signOutError as NSError {
                 print ("Error signing out: %@", signOutError)
             }
+        }
+        
+        alertController.addAction(action1)
+        alertController.addAction(action2)
+        
+        self.present(alertController, animated: true, completion: nil)
+    }
+    
+    func showMatchModal() {
+        let alertController = UIAlertController(title: "Match", message: "You have a match. You can continue browsing or go to chat.", preferredStyle: .alert)
+        let action1 = UIAlertAction(title: "Continue", style: .default, handler: nil)
+        let action2 = UIAlertAction(title: "Go to Chat", style: .default) { (action) in
+            self.tabBarController?.selectedIndex = 1
         }
         
         alertController.addAction(action1)
@@ -123,7 +141,6 @@ extension UIViewController: UIActionSheetDelegate {
     }
 }
 
-// Put this piece of code anywhere you like
 extension UIViewController {
     func hideKeyboardWhenTappedAround() {
         let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))

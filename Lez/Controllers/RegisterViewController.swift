@@ -16,7 +16,6 @@ import TwitterKit
 class RegisterViewController: UIViewController {
     
     let facebookLoginButton = UIButton()
-//    let twitterLoginButton = TWTRLogInButton()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -30,31 +29,11 @@ class RegisterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-//        setupTwitterButton()
-        setupTwitterButton()
-        setupFacebookButton()
+        setupButtons()
     }
-    
-    fileprivate func setupFacebookButton() {
-        // Add a custom login button to your app
-        facebookLoginButton.setTitle("Login with Facebook", for: .normal)
-        
-        // Handle clicks on the button
-        facebookLoginButton.addTarget(self, action: #selector(self.facebookButtonTapped), for:.touchUpInside)
-        
-        // Add the button to the view
-        view.addSubview(facebookLoginButton)
-        facebookLoginButton.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview().inset(48)
-            make.bottom.equalToSuperview().inset(20)
-            make.height.equalTo(48)
-        }
-        facebookLoginButton.backgroundColor = UIColor(red:0.28, green:0.37, blue:0.60, alpha:1.00)
-        facebookLoginButton.layer.cornerRadius = 48 / 2
-    }
-    
-    fileprivate func setupTwitterButton() {
-        let logInButton = TWTRLogInButton(logInCompletion: { session, error in
+
+    fileprivate func setupButtons() {
+        let twitterLoginButton = TWTRLogInButton(logInCompletion: { session, error in
             if let session = session {
                 let credential = TwitterAuthProvider.credential(withToken: session.authToken, secret: session.authTokenSecret)
                 Auth.auth().signIn(with: credential) { (user, error) in
@@ -98,16 +77,25 @@ class RegisterViewController: UIViewController {
             }
         })
         
-        
-        // Add the button to the view
-        view.addSubview(logInButton)
-        logInButton.snp.makeConstraints { (make) in
+        view.addSubview(twitterLoginButton)
+        twitterLoginButton.snp.makeConstraints { (make) in
             make.left.right.equalToSuperview().inset(48)
             make.bottom.equalToSuperview().inset(100)
             make.height.equalTo(48)
         }
-        logInButton.backgroundColor = UIColor(red:0.30, green:0.62, blue:0.93, alpha:1.00)
-        logInButton.layer.cornerRadius = 48 / 2
+        twitterLoginButton.backgroundColor = UIColor(red:0.30, green:0.62, blue:0.93, alpha:1.00)
+        twitterLoginButton.layer.cornerRadius = 48 / 2
+        
+        facebookLoginButton.setTitle("Login with Facebook", for: .normal)
+        facebookLoginButton.addTarget(self, action: #selector(self.facebookButtonTapped), for:.touchUpInside)
+        view.addSubview(facebookLoginButton)
+        facebookLoginButton.snp.makeConstraints { (make) in
+            make.left.right.equalToSuperview().inset(48)
+            make.bottom.equalTo(twitterLoginButton.snp.top).inset(-8)
+            make.height.equalTo(48)
+        }
+        facebookLoginButton.backgroundColor = UIColor(red:0.28, green:0.37, blue:0.60, alpha:1.00)
+        facebookLoginButton.layer.cornerRadius = 48 / 2
     }
    
     @objc func facebookButtonTapped() {
@@ -129,18 +117,19 @@ class RegisterViewController: UIViewController {
                         return
                     }
                     // User is signed in
-                    guard let current = user else { return }
-                    FirestoreManager.shared.checkIfUserExists(uid: current.uid).then({ (exists) in
+                    guard let currentUser = user else { return }
+                    FirestoreManager.shared.checkIfUserExists(uid: currentUser.uid).then({ (exists) in
                         if exists {
                             print("User exists")
-                            FirestoreManager.shared.fetchUser(uid: current.uid).then { (user) in
+                            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                                 if user.isOnboarded {
+                                    print("User is onboarded")
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
                                     let setupProfileViewController = SetupProfileViewController()
-                                    setupProfileViewController.name = current.displayName!
-                                    setupProfileViewController.email = current.email!
-                                    setupProfileViewController.uid = current.uid
+                                    setupProfileViewController.name = currentUser.displayName!
+                                    setupProfileViewController.email = currentUser.email!
+                                    setupProfileViewController.uid = currentUser.uid
                                     self.navigationController?.pushViewController(setupProfileViewController, animated: true)
                                     self.navigationItem.setHidesBackButton(true, animated: true)
                                 }
@@ -148,9 +137,9 @@ class RegisterViewController: UIViewController {
                         } else {
                             print("User doesn't exist")
                             let setupProfileViewController = SetupProfileViewController()
-                            setupProfileViewController.name = current.displayName!
-                            setupProfileViewController.email = current.email!
-                            setupProfileViewController.uid = current.uid
+                            setupProfileViewController.name = currentUser.displayName!
+                            setupProfileViewController.email = currentUser.email!
+                            setupProfileViewController.uid = currentUser.uid
                             self.navigationController?.pushViewController(setupProfileViewController, animated: true)
                             self.navigationItem.setHidesBackButton(true, animated: true)
                         }
@@ -159,37 +148,4 @@ class RegisterViewController: UIViewController {
             }
         }
     }
-    
-//    func loginButton(_ loginButton: FBSDKLoginButton!, didCompleteWith result: FBSDKLoginManagerLoginResult!, error: Error!) {
-//        if let error = error {
-//            print(error.localizedDescription)
-//            return
-//        }
-//        // Start Animating
-//        let hud = JGProgressHUD(style: .dark)
-//        hud.textLabel.text = "Please wait"
-//        hud.vibrancyEnabled = true
-//        hud.show(in: view)
-//
-//        // Hide Button
-//        loginButton.isHidden = true
-//
-//        let credential = FacebookAuthProvider.credential(withAccessToken: FBSDKAccessToken.current().tokenString)
-//        Auth.auth().signIn(with: credential) { (user, error) in
-//            if let error = error {
-//                print(error)
-//                return
-//            }
-//            // User is signed in
-//            print(user!)
-//            guard let usr = user else { return }
-//            let setupProfileViewController = SetupProfileViewController()
-//            setupProfileViewController.name = usr.displayName!
-//            setupProfileViewController.email = usr.email!
-//            setupProfileViewController.uid = usr.uid
-//            hud.dismiss(animated: true)
-//            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
-//            self.navigationItem.setHidesBackButton(true, animated: true)
-//        }
-//    }
 }

@@ -98,14 +98,19 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     var jellyAnimator: JellyAnimator?
     var user: User?
     let hud = JGProgressHUD(style: .dark)
+    var handle: AuthStateDidChangeListenerHandle?
     
     // MARK: - Lifecycle
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        startSpinner()
-        
-        Auth.auth().addStateDidChangeListener { auth, user in
+        kolodaView.reloadData()
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+//        try! Auth.auth().signOut()
+        handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let _ = user {
 //               let isOnboarded = DefaultsManager.sharedInstance.isCurrentUserOnboarded()
 //
@@ -127,10 +132,15 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                 self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
                 self.navigationController?.navigationBar.shadowImage = UIImage()
                 
-                if let currentUser =  Auth.auth().currentUser {
-                    print("Trebalo raditi")
+                if let currentUser = Auth.auth().currentUser {
+                    Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                        AnalyticsParameterItemID: "id-\(currentUser.uid)",
+                        AnalyticsParameterItemName: "MatchViewController",
+                        AnalyticsParameterContentType: "screen_view"
+                    ])
+                    self.startSpinner()
+                    print("User postoji. MatchViewController.")
                     FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
-                        print(user)
                         self.user = user
                         FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                             self.users = users
@@ -139,7 +149,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                                     .action(.default("Okay"))
                                     .show()
                             }
-                            self.kolodaView.reloadData()
+                            self.setupKoloda()
                             self.stopSpinner()
                         })
                     }
@@ -154,10 +164,9 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         }
     }
     
-    override func viewDidLoad() {
-        super.viewDidLoad()
-//        try! Auth.auth().signOut()
-        setupKoloda()
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        Auth.auth().removeStateDidChangeListener(handle!)
     }
     
     // MARK: - Methods
@@ -339,7 +348,6 @@ extension MatchViewController {
     }
     
     func koloda(_ koloda: KolodaView, didShowCardAt index: Int) {
-        print("Card \(index), \(String(describing: users[index].name))")
     }
     
     func koloda(_ koloda: KolodaView, viewForCardOverlayAt index: Int) -> OverlayView? {
