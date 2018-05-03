@@ -11,10 +11,12 @@ import FacebookCore
 import FacebookLogin
 import Firebase
 import JGProgressHUD
+import TwitterKit
 
 class RegisterViewController: UIViewController {
     
     let facebookLoginButton = UIButton()
+//    let twitterLoginButton = TWTRLogInButton()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -28,10 +30,12 @@ class RegisterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupLoginButter() 
+//        setupTwitterButton()
+        setupTwitterButton()
+        setupFacebookButton()
     }
     
-    func setupLoginButter() {
+    fileprivate func setupFacebookButton() {
         // Add a custom login button to your app
         facebookLoginButton.setTitle("Login with Facebook", for: .normal)
         
@@ -42,13 +46,70 @@ class RegisterViewController: UIViewController {
         view.addSubview(facebookLoginButton)
         facebookLoginButton.snp.makeConstraints { (make) in
             make.left.right.equalToSuperview().inset(48)
-            make.bottom.equalToSuperview().inset(100)
+            make.bottom.equalToSuperview().inset(20)
             make.height.equalTo(48)
         }
         facebookLoginButton.backgroundColor = UIColor(red:0.28, green:0.37, blue:0.60, alpha:1.00)
         facebookLoginButton.layer.cornerRadius = 48 / 2
     }
     
+    fileprivate func setupTwitterButton() {
+        let logInButton = TWTRLogInButton(logInCompletion: { session, error in
+            if let session = session {
+                let credential = TwitterAuthProvider.credential(withToken: session.authToken, secret: session.authTokenSecret)
+                Auth.auth().signIn(with: credential) { (user, error) in
+                    if let error = error {
+                        print(error.localizedDescription)
+                        return
+                    }
+                    // User is signed in
+                    guard let current = user else { return }
+                    print("User signed in. \(current.uid)")
+                    FirestoreManager.shared.checkIfUserExists(uid: current.uid).then({ (exists) in
+                        if exists {
+                            print("User exists. Skipping onboarding.")
+                            FirestoreManager.shared.fetchUser(uid: current.uid).then { (user) in
+                                if user.isOnboarded {
+                                    self.dismiss(animated: true, completion: nil)
+                                } else {
+                                    print("Almost there!")
+                                    let client = TWTRAPIClient.withCurrentUser()
+                                    client.requestEmail { email, error in
+                                        if let email = email {
+                                            let setupProfileViewController = SetupProfileViewController()
+                                            setupProfileViewController.email = email
+                                            setupProfileViewController.uid = current.uid
+                                            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                                            self.navigationItem.setHidesBackButton(true, animated: true)
+                                        } else {
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            let setupProfileViewController = SetupProfileViewController()
+                            setupProfileViewController.uid = current.uid
+                            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                            self.navigationItem.setHidesBackButton(true, animated: true)
+                        }
+                    })
+                }
+            } else {
+            }
+        })
+        
+        
+        // Add the button to the view
+        view.addSubview(logInButton)
+        logInButton.snp.makeConstraints { (make) in
+            make.left.right.equalToSuperview().inset(48)
+            make.bottom.equalToSuperview().inset(100)
+            make.height.equalTo(48)
+        }
+        logInButton.backgroundColor = UIColor(red:0.30, green:0.62, blue:0.93, alpha:1.00)
+        logInButton.layer.cornerRadius = 48 / 2
+    }
+   
     @objc func facebookButtonTapped() {
         let loginManager = LoginManager()
         loginManager.logOut()
@@ -69,7 +130,6 @@ class RegisterViewController: UIViewController {
                     }
                     // User is signed in
                     guard let current = user else { return }
-                    print(current.uid)
                     FirestoreManager.shared.checkIfUserExists(uid: current.uid).then({ (exists) in
                         if exists {
                             print("User exists")
@@ -95,7 +155,6 @@ class RegisterViewController: UIViewController {
                             self.navigationItem.setHidesBackButton(true, animated: true)
                         }
                     })
-                    
                 }
             }
         }

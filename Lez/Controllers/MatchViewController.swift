@@ -104,11 +104,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         startSpinner()
-    }
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-//        try! Auth.auth().signOut()
+        
         Auth.auth().addStateDidChangeListener { auth, user in
             if let _ = user {
 //               let isOnboarded = DefaultsManager.sharedInstance.isCurrentUserOnboarded()
@@ -130,8 +126,9 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                 self.navigationController?.navigationBar.backgroundColor = .white
                 self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
                 self.navigationController?.navigationBar.shadowImage = UIImage()
-
+                
                 if let currentUser =  Auth.auth().currentUser {
+                    print("Trebalo raditi")
                     FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                         print(user)
                         self.user = user
@@ -142,12 +139,12 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                                     .action(.default("Okay"))
                                     .show()
                             }
-                            self.setupKoloda()
+                            self.kolodaView.reloadData()
                             self.stopSpinner()
                         })
                     }
                 }
-    
+                
             } else {
                 // No User is signed in. Show user the login screen
                 let registerViewController = RegisterViewController()
@@ -155,8 +152,12 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                 self.present(navigationController, animated: false, completion: nil)
             }
         }
-
-        
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+//        try! Auth.auth().signOut()
+        setupKoloda()
     }
     
     // MARK: - Methods

@@ -10,6 +10,7 @@ import UIKit
 import GooglePlaces
 import Firebase
 import FBSDKLoginKit
+import TwitterKit
 
 class CustomTabBarController: UITabBarController {
     override func viewDidLoad() {
@@ -20,8 +21,8 @@ class CustomTabBarController: UITabBarController {
         loveRoomController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
         
         
-        let chat = UIImage(named: "Chat")
-        let chatFull = UIImage(named: "Chat_Full")
+//        let chat = UIImage(named: "Chat")
+//        let chatFull = UIImage(named: "Chat_Full")
         let chatController = UINavigationController(rootViewController: ChatViewController())
 //        chatController.tabBarItem = UITabBarItem.init(title: "", image: chat, selectedImage: chatFull)
         chatController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Chat"), tag: 1)
@@ -59,8 +60,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let apiKey = "***REMOVED***"
         GMSPlacesClient.provideAPIKey(apiKey)
+        
+        TWTRTwitter.sharedInstance().start(withConsumerKey:"jCRNWy0U3EoRpvQHDnMubOhNb", consumerSecret:"G4XulpZ0LRHofdELtUShQLMTENvg2H0jJle22vy8WJx0988HRd")
  
         return true
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        return TWTRTwitter.sharedInstance().application(app, open: url, options: options)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

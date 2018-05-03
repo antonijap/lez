@@ -27,6 +27,7 @@ target 'Lez' do
   pod 'JGProgressHUD'
   pod 'SkeletonView'
   pod 'SwiftDate', '~> 4.0'
+  pod 'TwitterKit'
 
   target 'LezTests' do
     inherit! :search_paths
