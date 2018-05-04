@@ -25,6 +25,7 @@
 		CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */; };
 		CF425B4620679D8F00D6A1FE /* SetupProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF425B4520679D8F00D6A1FE /* SetupProfileViewController.swift */; };
 		CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */; };
+		CF6CE927209CE12D00EED316 /* GetPremiumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */; };
 		CF8C5DFE2094C08C00538C67 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */; };
 		CF8C5E002094C84F00538C67 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C5DFF2094C84F00538C67 /* Chat.swift */; };
 		CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C12066B15900114EC4 /* Extensions.swift */; };
@@ -84,6 +85,7 @@
 		CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFullscreenViewController.swift; sourceTree = "<group>"; };
 		CF425B4520679D8F00D6A1FE /* SetupProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SetupProfileViewController.swift; sourceTree = "<group>"; };
 		CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LezKolodaView.swift; sourceTree = "<group>"; };
+		CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPremiumViewController.swift; sourceTree = "<group>"; };
 		CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
 		CF8C5DFF2094C84F00538C67 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		CFB7C4C12066B15900114EC4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
@@ -196,6 +198,7 @@
 				CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */,
 				CF1C6C54206F68650018DCD9 /* ChatViewController.swift */,
 				CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */,
+				CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -588,6 +591,7 @@
 				CF425B4620679D8F00D6A1FE /* SetupProfileViewController.swift in Sources */,
 				CF1C6C55206F68650018DCD9 /* ChatViewController.swift in Sources */,
 				CF1C6C53206F631A0018DCD9 /* ImageGalleryViewController.swift in Sources */,
+				CF6CE927209CE12D00EED316 /* GetPremiumViewController.swift in Sources */,
 				CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */,
 				CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */,
 				CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */,

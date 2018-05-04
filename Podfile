@@ -28,6 +28,7 @@ target 'Lez' do
   pod 'SkeletonView'
   pod 'SwiftDate', '~> 4.0'
   pod 'TwitterKit'
+  pod 'SwiftyStoreKit'
 
   target 'LezTests' do
     inherit! :search_paths

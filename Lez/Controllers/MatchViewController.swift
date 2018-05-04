@@ -103,16 +103,14 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        if users.count < 1 {
-            fetchPotentialMatches()
-        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
-            if let _ = user {
+            if let user = user {
+                print("User detected")
                 self.navigationItem.title = "Match Room"
                 let filterButton = UIButton(type: .custom)
                 filterButton.setImage(UIImage(named: "Filter"), for: .normal)
@@ -124,35 +122,20 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                 self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
                 self.navigationController?.navigationBar.shadowImage = UIImage()
                 
-                if let currentUser = Auth.auth().currentUser {
-                    Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
-                        AnalyticsParameterItemID: "id-\(currentUser.uid)",
-                        AnalyticsParameterItemName: "MatchViewController",
-                        AnalyticsParameterContentType: "screen_view"
-                    ])
-                    self.startSpinner()
-                    FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
-                        self.user = user
-                        if !user.isOnboarded {
-                            let setupProfileViewController = SetupProfileViewController()
-                            setupProfileViewController.name = user.name
-                            setupProfileViewController.email = user.email
-                            let navigationController = UINavigationController(rootViewController: setupProfileViewController)
-                            self.present(navigationController, animated: false, completion: nil)
-                        }
-                        FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
-                            self.users = users
-                            if self.users.isEmpty {
-                                Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
-                                    .action(.default("Okay"))
-                                    .show()
-                            }
-                            self.setupKoloda()
-                            self.stopSpinner()
-                        })
+                FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
+                    self.user = user
+                    if !user.isOnboarded {
+                        let setupProfileViewController = SetupProfileViewController()
+                        setupProfileViewController.name = user.name
+                        setupProfileViewController.email = user.email
+                        let navigationController = UINavigationController(rootViewController: setupProfileViewController)
+                        self.present(navigationController, animated: false, completion: nil)
                     }
+                    FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
+                        self.users = users
+                        self.setupKoloda()
+                    })
                 }
-                
             } else {
                 // No User is signed in. Show user the login screen
                 let registerViewController = RegisterViewController()
@@ -171,31 +154,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     fileprivate func startSpinner() {
         hud.textLabel.text = "Loading"
         hud.show(in: self.view)
-    }
-    
-    fileprivate func fetchPotentialMatches() {
-        print("Fetching new users")
-        if let currentUser = Auth.auth().currentUser {
-            Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
-                AnalyticsParameterItemID: "id-\(currentUser.uid)",
-                AnalyticsParameterItemName: "MatchViewController",
-                AnalyticsParameterContentType: "screen_view"
-                ])
-            self.startSpinner()
-            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
-                self.user = user
-                FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
-                    self.users = users
-                    if self.users.isEmpty {
-                        Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
-                            .action(.default("Okay"))
-                            .show()
-                    }
-                    self.kolodaView.reloadData()
-                    self.stopSpinner()
-                })
-            }
-        }
+        hud.interactionType = .blockAllTouches
     }
     
     fileprivate func stopSpinner() {
@@ -235,14 +194,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     }
     
     @objc func showFilters() {
-//        let nextViewController = FilterViewController()
-//        let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
-//                                                                   presentationCurve: .easeInEaseOut,
-//                                                                   backgroundStyle: .blur(effectStyle: .light))
-//        self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
-//        self.jellyAnimator?.prepare(viewController: nextViewController)
-//        present(nextViewController, animated: true, completion: nil)
-        
         let filterViewController = FilterViewController()
         filterViewController.delegate = self
         let navigationController = UINavigationController(rootViewController: filterViewController)
@@ -263,7 +214,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                 self.kolodaView.reloadData()
             })
         }
-        
     }
     
     func dislikeUser() {
@@ -294,41 +244,84 @@ extension MatchViewController {
     
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
         if direction == .right {
-            var previousLikes: [String] = []
-            guard let user = user else { return }
-            FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
-                previousLikes = user.likes!
-                previousLikes.append(self.users[index].uid)
-                let data = [
-                    "likes": previousLikes
-                ]
-                FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
-                    if success {
-                        FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
-                            if success {
-                                var participants: [String] = []
-                                participants.append(user.uid)
-                                participants.append(self.users[index].uid)
-                                let data: [String: Any] = [
-                                    "created": FieldValue.serverTimestamp(),
-                                    "participants": participants,
-                                    "lastUpdated": FieldValue.serverTimestamp(),
-                                    "isRead": false
-                                ]
-                                FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
+            guard let user = user else { return}
+            FirestoreManager.shared.checkIfUserHasAvailableMatches(for: user.uid).then({ (hasMatches) in
+                if hasMatches {
+                    FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
+                        if (user.matchesLeft - 1) == 0 {
+                            // Add Timestamp because this one is getting to zero and countdown starts now
+                            var previousLikes: [String] = []
+                            previousLikes = user.likes!
+                            previousLikes.append(self.users[index].uid)
+                            let data: [String: Any] = [
+                                "matchesLeft": user.matchesLeft - 1,
+                                "likes": previousLikes,
+                                "cooldownTime": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss")
+                            ]
+                            FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
+                                FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
                                     if success {
-                                        self.playMatchAnimation {
-                                            self.showMatchModal()
-                                        }
+                                        var participants: [String] = []
+                                        participants.append(user.uid)
+                                        participants.append(self.users[index].uid)
+                                        let data: [String: Any] = [
+                                            "created": FieldValue.serverTimestamp(),
+                                            "participants": participants,
+                                            "lastUpdated": FieldValue.serverTimestamp(),
+                                            ]
+                                        FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
+                                            if success {
+                                                self.playMatchAnimation {
+                                                    self.showMatchModal()
+                                                }
+                                            }
+                                        })
                                     }
                                 })
-                            }
-                        })
-                    } else {
-                        print("Error happened.")
+                            })
+                        } else {
+                            var previousLikes: [String] = []
+                            previousLikes = user.likes!
+                            previousLikes.append(self.users[index].uid)
+                            let data: [String: Any] = [
+                                "matchesLeft": user.matchesLeft - 1,
+                                "likes": previousLikes
+                            ]
+                            
+                            FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
+                                FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
+                                    if success {
+                                        var participants: [String] = []
+                                        participants.append(user.uid)
+                                        participants.append(self.users[index].uid)
+                                        let data: [String: Any] = [
+                                            "created": FieldValue.serverTimestamp(),
+                                            "participants": participants,
+                                            "lastUpdated": FieldValue.serverTimestamp(),
+                                            ]
+                                        FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
+                                            if success {
+                                                self.playMatchAnimation {
+                                                    self.showMatchModal()
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            })
+                        }
+                        
                     }
-                })
-            }
+                } else {
+                    let nextViewController = GetPremiumViewController()
+                    let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
+                                                                               presentationCurve: .easeInEaseOut,
+                                                                               backgroundStyle: .blur(effectStyle: .light))
+                    self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+                    self.jellyAnimator?.prepare(viewController: nextViewController)
+                    self.present(nextViewController, animated: true, completion: nil)
+                }
+            })
         } else if direction == .left {
             var previousDislikes: [String] = []
             let currentUser = Auth.auth().currentUser!.uid
@@ -350,7 +343,8 @@ extension MatchViewController {
     }
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
-        fetchPotentialMatches()
+        print("No cards")
+        refreshKolodaData()
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {

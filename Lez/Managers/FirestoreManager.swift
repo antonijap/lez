@@ -376,10 +376,20 @@ final class FirestoreManager {
             return nil
         }
         
+        guard let matchesLeft = data["matchesLeft"] as? Int else {
+            print("Problem with parsing matchesLeft.")
+            return nil
+        }
+        
+        guard let cooldownTime = data["cooldownTime"] as? String else {
+            print("Problem with parsing cooldownTime.")
+            return nil
+        }
+        
         let newLocation = Location(city: city, country: country)
         let newPreferences = Preferences(ageRange: AgeRange(from: from, to: to), lookingFor: lookingFor)
         let newDetails = Details(about: about, dealBreakers: dealBreakers, diet: Diet(rawValue: diet)!)
-        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, dislikes: dislikes, blockedUsers: blockedUsers, chats: chats)
+        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, dislikes: dislikes, blockedUsers: blockedUsers, chats: chats, matchesLeft: matchesLeft, cooldownTime: cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate)
         return newUser
     }
     
@@ -606,5 +616,28 @@ final class FirestoreManager {
                 print("Error writing document: \(error)")
             }
         })
+    }
+    
+    func checkIfUserHasAvailableMatches(for uid: String) -> Promise<Bool> {
+        return Promise { fulfill, _ in
+            self.fetchUser(uid: uid).then { (user) in
+                if user.matchesLeft > 0 {
+                    // Allow Match
+                    fulfill(true)
+                } else {
+                    // Offer subscription if cooldown is not ready
+                    let endTime = user.cooldownTime!.add(components: 24.hours)
+                    print(user.cooldownTime!)
+                    print(endTime)
+                    if endTime.isInFuture {
+                        print("odjebi jos cekaj")
+                        fulfill(false)
+                    } else {
+                        print("oke, mos opet matchat")
+                        fulfill(true)
+                    }
+                }
+            }
+        }
     }
 }

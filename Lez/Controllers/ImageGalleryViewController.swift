@@ -178,7 +178,8 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
             "dislikes": [],
             "created": FieldValue.serverTimestamp(),
             "blockedUsers": [],
-            "chats": []
+            "chats": [],
+            "matchesLeft": 5
         ]
         FirestoreManager.shared.addUser(uid: self.user.uid, data: data).then { (success) in
             if success {

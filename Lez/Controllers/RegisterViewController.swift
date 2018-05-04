@@ -16,6 +16,7 @@ import TwitterKit
 class RegisterViewController: UIViewController {
     
     let facebookLoginButton = UIButton()
+    let hud = JGProgressHUD(style: .dark)
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -31,10 +32,22 @@ class RegisterViewController: UIViewController {
         super.viewDidLoad()
         setupButtons()
     }
+    
+    fileprivate func startSpinner() {
+        hud.textLabel.text = "Logging in"
+        hud.show(in: view)
+        hud.interactionType = .blockAllTouches
+        hud.detailTextLabel.font = UIFont.systemFont(ofSize: 9.0, weight: .regular)
+    }
+    
+    fileprivate func stopSpinner() {
+        hud.dismiss(animated: true)
+    }
 
     fileprivate func setupButtons() {
         let twitterLoginButton = TWTRLogInButton(logInCompletion: { session, error in
             if let session = session {
+                self.startSpinner()
                 let credential = TwitterAuthProvider.credential(withToken: session.authToken, secret: session.authTokenSecret)
                 Auth.auth().signIn(with: credential) { (user, error) in
                     if let error = error {
@@ -49,6 +62,7 @@ class RegisterViewController: UIViewController {
                             print("User exists. Skipping onboarding.")
                             FirestoreManager.shared.fetchUser(uid: current.uid).then { (user) in
                                 if user.isOnboarded {
+                                    self.stopSpinner()
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
                                     let setupProfileViewController = SetupProfileViewController()
@@ -102,6 +116,7 @@ class RegisterViewController: UIViewController {
                 print("User cancelled login.")
             case .success(_, _, let accessToken):
                 print("Logged in!")
+                self.startSpinner()
                 let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
                 Auth.auth().signIn(with: credential) { (user, error) in
                     if let error = error {
@@ -116,6 +131,7 @@ class RegisterViewController: UIViewController {
                             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                                 if user.isOnboarded {
                                     print("User is onboarded")
+                                    self.stopSpinner()
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
                                     let setupProfileViewController = SetupProfileViewController()
@@ -139,5 +155,6 @@ class RegisterViewController: UIViewController {
                 }
             }
         }
+        self.stopSpinner()
     }
 }

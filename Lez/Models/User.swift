@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import Firebase
 
 enum LookingFor: String {
     case relationship = "Relationship", friendship = "Friendship", sex = "Sex"
@@ -20,7 +21,7 @@ enum Diet: String, Encodable {
     case other = "Other"
 }
 
-class User: Encodable, Hashable {
+class User: Hashable {
     var hashValue: Int { get { return uid.hashValue } }
     var uid: String
     var name: String
@@ -38,10 +39,12 @@ class User: Encodable, Hashable {
     var dislikes: [String]?
     var blockedUsers: [String]?
     var chats: [String]?
+    var matchesLeft: Int
+    var cooldownTime: Date?
     
     // Initial user cration, no images, flags are false
     convenience init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details) {
-        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: nil, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], dislikes: [], blockedUsers: [], chats: [])
+        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: nil, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], dislikes: [], blockedUsers: [], chats: [], matchesLeft: 5, cooldownTime: nil)
         self.uid = uid
         self.name = name
         self.email = email
@@ -52,7 +55,7 @@ class User: Encodable, Hashable {
     }
     
     // With everything
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]?, isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], dislikes: [String], blockedUsers: [String], chats: [String]) {
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]?, isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], dislikes: [String], blockedUsers: [String], chats: [String], matchesLeft: Int, cooldownTime: Date?) {
         self.uid = uid
         self.name = name
         self.email = email
@@ -69,6 +72,8 @@ class User: Encodable, Hashable {
         self.dislikes = dislikes
         self.blockedUsers = blockedUsers
         self.chats = chats
+        self.matchesLeft = matchesLeft
+        self.cooldownTime = cooldownTime
     }
     
     static func ==(left:User, right:User) -> Bool {
