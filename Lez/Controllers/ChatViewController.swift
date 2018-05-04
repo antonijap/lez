@@ -23,15 +23,33 @@ class ChatViewController: UIViewController {
     var existingChats: [Chat] = []
     let headerTitles = ["New Matches", "Chat"]
     let hud = JGProgressHUD(style: .dark)
+    let illustration = UIImageView()
+    let label = UILabel()
+    private let refreshControl = UIRefreshControl()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        startSpinner()
+//        print("viewWillAppear")
+//        fetchChats()
+    }
+    
+    // Mark: - Lifecycle
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        view.backgroundColor = .white
+        setupNavigationBar()
+        setupTableView()
+    }
+    
+    // Mark: - Methods
+    @objc fileprivate func refreshChats(_ sender: Any) {
+        fetchChats()
+    }
+    
+    fileprivate func fetchChats() {
         guard let currentUser = Auth.auth().currentUser else { return }
-        
+        myUid = currentUser.uid
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
-            self.myUid = user.uid
             guard let chats = user.chats else { return }
             if chats.count > 0 {
                 FirestoreManager.shared.fetchChats(chats: chats).then({ (chats) in
@@ -53,42 +71,73 @@ class ChatViewController: UIViewController {
                     self.emptyChats.sort(by: { (a, b) -> Bool in
                         a.lastUpdated.dateValue() > b.lastUpdated.dateValue()
                     })
-
+                    self.hideEmptyState()
+                    self.tableView.isHidden = false
                     self.tableView.reloadData()
                     self.stopSpinner()
+                    self.refreshControl.endRefreshing()
                 })
+            } else if chats.isEmpty {
+                self.showEmptyState()
             } else {
-                self.stopSpinner()
+                self.hideEmptyState()
+                self.tableView.isHidden = false
             }
         }
     }
     
-    // Mark: - Lifecycle
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        view.backgroundColor = .white
-        setupNavigationBar()
-        setupTableView()
+    fileprivate func showEmptyState() {
+        if emptyChats.isEmpty && existingChats.isEmpty {
+            tableView.isHidden = true
+            
+            view.addSubview(illustration)
+            illustration.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.width.height.equalTo(64)
+                make.top.equalToSuperview().offset(100)
+            }
+            illustration.image = UIImage(named: "EmptyChat")
+            
+            view.addSubview(label)
+            label.snp.makeConstraints { (make) in
+                make.top.equalTo(illustration.snp.bottom).offset(24)
+                make.left.equalToSuperview().offset(32)
+                make.right.equalToSuperview().inset(32)
+            }
+            label.text = "When you get your first match, you will be able to chat here. Keep on liking!"
+            label.numberOfLines = 3
+            label.textColor = .gray
+            label.textAlignment = .center
+        }
     }
     
-    // Mark: - Methods
-    func startSpinner() {
+    fileprivate func hideEmptyState() {
+        illustration.isHidden = true
+        label.isHidden = true
+    }
+
+    fileprivate func startSpinner() {
         hud.textLabel.text = "Loading"
         hud.show(in: self.view)
     }
     
-    func stopSpinner() {
+    fileprivate func stopSpinner() {
         hud.dismiss(animated: true)
     }
     
-    func setupNavigationBar() {
+    fileprivate func setupNavigationBar() {
         navigationItem.title = "Chats & Matches"
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.setBackgroundImage(UIImage(named: "White"), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.layer.masksToBounds = false
+        navigationController?.navigationBar.layer.shadowColor = UIColor(red:0.90, green:0.90, blue:0.90, alpha:1.00).cgColor
+        navigationController?.navigationBar.layer.shadowOpacity = 0.8
+        navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 0, height: 2.0)
+        navigationController?.navigationBar.layer.shadowRadius = 4
     }
     
-    func setupTableView() {
+    fileprivate func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
         
@@ -104,6 +153,10 @@ class ChatViewController: UIViewController {
         tableView.contentInset = insets
         tableView.register(NewChatCell.self, forCellReuseIdentifier: "NewChatCell")
         tableView.register(ChatCell.self, forCellReuseIdentifier: "ChatCell")
+        tableView.isHidden = true
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(refreshChats(_:)), for: .valueChanged)
+        fetchChats()
     }
 }
 
@@ -151,7 +204,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         return 40.0
     }
     
-    func showLastMessage(chatUid: String) -> Promise<[Message]> {
+    fileprivate func showLastMessage(chatUid: String) -> Promise<[Message]> {
         return Promise { fulfill, reject in
             var messages = [Message]()
             let group = DispatchGroup()
@@ -205,8 +258,10 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                         notMe = participant
                     }
                 }
+                print(notMe?.name)
                 newChatCell.titleLabel.text = notMe?.name
                 newChatCell.userPictureView.moa.url = notMe?.images?.first
+                
                 cell = newChatCell
             } else {
                 let chatCell = tableView.dequeueReusableCell(withIdentifier: ChatCell.reuseID) as! ChatCell
@@ -224,6 +279,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 chatCell.titleLabel.text = notMe?.name
                 chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.dateValue().colloquialSinceNow()
                 chatCell.userPictureView.moa.url = notMe?.images?.first
+                
                 cell = chatCell
             }
         }

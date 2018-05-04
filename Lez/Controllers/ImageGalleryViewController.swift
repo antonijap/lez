@@ -183,6 +183,11 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
         FirestoreManager.shared.addUser(uid: self.user.uid, data: data).then { (success) in
             if success {
                 self.stopSpinner()
+                Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                    AnalyticsParameterItemID: "id-\(String(describing: self.title))",
+                    AnalyticsParameterItemName: self.title ?? "ImageGalleryViewController",
+                    AnalyticsParameterContentType: "user_registered"
+                    ])
                 self.dismiss(animated: true, completion: nil)
             } else {
                 self.showOkayModal(messageTitle: "Profile Image", messageAlert: "All profiles must have at least a profile image.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})

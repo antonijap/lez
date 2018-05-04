@@ -51,18 +51,10 @@ class RegisterViewController: UIViewController {
                                 if user.isOnboarded {
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
-                                    print("Almost there!")
-                                    let client = TWTRAPIClient.withCurrentUser()
-                                    client.requestEmail { email, error in
-                                        if let email = email {
-                                            let setupProfileViewController = SetupProfileViewController()
-                                            setupProfileViewController.email = email
-                                            setupProfileViewController.uid = current.uid
-                                            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
-                                            self.navigationItem.setHidesBackButton(true, animated: true)
-                                        } else {
-                                        }
-                                    }
+                                    let setupProfileViewController = SetupProfileViewController()
+                                    setupProfileViewController.uid = current.uid
+                                    self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                                    self.navigationItem.setHidesBackButton(true, animated: true)
                                 }
                             }
                         } else {

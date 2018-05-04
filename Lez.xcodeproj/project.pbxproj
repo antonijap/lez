@@ -161,7 +161,6 @@
 				CF425B472067EA3F00D6A1FE /* Controllers */,
 				CF425B482067EA4E00D6A1FE /* Models */,
 				CF425B492067EA6000D6A1FE /* Trash Candidate */,
-				CF0C3F042066F57D0033ECCA /* MatchAnimation.json */,
 				CF425B4A2067EA6E00D6A1FE /* Util */,
 			);
 			path = Lez;
@@ -222,6 +221,7 @@
 		CF425B4A2067EA6E00D6A1FE /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				CF0C3F042066F57D0033ECCA /* MatchAnimation.json */,
 				CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */,
 				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
 				CFB7C4C12066B15900114EC4 /* Extensions.swift */,

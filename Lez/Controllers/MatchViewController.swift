@@ -85,7 +85,6 @@ class KolodaImage: UIImageView {
     }
 }
 
-
 class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate, CardFullscreenDelegate {
     
     // MARK: - Variables
@@ -104,7 +103,9 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        kolodaView.reloadData()
+        if users.count < 1 {
+            fetchPotentialMatches()
+        }
     }
     
     override func viewDidLoad() {
@@ -112,15 +113,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let _ = user {
-//               let isOnboarded = DefaultsManager.sharedInstance.isCurrentUserOnboarded()
-//
-//                if !isOnboarded {
-//                    let setupProfileViewController = SetupProfileViewController()
-//                    setupProfileViewController.name = user?.displayName!
-//                    setupProfileViewController.email = user?.email!
-//                    let navigationController = UINavigationController(rootViewController: setupProfileViewController)
-//                    self.present(navigationController, animated: false, completion: nil)
-//                }
                 self.navigationItem.title = "Match Room"
                 let filterButton = UIButton(type: .custom)
                 filterButton.setImage(UIImage(named: "Filter"), for: .normal)
@@ -139,9 +131,15 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                         AnalyticsParameterContentType: "screen_view"
                     ])
                     self.startSpinner()
-                    print("User postoji. MatchViewController.")
                     FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                         self.user = user
+                        if !user.isOnboarded {
+                            let setupProfileViewController = SetupProfileViewController()
+                            setupProfileViewController.name = user.name
+                            setupProfileViewController.email = user.email
+                            let navigationController = UINavigationController(rootViewController: setupProfileViewController)
+                            self.present(navigationController, animated: false, completion: nil)
+                        }
                         FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                             self.users = users
                             if self.users.isEmpty {
@@ -170,16 +168,41 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     }
     
     // MARK: - Methods
-    func startSpinner() {
+    fileprivate func startSpinner() {
         hud.textLabel.text = "Loading"
         hud.show(in: self.view)
     }
     
-    func stopSpinner() {
+    fileprivate func fetchPotentialMatches() {
+        print("Fetching new users")
+        if let currentUser = Auth.auth().currentUser {
+            Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
+                AnalyticsParameterItemID: "id-\(currentUser.uid)",
+                AnalyticsParameterItemName: "MatchViewController",
+                AnalyticsParameterContentType: "screen_view"
+                ])
+            self.startSpinner()
+            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                self.user = user
+                FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
+                    self.users = users
+                    if self.users.isEmpty {
+                        Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
+                            .action(.default("Okay"))
+                            .show()
+                    }
+                    self.kolodaView.reloadData()
+                    self.stopSpinner()
+                })
+            }
+        }
+    }
+    
+    fileprivate func stopSpinner() {
         hud.dismiss(animated: true)
     }
     
-    func setupKoloda() {
+    fileprivate func setupKoloda() {
         kolodaView.dataSource = self
         kolodaView.delegate = self
         kolodaView.countOfVisibleCards = 3
@@ -193,7 +216,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         }
     }
     
-    func playMatchAnimation() {
+    fileprivate func playMatchAnimation() {
         kolodaView.layer.opacity = 0.2
         let animationView = LOTAnimationView(name: "MatchAnimation")
         animationView.contentMode = .scaleAspectFit
@@ -293,7 +316,7 @@ extension MatchViewController {
                                 FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
                                     if success {
                                         self.playMatchAnimation()
-                                        // Offer to open chat or keep playing
+                                        self.showMatchModal()
                                     }
                                 })
                             }
@@ -324,7 +347,7 @@ extension MatchViewController {
     }
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
-        kolodaView.reloadData()
+        fetchPotentialMatches()
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {

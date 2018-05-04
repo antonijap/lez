@@ -125,7 +125,7 @@ final class FirestoreManager {
                         }
                     }
                 }
-
+                
                 // Remove yourself
                 var filteredMe: [User] = []
                 for match in Array(Set(filteredLookingFor)) {
@@ -206,6 +206,7 @@ final class FirestoreManager {
     
     func checkIfUserExists(uid: String) -> Promise<Bool> {
         return Promise { fulfill, reject in
+            print(uid)
             let docRef = self.db.collection("users").document(uid)
             docRef.getDocument { (document, error) in
                 if let document = document {
@@ -478,9 +479,9 @@ final class FirestoreManager {
                 self.fetchMessages(uid: uid).then({ (messages) in
                     if let messages = messages {
                         if messages.count > 0 {
-                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: messages))
+                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: messages, isRead: true))
                         } else {
-                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: nil))
+                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: nil, isRead: true))
                         }
                     }
                 })

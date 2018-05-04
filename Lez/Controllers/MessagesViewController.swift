@@ -9,6 +9,12 @@
 import UIKit
 import Firebase
 
+extension Notification.Name {
+    
+    static let chatUpdated = Notification.Name("ChatUpdated")
+    
+}
+
 class MessagesViewController: UIViewController {
     
     // Mark: - Properties
@@ -36,7 +42,7 @@ class MessagesViewController: UIViewController {
         
         Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created").addSnapshotListener { (snapshot, error) in
             self.populateMessages()
-        }
+        } 
     }
     
     override func viewWillDisappear(_ animated: Bool) {
