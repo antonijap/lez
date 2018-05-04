@@ -13,24 +13,26 @@ import SwiftDate
 import moa
 import JGProgressHUD
 
+extension Notification.Name {
+    static let chatUpdated = Notification.Name("chatUpdated")
+}
+
 class ChatViewController: UIViewController {
     
     // Mark: - Properties
-    let tableView = UITableView()
-    var sections: [ChatSections] = []
-    var myUid: String!
-    var emptyChats: [Chat] = []
-    var existingChats: [Chat] = []
-    let headerTitles = ["New Matches", "Chat"]
-    let hud = JGProgressHUD(style: .dark)
-    let illustration = UIImageView()
-    let label = UILabel()
+    private let tableView = UITableView()
+    private var sections: [ChatSections] = []
+    private var myUid: String!
+    private var emptyChats: [Chat] = []
+    private var existingChats: [Chat] = []
+    private let headerTitles = ["New Matches", "Chat"]
+    private let hud = JGProgressHUD(style: .dark)
+    private let illustration = UIImageView()
+    private let label = UILabel()
     private let refreshControl = UIRefreshControl()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        print("viewWillAppear")
-//        fetchChats()
     }
     
     // Mark: - Lifecycle
@@ -45,7 +47,7 @@ class ChatViewController: UIViewController {
     @objc fileprivate func refreshChats(_ sender: Any) {
         fetchChats()
     }
-    
+
     fileprivate func fetchChats() {
         guard let currentUser = Auth.auth().currentUser else { return }
         myUid = currentUser.uid
@@ -242,7 +244,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             }
             
             self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ (messages) in
-                chatCell.messageLabel.text = messages.last?.message
+                chatCell.messageLabel.text = messages.last!.message
             })
             
             chatCell.titleLabel.text = notMe?.name
@@ -258,7 +260,6 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                         notMe = participant
                     }
                 }
-                print(notMe?.name)
                 newChatCell.titleLabel.text = notMe?.name
                 newChatCell.userPictureView.moa.url = notMe?.images?.first
                 

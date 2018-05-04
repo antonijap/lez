@@ -438,7 +438,6 @@ final class FirestoreManager {
                 fulfill(fetchedChats)
             })
         }
-        
     }
     
     func parseFirebaseChat(document: DocumentSnapshot) -> Promise<Chat> {
@@ -466,7 +465,7 @@ final class FirestoreManager {
                 print("Problem with parsing participants.")
                 return
             }
-            
+
             for p in participantsArray {
                 group.enter()
                 FirestoreManager.shared.fetchUser(uid: p).then { (user) in
@@ -479,9 +478,9 @@ final class FirestoreManager {
                 self.fetchMessages(uid: uid).then({ (messages) in
                     if let messages = messages {
                         if messages.count > 0 {
-                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: messages, isRead: true))
+                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: messages))
                         } else {
-                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: nil, isRead: true))
+                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: nil))
                         }
                     }
                 })
@@ -510,30 +509,6 @@ final class FirestoreManager {
             
             let newMessage = Message(created: created, from: from, message: message)
             fulfill(newMessage)
-        }
-    }
-    
-    func liveFetchMessages(uid: String) -> Promise<[Message]> {
-        return Promise { fulfill, _ in
-            var messages = [Message]()
-            let group = DispatchGroup()
-            
-            self.db.collection("chats").document(uid).collection("messages").addSnapshotListener { (snapshot, error) in
-                guard let document = snapshot else {
-                    print("Error fetching document: \(error!)")
-                    return
-                }
-                for message in document.documents {
-                    group.enter()
-                    self.parseMessage(document: message).then({ (message) in
-                        messages.append(message)
-                        group.leave()
-                    })
-                }
-                group.notify(queue: .main, execute: {
-                    fulfill(messages)
-                })
-            }
         }
     }
     
@@ -605,7 +580,7 @@ final class FirestoreManager {
                     reject(err)
                 } else {
                     let d: [String: Any] = [
-                        "lastUpdated": FieldValue.serverTimestamp()
+                        "lastUpdated": FieldValue.serverTimestamp(),
                     ]
                     self.db.collection("chats").document(chat).updateData(d, completion: { (error) in
                         if let err = err {
@@ -619,5 +594,17 @@ final class FirestoreManager {
             })
             
         }
+    }
+    
+    func updateIsReadState(to chat: String, value: Bool) {
+        let data: [String: Any] = [
+            "lastUpdated": FieldValue.serverTimestamp(),
+            "isRead": value
+        ]
+        self.db.collection("chats").document(chat).updateData(data, completion: { (error) in
+            if let error = error {
+                print("Error writing document: \(error)")
+            }
+        })
     }
 }

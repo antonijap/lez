@@ -21,14 +21,12 @@ class Chat {
     var lastUpdated: Timestamp
     var participants: [User]
     var messages: [Message]?
-    var isRead: Bool
     
-    init(uid: String, created: Timestamp, lastUpdated: Timestamp, participants: [User], messages: [Message]?, isRead: Bool) {
+    init(uid: String, created: Timestamp, lastUpdated: Timestamp, participants: [User], messages: [Message]?) {
         self.uid = uid
         self.created = created
         self.lastUpdated = lastUpdated
         self.participants = participants
         self.messages = messages
-        self.isRead = isRead
     }
 }

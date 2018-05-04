@@ -9,12 +9,6 @@
 import UIKit
 import Firebase
 
-extension Notification.Name {
-    
-    static let chatUpdated = Notification.Name("ChatUpdated")
-    
-}
-
 class MessagesViewController: UIViewController {
     
     // Mark: - Properties
@@ -59,12 +53,12 @@ class MessagesViewController: UIViewController {
             })
             self?.view.setNeedsUpdateConstraints()
             }, willHide: { [weak self](height) in
-                // Reset constraints here
                 self?.textField.snp.updateConstraints({ (make) in
                     make.bottom.equalToSuperview()
                 })
                 self?.view.setNeedsUpdateConstraints()
         })
+        FirestoreManager.shared.updateIsReadState(to: chatUid, value: true)
     }
     
     func populateMessages() {
@@ -85,7 +79,7 @@ class MessagesViewController: UIViewController {
             }
             group.notify(queue: .main, execute: {
                 if messages.isEmpty {
-                    
+                    print("Nema poruka, vjerojatno neka greska.")
                 } else {
                     print("Will refresh messages")
                     self.messages.removeAll()
@@ -113,7 +107,7 @@ class MessagesViewController: UIViewController {
         tableView.separatorColor = .clear
         tableView.isUserInteractionEnabled = true
         
-        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 48, right: 0)
+        let insets = UIEdgeInsets(top: 16, left: 0, bottom: 48, right: 0)
         tableView.contentInset = insets
         tableView.register(MyMessageCell.self, forCellReuseIdentifier: "MyMessageCell")
         tableView.register(HerMessageCell.self, forCellReuseIdentifier: "HerMessageCell")
@@ -227,7 +221,6 @@ extension MessagesViewController: UITextFieldDelegate {
                     "message": text
                 ]
                 FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
-                    print("Message added.")
                     self.populateMessages()
                     textField.text = ""
                     textField.resignFirstResponder()

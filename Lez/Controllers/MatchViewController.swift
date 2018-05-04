@@ -216,7 +216,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         }
     }
     
-    fileprivate func playMatchAnimation() {
+    fileprivate func playMatchAnimation(completion: @escaping () -> Void) {
         kolodaView.layer.opacity = 0.2
         let animationView = LOTAnimationView(name: "MatchAnimation")
         animationView.contentMode = .scaleAspectFit
@@ -230,6 +230,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
             animationView.stop()
             animationView.isHidden = true
             self.kolodaView.layer.opacity = 1.0
+            completion()
         })
     }
     
@@ -311,12 +312,14 @@ extension MatchViewController {
                                 let data: [String: Any] = [
                                     "created": FieldValue.serverTimestamp(),
                                     "participants": participants,
-                                    "lastUpdated": FieldValue.serverTimestamp()
+                                    "lastUpdated": FieldValue.serverTimestamp(),
+                                    "isRead": false
                                 ]
                                 FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
                                     if success {
-                                        self.playMatchAnimation()
-                                        self.showMatchModal()
+                                        self.playMatchAnimation {
+                                            self.showMatchModal()
+                                        }
                                     }
                                 })
                             }
