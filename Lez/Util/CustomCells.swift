@@ -496,9 +496,8 @@ class HeaderCell: UITableViewCell {
             make.top.left.right.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 32, bottom: 0, right: 32))
         }
         titleLabel.textColor = .black
-        titleLabel.textColor = UIColor(red:0.59, green:0.59, blue:0.59, alpha:1.00)
-        titleLabel.font = UIFont.systemFont(ofSize: 21.0)
-        titleLabel.numberOfLines = 2
+        titleLabel.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        titleLabel.numberOfLines = 4
         
         addSubview(bodyLabel)
         bodyLabel.snp.makeConstraints { (make) in
@@ -549,10 +548,12 @@ class PremiumMenuCell: UITableViewCell {
         premiumButton.snp.makeConstraints { (make) in
             make.right.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
+            make.height.equalTo(32)
         }
         premiumButton.backgroundColor = UIColor(red:0.05, green:0.79, blue:0.40, alpha:1.00)
         premiumButton.contentEdgeInsets = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        premiumButton.layer.cornerRadius = 10
+        premiumButton.layer.cornerRadius = 16
+        premiumButton.clipsToBounds = true
         premiumButton.setTitle("2.99", for: .normal)
     }
     

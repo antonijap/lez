@@ -96,7 +96,7 @@ class ChatViewController: UIViewController {
             illustration.snp.makeConstraints { (make) in
                 make.centerX.equalToSuperview()
                 make.width.height.equalTo(64)
-                make.top.equalToSuperview().offset(100)
+                make.top.equalToSuperview().inset(view.frame.height / 4.0)
             }
             illustration.image = UIImage(named: "EmptyChat")
             
@@ -110,6 +110,7 @@ class ChatViewController: UIViewController {
             label.numberOfLines = 3
             label.textColor = .gray
             label.textAlignment = .center
+            label.font = UIFont.systemFont(ofSize: 21, weight: .medium)
         }
     }
     

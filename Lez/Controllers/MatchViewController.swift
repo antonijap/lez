@@ -16,6 +16,8 @@ import Firebase
 import FBSDKLoginKit
 import Alertift
 import JGProgressHUD
+import StoreKit
+import SwiftyStoreKit
 
 class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate, CardFullscreenDelegate, GetPremiumViewControllerDelegate {
     
@@ -42,11 +44,30 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        checkIfTimerNeedsToBeUpdated()
+        
+        SwiftyStoreKit.retrieveProductsInfo(["com.antonijapek.Lez.premium"]) { result in
+            if let product = result.retrievedProducts.first {
+                let priceString = product.localizedPrice!
+                print("Product: \(product.localizedDescription), price: \(priceString)")
+            }
+            else if let invalidProductId = result.invalidProductIDs.first {
+                print("Invalid product identifier: \(invalidProductId)")
+            }
+            else {
+                print("Error: \(String(describing: result.error))")
+            }
+        }
+    }
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
 //        try! Auth.auth().signOut()
+        NotificationCenter.default.addObserver(self, selector:#selector(self.checkIfTimerNeedsToBeUpdated), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let currentUser = user {
                 print("User detected")
@@ -76,6 +97,10 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                         self.setupTimer()
                         self.showTimer()
                         self.setupNoCards()
+                        print(users.count)
+                        if users.count <= 0 {
+                            self.showNoCards()
+                        }
                     })
                 }
             } else {
@@ -97,7 +122,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         
         timerBoxView.addSubview(timerLabel)
         timerLabel.snp.makeConstraints { (make) in
-            make.top.equalToSuperview().inset(view.frame.height / 2.5)
+            make.top.equalToSuperview().inset(view.frame.height / 2.6)
             make.left.equalToSuperview().offset(40)
             make.right.equalToSuperview().inset(40)
         }
@@ -123,7 +148,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
             make.right.equalToSuperview().inset(40)
             make.height.equalTo(48)
         }
-        timerBuyButton.setTitle("Get Premium", for: .normal)
+        timerBuyButton.setTitle("Unlock Now", for: .normal)
         timerBuyButton.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
         let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.buyTapped(_:)))
         timerBuyButton.addGestureRecognizer(buttonTap)
@@ -136,6 +161,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         timerLabel.isHidden = true
         timerDescriptionLabel.isHidden = true
         timerBuyButton.isHidden = true
+        navigationItem.rightBarButtonItem?.isEnabled = false
     }
     
     
@@ -146,6 +172,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         timerBuyButton.isHidden = false
         runTimer()
         updateTimer()
+        navigationItem.rightBarButtonItem?.isEnabled = false
     }
     
     @objc func buyTapped(_ sender: UIButton) {
@@ -158,21 +185,24 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         self.present(nextViewController, animated: true, completion: nil)
     }
     
+    @objc fileprivate func checkIfTimerNeedsToBeUpdated() {
+        runTimer()
+    }
+    
     fileprivate func runTimer() {
         timer.invalidate()
         guard let user = user else { return }
         if let cooldownTime = user.cooldownTime {
-            print("There is cooldown")
             let timeUntilKolodaUnlocks = cooldownTime.add(components: 24.hours)
             let differenceBetweenNowAndTimeUntilKolodaUnlocks = timeUntilKolodaUnlocks.timeIntervalSinceNow
             self.seconds = Int(differenceBetweenNowAndTimeUntilKolodaUnlocks)
             timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
         } else {
-            print("No cooldown")
             self.hideTimer()
         }
     }
     
+    // Ovo ne diraj
     @objc func updateTimer() {
         if (seconds - 1) == 0 {
             guard let user = user else { return }
@@ -318,7 +348,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
 
 extension MatchViewController {
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
-        print("Rendering card")
         let view = LezKolodaView()
         view.imageView.moa.url = users[index].images!.first
         view.imageView.moa.onSuccess = { image in
@@ -444,6 +473,7 @@ extension MatchViewController {
     }
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
+        showNoCards()
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
