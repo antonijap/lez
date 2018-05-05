@@ -625,17 +625,7 @@ final class FirestoreManager {
                     // Allow Match
                     fulfill(true)
                 } else {
-                    // Offer subscription if cooldown is not ready
-                    let endTime = user.cooldownTime!.add(components: 24.hours)
-                    print(user.cooldownTime!)
-                    print(endTime)
-                    if endTime.isInFuture {
-                        print("odjebi jos cekaj")
-                        fulfill(false)
-                    } else {
-                        print("oke, mos opet matchat")
-                        fulfill(true)
-                    }
+                    fulfill(false)
                 }
             }
         }

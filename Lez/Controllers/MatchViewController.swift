@@ -160,11 +160,12 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     
     fileprivate func runTimer() {
         timer.invalidate()
-        if let cooldownTime = user!.cooldownTime {
+        guard let user = user else { return }
+        if let cooldownTime = user.cooldownTime {
             print("There is cooldown")
-//            let timeUntilKolodaUnlocks = cooldownTime.add(components: 24.hours)
-//            let differenceBetweenNowAndTimeUntilKolodaUnlocks = timeUntilKolodaUnlocks.timeIntervalSinceNow
-//            self.seconds = Int(differenceBetweenNowAndTimeUntilKolodaUnlocks)
+            let timeUntilKolodaUnlocks = cooldownTime.add(components: 24.hours)
+            let differenceBetweenNowAndTimeUntilKolodaUnlocks = timeUntilKolodaUnlocks.timeIntervalSinceNow
+            self.seconds = Int(differenceBetweenNowAndTimeUntilKolodaUnlocks)
             timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
         } else {
             print("No cooldown")
@@ -292,9 +293,9 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     }
     
     @objc func refreshKolodaData() {
-        users.removeAll()
-        guard let currentUserUid = Auth.auth().currentUser?.uid else { return }
-        FirestoreManager.shared.fetchUser(uid: currentUserUid).then { (user) in
+        guard let currentUser = Auth.auth().currentUser else { return }
+        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+            self.user = user
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                 self.users = users
                 if self.users.isEmpty {
@@ -304,10 +305,8 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                         })
                         .show()
                 }
+                self.hideNoCards()
                 self.kolodaView.reloadData()
-                if self.kolodaView.countOfCards > 0 {
-                    self.hideNoCards()
-                }
             })
         }
     }
@@ -319,6 +318,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
 
 extension MatchViewController {
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
+        print("Rendering card")
         let view = LezKolodaView()
         view.imageView.moa.url = users[index].images!.first
         view.imageView.moa.onSuccess = { image in
@@ -406,7 +406,6 @@ extension MatchViewController {
                             })
                         }
                     }
-                    print(self.kolodaView.isRunOutOfCards)
                     if self.kolodaView.isRunOutOfCards {
                         self.showNoCards()
                     } else {
