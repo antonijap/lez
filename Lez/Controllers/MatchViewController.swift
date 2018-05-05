@@ -48,7 +48,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         super.viewDidLoad()
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
-            if let user = user {
+            if let currentUser = user {
                 print("User detected")
                 self.navigationItem.title = "Match Room"
                 let filterButton = UIButton(type: .custom)
@@ -61,7 +61,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                 self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
                 self.navigationController?.navigationBar.shadowImage = UIImage()
                 
-                FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
+                FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                     self.user = user
                     if !user.isOnboarded {
                         let setupProfileViewController = SetupProfileViewController()
@@ -74,6 +74,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                         self.users = users
                         self.setupKoloda()
                         self.setupTimer()
+                        self.showTimer()
                         self.setupNoCards()
                     })
                 }
@@ -88,15 +89,13 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     
     // MARK: - Methods
     fileprivate func setupTimer() {
-        print("Setting up timer")
-        
         view.insertSubview(timerBoxView, aboveSubview: kolodaView)
         timerBoxView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
         }
-        timerBoxView.addSubview(timerLabel)
         timerBoxView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
         
+        timerBoxView.addSubview(timerLabel)
         timerLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview().inset(view.frame.height / 2.5)
             make.left.equalToSuperview().offset(40)
@@ -140,7 +139,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     }
     
     
-    fileprivate func showTimer() {
+    func showTimer() {
         timerBoxView.isHidden = false
         timerLabel.isHidden = false
         timerDescriptionLabel.isHidden = false
@@ -161,14 +160,20 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     
     fileprivate func runTimer() {
         timer.invalidate()
-        seconds = 5
-        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
+        if let cooldownTime = user!.cooldownTime {
+            print("There is cooldown")
+//            let timeUntilKolodaUnlocks = cooldownTime.add(components: 24.hours)
+//            let differenceBetweenNowAndTimeUntilKolodaUnlocks = timeUntilKolodaUnlocks.timeIntervalSinceNow
+//            self.seconds = Int(differenceBetweenNowAndTimeUntilKolodaUnlocks)
+            timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
+        } else {
+            print("No cooldown")
+            self.hideTimer()
+        }
     }
     
     @objc func updateTimer() {
-        seconds -= 1
-        timerLabel.text = timeString(time: TimeInterval(seconds))
-        if seconds == 0 {
+        if (seconds - 1) == 0 {
             guard let user = user else { return }
             let data: [String: Any] = [
                 "matchesLeft": 5,
@@ -180,7 +185,11 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                     self.refreshKolodaData()
                 }
             }
+        } else {
+            seconds -= 1
+            timerLabel.text = timeString(time: TimeInterval(seconds))
         }
+        
     }
     
     fileprivate func timeString(time: TimeInterval) -> String {
@@ -191,7 +200,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     }
     
     fileprivate func setupNoCards() {
-        noCardsBoxView.isHidden = false
         view.insertSubview(noCardsBoxView, aboveSubview: kolodaView)
         noCardsBoxView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
@@ -307,10 +315,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     func dislikeUser() {
         kolodaView.swipe(.left)
     }
-    
-    func activateTimer() {
-        showTimer()
-    }
 }
 
 extension MatchViewController {
@@ -401,7 +405,12 @@ extension MatchViewController {
                                 })
                             })
                         }
-                        
+                    }
+                    print(self.kolodaView.isRunOutOfCards)
+                    if self.kolodaView.isRunOutOfCards {
+                        self.showNoCards()
+                    } else {
+                        self.hideNoCards()
                     }
                 } else {
                     self.kolodaView.revertAction()
@@ -436,13 +445,6 @@ extension MatchViewController {
     }
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
-        guard let user = user else { return }
-        FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
-            self.user = user
-            if user.matchesLeft > 0 {
-                self.showNoCards()
-            }
-        }
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {

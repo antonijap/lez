@@ -11,7 +11,7 @@ import UIKit
 import SnapKit
 
 protocol GetPremiumViewControllerDelegate {
-    func activateTimer()
+    func showTimer()
 }
 
 class GetPremiumViewController: UIViewController {
@@ -77,7 +77,7 @@ class GetPremiumViewController: UIViewController {
     }
     
     @objc func closeButtonTapped(_ sender: UIButton) {
-        delegate?.activateTimer()
+        delegate?.showTimer()
         dismiss(animated: true, completion: nil)
     }
     
