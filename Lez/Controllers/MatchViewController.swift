@@ -17,78 +17,9 @@ import FBSDKLoginKit
 import Alertift
 import JGProgressHUD
 
-class KolodaImage: UIImageView {
-    var userImage = UIImageView()
-    var userName = UILabel()
-    var userLocation = UILabel()
-    var gradientLayer = CAGradientLayer()
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
-        backgroundColor = .clear
-        layer.cornerRadius = 16
-        clipsToBounds = true
-        
-        setupUserImage()
-        setupUserName()
-        setupLocation()
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        gradientLayer.frame = userImage.bounds
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func setupUserImage() {
-        addSubview(userImage)
-        userImage.snp.makeConstraints { make in
-            make.edges.equalToSuperview()
-        }
-        userImage.contentMode = .scaleAspectFill
-        userImage.clipsToBounds = true
-        userImage.layer.cornerRadius = 16
-    }
-    
-    func setupUserName() {
-        addSubview(userName)
-        userName.snp.setLabel("USERNAME_LABEL")
-        userName.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview().inset(16)
-            make.bottom.equalToSuperview().inset(38)
-        }
-        userName.textColor = .white
-        userName.textAlignment = .left
-    }
-    
-    func setupLocation() {
-        addSubview(userLocation)
-        userLocation.snp.setLabel("LOCATION_LABEL")
-        userLocation.snp.makeConstraints { (make) in
-            make.left.right.equalTo(userName)
-            make.top.equalTo(userName.snp.bottom)
-        }
-        userLocation.textColor = UIColor.white.withAlphaComponent(0.7)
-        userLocation.textAlignment = .left
-    }
-    
-    func activateShadow() {
-        userImage.layer.addSublayer(gradientLayer)
-        let black = UIColor.black.withAlphaComponent(0.5).cgColor
-        gradientLayer.colors = [black, UIColor.clear.cgColor]
-        gradientLayer.endPoint = CGPoint(x: 0.0, y: 0.7)
-        gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
-        gradientLayer.opacity = 1
-    }
-}
-
-class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate, CardFullscreenDelegate {
+class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate, CardFullscreenDelegate, GetPremiumViewControllerDelegate {
     
     // MARK: - Variables
-    
     var kolodaView = LezKolodaView()
     let userImage = UIImageView()
     var users: [User] = []
@@ -98,9 +29,17 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     var user: User?
     let hud = JGProgressHUD(style: .dark)
     var handle: AuthStateDidChangeListenerHandle?
-    
+    var timerLabel = UILabel()
+    var seconds = 5//86400
+    var timer = Timer()
+    var timerBuyButton = CustomButton()
+    var timerDescriptionLabel = UILabel()
+    let timerBoxView = UIView()
+    let noCardsBoxView = UIView()
+    let noCardsButton = CustomButton()
+    let noCardsLabel = UILabel()
+
     // MARK: - Lifecycle
-    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
     }
@@ -134,6 +73,8 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                     FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                         self.users = users
                         self.setupKoloda()
+                        self.setupTimer()
+                        self.setupNoCards()
                     })
                 }
             } else {
@@ -145,12 +86,150 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        Auth.auth().removeStateDidChangeListener(handle!)
+    // MARK: - Methods
+    fileprivate func setupTimer() {
+        print("Setting up timer")
+        
+        view.insertSubview(timerBoxView, aboveSubview: kolodaView)
+        timerBoxView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        timerBoxView.addSubview(timerLabel)
+        timerBoxView.backgroundColor = UIColor.white.withAlphaComponent(0.9)
+        
+        timerLabel.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().inset(view.frame.height / 2.5)
+            make.left.equalToSuperview().offset(40)
+            make.right.equalToSuperview().inset(40)
+        }
+        timerLabel.text = "Timer"
+        timerLabel.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
+        timerLabel.textAlignment = .center
+        
+        timerBoxView.addSubview(timerDescriptionLabel)
+        timerDescriptionLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(timerLabel.snp.bottom).offset(16)
+            make.left.equalToSuperview().offset(40)
+            make.right.equalToSuperview().inset(40)
+        }
+        timerDescriptionLabel.text = "No more likes, get Premium or wait for 24 hours."
+        timerDescriptionLabel.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        timerDescriptionLabel.numberOfLines = 2
+        timerDescriptionLabel.textAlignment = .center
+        
+        timerBoxView.addSubview(timerBuyButton)
+        timerBuyButton.snp.makeConstraints { (make) in
+            make.top.equalTo(timerDescriptionLabel.snp.bottom).offset(40)
+            make.left.equalToSuperview().offset(40)
+            make.right.equalToSuperview().inset(40)
+            make.height.equalTo(48)
+        }
+        timerBuyButton.setTitle("Get Premium", for: .normal)
+        timerBuyButton.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
+        let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.buyTapped(_:)))
+        timerBuyButton.addGestureRecognizer(buttonTap)
+        hideTimer()
     }
     
-    // MARK: - Methods
+    fileprivate func hideTimer() {
+        timer.invalidate()
+        timerBoxView.isHidden = true
+        timerLabel.isHidden = true
+        timerDescriptionLabel.isHidden = true
+        timerBuyButton.isHidden = true
+    }
+    
+    
+    fileprivate func showTimer() {
+        timerBoxView.isHidden = false
+        timerLabel.isHidden = false
+        timerDescriptionLabel.isHidden = false
+        timerBuyButton.isHidden = false
+        runTimer()
+        updateTimer()
+    }
+    
+    @objc func buyTapped(_ sender: UIButton) {
+        let nextViewController = GetPremiumViewController()
+        let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
+                                                                   presentationCurve: .easeInEaseOut,
+                                                                   backgroundStyle: .blur(effectStyle: .light))
+        self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+        self.jellyAnimator?.prepare(viewController: nextViewController)
+        self.present(nextViewController, animated: true, completion: nil)
+    }
+    
+    fileprivate func runTimer() {
+        timer.invalidate()
+        seconds = 5
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
+    }
+    
+    @objc func updateTimer() {
+        seconds -= 1
+        timerLabel.text = timeString(time: TimeInterval(seconds))
+        if seconds == 0 {
+            guard let user = user else { return }
+            let data: [String: Any] = [
+                "matchesLeft": 5,
+                "cooldownTime": ""
+            ]
+            FirestoreManager.shared.updateUser(uid: user.uid, data: data).then { (user) in
+                self.hideTimer()
+                if self.kolodaView.countOfCards == 0 {
+                    self.refreshKolodaData()
+                }
+            }
+        }
+    }
+    
+    fileprivate func timeString(time: TimeInterval) -> String {
+        let hours = Int(time) / 3600
+        let minutes = Int(time) / 60 % 60
+        let seconds = Int(time) % 60
+        return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
+    }
+    
+    fileprivate func setupNoCards() {
+        noCardsBoxView.isHidden = false
+        view.insertSubview(noCardsBoxView, aboveSubview: kolodaView)
+        noCardsBoxView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        
+        noCardsBoxView.addSubview(noCardsLabel)
+        noCardsLabel.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().inset(view.frame.height / 2.5)
+            make.left.equalToSuperview().offset(40)
+            make.right.equalToSuperview().inset(40)
+        }
+        noCardsLabel.text = "Deck empty, let's try to find more matches. Hit refresh."
+        noCardsLabel.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        noCardsLabel.numberOfLines = 2
+        noCardsLabel.textAlignment = .center
+
+        noCardsBoxView.addSubview(noCardsButton)
+        noCardsButton.snp.makeConstraints { (make) in
+            make.top.equalTo(noCardsLabel.snp.bottom).offset(40)
+            make.left.equalToSuperview().offset(40)
+            make.right.equalToSuperview().inset(40)
+            make.height.equalTo(48)
+        }
+        noCardsButton.setTitle("Refresh Deck", for: .normal)
+        noCardsButton.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
+        let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.refreshKolodaData))
+        noCardsButton.addGestureRecognizer(buttonTap)
+        hideNoCards()
+    }
+    
+    fileprivate func showNoCards() {
+        noCardsBoxView.isHidden = false
+    }
+    
+    fileprivate func hideNoCards() {
+        noCardsBoxView.isHidden = true
+    }
+    
     fileprivate func startSpinner() {
         hud.textLabel.text = "Loading"
         hud.show(in: self.view)
@@ -172,6 +251,10 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).inset(24)
             make.width.equalToSuperview().inset(UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8))
             make.centerX.equalToSuperview()
+        }
+        
+        if kolodaView.countOfCards == 0 {
+            setupTimer()
         }
     }
     
@@ -200,24 +283,37 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         self.present(navigationController, animated: false, completion: nil)
     }
     
-    func refreshKolodaData() {
-        print("Reloading users")
+    @objc func refreshKolodaData() {
+        users.removeAll()
         guard let currentUserUid = Auth.auth().currentUser?.uid else { return }
         FirestoreManager.shared.fetchUser(uid: currentUserUid).then { (user) in
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                 self.users = users
                 if self.users.isEmpty {
+                    print("Should show noCards")
+//                    Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
+//                        .action(.default("Okay"))
+//                        .show()
                     Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
-                        .action(.default("Okay"))
+                        .action(.default("Okay"), handler: { (_, _, _) in
+                            self.showNoCards()
+                        })
                         .show()
                 }
                 self.kolodaView.reloadData()
+                if self.kolodaView.countOfCards > 0 {
+                    self.hideNoCards()
+                }
             })
         }
     }
     
     func dislikeUser() {
         kolodaView.swipe(.left)
+    }
+    
+    func activateTimer() {
+        showTimer()
     }
 }
 
@@ -249,7 +345,6 @@ extension MatchViewController {
                 if hasMatches {
                     FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
                         if (user.matchesLeft - 1) == 0 {
-                            // Add Timestamp because this one is getting to zero and countdown starts now
                             var previousLikes: [String] = []
                             previousLikes = user.likes!
                             previousLikes.append(self.users[index].uid)
@@ -313,7 +408,9 @@ extension MatchViewController {
                         
                     }
                 } else {
+                    self.kolodaView.revertAction()
                     let nextViewController = GetPremiumViewController()
+                    nextViewController.delegate = self
                     let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
                                                                                presentationCurve: .easeInEaseOut,
                                                                                backgroundStyle: .blur(effectStyle: .light))
@@ -343,8 +440,8 @@ extension MatchViewController {
     }
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
-        print("No cards")
-        refreshKolodaData()
+        print("NO CARDS")
+        showNoCards()
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {

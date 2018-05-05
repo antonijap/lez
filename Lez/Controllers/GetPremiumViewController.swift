@@ -10,12 +10,17 @@ import Foundation
 import UIKit
 import SnapKit
 
+protocol GetPremiumViewControllerDelegate {
+    func activateTimer()
+}
+
 class GetPremiumViewController: UIViewController {
     
     let closeButton = UIButton()
     let titleLabel = UILabel()
     let descriptionLabel = UILabel()
     let buyButton = CustomButton()
+    var delegate: GetPremiumViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -72,6 +77,7 @@ class GetPremiumViewController: UIViewController {
     }
     
     @objc func closeButtonTapped(_ sender: UIButton) {
+        delegate?.activateTimer()
         dismiss(animated: true, completion: nil)
     }
     
