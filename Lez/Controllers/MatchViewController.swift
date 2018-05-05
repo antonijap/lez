@@ -290,10 +290,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                 self.users = users
                 if self.users.isEmpty {
-                    print("Should show noCards")
-//                    Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
-//                        .action(.default("Okay"))
-//                        .show()
                     Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
                         .action(.default("Okay"), handler: { (_, _, _) in
                             self.showNoCards()
@@ -440,8 +436,13 @@ extension MatchViewController {
     }
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
-        print("NO CARDS")
-        showNoCards()
+        guard let user = user else { return }
+        FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
+            self.user = user
+            if user.matchesLeft > 0 {
+                self.showNoCards()
+            }
+        }
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {
