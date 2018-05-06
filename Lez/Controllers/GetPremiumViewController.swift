@@ -9,10 +9,8 @@
 import Foundation
 import UIKit
 import SnapKit
-
-protocol GetPremiumViewControllerDelegate {
-    func showTimer()
-}
+import Alertift
+import Firebase
 
 class GetPremiumViewController: UIViewController {
     
@@ -20,7 +18,7 @@ class GetPremiumViewController: UIViewController {
     let titleLabel = UILabel()
     let descriptionLabel = UILabel()
     let buyButton = CustomButton()
-    var delegate: GetPremiumViewControllerDelegate?
+    var delegate: MatchViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -63,6 +61,27 @@ class GetPremiumViewController: UIViewController {
         buyButton.addGestureRecognizer(buttonTap)
     }
     
+    fileprivate func markUserAsPremium(uid: String) {
+        let data: [String: Any] = [
+            "isPremium": true,
+            "cooldownTime": "",
+            "matchesLeft": 5
+        ]
+        FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
+            if success {
+                print("You are Premium")
+                Alertift.alert(title: "Congrats", message: "You are now a Premium user, enjoy unlimited likes.")
+                    .action(.default("Okay"))
+                    .show()
+            } else {
+                // Error happened, please contact support@getlez.com
+                Alertift.alert(title: "Something Happened", message: "Our computers had a hickup and couldn't update your account, please contact support@getlez.com.")
+                    .action(.default("Okay"))
+                    .show()
+            }
+        }
+    }
+    
     fileprivate func setupCloseButton() {
         view.addSubview(closeButton)
         closeButton.snp.makeConstraints { (make) in
@@ -82,7 +101,8 @@ class GetPremiumViewController: UIViewController {
     }
     
     @objc func buyTapped(_ sender: UIButton) {
-        print("Start purchase")
+        guard let currentUser = Auth.auth().currentUser else { return }
+        markUserAsPremium(uid: currentUser.uid)
     }
     
 }

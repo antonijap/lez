@@ -19,7 +19,7 @@ import JGProgressHUD
 import StoreKit
 import SwiftyStoreKit
 
-class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, MatchViewControllerDelegate, GetPremiumViewControllerDelegate {
+class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, MatchViewControllerDelegate {
     
     // MARK: - Variables
     var kolodaView = LezKolodaView()
@@ -97,7 +97,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                         self.setupTimer()
                         self.showTimer()
                         self.setupNoCards()
-                        print(users.count)
                         if users.count <= 0 {
                             self.showNoCards()
                         }
@@ -383,25 +382,27 @@ extension MatchViewController {
                                 "cooldownTime": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss")
                             ]
                             FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
-                                FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
-                                    if success {
-                                        var participants: [String] = []
-                                        participants.append(user.uid)
-                                        participants.append(self.users[index].uid)
-                                        let data: [String: Any] = [
-                                            "created": FieldValue.serverTimestamp(),
-                                            "participants": participants,
-                                            "lastUpdated": FieldValue.serverTimestamp(),
-                                            ]
-                                        FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
-                                            if success {
-                                                self.playMatchAnimation {
-                                                    self.showMatchModal()
+                                if success {
+                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
+                                        if success {
+                                            var participants: [String] = []
+                                            participants.append(user.uid)
+                                            participants.append(self.users[index].uid)
+                                            let data: [String: Any] = [
+                                                "created": FieldValue.serverTimestamp(),
+                                                "participants": participants,
+                                                "lastUpdated": FieldValue.serverTimestamp(),
+                                                ]
+                                            FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
+                                                if success {
+                                                    self.playMatchAnimation {
+                                                        self.showMatchModal()
+                                                    }
                                                 }
-                                            }
-                                        })
-                                    }
-                                })
+                                            })
+                                        }
+                                    })
+                                }
                             })
                         } else {
                             var previousLikes: [String] = []
@@ -413,25 +414,27 @@ extension MatchViewController {
                             ]
                             
                             FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
-                                FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
-                                    if success {
-                                        var participants: [String] = []
-                                        participants.append(user.uid)
-                                        participants.append(self.users[index].uid)
-                                        let data: [String: Any] = [
-                                            "created": FieldValue.serverTimestamp(),
-                                            "participants": participants,
-                                            "lastUpdated": FieldValue.serverTimestamp(),
-                                            ]
-                                        FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
-                                            if success {
-                                                self.playMatchAnimation {
-                                                    self.showMatchModal()
+                                if success {
+                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
+                                        if success {
+                                            var participants: [String] = []
+                                            participants.append(user.uid)
+                                            participants.append(self.users[index].uid)
+                                            let data: [String: Any] = [
+                                                "created": FieldValue.serverTimestamp(),
+                                                "participants": participants,
+                                                "lastUpdated": FieldValue.serverTimestamp(),
+                                                ]
+                                            FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
+                                                if success {
+                                                    self.playMatchAnimation {
+                                                        self.showMatchModal()
+                                                    }
                                                 }
-                                            }
-                                        })
-                                    }
-                                })
+                                            })
+                                        }
+                                    })
+                                }
                             })
                         }
                     }

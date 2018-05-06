@@ -11,6 +11,7 @@ import Foundation
 protocol MatchViewControllerDelegate {
     func refreshKolodaData()
     func dislikeUser()
+    func showTimer()
 }
 
 protocol ProfileViewControllerDelegate {

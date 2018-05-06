@@ -620,9 +620,28 @@ final class FirestoreManager {
     
     func checkIfUserHasAvailableMatches(for uid: String) -> Promise<Bool> {
         return Promise { fulfill, _ in
+            self.checkIfUserIsPremium(for: uid).then({ (isPremium) in
+                if isPremium {
+                    // Allow Match for all Premium users
+                    fulfill(true)
+                } else {
+                    self.fetchUser(uid: uid).then { (user) in
+                        if user.matchesLeft > 0 {
+                            // Allow Match
+                            fulfill(true)
+                        } else {
+                            fulfill(false)
+                        }
+                    }
+                }
+            })
+        }
+    }
+    
+    func checkIfUserIsPremium(for uid: String) -> Promise<Bool> {
+        return Promise { fulfill, _ in
             self.fetchUser(uid: uid).then { (user) in
-                if user.matchesLeft > 0 {
-                    // Allow Match
+                if user.isPremium {
                     fulfill(true)
                 } else {
                     fulfill(false)
