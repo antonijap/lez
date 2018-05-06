@@ -19,7 +19,12 @@ import JGProgressHUD
 import StoreKit
 import SwiftyStoreKit
 
-class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, MatchViewControllerDelegate {
+protocol GetPremiumViewControllerDelegate {
+    func refreshKolodaData()
+    func showTimer()
+}
+
+class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, MatchViewControllerDelegate, GetPremiumViewControllerDelegate {
     
     // MARK: - Variables
     var kolodaView = LezKolodaView()
@@ -45,20 +50,19 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        runTimer()
-        
-        SwiftyStoreKit.retrieveProductsInfo(["com.antonijapek.Lez.premium"]) { result in
-            if let product = result.retrievedProducts.first {
-                let priceString = product.localizedPrice!
-                print("Product: \(product.localizedDescription), price: \(priceString)")
-            }
-            else if let invalidProductId = result.invalidProductIDs.first {
-                print("Invalid product identifier: \(invalidProductId)")
-            }
-            else {
-                print("Error: \(String(describing: result.error))")
-            }
-        }
+        checkIfTimerNeedsToShow()
+//        SwiftyStoreKit.retrieveProductsInfo(["com.antonijapek.Lez.premium"]) { result in
+//            if let product = result.retrievedProducts.first {
+//                let priceString = product.localizedPrice!
+//                print("Product: \(product.localizedDescription), price: \(priceString)")
+//            }
+//            else if let invalidProductId = result.invalidProductIDs.first {
+//                print("Invalid product identifier: \(invalidProductId)")
+//            }
+//            else {
+//                print("Error: \(String(describing: result.error))")
+//            }
+//        }
     }
     
     deinit {
@@ -68,7 +72,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     override func viewDidLoad() {
         super.viewDidLoad()
 //        try! Auth.auth().signOut()
-        NotificationCenter.default.addObserver(self, selector:#selector(self.runTimer), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(self.showTimer), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let currentUser = user {
                 print("User detected")
@@ -96,7 +100,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                         self.users = users
                         self.setupKoloda()
                         self.setupTimer()
-                        self.showTimer()
+                        self.checkIfTimerNeedsToShow()
                         self.setupNoCards()
                         self.setupHelperLabel()
                         if users.count <= 0 {
@@ -114,6 +118,22 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     }
     
     // MARK: - Methods
+    fileprivate func checkIfTimerNeedsToShow() {
+        guard let user = Auth.auth().currentUser else { return }
+        FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
+            self.user = user
+            if user.isPremium {
+                self.hideTimer()
+            } else {
+                if let _ = user.cooldownTime {
+                    self.showTimer()
+                } else {
+                    self.hideTimer()
+                }
+            }
+        }
+    }
+    
     fileprivate func setupTimer() {
         view.insertSubview(timerBoxView, aboveSubview: kolodaView)
         timerBoxView.snp.makeConstraints { (make) in
@@ -162,11 +182,11 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         timerLabel.isHidden = true
         timerDescriptionLabel.isHidden = true
         timerBuyButton.isHidden = true
-        navigationItem.rightBarButtonItem?.isEnabled = false
+        navigationItem.rightBarButtonItem?.isEnabled = true
     }
     
     
-    func showTimer() {
+    @objc func showTimer() {
         timerBoxView.isHidden = false
         timerLabel.isHidden = false
         timerDescriptionLabel.isHidden = false
@@ -189,13 +209,20 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     @objc fileprivate func runTimer() {
         timer.invalidate()
         guard let user = user else { return }
-        if let cooldownTime = user.cooldownTime {
-            let timeUntilKolodaUnlocks = cooldownTime.add(components: 24.hours)
-            let differenceBetweenNowAndTimeUntilKolodaUnlocks = timeUntilKolodaUnlocks.timeIntervalSinceNow
-            self.seconds = Int(differenceBetweenNowAndTimeUntilKolodaUnlocks)
-            timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
-        } else {
-            self.hideTimer()
+        FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
+            self.user = user
+            if user.isPremium {
+                self.hideTimer()
+            } else {
+                if let cooldownTime = user.cooldownTime {
+                    let timeUntilKolodaUnlocks = cooldownTime.add(components: 24.hours)
+                    let differenceBetweenNowAndTimeUntilKolodaUnlocks = timeUntilKolodaUnlocks.timeIntervalSinceNow
+                    self.seconds = Int(differenceBetweenNowAndTimeUntilKolodaUnlocks)
+                    self.timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
+                } else {
+                    self.hideTimer()
+                }
+            }
         }
     }
     
@@ -349,22 +376,38 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     }
     
     @objc func refreshKolodaData() {
-        guard let currentUser = Auth.auth().currentUser else { return }
-        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
-            self.user = user
-            FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
-                self.users = users
-                if self.users.isEmpty {
-                    
-                    Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
-                        .action(.default("Okay"), handler: { (_, _, _) in
-                            self.showNoCards()
-                        })
-                        .show(on: GetPremiumViewController(), completion: nil)
+        if kolodaView.isRunOutOfCards {
+            guard let currentUser = Auth.auth().currentUser else { return }
+            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                print("Should remove timer")
+                self.user = user
+                if user.isPremium {
+                    self.hideTimer()
+                }
+                FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
+                    self.users = users
+                    if self.users.isEmpty {
+                        Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
+                            .action(.default("Okay"), handler: { (_, _, _) in
+                                self.showNoCards()
+                            })
+                            .show()
+                    }
+                    print(users.count)
+                    self.hideNoCards()
+                    self.kolodaView.reloadData()
+                })
+            }
+        } else {
+            print("No need to refresh")
+            guard let currentUser = Auth.auth().currentUser else { return }
+            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                self.user = user
+                if user.isPremium {
+                    self.hideTimer()
                 }
                 self.hideNoCards()
-                self.kolodaView.reloadData()
-            })
+            }
         }
     }
     
@@ -401,78 +444,59 @@ extension MatchViewController {
             FirestoreManager.shared.checkIfUserHasAvailableMatches(for: user.uid).then({ (hasMatches) in
                 if hasMatches {
                     FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
+                        var data: [String: Any] = [:]
+                        
                         if (user.likesLeft - 1) == 0 {
                             var previousLikes: [String] = []
                             previousLikes = user.likes!
                             previousLikes.append(self.users[index].uid)
-                            let data: [String: Any] = [
+                            let d: [String: Any] = [
                                 "likesLeft": user.likesLeft - 1,
                                 "likes": previousLikes,
                                 "cooldownTime": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss")
                             ]
-                            FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
-                                if success {
-                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
-                                        self.unfreezeKoloda()
-                                        if success {
-                                            var participants: [String] = []
-                                            participants.append(user.uid)
-                                            participants.append(self.users[index].uid)
-                                            let data: [String: Any] = [
-                                                "created": FieldValue.serverTimestamp(),
-                                                "participants": participants,
-                                                "lastUpdated": FieldValue.serverTimestamp(),
-                                                ]
-                                            FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
-                                                if success {
-                                                    self.playMatchAnimation {
-                                                        self.showMatchModal()
-                                                    }
-                                                }
-                                            })
-                                        }
-                                    })
-                                }
-                            })
+                            data = d
                         } else {
                             var previousLikes: [String] = []
                             previousLikes = user.likes!
                             previousLikes.append(self.users[index].uid)
-                            let data: [String: Any] = [
+                            let d: [String: Any] = [
                                 "likesLeft": user.likesLeft - 1,
                                 "likes": previousLikes
                             ]
-                            
-                            FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
-                                if success {
-                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
-                                        self.unfreezeKoloda()
-                                        if self.kolodaView.isRunOutOfCards {
-                                            self.showNoCards()
-                                        } else {
-                                            self.hideNoCards()
-                                        }
-                                        if success {
-                                            var participants: [String] = []
-                                            participants.append(user.uid)
-                                            participants.append(self.users[index].uid)
-                                            let data: [String: Any] = [
-                                                "created": FieldValue.serverTimestamp(),
-                                                "participants": participants,
-                                                "lastUpdated": FieldValue.serverTimestamp(),
-                                                ]
-                                            FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
-                                                if success {
-                                                    self.playMatchAnimation {
-                                                        self.showMatchModal()
-                                                    }
-                                                }
-                                            })
-                                        }
-                                    })
-                                }
-                            })
+                            data = d
                         }
+                        
+                        FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
+                            if success {
+                                FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
+                                    self.unfreezeKoloda()
+                                    if self.kolodaView.isRunOutOfCards {
+                                        self.showNoCards()
+                                    } else {
+                                        self.hideNoCards()
+                                    }
+                                    if success {
+                                        var participants: [String] = []
+                                        participants.append(user.uid)
+                                        participants.append(self.users[index].uid)
+                                        let data: [String: Any] = [
+                                            "created": FieldValue.serverTimestamp(),
+                                            "participants": participants,
+                                            "lastUpdated": FieldValue.serverTimestamp(),
+                                            ]
+                                        FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
+                                            if success {
+                                                self.playMatchAnimation {
+                                                    self.showMatchModal()
+                                                }
+                                            }
+                                        })
+                                    }
+                                })
+                            }
+                        })
+                        
                     }
                 } else {
                     self.unfreezeKoloda()

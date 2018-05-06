@@ -218,7 +218,6 @@
 			isa = PBXGroup;
 			children = (
 				CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */,
-				CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */,
 			);
 			path = "Trash Candidate";
 			sourceTree = "<group>";
@@ -232,6 +231,7 @@
 				CFB7C4C12066B15900114EC4 /* Extensions.swift */,
 				CFE0BD662073DD810055FC73 /* CustomCells.swift */,
 				CF11E904209EF545007E3D1D /* Protocols.swift */,
+				CF61B15B20639A0D0080F2C0 /* LezKolodaView.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";

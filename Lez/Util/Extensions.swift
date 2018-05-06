@@ -90,6 +90,15 @@ extension UIViewController: UIActionSheetDelegate {
         self.present(alertController, animated: true, completion: nil)
     }
     
+    func showPremiumPurchased(completion: @escaping () -> Void) {
+        let alert = UIAlertController(title: "Congrats", message: "You are now a Premium user, enjoy unlimited likes.", preferredStyle: .alert)
+        let okAction = UIAlertAction(title: "Okay", style: .default) { _ in
+            completion()
+        }
+        alert.addAction(okAction)
+        present(alert, animated: true, completion: nil)
+    }
+    
     func showSignoutAlert(CTA: String) {
         let alertController = UIAlertController(title: "Are you sure?", message: nil, preferredStyle: .alert)
         let action1 = UIAlertAction(title: "Cancel", style: .default, handler: nil)

@@ -177,7 +177,11 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let user = user else { return UITableViewCell() }
                 let simpleMenuCell = tableView.dequeueReusableCell(withIdentifier: SimpleMenuCell.reuseID) as! SimpleMenuCell
                 if indexPath.section == 6 {
-                    simpleMenuCell.titleLabel.text = "Likes: \(user.likesLeft). Unlock unlimited likes."
+                    if user.isPremium {
+                        simpleMenuCell.titleLabel.text = "You are Premium"
+                    } else {
+                        simpleMenuCell.titleLabel.text = "Likes: \(user.likesLeft). Unlock unlimited likes."
+                    }
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
                 }
@@ -189,8 +193,16 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     simpleMenuCell.titleLabel.text = "Edit Images"
                 }
                 if indexPath.section == 9 {
-                    simpleMenuCell.titleLabel.text = "Restore Subscription"
-                    simpleMenuCell.titleLabel.textColor = .black
+                    if user.isPremium {
+                        simpleMenuCell.titleLabel.text = "Restore Subscription"
+                        simpleMenuCell.titleLabel.textColor = .gray
+                        simpleMenuCell.isUserInteractionEnabled = false
+                    } else {
+                        simpleMenuCell.titleLabel.text = "Restore Subscription"
+                        simpleMenuCell.titleLabel.textColor = .black
+                        simpleMenuCell.isUserInteractionEnabled = true
+                    }
+                    
                 }
                 if indexPath.section == 10 {
                     simpleMenuCell.titleLabel.text = "Sign out"
@@ -208,13 +220,17 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath == [6, 0] {
-            let nextViewController = GetPremiumViewController()
-            let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
-                                                                       presentationCurve: .easeInEaseOut,
-                                                                       backgroundStyle: .blur(effectStyle: .light))
-            self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
-            self.jellyAnimator?.prepare(viewController: nextViewController)
-            self.present(nextViewController, animated: true, completion: nil)
+            if let user = user {
+                if !user.isPremium {
+                    let nextViewController = GetPremiumViewController()
+                    let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
+                                                                               presentationCurve: .easeInEaseOut,
+                                                                               backgroundStyle: .blur(effectStyle: .light))
+                    self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+                    self.jellyAnimator?.prepare(viewController: nextViewController)
+                    self.present(nextViewController, animated: true, completion: nil)
+                }
+            }
         }
         if indexPath == [7, 0] {
             let setupProfileViewController = SetupProfileViewController()

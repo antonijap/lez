@@ -19,7 +19,7 @@ class GetPremiumViewController: UIViewController {
     let descriptionLabel = UILabel()
     let backgroundImageView = UIImageView()
     let buyButton = CustomButton()
-    var delegate: MatchViewControllerDelegate?
+    var delegate: GetPremiumViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -78,20 +78,16 @@ class GetPremiumViewController: UIViewController {
         ]
         FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
             if success {
-                print("You are Premium")
-                Alertift.alert(title: "Congrats", message: "You are now a Premium user, enjoy unlimited likes.")
-                    .action(.default("Okay"))
-                    .action(.default("Okay"), handler: { (_, _, _) in
+                self.showPremiumPurchased {
+                    self.dismiss(animated: true, completion: {
                         self.delegate?.refreshKolodaData()
-                        self.dismiss(animated: true, completion: nil)
                     })
-                    .show()
-                
+                }
             } else {
                 // Error happened, please contact support@getlez.com
-                Alertift.alert(title: "Something Happened", message: "Our computers had a hickup and couldn't update your account, please contact support@getlez.com.")
-                    .action(.default("Okay"))
-                    .show()
+                self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+                    print("Error happened")
+                })
             }
         }
     }
