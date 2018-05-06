@@ -19,7 +19,7 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
 
     // MARK: - Variables
     let tableView = UITableView()
-    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
+    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
     var user: User?
     let tabBar = UITabBar()
     let hud = JGProgressHUD(style: .dark)
@@ -152,6 +152,11 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     titleWithDescriptionCell.titleLabel.text = "Dealbreakers"
                     titleWithDescriptionCell.bodyLabel.text = user.details.dealBreakers
                 }
+                if indexPath.section == 5 {
+                    guard let user = user else { return UITableViewCell() }
+                    titleWithDescriptionCell.titleLabel.text = "Diet"
+                    titleWithDescriptionCell.bodyLabel.text = user.details.diet.rawValue
+                }
                 cell = titleWithDescriptionCell
             
             case .profileImages:
@@ -170,25 +175,26 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             
             case .simpleMenu:
                 let simpleMenuCell = tableView.dequeueReusableCell(withIdentifier: SimpleMenuCell.reuseID) as! SimpleMenuCell
-                if indexPath.section == 5 {
+                if indexPath.section == 6 {
                     simpleMenuCell.titleLabel.text = "Unlock Unlimited Likes"
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
                 }
-                if indexPath.section == 6 {
+                if indexPath.section == 7 {
                     simpleMenuCell.titleLabel.text = "Edit Profile"
                     simpleMenuCell.titleLabel.textColor = .black
                 }
-                if indexPath.section == 7 {
+                if indexPath.section == 8 {
                     simpleMenuCell.titleLabel.text = "Edit Images"
                 }
-                if indexPath.section == 8 {
+                if indexPath.section == 9 {
                     simpleMenuCell.titleLabel.text = "Restore Subscription"
                     simpleMenuCell.titleLabel.textColor = .black
                 }
-                if indexPath.section == 9 {
+                if indexPath.section == 10 {
                     simpleMenuCell.titleLabel.text = "Sign out"
                     simpleMenuCell.titleLabel.textColor = .red
+                    simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
                 }
                 cell = simpleMenuCell
             
@@ -200,7 +206,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath == [5, 0] {
+        if indexPath == [6, 0] {
             let nextViewController = GetPremiumViewController()
             let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
                                                                        presentationCurve: .easeInEaseOut,
@@ -209,7 +215,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             self.jellyAnimator?.prepare(viewController: nextViewController)
             self.present(nextViewController, animated: true, completion: nil)
         }
-        if indexPath == [6, 0] {
+        if indexPath == [7, 0] {
             let setupProfileViewController = SetupProfileViewController()
             guard let user = user else { return }
             setupProfileViewController.currentUser = user
@@ -217,7 +223,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             setupProfileViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(setupProfileViewController, animated: true)
         }
-        if indexPath == [7, 0] {
+        if indexPath == [8, 0] {
             let imageGalleryViewController = ImageGalleryViewController()
             guard let user = user else { return }
             imageGalleryViewController.user = user
@@ -225,10 +231,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             imageGalleryViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }
-        if indexPath == [8, 0] {
+        if indexPath == [9, 0] {
             print("Restoring subscription...")
         }
-        if indexPath == [9, 0] {
+        if indexPath == [10, 0] {
             self.showSignoutAlert(CTA: "Sign out")
         }
     }

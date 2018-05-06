@@ -15,7 +15,7 @@ class CardFullscreenViewController: UIViewController {
     
     // MARK: - Variables
     let tableView = UITableView()
-    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu]
+    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu]
     var user: User?
     let closeButton = UIButton()
     let tabBar = UITabBar()
@@ -127,6 +127,10 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
                     titleWithDescriptionCell.titleLabel.text = "Dealbreakers"
                     titleWithDescriptionCell.bodyLabel.text = user.details.dealBreakers
                 }
+                if indexPath.section == 5 {
+                    titleWithDescriptionCell.titleLabel.text = "Diet"
+                    titleWithDescriptionCell.bodyLabel.text = user.details.diet.rawValue
+                }
                 cell = titleWithDescriptionCell
             
             case .profileImages:
@@ -141,11 +145,11 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
                 cell = iconMenuCell
             case .simpleMenu:
                 let simpleMenuCell = tableView.dequeueReusableCell(withIdentifier: SimpleMenuCell.reuseID) as! SimpleMenuCell
-                if indexPath.section == 5 {
+                if indexPath.section == 6 {
                     simpleMenuCell.titleLabel.text = "Report"
                     simpleMenuCell.titleLabel.textColor = .red
                 }
-                if indexPath.section == 6 {
+                if indexPath.section == 7 {
                     simpleMenuCell.titleLabel.text = "Block User"
                     simpleMenuCell.titleLabel.textColor = .black
                 }
@@ -161,10 +165,10 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
         guard let currentUser = Auth.auth().currentUser else { return }
         guard let fullscreenUser = user else { return }
 
-        if indexPath == [5, 0] {
+        if indexPath == [6, 0] {
             showReportActionSheet(report: fullscreenUser, reportOwner: currentUser.uid)
         }
-        if indexPath == [6, 0] {
+        if indexPath == [7, 0] {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.showBlockActionSheet(currentUser: user, blockedUser: fullscreenUser.uid, completion: {
                     self.delegate?.dislikeUser()
