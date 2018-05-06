@@ -39,12 +39,12 @@ class User: Hashable {
     var dislikes: [String]?
     var blockedUsers: [String]?
     var chats: [String]?
-    var matchesLeft: Int
+    var likesLeft: Int
     var cooldownTime: Date?
     
     // Initial user cration, no images, flags are false
     convenience init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details) {
-        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: nil, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], dislikes: [], blockedUsers: [], chats: [], matchesLeft: 5, cooldownTime: nil)
+        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: nil, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], dislikes: [], blockedUsers: [], chats: [], likesLeft: 5, cooldownTime: nil)
         self.uid = uid
         self.name = name
         self.email = email
@@ -55,7 +55,7 @@ class User: Hashable {
     }
     
     // With everything
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]?, isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], dislikes: [String], blockedUsers: [String], chats: [String], matchesLeft: Int, cooldownTime: Date?) {
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]?, isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], dislikes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?) {
         self.uid = uid
         self.name = name
         self.email = email
@@ -72,7 +72,7 @@ class User: Hashable {
         self.dislikes = dislikes
         self.blockedUsers = blockedUsers
         self.chats = chats
-        self.matchesLeft = matchesLeft
+        self.likesLeft = likesLeft
         self.cooldownTime = cooldownTime
     }
     

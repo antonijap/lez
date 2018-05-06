@@ -378,8 +378,8 @@ final class FirestoreManager {
             return nil
         }
         
-        guard let matchesLeft = data["matchesLeft"] as? Int else {
-            print("Problem with parsing matchesLeft.")
+        guard let likesLeft = data["likesLeft"] as? Int else {
+            print("Problem with parsing likesLeft.")
             return nil
         }
         
@@ -391,7 +391,7 @@ final class FirestoreManager {
         let newLocation = Location(city: city, country: country)
         let newPreferences = Preferences(ageRange: AgeRange(from: from, to: to), lookingFor: lookingFor)
         let newDetails = Details(about: about, dealBreakers: dealBreakers, diet: Diet(rawValue: diet)!)
-        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, dislikes: dislikes, blockedUsers: blockedUsers, chats: chats, matchesLeft: matchesLeft, cooldownTime: cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate)
+        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, dislikes: dislikes, blockedUsers: blockedUsers, chats: chats, likesLeft: likesLeft, cooldownTime: cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate)
         return newUser
     }
     
@@ -628,7 +628,7 @@ final class FirestoreManager {
                     fulfill(true)
                 } else {
                     self.fetchUser(uid: uid).then { (user) in
-                        if user.matchesLeft > 0 {
+                        if user.likesLeft > 0 {
                             // Allow Match
                             fulfill(true)
                         } else {

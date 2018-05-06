@@ -40,6 +40,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     let noCardsBoxView = UIView()
     let noCardsButton = CustomButton()
     let noCardsLabel = UILabel()
+    let helperLabel = UILabel()
 
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
@@ -97,6 +98,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
                         self.setupTimer()
                         self.showTimer()
                         self.setupNoCards()
+                        self.setupHelperLabel()
                         if users.count <= 0 {
                             self.showNoCards()
                         }
@@ -202,7 +204,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         if (seconds - 1) == 0 {
             guard let user = user else { return }
             let data: [String: Any] = [
-                "matchesLeft": 5,
+                "likesLeft": 5,
                 "cooldownTime": ""
             ]
             FirestoreManager.shared.updateUser(uid: user.uid, data: data).then { (user) in
@@ -218,14 +220,33 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         
     }
     
+    fileprivate func setupHelperLabel() {
+        view.addSubview(helperLabel)
+        helperLabel.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+        }
+        helperLabel.text = "Please, wait..."
+        hideHelperLabel()
+    }
+    
+    fileprivate func hideHelperLabel() {
+        helperLabel.isHidden = true
+    }
+    
+    fileprivate func showHelperLabel() {
+        helperLabel.isHidden = false
+    }
+    
     fileprivate func freezeKoloda() {
         kolodaView.layer.opacity = 0.5
         kolodaView.isUserInteractionEnabled = false
+        showHelperLabel()
     }
     
     fileprivate func unfreezeKoloda() {
         kolodaView.layer.opacity = 1
         kolodaView.isUserInteractionEnabled = true
+        hideHelperLabel()
     }
     
     fileprivate func timeString(time: TimeInterval) -> String {
@@ -334,11 +355,12 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                 self.users = users
                 if self.users.isEmpty {
+                    
                     Alertift.alert(title: "Nothing to Show", message: "Change matching preferences.")
                         .action(.default("Okay"), handler: { (_, _, _) in
                             self.showNoCards()
                         })
-                        .show()
+                        .show(on: GetPremiumViewController(), completion: nil)
                 }
                 self.hideNoCards()
                 self.kolodaView.reloadData()
@@ -379,12 +401,12 @@ extension MatchViewController {
             FirestoreManager.shared.checkIfUserHasAvailableMatches(for: user.uid).then({ (hasMatches) in
                 if hasMatches {
                     FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
-                        if (user.matchesLeft - 1) == 0 {
+                        if (user.likesLeft - 1) == 0 {
                             var previousLikes: [String] = []
                             previousLikes = user.likes!
                             previousLikes.append(self.users[index].uid)
                             let data: [String: Any] = [
-                                "matchesLeft": user.matchesLeft - 1,
+                                "likesLeft": user.likesLeft - 1,
                                 "likes": previousLikes,
                                 "cooldownTime": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss")
                             ]
@@ -417,7 +439,7 @@ extension MatchViewController {
                             previousLikes = user.likes!
                             previousLikes.append(self.users[index].uid)
                             let data: [String: Any] = [
-                                "matchesLeft": user.matchesLeft - 1,
+                                "likesLeft": user.likesLeft - 1,
                                 "likes": previousLikes
                             ]
                             
@@ -425,6 +447,11 @@ extension MatchViewController {
                                 if success {
                                     FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
                                         self.unfreezeKoloda()
+                                        if self.kolodaView.isRunOutOfCards {
+                                            self.showNoCards()
+                                        } else {
+                                            self.hideNoCards()
+                                        }
                                         if success {
                                             var participants: [String] = []
                                             participants.append(user.uid)
@@ -446,11 +473,6 @@ extension MatchViewController {
                                 }
                             })
                         }
-                    }
-                    if self.kolodaView.isRunOutOfCards {
-                        self.showNoCards()
-                    } else {
-                        self.hideNoCards()
                     }
                 } else {
                     self.unfreezeKoloda()

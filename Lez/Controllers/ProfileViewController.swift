@@ -174,9 +174,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 cell = iconMenuCell
             
             case .simpleMenu:
+                guard let user = user else { return UITableViewCell() }
                 let simpleMenuCell = tableView.dequeueReusableCell(withIdentifier: SimpleMenuCell.reuseID) as! SimpleMenuCell
                 if indexPath.section == 6 {
-                    simpleMenuCell.titleLabel.text = "Unlock Unlimited Likes"
+                    simpleMenuCell.titleLabel.text = "Likes: \(user.likesLeft). Unlock unlimited likes."
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
                 }

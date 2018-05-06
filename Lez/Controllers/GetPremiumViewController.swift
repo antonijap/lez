@@ -74,14 +74,19 @@ class GetPremiumViewController: UIViewController {
         let data: [String: Any] = [
             "isPremium": true,
             "cooldownTime": "",
-            "matchesLeft": 5
+            "likesLeft": 5
         ]
         FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
             if success {
                 print("You are Premium")
                 Alertift.alert(title: "Congrats", message: "You are now a Premium user, enjoy unlimited likes.")
                     .action(.default("Okay"))
+                    .action(.default("Okay"), handler: { (_, _, _) in
+                        self.delegate?.refreshKolodaData()
+                        self.dismiss(animated: true, completion: nil)
+                    })
                     .show()
+                
             } else {
                 // Error happened, please contact support@getlez.com
                 Alertift.alert(title: "Something Happened", message: "Our computers had a hickup and couldn't update your account, please contact support@getlez.com.")
