@@ -44,7 +44,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     // MARK: - Lifecycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        checkIfTimerNeedsToBeUpdated()
+        runTimer()
         
         SwiftyStoreKit.retrieveProductsInfo(["com.antonijapek.Lez.premium"]) { result in
             if let product = result.retrievedProducts.first {
@@ -67,7 +67,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
     override func viewDidLoad() {
         super.viewDidLoad()
 //        try! Auth.auth().signOut()
-        NotificationCenter.default.addObserver(self, selector:#selector(self.checkIfTimerNeedsToBeUpdated), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
+        NotificationCenter.default.addObserver(self, selector:#selector(self.runTimer), name: NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let currentUser = user {
                 print("User detected")
@@ -184,11 +184,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
         self.present(nextViewController, animated: true, completion: nil)
     }
     
-    @objc fileprivate func checkIfTimerNeedsToBeUpdated() {
-        runTimer()
-    }
-    
-    fileprivate func runTimer() {
+    @objc fileprivate func runTimer() {
         timer.invalidate()
         guard let user = user else { return }
         if let cooldownTime = user.cooldownTime {
@@ -220,6 +216,16 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
             timerLabel.text = timeString(time: TimeInterval(seconds))
         }
         
+    }
+    
+    fileprivate func freezeKoloda() {
+        kolodaView.layer.opacity = 0.5
+        kolodaView.isUserInteractionEnabled = false
+    }
+    
+    fileprivate func unfreezeKoloda() {
+        kolodaView.layer.opacity = 1
+        kolodaView.isUserInteractionEnabled = true
     }
     
     fileprivate func timeString(time: TimeInterval) -> String {
@@ -368,6 +374,7 @@ extension MatchViewController {
     
     func koloda(_ koloda: KolodaView, didSwipeCardAt index: Int, in direction: SwipeResultDirection) {
         if direction == .right {
+            freezeKoloda()
             guard let user = user else { return}
             FirestoreManager.shared.checkIfUserHasAvailableMatches(for: user.uid).then({ (hasMatches) in
                 if hasMatches {
@@ -384,6 +391,7 @@ extension MatchViewController {
                             FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
                                 if success {
                                     FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
+                                        self.unfreezeKoloda()
                                         if success {
                                             var participants: [String] = []
                                             participants.append(user.uid)
@@ -416,6 +424,7 @@ extension MatchViewController {
                             FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
                                 if success {
                                     FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[index].uid).then({ (success) in
+                                        self.unfreezeKoloda()
                                         if success {
                                             var participants: [String] = []
                                             participants.append(user.uid)
@@ -444,6 +453,7 @@ extension MatchViewController {
                         self.hideNoCards()
                     }
                 } else {
+                    self.unfreezeKoloda()
                     self.kolodaView.revertAction()
                     let nextViewController = GetPremiumViewController()
                     nextViewController.delegate = self
@@ -456,6 +466,7 @@ extension MatchViewController {
                 }
             })
         } else if direction == .left {
+            freezeKoloda()
             var previousDislikes: [String] = []
             let currentUser = Auth.auth().currentUser!.uid
             FirestoreManager.shared.fetchUser(uid: currentUser).then { (user) in
@@ -467,8 +478,10 @@ extension MatchViewController {
                 FirestoreManager.shared.updateUser(uid: currentUser, data: data).then({ (success) in
                     if success {
                         print("Dislike added")
+                        self.unfreezeKoloda()
                     } else {
                         print("Error happened.")
+                        self.unfreezeKoloda()
                     }
                 })
             }
@@ -476,7 +489,6 @@ extension MatchViewController {
     }
     
     func kolodaDidRunOutOfCards(_ koloda: KolodaView) {
-        showNoCards()
     }
     
     func koloda(_ koloda: KolodaView, didSelectCardAt index: Int) {

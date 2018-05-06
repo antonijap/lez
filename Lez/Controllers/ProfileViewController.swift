@@ -13,16 +13,18 @@ import moa
 import SkeletonView
 import JGProgressHUD
 import Alertift
+import Jelly
 
 class ProfileViewController: UIViewController, ProfileViewControllerDelegate {    
 
     // MARK: - Variables
     let tableView = UITableView()
-    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .premiumMenu, .simpleMenu, .simpleMenu, .simpleMenu]
+    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
     var user: User?
     let tabBar = UITabBar()
     let hud = JGProgressHUD(style: .dark)
     var shouldRefresh = false
+    var jellyAnimator: JellyAnimator?
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -168,6 +170,11 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             
             case .simpleMenu:
                 let simpleMenuCell = tableView.dequeueReusableCell(withIdentifier: SimpleMenuCell.reuseID) as! SimpleMenuCell
+                if indexPath.section == 5 {
+                    simpleMenuCell.titleLabel.text = "Unlock Unlimited Likes"
+                    simpleMenuCell.titleLabel.textColor = .black
+                    simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+                }
                 if indexPath.section == 6 {
                     simpleMenuCell.titleLabel.text = "Edit Profile"
                     simpleMenuCell.titleLabel.textColor = .black
@@ -176,6 +183,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     simpleMenuCell.titleLabel.text = "Edit Images"
                 }
                 if indexPath.section == 8 {
+                    simpleMenuCell.titleLabel.text = "Restore Subscription"
+                    simpleMenuCell.titleLabel.textColor = .black
+                }
+                if indexPath.section == 9 {
                     simpleMenuCell.titleLabel.text = "Sign out"
                     simpleMenuCell.titleLabel.textColor = .red
                 }
@@ -190,9 +201,13 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath == [5, 0] {
-            Alertift.alert(title: "Get Premium", message: "Building...")
-                .action(.default("Okay"))
-                .show()
+            let nextViewController = GetPremiumViewController()
+            let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
+                                                                       presentationCurve: .easeInEaseOut,
+                                                                       backgroundStyle: .blur(effectStyle: .light))
+            self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+            self.jellyAnimator?.prepare(viewController: nextViewController)
+            self.present(nextViewController, animated: true, completion: nil)
         }
         if indexPath == [6, 0] {
             let setupProfileViewController = SetupProfileViewController()
@@ -211,7 +226,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }
         if indexPath == [8, 0] {
-            self.showSignoutAlert(CTA: "Sign out")  
+            print("Restoring subscription...")
+        }
+        if indexPath == [9, 0] {
+            self.showSignoutAlert(CTA: "Sign out")
         }
     }
 }

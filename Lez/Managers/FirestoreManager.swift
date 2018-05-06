@@ -247,6 +247,8 @@ final class FirestoreManager {
                 guard let likes = user.likes else { return }
                 if likes.contains(currentUserUid) {
                     fulfill(true)
+                } else {
+                    fulfill(false)
                 }
             })
         }

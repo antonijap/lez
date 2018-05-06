@@ -16,23 +16,26 @@ class CustomTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let loveRoomController = UINavigationController(rootViewController: MatchViewController())
-        loveRoomController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Heart"), tag: 0)
-        loveRoomController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
+        let heart = UIImage(named: "Heart")
+        let heartFull = UIImage(named: "Heart_Full")
+        let matchViewController = UINavigationController(rootViewController: MatchViewController())
+        matchViewController.tabBarItem = UITabBarItem.init(title: "", image: heart, selectedImage: heartFull)
+        matchViewController.tabBarItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: -5, right: 0)
         
         
-//        let chat = UIImage(named: "Chat")
-//        let chatFull = UIImage(named: "Chat_Full")
+        let chat = UIImage(named: "Chat")
+        let chatFull = UIImage(named: "Chat_Full")
         let chatController = UINavigationController(rootViewController: ChatViewController())
-//        chatController.tabBarItem = UITabBarItem.init(title: "", image: chat, selectedImage: chatFull)
-        chatController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Chat"), tag: 1)
-        chatController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
+        chatController.tabBarItem = UITabBarItem.init(title: "", image: chat, selectedImage: chatFull)
+        chatController.tabBarItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: -5, right: 0)
         
+        let profile = UIImage(named: "Profile")
+        let profileFull = UIImage(named: "Profile_Full")
         let profileController = UINavigationController(rootViewController: ProfileViewController())
-        profileController.tabBarItem = UITabBarItem.init(title: nil, image: UIImage(named: "Profile"), tag: 2)
-        profileController.tabBarItem.imageInsets = UIEdgeInsets(top: 9, left: 0, bottom: -9, right: 0)
+        profileController.tabBarItem = UITabBarItem.init(title: "", image: profile, selectedImage: profileFull)
+        profileController.tabBarItem.imageInsets = UIEdgeInsets(top: 0, left: 0, bottom: -5, right: 0)
         
-        viewControllers = [loveRoomController, chatController, profileController]
+        viewControllers = [matchViewController, chatController, profileController]
     }
 }
 
@@ -47,7 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UITabBar.appearance().shadowImage = UIImage()
         UITabBar.appearance().backgroundImage = UIImage()
-        UITabBar.appearance().tintColor = UIColor(red:0.48, green:0.09, blue:0.68, alpha:1.00)
+        UITabBar.appearance().tintColor = UIColor(red:0.95, green:0.67, blue:0.24, alpha:1.00)//UIColor(red:0.45, green:0.96, blue:0.84, alpha:1.00)
         UITabBar.appearance().layer.borderColor = UIColor.clear.cgColor
         UITabBar.appearance().layer.borderWidth = 0.0
         

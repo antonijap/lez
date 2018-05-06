@@ -56,8 +56,10 @@ class CustomButton: UIButton {
         layer.backgroundColor = UIColor(red:0.35, green:0.06, blue:0.68, alpha:1.00).cgColor
         layer.cornerRadius = 8
         for state: UIControlState in [.normal, .highlighted, .disabled, .selected, .focused, .application, .reserved] {
-            setTitleColor(.white, for: state)
+            setTitleColor(.black, for: state)
         }
+        layer.backgroundColor = UIColor(red:0.45, green:0.96, blue:0.84, alpha:1.00).cgColor
+        self.titleLabel?.font =  UIFont.systemFont(ofSize: 16, weight: .medium)
     }
 }
 

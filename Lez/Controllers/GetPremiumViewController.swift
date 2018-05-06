@@ -17,6 +17,7 @@ class GetPremiumViewController: UIViewController {
     let closeButton = UIButton()
     let titleLabel = UILabel()
     let descriptionLabel = UILabel()
+    let backgroundImageView = UIImageView()
     let buyButton = CustomButton()
     var delegate: MatchViewControllerDelegate?
     
@@ -24,10 +25,16 @@ class GetPremiumViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupInterface()
-        setupCloseButton()
     }
     
     fileprivate func setupInterface() {
+        view.addSubview(backgroundImageView)
+        backgroundImageView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        backgroundImageView.image = UIImage(named: "Premium Background")
+        backgroundImageView.contentMode = .scaleAspectFill
+        
         view.addSubview(titleLabel)
         titleLabel.snp.makeConstraints { (make) in
             make.top.equalToSuperview().inset(view.frame.height / 2.6)
@@ -59,6 +66,8 @@ class GetPremiumViewController: UIViewController {
         buyButton.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
         let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.buyTapped(_:)))
         buyButton.addGestureRecognizer(buttonTap)
+        
+        setupCloseButton()
     }
     
     fileprivate func markUserAsPremium(uid: String) {
