@@ -12,16 +12,12 @@ import Firebase
 import Alertift
 import Eureka
 
-protocol FiltersDelegate {
-    func refreshKolodaData()
-}
-
 class FilterViewController: FormViewController {
     
     let closeButton = UIButton()
     
     var uid: String?
-    var delegate: FiltersDelegate?
+    var delegate: MatchViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()

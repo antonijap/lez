@@ -12,6 +12,7 @@
 		76A37FD28C40794876C735BB /* Pods_Lez.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DE15551B494E8923BB00C37 /* Pods_Lez.framework */; };
 		CF04FAE3204161A7001CB034 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF04FAE2204161A7001CB034 /* User.swift */; };
 		CF0C3F052066F57D0033ECCA /* MatchAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = CF0C3F042066F57D0033ECCA /* MatchAnimation.json */; };
+		CF11E905209EF545007E3D1D /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF11E904209EF545007E3D1D /* Protocols.swift */; };
 		CF1C6C53206F631A0018DCD9 /* ImageGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C52206F631A0018DCD9 /* ImageGalleryViewController.swift */; };
 		CF1C6C55206F68650018DCD9 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C54206F68650018DCD9 /* ChatViewController.swift */; };
 		CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */; };
@@ -66,6 +67,7 @@
 		BE9A5EDDC73AC30B43C2E7F1 /* Pods-Lez.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lez.release.xcconfig"; path = "Pods/Target Support Files/Pods-Lez/Pods-Lez.release.xcconfig"; sourceTree = "<group>"; };
 		CF04FAE2204161A7001CB034 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CF0C3F042066F57D0033ECCA /* MatchAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MatchAnimation.json; sourceTree = "<group>"; };
+		CF11E904209EF545007E3D1D /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		CF1C6C52206F631A0018DCD9 /* ImageGalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryViewController.swift; sourceTree = "<group>"; };
 		CF1C6C54206F68650018DCD9 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -229,6 +231,7 @@
 				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
 				CFB7C4C12066B15900114EC4 /* Extensions.swift */,
 				CFE0BD662073DD810055FC73 /* CustomCells.swift */,
+				CF11E904209EF545007E3D1D /* Protocols.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -596,6 +599,7 @@
 				CF6CE927209CE12D00EED316 /* GetPremiumViewController.swift in Sources */,
 				CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */,
 				CF61B15C20639A0D0080F2C0 /* LezKolodaView.swift in Sources */,
+				CF11E905209EF545007E3D1D /* Protocols.swift in Sources */,
 				CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */,
 				CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */,
 				CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */,

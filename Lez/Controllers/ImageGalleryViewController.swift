@@ -61,10 +61,6 @@ class CustomButton: UIButton {
     }
 }
 
-protocol ImageGalleryDelegate {
-    var shouldRefresh: Bool { get set }
-}
-
 class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
     
     var user: User!
@@ -75,7 +71,7 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
     var imageView2: CustomImageView!
     let storage = Storage.storage()
     let hud = JGProgressHUD(style: .dark)
-    var delegate: ImageGalleryDelegate?
+    var delegate: ProfileViewControllerDelegate?
     
     public var imageAssets: [UIImage] {
         return AssetManager.resolveAssets(imageGalleryPickerController.stack.assets)

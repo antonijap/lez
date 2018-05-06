@@ -14,7 +14,7 @@ import SkeletonView
 import JGProgressHUD
 import Alertift
 
-class ProfileViewController: UIViewController, ImageGalleryDelegate, ProfileViewDelegate {
+class ProfileViewController: UIViewController, ProfileViewControllerDelegate {    
 
     // MARK: - Variables
     let tableView = UITableView()

@@ -19,7 +19,7 @@ import JGProgressHUD
 import StoreKit
 import SwiftyStoreKit
 
-class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, FiltersDelegate, CardFullscreenDelegate, GetPremiumViewControllerDelegate {
+class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataSource, MatchViewControllerDelegate, GetPremiumViewControllerDelegate {
     
     // MARK: - Variables
     var kolodaView = LezKolodaView()

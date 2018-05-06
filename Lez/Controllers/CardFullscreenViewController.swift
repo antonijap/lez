@@ -11,10 +11,6 @@ import moa
 import Auk
 import Firebase
 
-protocol CardFullscreenDelegate {
-    func dislikeUser()
-}
-
 class CardFullscreenViewController: UIViewController {
     
     // MARK: - Variables
@@ -23,7 +19,7 @@ class CardFullscreenViewController: UIViewController {
     var user: User?
     let closeButton = UIButton()
     let tabBar = UITabBar()
-    var delegate: CardFullscreenDelegate?
+    var delegate: MatchViewControllerDelegate?
     
     // MARK: - Lifecycle
     
