@@ -8,17 +8,23 @@
 
 import UIKit
 import Firebase
+import Ably
+import SwiftyJSON
+import SwiftDate
 
 class MessagesViewController: UIViewController {
     
     // Mark: - Properties
     var chatUid: String!
-    let textField = UITextField()
-    var keyboardHeightLayoutConstraint: NSLayoutConstraint?
-    let tableView = UITableView()
-    var messages = [Message]()
     var participants: [User] = [User]()
-    var myUid: String!
+    private let textField = UITextField()
+    private var keyboardHeightLayoutConstraint: NSLayoutConstraint?
+    private let tableView = UITableView()
+    private var messages = [Message]()
+    private var messages2 = [Message2]()
+    private var myUid: String!
+    private var channel: ARTRealtimeChannel!
+    private var historyMessages: [String] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -36,7 +42,46 @@ class MessagesViewController: UIViewController {
         
         Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created").addSnapshotListener { (snapshot, error) in
             self.populateMessages()
-        } 
+        }
+        
+        // Ably Testing
+        let ably = ARTRealtime(key: "zxB3Ww.QWcf7w:l0cDpw6nUPIsiHaO")
+        channel = ably.channels.get("persisted:\(chatUid)")
+        
+        channel.subscribe(chatUid) { message in
+            if let data = message.data {
+                print("Here")
+                let jsonString = data as! String
+                let jsonData = jsonString.data(using: .utf8)!
+                let decoder = JSONDecoder()
+                let message = try! decoder.decode(Message2.self, from: jsonData)
+                self.messages2.append(message)
+                self.tableView.reloadData()
+                let indexPath = IndexPath(row: self.messages2.count - 1, section: 0)
+                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+            }
+        }
+        
+        channel.history() { (messages, error) in
+            if let error = error {
+                print(error.description())
+                return
+            }
+            guard let messages = messages else { return }
+            let historyMessages = messages.items
+            historyMessages.forEach { message in
+                if let data = message.data {
+                    let jsonString = data as! String
+                    let jsonData = jsonString.data(using: .utf8)!
+                    let decoder = JSONDecoder()
+                    let message = try? decoder.decode(Message2.self, from: jsonData)
+                    if let msg = message {
+                        self.messages2.append(msg)
+                    }
+                }
+            }
+            self.tableView.reloadData()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -137,7 +182,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return messages.count
+        return messages2.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -150,18 +195,18 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         var cell: UITableViewCell
-        let message = messages[indexPath.row]
-        if message.from == myUid {
+        let message = messages2[indexPath.row]
+        if message.sender == myUid {
             // MyCell
             let myCell = tableView.dequeueReusableCell(withIdentifier: MyMessageCell.reuseID) as! MyMessageCell
-            myCell.messageLabel.text = message.message
-            myCell.timeLabel.text = message.created.dateValue().string(format: .custom("EEE"))
+            myCell.messageLabel.text = message.text
+            myCell.timeLabel.text = message.created
             cell = myCell
         } else {
             // HerCell
             let herCell = tableView.dequeueReusableCell(withIdentifier: HerMessageCell.reuseID) as! HerMessageCell
-            herCell.messageLabel.text = message.message
-            herCell.timeLabel.text = message.created.dateValue().string(format: .custom("EEE"))
+            herCell.messageLabel.text = message.text
+            herCell.timeLabel.text = message.created
             cell = herCell
         }
         return cell
@@ -215,16 +260,24 @@ extension MessagesViewController: UITextFieldDelegate {
 //        print("TextField should return method called")
         if textField.text != "" {
             if let text = textField.text {
-                let data: [String: Any] = [
-                    "created": FieldValue.serverTimestamp(),
-                    "from": myUid,
-                    "message": text
+//                let data: [String: Any] = [
+//                    "created": FieldValue.serverTimestamp(),
+//                    "from": myUid,
+//                    "message": text
+//                ]
+//                FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
+//                    self.populateMessages()
+//                    textField.text = ""
+//                    textField.resignFirstResponder()
+//                }
+                let data: [String : Any] = [
+                    "sender": myUid,
+                    "created": Date().toString(dateFormat: "dd.MM.YYYY"),
+                    "text": text
                 ]
-                FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
-                    self.populateMessages()
-                    textField.text = ""
-                    textField.resignFirstResponder()
-                }
+                channel.publish(chatUid, data: data.dict2json())
+                textField.text = ""
+                textField.resignFirstResponder()
                 return true
             }
         }

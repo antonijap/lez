@@ -1,4 +1,8 @@
 PODS:
+  - Ably (1.0.12):
+    - KSCrashAblyFork (= 1.15.8-ably-2)
+    - msgpack (= 0.1.8)
+    - SocketRocket (= 0.5.1)
   - Alertift (3.2)
   - Auk (8.0.2):
     - moa
@@ -110,12 +114,76 @@ PODS:
   - JGProgressHUD (2.0.2)
   - Koloda (4.3.1):
     - pop (~> 1.0)
+  - KSCrashAblyFork (1.15.8-ably-2):
+    - KSCrashAblyFork/Installations (= 1.15.8-ably-2)
+  - KSCrashAblyFork/Installations (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting
+  - KSCrashAblyFork/Recording (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording/Tools (= 1.15.8-ably-2)
+  - KSCrashAblyFork/Recording/Tools (1.15.8-ably-2)
+  - KSCrashAblyFork/Reporting (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/MessageUI (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Sinks (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Tools (= 1.15.8-ably-2)
+  - KSCrashAblyFork/Reporting/Filters (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters/Alert (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Filters/AppleFmt (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Filters/Base (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Filters/Basic (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Filters/GZip (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Filters/JSON (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Filters/Sets (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Filters/Stringify (= 1.15.8-ably-2)
+    - KSCrashAblyFork/Reporting/Filters/Tools (= 1.15.8-ably-2)
+  - KSCrashAblyFork/Reporting/Filters/Alert (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters/Base
+  - KSCrashAblyFork/Reporting/Filters/AppleFmt (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters/Base
+  - KSCrashAblyFork/Reporting/Filters/Base (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+  - KSCrashAblyFork/Reporting/Filters/Basic (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters/Base
+  - KSCrashAblyFork/Reporting/Filters/GZip (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters/Base
+  - KSCrashAblyFork/Reporting/Filters/JSON (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters/Base
+  - KSCrashAblyFork/Reporting/Filters/Sets (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters/AppleFmt
+    - KSCrashAblyFork/Reporting/Filters/Base
+    - KSCrashAblyFork/Reporting/Filters/Basic
+    - KSCrashAblyFork/Reporting/Filters/GZip
+    - KSCrashAblyFork/Reporting/Filters/JSON
+    - KSCrashAblyFork/Reporting/Filters/Stringify
+  - KSCrashAblyFork/Reporting/Filters/Stringify (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters/Base
+  - KSCrashAblyFork/Reporting/Filters/Tools (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+  - KSCrashAblyFork/Reporting/MessageUI (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+  - KSCrashAblyFork/Reporting/Sinks (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
+    - KSCrashAblyFork/Reporting/Filters
+    - KSCrashAblyFork/Reporting/Tools
+  - KSCrashAblyFork/Reporting/Tools (1.15.8-ably-2):
+    - KSCrashAblyFork/Recording
   - leveldb-library (1.20)
   - Lightbox (2.1.2):
     - Hue (~> 3.0)
     - Imaginary (~> 3.0)
   - lottie-ios (2.5.0)
   - moa (9.0.2)
+  - msgpack (0.1.8)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
     - nanopb/encode (= 0.3.8)
@@ -128,13 +196,16 @@ PODS:
   - Protobuf (3.5.0)
   - SkeletonView (1.2)
   - SnapKit (4.0.0)
+  - SocketRocket (0.5.1)
   - SwiftDate (4.5.1)
+  - SwiftyJSON (4.1.0)
   - SwiftyStoreKit (0.13.2)
   - TwitterCore (3.1.0)
   - TwitterKit (3.3.0):
     - TwitterCore (>= 3.1.0)
 
 DEPENDENCIES:
+  - Ably
   - Alertift (~> 3.0)
   - Auk (~> 8.0)
   - FacebookCore
@@ -156,11 +227,13 @@ DEPENDENCIES:
   - SkeletonView
   - SnapKit (~> 4.0.0)
   - SwiftDate (~> 4.0)
+  - SwiftyJSON (~> 4.0)
   - SwiftyStoreKit
   - TwitterKit
 
 SPEC REPOS:
   https://github.com/CocoaPods/Specs.git:
+    - Ably
     - Alertift
     - Auk
     - Bolts
@@ -193,10 +266,12 @@ SPEC REPOS:
     - Jelly
     - JGProgressHUD
     - Koloda
+    - KSCrashAblyFork
     - leveldb-library
     - Lightbox
     - lottie-ios
     - moa
+    - msgpack
     - nanopb
     - pop
     - PromisesObjC
@@ -204,12 +279,15 @@ SPEC REPOS:
     - Protobuf
     - SkeletonView
     - SnapKit
+    - SocketRocket
     - SwiftDate
+    - SwiftyJSON
     - SwiftyStoreKit
     - TwitterCore
     - TwitterKit
 
 SPEC CHECKSUMS:
+  Ably: 63ee06d60953eeb4ebcd6bc53452f6b380ad4571
   Alertift: df0df24a557e47360180092f5f3fceb675c96b51
   Auk: 82be62a2cf650437fe745c81b12ac2440a0f682c
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
@@ -242,10 +320,12 @@ SPEC CHECKSUMS:
   Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
   JGProgressHUD: bf75da151936cfd3c9b674afb17e8a5df2e14a7d
   Koloda: 0d39b2aa188ccd1fac48d752acaf9802e683c625
+  KSCrashAblyFork: d356f10dcde9359db775334e38e93a48df6508f7
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   Lightbox: 2dc267df8be2285bc7724cb11cbbf4aaaf59dced
   lottie-ios: d699fdee68d7b63e721d949388b015fef1aaa4ac
   moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
+  msgpack: 97491d2ea799408f4694f2c7d7fd79baf77853dd
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
   PromisesObjC: c6ea89661f018e55cd83dd7d0b5a7751f5e63c23
@@ -253,11 +333,13 @@ SPEC CHECKSUMS:
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   SkeletonView: d68962d45d1af038f6a110d2274b183df8f82752
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
+  SocketRocket: d57c7159b83c3c6655745cd15302aa24b6bae531
   SwiftDate: 7b56d42a221f582047287deb256b23fc5ed49a60
+  SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   SwiftyStoreKit: b7563505440a68c9d9fa70bc43d8a97015519409
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: af77627646ac94bae85678e53c99e906f4d6f1f3
+PODFILE CHECKSUM: b540088a690763cfbb6932b53bb859e04223a461
 
 COCOAPODS: 1.5.0

@@ -15,6 +15,12 @@ struct Message {
     var message: String
 }
 
+struct Message2: Decodable {
+    var created: String
+    var sender: String
+    var text: String
+}
+
 class Chat {
     var uid: String
     var created: Timestamp
