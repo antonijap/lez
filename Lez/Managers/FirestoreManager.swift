@@ -473,19 +473,24 @@ final class FirestoreManager {
                 return
             }
             
-            guard let participantsArray = data["participants"] as? [String] else {
+            guard let participantsObject = data["participants"] as? NSObject else {
                 print("Problem with parsing participants.")
                 return
             }
-
-            for p in participantsArray {
+            
+            guard let participantsDictionary = participantsObject as? Dictionary<String, Bool> else {
+                print("Problem with parsing participantsDictionary.")
+                return
+            }
+            
+            for item in participantsDictionary {
                 group.enter()
-                FirestoreManager.shared.fetchUser(uid: p).then { (user) in
+                FirestoreManager.shared.fetchUser(uid: item.key).then { (user) in
                     participants.append(user)
                     group.leave()
                 }
             }
-            
+
             group.notify(queue: .main, execute: {
                 self.fetchMessages(uid: uid).then({ (messages) in
                     if let messages = messages {

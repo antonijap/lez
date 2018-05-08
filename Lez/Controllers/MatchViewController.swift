@@ -482,7 +482,10 @@ extension MatchViewController {
                                         participants.append(self.users[index].uid)
                                         let data: [String: Any] = [
                                             "created": FieldValue.serverTimestamp(),
-                                            "participants": participants,
+                                            "participants": [
+                                                user.uid: true,
+                                                self.users[index].uid: true
+                                            ],
                                             "lastUpdated": FieldValue.serverTimestamp(),
                                             ]
                                         FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in

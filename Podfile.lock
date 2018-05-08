@@ -107,7 +107,7 @@ PODS:
   - Imaginary (3.0.3):
     - Cache (~> 4.0)
   - Jelly (1.2.4)
-  - JGProgressHUD (2.0.2)
+  - JGProgressHUD (2.0.3)
   - Koloda (4.3.1):
     - pop (~> 1.0)
   - leveldb-library (1.20)
@@ -240,7 +240,7 @@ SPEC CHECKSUMS:
   ImagePicker: 973953c25960fe04729a7082a56194321c6762d2
   Imaginary: 9b45836a5af881f452a86e0a1215772ae4712d00
   Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
-  JGProgressHUD: bf75da151936cfd3c9b674afb17e8a5df2e14a7d
+  JGProgressHUD: 12b20a8f4ffe05258f8635c1ab92816e451f904d
   Koloda: 0d39b2aa188ccd1fac48d752acaf9802e683c625
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   Lightbox: 2dc267df8be2285bc7724cb11cbbf4aaaf59dced

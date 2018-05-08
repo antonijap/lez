@@ -298,3 +298,6 @@ extension UIViewController {
     }
 }
 
+extension Notification.Name {
+    static let chatUpdated = Notification.Name("chatUpdated")
+}

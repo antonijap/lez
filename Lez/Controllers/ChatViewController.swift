@@ -13,10 +13,6 @@ import SwiftDate
 import moa
 import JGProgressHUD
 
-extension Notification.Name {
-    static let chatUpdated = Notification.Name("chatUpdated")
-}
-
 class ChatViewController: UIViewController {
     
     // Mark: - Properties
@@ -31,9 +27,6 @@ class ChatViewController: UIViewController {
     private let label = UILabel()
     private let refreshControl = UIRefreshControl()
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
     
     // Mark: - Lifecycle
     override func viewDidLoad() {
@@ -41,9 +34,20 @@ class ChatViewController: UIViewController {
         view.backgroundColor = .white
         setupNavigationBar()
         setupTableView()
+
+        Firestore.firestore().collection("chats").whereField("participants.\(myUid!)", isEqualTo: true)
+            .addSnapshotListener { querySnapshot, error in
+                guard let _ = querySnapshot?.documents else {
+                    print("Error fetching documents: \(error!)")
+                    return
+                }
+                print("Change detected")
+                self.fetchChats()
+        }
     }
     
     // Mark: - Methods
+    
     @objc fileprivate func refreshChats(_ sender: Any) {
         fetchChats()
     }

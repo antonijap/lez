@@ -8,6 +8,7 @@
 
 import UIKit
 import Firebase
+import Alertift
 
 class MessagesViewController: UIViewController {
     
@@ -36,7 +37,7 @@ class MessagesViewController: UIViewController {
         
         Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created").addSnapshotListener { (snapshot, error) in
             self.populateMessages()
-        } 
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -81,7 +82,6 @@ class MessagesViewController: UIViewController {
                 if messages.isEmpty {
                     print("Nema poruka, vjerojatno neka greska.")
                 } else {
-                    print("Will refresh messages")
                     self.messages.removeAll()
                     self.messages = messages
                     self.tableView.reloadData()
@@ -230,5 +230,10 @@ extension MessagesViewController: UITextFieldDelegate {
         }
         return false
     }
+    
+}
+
+extension MessagesViewController {
+
     
 }
