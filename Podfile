@@ -29,6 +29,11 @@ target 'Lez' do
   pod 'SwiftDate', '~> 4.0'
   pod 'TwitterKit'
   pod 'SwiftyStoreKit'
+  pod 'Ably'
+  pod 'SwiftyJSON', '~> 4.0'
+  pod 'Alamofire', '~> 4.7'
+  pod 'Alamofire-SwiftyJSON'
+  pod 'PusherSwift'
 
   target 'LezTests' do
     inherit! :search_paths

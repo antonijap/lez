@@ -12,6 +12,9 @@ import Promises
 import SwiftDate
 import moa
 import JGProgressHUD
+import Alamofire
+import SwiftyJSON
+import Alamofire_SwiftyJSON
 
 class ChatViewController: UIViewController {
     
@@ -34,14 +37,21 @@ class ChatViewController: UIViewController {
         view.backgroundColor = .white
         setupNavigationBar()
         setupTableView()
+        
+//        Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/addMessage", method: .post).responseJSON { (response) in
+//            print("Response")
+//            print(response.value)
+//        }
 
+        guard let currentUser = Auth.auth().currentUser else { return }
+        self.myUid = currentUser.uid
+        
         Firestore.firestore().collection("chats").whereField("participants.\(myUid!)", isEqualTo: true)
             .addSnapshotListener { querySnapshot, error in
                 guard let _ = querySnapshot?.documents else {
                     print("Error fetching documents: \(error!)")
                     return
                 }
-                print("Change detected")
                 self.fetchChats()
         }
     }
@@ -163,7 +173,6 @@ class ChatViewController: UIViewController {
         tableView.isHidden = true
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshChats(_:)), for: .valueChanged)
-        fetchChats()
     }
 }
 

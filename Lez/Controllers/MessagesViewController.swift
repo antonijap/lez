@@ -9,17 +9,19 @@
 import UIKit
 import Firebase
 import Alertift
+import SwiftyJSON
+import SwiftDate
 
 class MessagesViewController: UIViewController {
     
     // Mark: - Properties
     var chatUid: String!
-    let textField = UITextField()
-    var keyboardHeightLayoutConstraint: NSLayoutConstraint?
-    let tableView = UITableView()
-    var messages = [Message]()
     var participants: [User] = [User]()
-    var myUid: String!
+    private let textField = UITextField()
+    private var keyboardHeightLayoutConstraint: NSLayoutConstraint?
+    private let tableView = UITableView()
+    private var messages = [Message]()
+    private var myUid: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,14 +82,22 @@ class MessagesViewController: UIViewController {
             }
             group.notify(queue: .main, execute: {
                 if messages.isEmpty {
-                    print("Nema poruka, vjerojatno neka greska.")
+                    print("Nema poruka")
                 } else {
-                    self.messages.removeAll()
-                    self.messages = messages
-                    self.tableView.reloadData()
-                    self.tableView.setNeedsLayout()
-                    let indexPath = IndexPath(row: messages.count - 1, section: 0)
-                    self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                    print(messages)
+                    if messages.count > 20 {
+                        self.messages.removeAll()
+                        self.messages = messages
+                        self.tableView.reloadData()
+                        self.tableView.setNeedsLayout()
+                        let indexPath = IndexPath(row: messages.count - 1, section: 0)
+                        self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                    } else {
+                        self.messages.removeAll()
+                        self.messages = messages
+                        self.tableView.reloadData()
+                        self.tableView.setNeedsLayout()
+                    }
                 }
             })
         }
@@ -155,13 +165,13 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
             // MyCell
             let myCell = tableView.dequeueReusableCell(withIdentifier: MyMessageCell.reuseID) as! MyMessageCell
             myCell.messageLabel.text = message.message
-            myCell.timeLabel.text = message.created.dateValue().string(format: .custom("EEE"))
+            myCell.timeLabel.text = message.created.dateValue().toString(dateFormat: "MMM")
             cell = myCell
         } else {
             // HerCell
             let herCell = tableView.dequeueReusableCell(withIdentifier: HerMessageCell.reuseID) as! HerMessageCell
             herCell.messageLabel.text = message.message
-            herCell.timeLabel.text = message.created.dateValue().string(format: .custom("EEE"))
+            herCell.timeLabel.text = message.created.dateValue().toString(dateFormat: "MMM")
             cell = herCell
         }
         return cell
@@ -225,7 +235,6 @@ extension MessagesViewController: UITextFieldDelegate {
                     textField.text = ""
                     textField.resignFirstResponder()
                 }
-                return true
             }
         }
         return false
