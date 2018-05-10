@@ -13,6 +13,8 @@ import Firebase
 import moa
 import Jelly
 import Promises
+import Alamofire
+import AlamofireImage
 
 class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
     
@@ -126,32 +128,13 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
 extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, MatchCellDelegate {
     @objc func likeTapped(_ sender: MatchCell) {
         if let me = me {
-            if let likes = me.likes {
-                var previousLikes: [String] = []
-                previousLikes = likes
-                previousLikes.append(users[sender.tag].uid)
-                let data: [String: Any] = [
-                    "likesLeft": me.likesLeft - 1,
-                    "likes": previousLikes
-                ]
-                print(data)
-                self.updateLike(myUid: me.uid, herUid: users[sender.tag].uid).then { (success) in
-                    FirestoreManager.shared.fetchUser(uid: me.uid).then { (user) in
-                        self.me = user
-                        UIView.performWithoutAnimation {
-                            self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
-                        }
-                        
+            self.updateLike(myUid: me.uid, herUid: users[sender.tag].uid).then { (success) in
+                FirestoreManager.shared.fetchUser(uid: me.uid).then { (user) in
+                    self.me = user
+                    UIView.performWithoutAnimation {
+                        self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
                     }
                 }
-                
-//                FirestoreManager.shared.updateUser(uid: me.uid, data: data).then { (success) in
-//                    if success {
-//                        let affectedCell = self.tableView.cellForRow(at: IndexPath(row: sender.tag, section: 0)) as? MatchCell
-//                        affectedCell?.likeButton.setImage(UIImage(named: "Like"), for: .normal)
-//                        sender.likeButton.setImage(UIImage(named: "Like"), for: .normal)
-//                    }
-//                }
             }
         }
     }

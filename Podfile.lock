@@ -3,6 +3,8 @@ PODS:
   - Alamofire-SwiftyJSON (3.0.0):
     - Alamofire (~> 4.5)
     - SwiftyJSON (~> 4.0.0)
+  - AlamofireImage (3.3.1):
+    - Alamofire (~> 4.5)
   - Alertift (3.2)
   - Auk (8.0.2):
     - moa
@@ -139,6 +141,7 @@ PODS:
 DEPENDENCIES:
   - Alamofire (~> 4.7)
   - Alamofire-SwiftyJSON
+  - AlamofireImage (~> 3.3)
   - Alertift (~> 3.0)
   - Auk (~> 8.0)
   - FacebookCore
@@ -167,6 +170,7 @@ SPEC REPOS:
   https://github.com/cocoapods/specs.git:
     - Alamofire
     - Alamofire-SwiftyJSON
+    - AlamofireImage
     - Alertift
     - Auk
     - Bolts
@@ -218,6 +222,7 @@ SPEC REPOS:
 SPEC CHECKSUMS:
   Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
   Alamofire-SwiftyJSON: 2b3649d57dc7bb2880fb8b86f8bb969397666916
+  AlamofireImage: 3b35b586853abaf94ca1250f4e94cff3c21a4c0d
   Alertift: df0df24a557e47360180092f5f3fceb675c96b51
   Auk: 82be62a2cf650437fe745c81b12ac2440a0f682c
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
@@ -266,6 +271,6 @@ SPEC CHECKSUMS:
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: fb75c17b222944e518beacafb07e1848c655a526
+PODFILE CHECKSUM: 4894aeda06ebb441c6589a3340553e565b034555
 
 COCOAPODS: 1.5.2

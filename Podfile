@@ -32,9 +32,10 @@ target 'Lez' do
 #  pod 'Ably'
   pod 'SwiftyJSON', '~> 4.0'
   pod 'Alamofire', '~> 4.7'
-  pod 'Alamofire-SwiftyJSON'
+#  pod 'Alamofire-SwiftyJSON'
 #  pod 'PusherChatkit'
 #  pod 'IGListKit', '~> 3.0'
+  pod 'AlamofireImage', '~> 3.3'
   
   target 'LezTests' do
     inherit! :search_paths
