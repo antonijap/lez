@@ -25,16 +25,17 @@ target 'Lez' do
   pod 'Lightbox'
   pod 'Alertift', '~> 3.0'
   pod 'JGProgressHUD'
-  pod 'SkeletonView'
+#  pod 'SkeletonView'
   pod 'SwiftDate', '~> 4.0'
   pod 'TwitterKit'
   pod 'SwiftyStoreKit'
-  pod 'Ably'
+#  pod 'Ably'
   pod 'SwiftyJSON', '~> 4.0'
   pod 'Alamofire', '~> 4.7'
   pod 'Alamofire-SwiftyJSON'
-  pod 'PusherChatkit'
-
+#  pod 'PusherChatkit'
+#  pod 'IGListKit', '~> 3.0'
+  
   target 'LezTests' do
     inherit! :search_paths
     # Pods for testing

@@ -10,7 +10,6 @@ import UIKit
 import Firebase
 import SnapKit
 import moa
-import SkeletonView
 import JGProgressHUD
 import Alertift
 import Jelly

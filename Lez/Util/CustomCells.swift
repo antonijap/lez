@@ -10,7 +10,6 @@ import UIKit
 import Firebase
 import SnapKit
 import moa
-import SkeletonView
 import JGProgressHUD
 
 enum MenuSections {
@@ -34,6 +33,11 @@ enum MessagesSections {
 protocol ReuseIdentifiable {
     static var reuseID: String { get }
 }
+
+extension MatchCell: ReuseIdentifiable {
+    static var reuseID: String { return String(describing: self) }
+}
+
 
 extension MyMessageCell: ReuseIdentifiable {
     static var reuseID: String { return String(describing: self) }
@@ -73,6 +77,77 @@ extension IconMenuCell: ReuseIdentifiable {
 
 extension PremiumMenuCell: ReuseIdentifiable {
     static var reuseID: String { return String(describing: self) }
+}
+
+class MatchCell: UITableViewCell {
+    var userImageView = UIImageView()
+    var nameAndAgeLabel = UILabel()
+    var locationLabel = UILabel()
+    var likeImageView = UIImageView()
+    let gradientLayer = CAGradientLayer()
+    
+    override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        addShadow()
+        setupCell()
+        layoutIfNeeded()
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        gradientLayer.frame = userImageView.bounds
+    }
+    
+    func setupCell() {
+        selectionStyle = .none
+        let x = frame.width * 1.6
+        addSubview(userImageView)
+        userImageView.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().offset(8)
+            make.bottom.equalToSuperview().priority(999)
+            make.left.equalToSuperview().offset(8)
+            make.right.equalToSuperview().inset(8)
+            make.height.equalTo(x)
+        }
+        userImageView.contentMode = .scaleAspectFill
+        userImageView.layer.cornerRadius = 16
+        userImageView.clipsToBounds = true
+        
+        addSubview(locationLabel)
+        locationLabel.snp.makeConstraints { (make) in
+            make.left.equalToSuperview().inset(24)
+            make.bottom.equalToSuperview().inset(24)
+        }
+        locationLabel.textColor = .white
+        
+        addSubview(nameAndAgeLabel)
+        nameAndAgeLabel.snp.makeConstraints { (make) in
+            make.left.equalTo(locationLabel.snp.left)
+            make.bottom.equalTo(locationLabel.snp.top).offset(-3)
+        }
+        nameAndAgeLabel.textColor = .white
+        
+        addSubview(likeImageView)
+        likeImageView.snp.makeConstraints { (make) in
+            make.width.height.equalTo(44)
+            make.right.equalToSuperview().inset(24)
+            make.bottom.equalTo(locationLabel.snp.bottom)
+        }
+        likeImageView.image = UIImage(named: "Like")
+    }
+    
+    func addShadow() {
+        userImageView.layer.addSublayer(gradientLayer)
+        let black = UIColor.black.withAlphaComponent(0.5).cgColor
+        gradientLayer.colors = [black, UIColor.clear.cgColor]
+        gradientLayer.endPoint = CGPoint(x: 0.0, y: 0.7)
+        gradientLayer.startPoint = CGPoint(x: 0.0, y: 1.0)
+        gradientLayer.opacity = 1
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }
 
 class MyMessageCell: UITableViewCell {

@@ -14,10 +14,8 @@ import moa
 import JGProgressHUD
 import Alamofire
 import SwiftyJSON
-import Alamofire_SwiftyJSON
-import PusherChatkit
 
-class ChatViewController: UIViewController, PCChatManagerDelegate {
+class ChatViewController: UIViewController {
     
     // Mark: - Properties
     private let tableView = UITableView()
@@ -30,7 +28,6 @@ class ChatViewController: UIViewController, PCChatManagerDelegate {
     private let illustration = UIImageView()
     private let label = UILabel()
     private let refreshControl = UIRefreshControl()
-    var currentUser: PCCurrentUser?
     
     
     // Mark: - Lifecycle
@@ -43,16 +40,6 @@ class ChatViewController: UIViewController, PCChatManagerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        // Creates a new Pusher user, put this when app first runs.
-//        FirestoreManager.shared.fetchUser(uid: myUid).then { (user) in
-//            Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/createPusheruser", method: .post, parameters: ["uid": user.uid, "name": user.name]).responseData { (dataResponse) in
-//                if let data = dataResponse.data {
-//                    print(String(data: data, encoding: .utf8) ?? "")
-//                }
-//            }
-//        }
-//
         
         guard let currentUser = Auth.auth().currentUser else { return }
         self.myUid = currentUser.uid

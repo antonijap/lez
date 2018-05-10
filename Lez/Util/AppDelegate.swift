@@ -18,7 +18,7 @@ class CustomTabBarController: UITabBarController {
         
         let heart = UIImage(named: "Heart")
         let heartFull = UIImage(named: "Heart_Full")
-        let matchViewController = UINavigationController(rootViewController: MatchViewController())
+        let matchViewController = UINavigationController(rootViewController: MatchViewController2())
         matchViewController.tabBarItem = UITabBarItem.init(title: "", image: heart, selectedImage: heartFull)
         matchViewController.tabBarItem.imageInsets = UIEdgeInsets(top: 5, left: 0, bottom: -5, right: 0)
         
