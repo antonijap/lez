@@ -15,6 +15,7 @@ import Jelly
 import Promises
 import Alamofire
 import AlamofireImage
+import Spring
 
 class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
     
@@ -132,7 +133,10 @@ extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, Matc
                 FirestoreManager.shared.fetchUser(uid: me.uid).then { (user) in
                     self.me = user
                     UIView.performWithoutAnimation {
-                        self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
+                        let affectedCell = self.tableView.cellForRow(at: IndexPath(row: sender.tag, section: 0)) as? MatchCell
+                        affectedCell?.likeButton.setImage(UIImage(named: "Like"), for: .normal)
+//                        affectedCell?.layer.animation = "pop"
+//                        self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
                     }
                 }
             }

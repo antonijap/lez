@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double Alamofire_SwiftyJSONVersionNumber;
-FOUNDATION_EXPORT const unsigned char Alamofire_SwiftyJSONVersionString[];
+FOUNDATION_EXPORT double SpringVersionNumber;
+FOUNDATION_EXPORT const unsigned char SpringVersionString[];
 
