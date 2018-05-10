@@ -406,7 +406,7 @@ final class FirestoreManager {
                             print("Problem with parsing from.")
                             return
                         }
-                        guard let created = item["created"] as? Timestamp else {
+                        guard let created = item["created"] as? String else {
                             print("Problem with parsing created.")
                             return
                         }
@@ -463,12 +463,12 @@ final class FirestoreManager {
                 return
             }
             
-            guard let created = data["created"] as? Timestamp else {
+            guard let created = data["created"] as? String else {
                 print("Problem with parsing created.")
                 return
             }
             
-            guard let lastUpdated = data["lastUpdated"] as? Timestamp else {
+            guard let lastUpdated = data["lastUpdated"] as? String else {
                 print("Problem with parsing lastUpdated.")
                 return
             }
@@ -519,7 +519,7 @@ final class FirestoreManager {
                 return
             }
             
-            guard let created = data["created"] as? Timestamp else {
+            guard let created = data["created"] as? String else {
                 print("Problem with parsing message created.")
                 return
             }
@@ -577,6 +577,8 @@ final class FirestoreManager {
                                         self.updateUser(uid: herUid, data: data).then({ (success) in
                                             if success {
                                                 fulfill(true)
+                                            } else {
+                                                fulfill(false)
                                             }
                                         })
                                     })
@@ -597,7 +599,7 @@ final class FirestoreManager {
                     reject(err)
                 } else {
                     let d: [String: Any] = [
-                        "lastUpdated": FieldValue.serverTimestamp(),
+                        "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss")
                     ]
                     self.db.collection("chats").document(chat).updateData(d, completion: { (error) in
                         if let err = err {
@@ -615,7 +617,7 @@ final class FirestoreManager {
     
     func updateIsReadState(to chat: String, value: Bool) {
         let data: [String: Any] = [
-            "lastUpdated": FieldValue.serverTimestamp(),
+            "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
             "isRead": value
         ]
         self.db.collection("chats").document(chat).updateData(data, completion: { (error) in

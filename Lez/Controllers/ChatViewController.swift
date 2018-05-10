@@ -15,8 +15,9 @@ import JGProgressHUD
 import Alamofire
 import SwiftyJSON
 import Alamofire_SwiftyJSON
+import PusherChatkit
 
-class ChatViewController: UIViewController {
+class ChatViewController: UIViewController, PCChatManagerDelegate {
     
     // Mark: - Properties
     private let tableView = UITableView()
@@ -29,6 +30,7 @@ class ChatViewController: UIViewController {
     private let illustration = UIImageView()
     private let label = UILabel()
     private let refreshControl = UIRefreshControl()
+    var currentUser: PCCurrentUser?
     
     
     // Mark: - Lifecycle
@@ -37,14 +39,32 @@ class ChatViewController: UIViewController {
         view.backgroundColor = .white
         setupNavigationBar()
         setupTableView()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         
-//        Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/addMessage", method: .post).responseJSON { (response) in
-//            print("Response")
-//            print(response.value)
+        // Creates a new Pusher user, put this when app first runs.
+//        FirestoreManager.shared.fetchUser(uid: myUid).then { (user) in
+//            Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/createPusheruser", method: .post, parameters: ["uid": user.uid, "name": user.name]).responseData { (dataResponse) in
+//                if let data = dataResponse.data {
+//                    print(String(data: data, encoding: .utf8) ?? "")
+//                }
+//            }
 //        }
-
+//
+        
         guard let currentUser = Auth.auth().currentUser else { return }
         self.myUid = currentUser.uid
+        
+        Firestore.firestore().collection("users").document(myUid)
+            .addSnapshotListener { querySnapshot, error in
+                guard let _ = querySnapshot?.data() else {
+                    print("Error fetching documents: \(error!)")
+                    return
+                }
+                self.fetchChats()
+        }
         
         Firestore.firestore().collection("chats").whereField("participants.\(myUid!)", isEqualTo: true)
             .addSnapshotListener { querySnapshot, error in
@@ -52,6 +72,7 @@ class ChatViewController: UIViewController {
                     print("Error fetching documents: \(error!)")
                     return
                 }
+                print("Change detected.")
                 self.fetchChats()
         }
     }
@@ -71,7 +92,6 @@ class ChatViewController: UIViewController {
                 FirestoreManager.shared.fetchChats(chats: chats).then({ (chats) in
                     self.emptyChats.removeAll()
                     self.existingChats.removeAll()
-                    
                     for c in chats {
                         if c.messages == nil {
                             self.emptyChats.append(c)
@@ -81,11 +101,11 @@ class ChatViewController: UIViewController {
                     }
                     
                     self.existingChats.sort(by: { (a, b) -> Bool in
-                        a.lastUpdated.dateValue() > b.lastUpdated.dateValue()
+                        a.lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))! > b.lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))!
                     })
                     
                     self.emptyChats.sort(by: { (a, b) -> Bool in
-                        a.lastUpdated.dateValue() > b.lastUpdated.dateValue()
+                        a.lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))! > b.lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))!
                     })
                     self.hideEmptyState()
                     self.tableView.isHidden = false
@@ -173,6 +193,7 @@ class ChatViewController: UIViewController {
         tableView.isHidden = true
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(refreshChats(_:)), for: .valueChanged)
+        self.fetchChats()
     }
 }
 
@@ -262,7 +283,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             })
             
             chatCell.titleLabel.text = notMe?.name
-            chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.dateValue().colloquialSinceNow()
+            chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
             chatCell.userPictureView.moa.url = notMe?.images?.first
             cell = chatCell
         } else {
@@ -292,7 +313,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 })
                 
                 chatCell.titleLabel.text = notMe?.name
-                chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.dateValue().colloquialSinceNow()
+                chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
                 chatCell.userPictureView.moa.url = notMe?.images?.first
                 
                 cell = chatCell

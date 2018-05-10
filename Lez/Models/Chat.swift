@@ -10,7 +10,7 @@ import Foundation
 import Firebase
 
 struct Message {
-    var created: Timestamp
+    var created: String
     var from: String
     var message: String
 }
@@ -23,12 +23,12 @@ struct Message2: Decodable {
 
 class Chat {
     var uid: String
-    var created: Timestamp
-    var lastUpdated: Timestamp
+    var created: String
+    var lastUpdated: String
     var participants: [User]
     var messages: [Message]?
     
-    init(uid: String, created: Timestamp, lastUpdated: Timestamp, participants: [User], messages: [Message]?) {
+    init(uid: String, created: String, lastUpdated: String, participants: [User], messages: [Message]?) {
         self.uid = uid
         self.created = created
         self.lastUpdated = lastUpdated

@@ -104,11 +104,6 @@ extension UIViewController: UIActionSheetDelegate {
         let action1 = UIAlertAction(title: "Cancel", style: .default, handler: nil)
         let action2 = UIAlertAction(title: CTA, style: .destructive) { (action) in
             do {
-                Analytics.logEvent(AnalyticsEventSelectContent, parameters: [
-                    AnalyticsParameterItemID: "id-\(String(describing: Auth.auth().currentUser?.uid))",
-                    AnalyticsParameterItemName: "Log Out",
-                    AnalyticsParameterContentType: "action"
-                    ])
                 try Auth.auth().signOut()
                 self.tabBarController?.selectedIndex = 0
                 let registerViewController = RegisterViewController()

@@ -208,59 +208,59 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
             }
             uploadTask.observe(.success) { snapshot in
                 
-                self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
-                // 2. Check if there is first image and upload it
-                if self.checkImageOne() {
-                    let ref = self.storage.reference().child("images").child(self.user.uid).child("image_1.jpg")
-                    guard let data = UIImageJPEGRepresentation(self.imageView.image!, 90.00) else {
-                        print("Error happened")
-                        return
-                    }
-                    let uploadTask = ref.putData(data, metadata: nil) { (metadata, error) in
-                        if let error = error {
-                            print(error)
-                        }
-                    }
-                    uploadTask.observe(.success) { snapshot in
-                        self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
-                        // 3. Check if there is second image and upload it
-                        if self.checkImageTwo() {
-                            let ref = self.storage.reference().child("images").child(self.user.uid).child("image_2.jpg")
-                            guard let data = UIImageJPEGRepresentation(self.imageView2.image!, 90.00) else {
-                                print("Error happened")
-                                return
-                            }
-                            let uploadTask = ref.putData(data, metadata: nil) { (metadata, error) in
-                                if let error = error {
-                                    print(error)
-                                }
-                            }
-                            uploadTask.observe(.success) { snapshot in
-                                self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
-                                // 4. Write user data to Firestore
-                                if self.user.isOnboarded {
-                                    self.updateImages(images: self.imageURLs)
-                                } else {
-                                    self.writeUserData(images: self.imageURLs)
-                                }
-                            }
-                        } else {
-                            // 4. Write user data to Firestore
-                            if self.user.isOnboarded {
-                                self.updateImages(images: self.imageURLs)
-                            } else {
-                                self.writeUserData(images: self.imageURLs)
-                            }
-                        }
-                    }
-                } else {
-                    // 4. Write user data to Firestore
-                    if self.user.isOnboarded {
-                        self.updateImages(images: self.imageURLs)
-                    } else {
-                        self.writeUserData(images: self.imageURLs)
-                    }
-                }
+//                self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
+//                // 2. Check if there is first image and upload it
+//                if self.checkImageOne() {
+//                    let ref = self.storage.reference().child("images").child(self.user.uid).child("image_1.jpg")
+//                    guard let data = UIImageJPEGRepresentation(self.imageView.image!, 90.00) else {
+//                        print("Error happened")
+//                        return
+//                    }
+//                    let uploadTask = ref.putData(data, metadata: nil) { (metadata, error) in
+//                        if let error = error {
+//                            print(error)
+//                        }
+//                    }
+//                    uploadTask.observe(.success) { snapshot in
+//                        self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
+//                        // 3. Check if there is second image and upload it
+//                        if self.checkImageTwo() {
+//                            let ref = self.storage.reference().child("images").child(self.user.uid).child("image_2.jpg")
+//                            guard let data = UIImageJPEGRepresentation(self.imageView2.image!, 90.00) else {
+//                                print("Error happened")
+//                                return
+//                            }
+//                            let uploadTask = ref.putData(data, metadata: nil) { (metadata, error) in
+//                                if let error = error {
+//                                    print(error)
+//                                }
+//                            }
+//                            uploadTask.observe(.success) { snapshot in
+//                                self.imageURLs.append(snapshot.metadata!.downloadURL()!.standardizedFileURL.absoluteString)
+//                                // 4. Write user data to Firestore
+//                                if self.user.isOnboarded {
+//                                    self.updateImages(images: self.imageURLs)
+//                                } else {
+//                                    self.writeUserData(images: self.imageURLs)
+//                                }
+//                            }
+//                        } else {
+//                            // 4. Write user data to Firestore
+//                            if self.user.isOnboarded {
+//                                self.updateImages(images: self.imageURLs)
+//                            } else {
+//                                self.writeUserData(images: self.imageURLs)
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    // 4. Write user data to Firestore
+//                    if self.user.isOnboarded {
+//                        self.updateImages(images: self.imageURLs)
+//                    } else {
+//                        self.writeUserData(images: self.imageURLs)
+//                    }
+//                }
             }
         } else {
             Alertift.alert(title: "Profile Image", message: "Every profile has a profile image. It's mandatory.")

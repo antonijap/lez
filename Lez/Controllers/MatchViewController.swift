@@ -63,6 +63,8 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
 //                print("Error: \(String(describing: result.error))")
 //            }
 //        }
+        
+        // Uvijek provjeri jel treba reload
     }
     
     deinit {
@@ -481,18 +483,19 @@ extension MatchViewController {
                                         participants.append(user.uid)
                                         participants.append(self.users[index].uid)
                                         let data: [String: Any] = [
-                                            "created": FieldValue.serverTimestamp(),
+                                            "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
                                             "participants": [
                                                 user.uid: true,
                                                 self.users[index].uid: true
                                             ],
-                                            "lastUpdated": FieldValue.serverTimestamp(),
+                                            "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
                                             ]
                                         FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[index].uid).then({ (success) in
                                             if success {
-                                                self.playMatchAnimation {
-                                                    self.showMatchModal()
-                                                }
+                                                self.showMatchModal()
+//                                                self.playMatchAnimation {
+//                                                    self.showMatchModal()
+//                                                }
                                             }
                                         })
                                     }

@@ -165,13 +165,13 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
             // MyCell
             let myCell = tableView.dequeueReusableCell(withIdentifier: MyMessageCell.reuseID) as! MyMessageCell
             myCell.messageLabel.text = message.message
-            myCell.timeLabel.text = message.created.dateValue().toString(dateFormat: "MMM")
+            myCell.timeLabel.text = message.created.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.string()
             cell = myCell
         } else {
             // HerCell
             let herCell = tableView.dequeueReusableCell(withIdentifier: HerMessageCell.reuseID) as! HerMessageCell
             herCell.messageLabel.text = message.message
-            herCell.timeLabel.text = message.created.dateValue().toString(dateFormat: "MMM")
+            herCell.timeLabel.text = message.created.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.string()
             cell = herCell
         }
         return cell
@@ -226,7 +226,7 @@ extension MessagesViewController: UITextFieldDelegate {
         if textField.text != "" {
             if let text = textField.text {
                 let data: [String: Any] = [
-                    "created": FieldValue.serverTimestamp(),
+                    "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
                     "from": myUid,
                     "message": text
                 ]
