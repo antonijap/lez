@@ -163,7 +163,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
                 let url = user.images
                 profileImagesCell.scrollView.auk.removeAll()
-                for u in url! {
+                for u in url {
                     profileImagesCell.scrollView.auk.show(url: u)
                 }
                 cell = profileImagesCell

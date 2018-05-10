@@ -346,11 +346,8 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
         }
         profileImageView.isUserInteractionEnabled = true
         profileImageView.addGestureRecognizer(tap)
-        if let imagesURLs = user.images {
-            profileImageView.contentMode = .scaleAspectFill
-            profileImageView.moa.url = imagesURLs.first
-        }
-
+        profileImageView.contentMode = .scaleAspectFill
+        profileImageView.moa.url = user.images.first
         let imageGalleryLabel = UILabel()
         view.addSubview(imageGalleryLabel)
         imageGalleryLabel.snp.makeConstraints { (make) in
@@ -380,11 +377,10 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
             make.centerY.equalToSuperview()
             make.left.equalToSuperview()
         }
-        if let imagesURLs = user.images {
-            imageView.contentMode = .scaleAspectFill
-            if imagesURLs.count > 1 {
-                imageView.moa.url = imagesURLs[1]
-            }
+
+        imageView.contentMode = .scaleAspectFill
+        if user.images.count > 1 {
+            imageView.moa.url = user.images[1]
         }
 
         imageView2 = CustomImageView()
@@ -395,11 +391,10 @@ class ImageGalleryViewController: UIViewController, ImagePickerDelegate {
             make.centerY.equalToSuperview()
             make.right.equalToSuperview()
         }
-        if let imagesURLs = user.images {
-            imageView2.contentMode = .scaleAspectFill
-            if imagesURLs.count > 2 {
-                imageView2.moa.url = imagesURLs[2]
-            }
+
+        imageView2.contentMode = .scaleAspectFill
+        if user.images.count > 2 {
+            imageView2.moa.url = user.images[2]
         }
         
         let button = CustomButton()

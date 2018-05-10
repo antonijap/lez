@@ -34,7 +34,7 @@ class User: Hashable {
     var isHidden: Bool
     var preferences: Preferences
     var details: Details
-    var images: [String]?
+    var images: [String]
     var likes: [String]?
     var dislikes: [String]?
     var blockedUsers: [String]?
@@ -43,8 +43,8 @@ class User: Hashable {
     var cooldownTime: Date?
     
     // Initial user cration, no images, flags are false
-    convenience init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details) {
-        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: nil, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], dislikes: [], blockedUsers: [], chats: [], likesLeft: 5, cooldownTime: nil)
+    convenience init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]) {
+        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: images, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], dislikes: [], blockedUsers: [], chats: [], likesLeft: 5, cooldownTime: nil)
         self.uid = uid
         self.name = name
         self.email = email
@@ -52,10 +52,11 @@ class User: Hashable {
         self.location = location
         self.preferences = preferences
         self.details = details
+        self.images = images
     }
     
     // With everything
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]?, isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], dislikes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?) {
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String], isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], dislikes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?) {
         self.uid = uid
         self.name = name
         self.email = email

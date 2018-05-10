@@ -86,7 +86,8 @@ class SetupProfileViewController: FormViewController {
         let ageRange = AgeRange(from: from, to: to)
         let details = Details(about: about, dealBreakers: dealbreakers, diet: Diet(rawValue: diet)!)
         let preferences = Preferences(ageRange: ageRange, lookingFor: lookingForArray)
-        let user = User(uid: uid!, name: name, email: email, age: age, location: loc!, preferences: preferences, details: details)
+        // Prenesi sve podatke na iduci screen i napravi novog usera
+        let user = User(uid: uid!, name: name, email: email, age: age, location: loc!, preferences: preferences, details: details, images: ["", ""])
         return user
     }
     

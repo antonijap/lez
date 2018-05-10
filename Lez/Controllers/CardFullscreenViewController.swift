@@ -136,7 +136,7 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
             case .profileImages:
                 let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
                 let url = user.images
-                for u in url! {
+                for u in url {
                     profileImagesCell.scrollView.auk.show(url: u)
                 }
                 cell = profileImagesCell

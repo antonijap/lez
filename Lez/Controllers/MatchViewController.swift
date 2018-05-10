@@ -421,7 +421,7 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
 extension MatchViewController {
     func koloda(_ koloda: KolodaView, viewForCardAt index: Int) -> UIView {
         let view = LezKolodaView()
-        view.imageView.moa.url = users[index].images!.first
+        view.imageView.moa.url = users[index].images.first
         view.imageView.moa.onSuccess = { image in
             view.locationLabel.text = self.users[index].location.city
             view.nameAndAgeLabel.text = "\(self.users[index].name), \(self.users[index].age)"

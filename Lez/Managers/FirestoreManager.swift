@@ -146,11 +146,11 @@ final class FirestoreManager {
 //                    }
 //                }
                 
-                for _ in finalArray {
-                    if let i = finalArray.index(where: { user.likes!.contains($0.uid) }) {
-                        finalArray.remove(at: i)
-                    }
-                }
+//                for _ in finalArray {
+//                    if let i = finalArray.index(where: { user.likes!.contains($0.uid) }) {
+//                        finalArray.remove(at: i)
+//                    }
+//                }
                 
                 // Remove all disliked users
 //                for match in finalArray {
@@ -162,11 +162,11 @@ final class FirestoreManager {
 //                    }
 //                }
                 
-                for _ in finalArray {
-                    if let i = finalArray.index(where: { user.dislikes!.contains($0.uid) }) {
-                        finalArray.remove(at: i)
-                    }
-                }
+//                for _ in finalArray {
+//                    if let i = finalArray.index(where: { user.dislikes!.contains($0.uid) }) {
+//                        finalArray.remove(at: i)
+//                    }
+//                }
                 
                 // Remove blocked users
 //                for match in finalArray {

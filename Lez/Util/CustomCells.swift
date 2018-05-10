@@ -83,8 +83,10 @@ class MatchCell: UITableViewCell {
     var userImageView = UIImageView()
     var nameAndAgeLabel = UILabel()
     var locationLabel = UILabel()
-    var likeImageView = UIImageView()
+    var likeButton = UIButton(type: .custom)
+    weak var delegate: MatchCellDelegate?
     let gradientLayer = CAGradientLayer()
+    
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -98,7 +100,7 @@ class MatchCell: UITableViewCell {
         gradientLayer.frame = userImageView.bounds
     }
     
-    func setupCell() {
+    private func setupCell() {
         selectionStyle = .none
         let x = frame.width * 1.6
         addSubview(userImageView)
@@ -127,16 +129,16 @@ class MatchCell: UITableViewCell {
         }
         nameAndAgeLabel.textColor = .white
         
-        addSubview(likeImageView)
-        likeImageView.snp.makeConstraints { (make) in
+        addSubview(likeButton)
+        likeButton.snp.makeConstraints { (make) in
             make.width.height.equalTo(44)
             make.right.equalToSuperview().inset(24)
             make.bottom.equalTo(locationLabel.snp.bottom)
         }
-        likeImageView.image = UIImage(named: "Like")
+        likeButton.setImage(UIImage(named: "Like_Disabled"), for: .normal)
     }
     
-    func addShadow() {
+    private func addShadow() {
         userImageView.layer.addSublayer(gradientLayer)
         let black = UIColor.black.withAlphaComponent(0.5).cgColor
         gradientLayer.colors = [black, UIColor.clear.cgColor]

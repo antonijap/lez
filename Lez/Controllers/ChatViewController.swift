@@ -271,7 +271,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             
             chatCell.titleLabel.text = notMe?.name
             chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
-            chatCell.userPictureView.moa.url = notMe?.images?.first
+            chatCell.userPictureView.moa.url = notMe?.images.first
             cell = chatCell
         } else {
             if indexPath.section == 0 {
@@ -283,7 +283,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                     }
                 }
                 newChatCell.titleLabel.text = notMe?.name
-                newChatCell.userPictureView.moa.url = notMe?.images?.first
+                newChatCell.userPictureView.moa.url = notMe?.images.first
                 
                 cell = newChatCell
             } else {
@@ -301,7 +301,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 
                 chatCell.titleLabel.text = notMe?.name
                 chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
-                chatCell.userPictureView.moa.url = notMe?.images?.first
+                chatCell.userPictureView.moa.url = notMe?.images.first
                 
                 cell = chatCell
             }
