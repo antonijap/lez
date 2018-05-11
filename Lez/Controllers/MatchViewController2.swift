@@ -87,6 +87,7 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
 }
 
 extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, MatchCellDelegate {
+    
     @objc func likeTapped(_ sender: MatchCell) {
         if let me = me {
             FirestoreManager.shared.updateLike(myUid: me.uid, herUid: users[sender.tag].uid).then { (success) in
@@ -95,7 +96,6 @@ extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, Matc
                     UIView.performWithoutAnimation {
                         let affectedCell = self.tableView.cellForRow(at: IndexPath(row: sender.tag, section: 0)) as? MatchCell
                         affectedCell?.likeButton.setImage(UIImage(named: "Like"), for: .normal)
-//                        affectedCell?.layer.animation = "pop"
 //                        self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .none)
                     }
                 }
@@ -134,15 +134,16 @@ extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, Matc
         guard let likes = user.likes else { return UITableViewCell() }
         if likes.contains(users[indexPath.row].uid) {
             cell.likeButton.setImage(UIImage(named: "Like"), for: .normal)
+            cell.userImageView.layer.opacity = 0.5
         } else {
             cell.likeButton.setImage(UIImage(named: "Like_Disabled"), for: .normal)
+            cell.userImageView.layer.opacity = 1.0
         }
         cell.likeButton.addTarget(self, action: #selector(self.likeTapped(_:)), for: .touchUpInside)
         cell.likeButton.tag = indexPath.row
         return cell
     }
     
-
 }
 
 protocol MatchCellDelegate: class {
