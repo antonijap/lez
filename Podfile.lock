@@ -123,13 +123,16 @@ PODS:
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
   - pop (1.0.10)
-  - PromisesObjC (1.1.1)
-  - PromisesSwift (1.1.1):
-    - PromisesObjC (= 1.1.1)
+  - PromisesObjC (1.2)
+  - PromisesSwift (1.2):
+    - PromisesObjC (= 1.2)
   - Protobuf (3.5.0)
+  - SDWebImage (4.3.3):
+    - SDWebImage/Core (= 4.3.3)
+  - SDWebImage/Core (4.3.3)
   - SnapKit (4.0.0)
   - SwiftDate (4.5.1)
-  - SwiftyJSON (4.0.0)
+  - SwiftyJSON (4.1.0)
   - SwiftyStoreKit (0.13.2)
   - TwitterCore (3.1.0)
   - TwitterKit (3.3.0):
@@ -156,6 +159,7 @@ DEPENDENCIES:
   - lottie-ios
   - moa (~> 9.0)
   - PromisesSwift (~> 1.0)
+  - SDWebImage (~> 4.0)
   - SnapKit (~> 4.0.0)
   - SwiftDate (~> 4.0)
   - SwiftyJSON (~> 4.0)
@@ -207,6 +211,7 @@ SPEC REPOS:
     - PromisesObjC
     - PromisesSwift
     - Protobuf
+    - SDWebImage
     - SnapKit
     - SwiftDate
     - SwiftyJSON
@@ -255,16 +260,17 @@ SPEC CHECKSUMS:
   moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
-  PromisesObjC: c6ea89661f018e55cd83dd7d0b5a7751f5e63c23
-  PromisesSwift: 23ae4ad1c81963d35a37a98b83dd1e63403c54b8
+  PromisesObjC: 7358d6a58e012d77f9af3831e3d1390b78319c71
+  PromisesSwift: 1ff253725dee00d711561b2c482b0cce789029c6
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
+  SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   SwiftDate: 7b56d42a221f582047287deb256b23fc5ed49a60
-  SwiftyJSON: 070dabdcb1beb81b247c65ffa3a79dbbfb3b48aa
+  SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   SwiftyStoreKit: b7563505440a68c9d9fa70bc43d8a97015519409
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: 30e00b2dd098b0a20fd02888c53d334fea5386c9
+PODFILE CHECKSUM: 2de6bf431f3e111669c1f148b821d0d8136828ae
 
 COCOAPODS: 1.5.2

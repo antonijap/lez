@@ -659,33 +659,71 @@ final class FirestoreManager {
         }
     }
     
+    func classicUpdateLike(myUid: String, herUid: String) -> Promise<Bool> {
+        return Promise { fulfill, reject in
+            self.fetchUser(uid: myUid).then({ (user) in
+                let likesLeft = user.likesLeft
+                var newLikes = user.likes!
+                newLikes.append(herUid)
+                if (likesLeft - 1) == 0 {
+                    // Add countdown as well
+                    self.updateUser(uid: myUid, data: ["likes": newLikes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")]).then({ (success) in
+                        fulfill(true)
+                    })
+                } else {
+                    self.updateUser(uid: myUid, data: ["likes": newLikes, "likesLeft": likesLeft - 1]).then({ (success) in
+                        fulfill(true)
+                    })
+                }
+            })
+        }
+    }
+    
     func updateLike(myUid: String, herUid: String) -> Promise<Bool> {
         return Promise { fulfill, reject in
             let ref = Firestore.firestore().collection("users").document(myUid)
-            
             Firestore.firestore().runTransaction({ (transaction, errorPointer) -> Any? in
-                let sfDocument: DocumentSnapshot
+                let document: DocumentSnapshot
                 do {
-                    try sfDocument = transaction.getDocument(ref)
+                    try document = transaction.getDocument(ref)
                 } catch let fetchError as NSError {
                     errorPointer?.pointee = fetchError
                     return nil
                 }
                 
-                guard let oldLikes = sfDocument.data()?["likes"] as? [String] else {
+                guard let oldLikes = document.data()?["likes"] as? [String] else {
                     let error = NSError(
                         domain: "AppErrorDomain",
                         code: -1,
                         userInfo: [
-                            NSLocalizedDescriptionKey: "Unable to retrieve likes from snapshot \(sfDocument)"
+                            NSLocalizedDescriptionKey: "Unable to retrieve likes from snapshot \(document)"
                         ]
                     )
                     errorPointer?.pointee = error
                     return nil
                 }
+                
+                guard let likesLeft = document.data()?["likesLeft"] as? Int else {
+                    let error = NSError(
+                        domain: "AppErrorDomain",
+                        code: -1,
+                        userInfo: [
+                            NSLocalizedDescriptionKey: "Unable to retrieve likes from snapshot \(document)"
+                        ]
+                    )
+                    errorPointer?.pointee = error
+                    return nil
+                }
+                
                 var newLikes = oldLikes
                 newLikes.append(herUid)
-                transaction.updateData(["likes": newLikes], forDocument: ref)
+                if (likesLeft - 1) == 0 {
+                    // Add countdown as well
+                    transaction.updateData(["likes": newLikes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")], forDocument: ref)
+                } else {
+                    transaction.updateData(["likes": newLikes, "likesLeft": likesLeft - 1], forDocument: ref)
+                }
+                
                 return nil
             }) { (object, error) in
                 if let error = error {

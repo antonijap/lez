@@ -246,7 +246,6 @@ class MatchViewController: UIViewController, KolodaViewDelegate, KolodaViewDataS
             seconds -= 1
             timerLabel.text = timeString(time: TimeInterval(seconds))
         }
-        
     }
     
     fileprivate func setupHelperLabel() {

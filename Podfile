@@ -36,7 +36,8 @@ target 'Lez' do
 #  pod 'PusherChatkit'
 #  pod 'IGListKit', '~> 3.0'
   pod 'AlamofireImage', '~> 3.3'
-
+  pod 'SDWebImage', '~> 4.0'
+  
   target 'LezTests' do
     inherit! :search_paths
     # Pods for testing
