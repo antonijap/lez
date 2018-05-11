@@ -15,7 +15,6 @@ import Jelly
 import Promises
 import Alamofire
 import AlamofireImage
-import Spring
 
 class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
     
