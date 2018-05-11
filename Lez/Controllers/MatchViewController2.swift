@@ -85,51 +85,12 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         }
     }
     
-    private func updateLike(myUid: String, herUid: String) -> Promise<Bool> {
-        return Promise { fulfill, reject in
-            let ref = Firestore.firestore().collection("users").document(myUid)
-            
-            Firestore.firestore().runTransaction({ (transaction, errorPointer) -> Any? in
-                let sfDocument: DocumentSnapshot
-                do {
-                    try sfDocument = transaction.getDocument(ref)
-                } catch let fetchError as NSError {
-                    errorPointer?.pointee = fetchError
-                    return nil
-                }
-                
-                guard let oldLikes = sfDocument.data()?["likes"] as? [String] else {
-                    let error = NSError(
-                        domain: "AppErrorDomain",
-                        code: -1,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: "Unable to retrieve likes from snapshot \(sfDocument)"
-                        ]
-                    )
-                    errorPointer?.pointee = error
-                    return nil
-                }
-                var newLikes = oldLikes
-                newLikes.append(herUid)
-                transaction.updateData(["likes": newLikes], forDocument: ref)
-                return nil
-            }) { (object, error) in
-                if let error = error {
-                    print("Transaction failed: \(error)")
-                    reject(error)
-                } else {
-                    print("Transaction successfully committed!")
-                    fulfill(true)
-                }
-            }
-        }
-    }
 }
 
 extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, MatchCellDelegate {
     @objc func likeTapped(_ sender: MatchCell) {
         if let me = me {
-            self.updateLike(myUid: me.uid, herUid: users[sender.tag].uid).then { (success) in
+            FirestoreManager.shared.updateLike(myUid: me.uid, herUid: users[sender.tag].uid).then { (success) in
                 FirestoreManager.shared.fetchUser(uid: me.uid).then { (user) in
                     self.me = user
                     UIView.performWithoutAnimation {
