@@ -37,6 +37,7 @@ target 'Lez' do
 #  pod 'IGListKit', '~> 3.0'
   pod 'AlamofireImage', '~> 3.3'
   pod 'SDWebImage', '~> 4.0'
+  pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
   
   target 'LezTests' do
     inherit! :search_paths

@@ -17,6 +17,7 @@ import Alamofire
 import AlamofireImage
 import SwiftDate
 import SDWebImage
+import Spring
 
 class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
     
@@ -35,12 +36,18 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
     let likesCounterWidgetView = UIView()
     let likesCounterWidgetImageView = UIImageView()
     let likesCounterWidgetLabel = UILabel()
+    let matchYourImageView = SpringImageView()
+    let matchHerImageView = SpringImageView()
+    let matchLabel = UILabel()
+    let matchCTA = CustomButton()
+    let matchCloseButton = UIButton()
+    let matchView = SpringView()
+    let matchOverlayView = SpringView()
     var users: [User] = []
     var me: User?
     var jellyAnimator: JellyAnimator?
     var seconds = 86400
     var timer = Timer()
-    
     
     // MARK: - Life Cycle
     
@@ -48,11 +55,12 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         super.viewDidLoad()
         setupTableView()
         setupNavigationBar()
+        
         // Get all users and reload tableView
         guard let currentUser = Auth.auth().currentUser else { return }
         fetchUsers(for: currentUser.uid)
         setupLikesWidget()
-        
+
         guard let me = Auth.auth().currentUser else { return }
         Firestore.firestore().collection("users").document(me.uid)
             .addSnapshotListener { documentSnapshot, error in
@@ -65,6 +73,10 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         }
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        setupMatchView()
+    }
     // MARK: - Methods
     private func setupTableView() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -154,6 +166,107 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         likesCounterWidgetView.layoutIfNeeded()
     }
     
+    private func setupMatchView() {
+        UIApplication.shared.keyWindow?.addSubview(matchOverlayView)
+        matchOverlayView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        matchOverlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        UIApplication.shared.keyWindow?.addSubview(matchView)
+        matchView.snp.makeConstraints { (make) in
+            make.left.equalToSuperview().offset(32)
+            make.right.equalToSuperview().inset(32)
+            make.center.equalToSuperview()
+        }
+        matchView.backgroundColor = .white
+        matchView.layer.cornerRadius = 8
+        matchView.dropShadow()
+        
+        matchView.addSubview(matchYourImageView)
+        matchYourImageView.snp.makeConstraints { (make) in
+            make.height.width.equalTo(100)
+            make.centerX.equalToSuperview().inset(20)
+            make.top.equalToSuperview().offset(40)
+        }
+        matchYourImageView.backgroundColor = UIColor(red:0.77, green:0.77, blue:0.77, alpha:1.00)
+        matchYourImageView.layer.cornerRadius = 50
+        matchYourImageView.clipsToBounds = true
+        
+        matchView.addSubview(matchHerImageView)
+        matchHerImageView.snp.makeConstraints { (make) in
+            make.height.width.equalTo(100)
+            make.centerX.equalToSuperview().inset(-20)
+            make.top.equalTo(matchYourImageView.snp.top)
+        }
+        matchHerImageView.backgroundColor = UIColor(red:0.69, green:0.69, blue:0.69, alpha:1.00)
+        matchHerImageView.layer.cornerRadius = 50
+        matchHerImageView.clipsToBounds = true
+        
+        matchView.addSubview(matchLabel)
+        matchLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(matchYourImageView.snp.bottom).offset(64)
+            make.centerX.equalToSuperview()
+        }
+        matchLabel.text = "Match"
+        matchLabel.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
+        
+        matchView.addSubview(matchCTA)
+        matchCTA.snp.makeConstraints { (make) in
+            make.top.equalTo(matchLabel.snp.bottom).offset(40)
+            make.left.equalToSuperview().offset(32)
+            make.right.equalToSuperview().inset(32)
+            make.height.equalTo(44)
+            make.bottom.equalToSuperview().inset(40)
+        }
+        matchCTA.setTitle("Go To Chat", for: .normal)
+        
+        matchView.addSubview(matchCloseButton)
+        matchCloseButton.snp.makeConstraints { (make) in
+            make.width.equalTo(32)
+            make.height.equalTo(32)
+            make.right.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(16)
+        }
+        matchCloseButton.setImage(UIImage(named: "Close"), for: .normal)
+        matchCloseButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for:.touchUpInside)
+        
+        matchView.alpha = 0
+        matchOverlayView.alpha = 0
+    }
+    
+    @objc func closeButtonTapped(_ sender:UIButton) {
+        hideMatch()
+    }
+    
+    private func hideMatch() {
+        matchOverlayView.animation = "fadeOut"
+        matchOverlayView.animate()
+        matchView.animation = "fall"
+        matchView.animate()
+    }
+    
+    private func showMatch() {
+        matchOverlayView.animation = "fadeIn"
+        matchOverlayView.animate()
+        matchView.animation = "pop"
+        matchView.duration = 1
+        matchView.curve = "spring"
+        matchView.velocity = 20
+        matchView.animate()
+//        matchYourImageView.animation = "slideLeft"
+//        matchYourImageView.delay = 1
+//        matchYourImageView.animate()
+//        matchHerImageView.animation = "slideRight"
+//        matchHerImageView.delay = 1
+//        matchHerImageView.animate()
+    }
+    
+    private func addImagesToMatch(myUrl: String, herUrl: String) {
+        matchYourImageView.sd_setImage(with: URL(string: myUrl), placeholderImage: UIImage(named: "Placeholder_Image"))
+        matchHerImageView.sd_setImage(with: URL(string: herUrl), placeholderImage: UIImage(named: "Placeholder_Image"))
+    }
+    
     private func fetchUsers(for uid: String) {
         FirestoreManager.shared.fetchUser(uid: uid).then { (user) in
             self.me = user
@@ -203,10 +316,10 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
                     FirestoreManager.shared.classicUpdateLike(myUid: me.uid, herUid: self.users[sender.tag].uid).then { (success) in
                         if success {
                             UIView.performWithoutAnimation {
-                                //  let affectedCell = self.tableView.cellForRow(at: IndexPath(row: sender.tag, section: 0)) as? MatchCell
-                                //  affectedCell?.likeButton.setImage(UIImage(named: "Like"), for: .normal)
                                 self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
+                                self.addImagesToMatch(myUrl: me.images.first!, herUrl: self.users[sender.tag].images.first!)
                             }
+                            self.showMatch()
                         }
                     }
                 } else {
