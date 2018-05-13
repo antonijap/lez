@@ -207,12 +207,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     }
     
     private func setupNavigationBar() {
-        let filterButton = UIButton(type: .custom)
-        filterButton.setImage(UIImage(named: "Filter"), for: .normal)
-        filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        filterButton.addTarget(self, action: #selector(self.showFilters), for: .touchUpInside)
-        let rightItem = UIBarButtonItem(customView: filterButton)
-        
         navigationItem.title = "Match Room"
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.setBackgroundImage(UIImage(named: "White"), for: UIBarMetrics.default)
@@ -222,6 +216,12 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         navigationController?.navigationBar.layer.shadowOpacity = 0.8
         navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 0, height: 2.0)
         navigationController?.navigationBar.layer.shadowRadius = 4
+        let filterButton = UIButton(type: .custom)
+        filterButton.setImage(UIImage(named: "Filter"), for: .normal)
+        filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        filterButton.addTarget(self, action: #selector(self.showFilters), for: .touchUpInside)
+        let rightItem = UIBarButtonItem(customView: filterButton)
+        navigationItem.setRightBarButtonItems([rightItem], animated: true)
     }
     
     private func setupLikesWidget() {
