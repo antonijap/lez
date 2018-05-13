@@ -16,9 +16,9 @@ final class FirestoreManager {
     static let shared = FirestoreManager()
     
     private init() {
-        let settings = db.settings
-        settings.areTimestampsInSnapshotsEnabled = true
-        db.settings = settings
+//        let settings = db.settings
+//        settings.areTimestampsInSnapshotsEnabled = true
+//        db.settings = settings
     }
     
     func addReport(data: [String: Any]) -> Promise<Bool> {
@@ -363,11 +363,6 @@ final class FirestoreManager {
             return nil
         }
         
-        guard let dislikes = data["dislikes"] as? [String] else {
-            print("Problem with parsing dislikes.")
-            return nil
-        }
-        
         guard let blockedUsers = data["blockedUsers"] as? [String] else {
             print("Problem with parsing blocked users.")
             return nil
@@ -391,7 +386,7 @@ final class FirestoreManager {
         let newLocation = Location(city: city, country: country)
         let newPreferences = Preferences(ageRange: AgeRange(from: from, to: to), lookingFor: lookingFor)
         let newDetails = Details(about: about, dealBreakers: dealBreakers, diet: Diet(rawValue: diet)!)
-        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, dislikes: dislikes, blockedUsers: blockedUsers, chats: chats, likesLeft: likesLeft, cooldownTime: cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate)
+        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, blockedUsers: blockedUsers, chats: chats, likesLeft: likesLeft, cooldownTime: cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate)
         return newUser
     }
     

@@ -36,7 +36,6 @@ class User: Hashable {
     var details: Details
     var images: [String]
     var likes: [String]?
-    var dislikes: [String]?
     var blockedUsers: [String]?
     var chats: [String]?
     var likesLeft: Int
@@ -44,7 +43,7 @@ class User: Hashable {
     
     // Initial user cration, no images, flags are false
     convenience init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]) {
-        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: images, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], dislikes: [], blockedUsers: [], chats: [], likesLeft: 5, cooldownTime: nil)
+        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: images, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], blockedUsers: [], chats: [], likesLeft: 5, cooldownTime: nil)
         self.uid = uid
         self.name = name
         self.email = email
@@ -56,7 +55,7 @@ class User: Hashable {
     }
     
     // With everything
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String], isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], dislikes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?) {
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String], isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?) {
         self.uid = uid
         self.name = name
         self.email = email
@@ -70,7 +69,6 @@ class User: Hashable {
         self.isBanned = isBanned
         self.isHidden = isHidden
         self.likes = likes
-        self.dislikes = dislikes
         self.blockedUsers = blockedUsers
         self.chats = chats
         self.likesLeft = likesLeft

@@ -10,6 +10,7 @@ import UIKit
 import Alertift
 import Firebase
 import Promises
+import JGProgressHUD
 
 class ImagesViewController: UIViewController {
     
@@ -22,6 +23,7 @@ class ImagesViewController: UIViewController {
     let imagePickerThree = UIImagePickerController()
     let imagePickerFour = UIImagePickerController()
     let storage = Storage.storage()
+    let hud = JGProgressHUD(style: .dark)
     var imageViews: [UIImageView] = []
     var imageURLs: [String] = []
     var activeImage = ""
@@ -37,8 +39,19 @@ class ImagesViewController: UIViewController {
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
-        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Finish", style: .plain, target: self, action: #selector(self.finishTapped))
     }
+    
+    private func startSpinner() {
+        hud.textLabel.text = "Uploading. Please wait."
+        hud.vibrancyEnabled = true
+        hud.interactionType = .blockAllTouches
+        hud.show(in: view)
+    }
+    
+    private func stopSpinner() {
+        hud.dismiss(animated: true)
+    }
+
     
     private func setupInterface() {
         let width = 2.4
@@ -123,6 +136,19 @@ class ImagesViewController: UIViewController {
         imagePickerFour.delegate = self
         imagePickerFour.sourceType = .savedPhotosAlbum
         imagePickerFour.allowsEditing = false
+        
+        let button = CustomButton()
+        let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.finishTapped))
+        view.addSubview(button)
+        button.snp.makeConstraints { (make) in
+            make.width.equalToSuperview().inset(32)
+            make.height.equalTo(44)
+            make.bottom.equalToSuperview().inset(24)
+            make.centerX.equalToSuperview()
+        }
+        button.setTitle("Done", for: .normal)
+        button.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
+        button.addGestureRecognizer(buttonTap)
     }
     
     private func getAllImageViews() -> [UIImageView] {
@@ -136,11 +162,14 @@ class ImagesViewController: UIViewController {
     }
     
     private func uploadImages() {
+        startSpinner()
         let group = DispatchGroup()
         if getAllImageViews().isEmpty {
             Alertift.alert(title: "No images", message: "Every profile has at least one image. It's mandatory.")
                 .action(.default("Okay"))
-                .show(on: self, completion: nil)
+                .show(on: self, completion: {
+                    self.stopSpinner()
+                })
         } else {
             for imageView in getAllImageViews() {
                 group.enter()
@@ -154,6 +183,7 @@ class ImagesViewController: UIViewController {
                 guard let user = Auth.auth().currentUser else { return }
                 FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageURLs, "isOnboarded": true]).then({ (success) in
                     // Images uploaded
+                    self.stopSpinner()
                     self.showOkayModal(messageTitle: "Success", messageAlert: "Profile setup completed. Enjoy Lez.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
                         self.dismiss(animated: true, completion: nil)
                     })

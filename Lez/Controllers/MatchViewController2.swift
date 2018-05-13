@@ -20,24 +20,29 @@ import Spring
 class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     
     // MARK: - Properties
-    let tableView = UITableView()
-    let likesCounterWidgetView = UIView()
-    let likesCounterWidgetImageView = UIImageView()
-    let likesCounterWidgetLabel = UILabel()
-    let matchYourImageView = SpringImageView()
-    let matchHerImageView = SpringImageView()
-    let matchLabel = UILabel()
-    let matchCTA = CustomButton()
-    let matchCloseButton = UIButton()
-    let matchView = SpringView()
-    let matchOverlayView = SpringView()
-    let matchDescriptionLabel = SpringLabel()
-    var users: [User] = []
-    var user: User?
-    var jellyAnimator: JellyAnimator?
-    var seconds = 86400
-    var timer = Timer()
-    var handle: AuthStateDidChangeListenerHandle?
+    private let tableView = UITableView()
+    private let likesCounterWidgetView = UIView()
+    private let likesCounterWidgetImageView = UIImageView()
+    private let likesCounterWidgetLabel = UILabel()
+    private let matchYourImageView = SpringImageView()
+    private let matchHerImageView = SpringImageView()
+    private let matchLabel = UILabel()
+    private let matchCTA = CustomButton()
+    private let matchCloseButton = UIButton()
+    private let matchView = SpringView()
+    private let matchOverlayView = SpringView()
+    private let matchDescriptionLabel = SpringLabel()
+    private let noUsersBackground = UIImageView()
+    private let noUsersTitle = UILabel()
+    private let noUsersDescription = UILabel()
+    private let noUsersCTA = CustomButton()
+    private let nousersRefreshButton = SpringButton()
+    private var users: [User] = []
+    private var user: User?
+    private var jellyAnimator: JellyAnimator?
+    private var seconds = 86400
+    private var timer = Timer()
+    private var handle: AuthStateDidChangeListenerHandle?
     
     // MARK: - Life Cycle
     
@@ -46,61 +51,145 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         setupTableView()
         setupNavigationBar()
         setupMatchView()
+        setupNoUsersState()
         
-        // Get all users and reload tableView
-        guard let currentUser = Auth.auth().currentUser else { return }
-        fetchUsers(for: currentUser.uid)
-        setupLikesWidget()
-
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
-                Firestore.firestore().collection("users").document(user.uid)
-                    .getDocument { documentSnapshot, error in
-                        guard let document = documentSnapshot else {
-                            print("Error fetching document: \(error!)")
-                            return
-                        }
-                        guard let data = document.data() else { return }
-                        
-                        guard let isOnboarded = data["isOnboarded"] as? Bool else {
-                            print("Problem with parsing isOnboarded.")
-                            return
-                        }
-                        
-                        if isOnboarded {
-                            Firestore.firestore().collection("users").document(user.uid)
-                                .getDocument { documentSnapshot, error in
-                                    guard let document = documentSnapshot else {
-                                        print("Error fetching document: \(error!)")
-                                        return
-                                    }
-                                    let newUser = FirestoreManager.shared.parseFirebaseUser(document: document)
-                                    self.user = newUser
+                print(user.displayName)
+                Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
+                    guard let document = documentSnapshot else {
+                        print("Error fetching document: \(error!)")
+                        return
+                    }
+                    guard let data = document.data() else {
+                        self.presentRegisterViewController()
+                        return
+                    }
+                    
+                    guard let isOnboarded = data["isOnboarded"] as? Bool else {
+                        print("Problem with parsing isOnboarded.")
+                        return
+                    }
+                    
+                    // Get all users and reload tableView
+                    self.fetchUsers(for: user.uid)
+                    self.setupLikesWidget()
+                    
+                    if isOnboarded {
+                        Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
+                            guard let document = documentSnapshot else {
+                                print("Error fetching document: \(error!)")
+                                return
                             }
-                        } else {
-                            let registerViewController = RegisterViewController()
-                            let navigationController = UINavigationController(rootViewController: registerViewController)
-                            self.present(navigationController, animated: false, completion: nil)
+                            let newUser = FirestoreManager.shared.parseFirebaseUser(document: document)
+                            self.user = newUser
                         }
+                    } else {
+                        self.presentRegisterViewController()
+                    }
                 }
             } else {
-                let registerViewController = RegisterViewController()
-                let navigationController = UINavigationController(rootViewController: registerViewController)
-                self.present(navigationController, animated: false, completion: nil)
+                self.presentRegisterViewController()
             }
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-//        tableView.reloadData()
+        tableView.reloadData()
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        print("User registered")
+        tableView.reloadData()
     }
     
     
     // MARK: - Methods
-    func refreshTableView() {
+    private func presentRegisterViewController() {
+        let registerViewController = RegisterViewController()
+        let navigationController = UINavigationController(rootViewController: registerViewController)
+        self.present(navigationController, animated: false, completion: nil)
+    }
+    
+    @objc func refreshTableView() {
         tableView.reloadData()
+    }
+    
+    private func setupNoUsersState() {
+        view.addSubview(noUsersBackground)
+        noUsersBackground.snp.makeConstraints { (make) in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
+            make.right.left.equalToSuperview()
+        }
+        noUsersBackground.image = UIImage(named: "No_Users_Background")
+        noUsersBackground.contentMode = .scaleAspectFill
+        noUsersBackground.clipsToBounds = true
+        
+        view.addSubview(noUsersTitle)
+        noUsersTitle.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().inset(view.frame.height / 3.0)
+            make.centerX.equalToSuperview()
+        }
+        noUsersTitle.text = "Bummer"
+        noUsersTitle.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
+        
+        view.addSubview(noUsersDescription)
+        noUsersDescription.snp.makeConstraints { (make) in
+            make.top.equalTo(noUsersTitle.snp.bottom).offset(8)
+            make.left.equalToSuperview().offset(32)
+            make.right.equalToSuperview().inset(32)
+        }
+        noUsersDescription.text = "No lesbians with your criteria. Try changing preferences."
+        noUsersDescription.numberOfLines = 2
+        noUsersDescription.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        noUsersDescription.textAlignment = .center
+        
+        view.addSubview(noUsersCTA)
+        noUsersCTA.snp.makeConstraints { (make) in
+            make.top.equalTo(noUsersDescription.snp.bottom).offset(32)
+            make.left.equalToSuperview().offset(48)
+            make.right.equalToSuperview().inset(48)
+            make.height.equalTo(48)
+        }
+        noUsersCTA.setTitle("Spread Word", for: .normal)
+        noUsersCTA.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
+        let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.shareWebsite))
+        noUsersCTA.addGestureRecognizer(buttonTap)
+        
+        view.addSubview(nousersRefreshButton)
+        nousersRefreshButton.snp.makeConstraints { (make) in
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).inset(32)
+            make.centerX.equalToSuperview()
+        }
+        nousersRefreshButton.setTitle("Try refresh?", for: .normal)
+        nousersRefreshButton.addTarget(self, action: #selector(self.refreshTableView), for: .touchUpInside)
+        nousersRefreshButton.setTitleColor(.gray, for: .normal)
+        nousersRefreshButton.setTitleColor(UIColor.gray.withAlphaComponent(0.5), for: .highlighted)
+        
+        hideEmptyState()
+    }
+    
+    private func hideEmptyState() {
+        noUsersBackground.isHidden = true
+        noUsersTitle.isHidden = true
+        noUsersDescription.isHidden = true
+        noUsersCTA.isHidden = true
+    }
+    
+    private func showEmptyState() {
+        noUsersBackground.isHidden = false
+        noUsersTitle.isHidden = false
+        noUsersDescription.isHidden = false
+        noUsersCTA.isHidden = false
+    }
+    
+    @objc private func shareWebsite() {
+        let web = NSURL(string: "http://getlez.com")
+        web.share()
     }
     
     private func setupTableView() {
@@ -124,11 +213,15 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         filterButton.addTarget(self, action: #selector(self.showFilters), for: .touchUpInside)
         let rightItem = UIBarButtonItem(customView: filterButton)
         
-        self.navigationItem.title = "Match Room"
-        self.navigationItem.setRightBarButtonItems([rightItem], animated: true)
-        self.navigationController?.navigationBar.backgroundColor = .white
-        self.navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
-        self.navigationController?.navigationBar.shadowImage = UIImage()
+        navigationItem.title = "Match Room"
+        navigationController?.navigationBar.backgroundColor = .white
+        navigationController?.navigationBar.setBackgroundImage(UIImage(named: "White"), for: UIBarMetrics.default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.layer.masksToBounds = false
+        navigationController?.navigationBar.layer.shadowColor = UIColor(red:0.90, green:0.90, blue:0.90, alpha:1.00).cgColor
+        navigationController?.navigationBar.layer.shadowOpacity = 0.8
+        navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 0, height: 2.0)
+        navigationController?.navigationBar.layer.shadowRadius = 4
     }
     
     private func setupLikesWidget() {
@@ -259,6 +352,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
             make.bottom.equalToSuperview().inset(40)
         }
         matchCTA.setTitle("Go to Chat", for: .normal)
+        matchCTA.addTarget(self, action: #selector(self.goToChat), for: .touchUpInside)
         
         matchView.addSubview(matchCloseButton)
         matchCloseButton.snp.makeConstraints { (make) in
@@ -274,8 +368,13 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         matchOverlayView.alpha = 0
     }
     
-    @objc func closeButtonTapped(_ sender:UIButton) {
+    @objc func closeButtonTapped(_ sender: UIButton) {
         hideMatch()
+    }
+    
+    @objc func goToChat() {
+        hideMatch()
+        tabBarController?.selectedIndex = 1
     }
     
     private func hideMatch() {
@@ -305,7 +404,11 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
             self.user = user
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                 self.users = users
-                self.tableView.reloadData()
+                if users.count > 0 {
+                    self.tableView.reloadData()
+                } else {
+                    self.showEmptyState()
+                }
             })
         }
     }
@@ -421,13 +524,10 @@ extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, Matc
         cell.locationLabel.text = users[indexPath.row].location.city
         guard let user = user else { return UITableViewCell() }
         guard let likes = user.likes else { return UITableViewCell() }
-        print(likes)
         if likes.contains(users[indexPath.row].uid) {
-            print("Like")
             cell.likeButton.setImage(UIImage(named: "Like"), for: .normal)
             cell.likeButton.isUserInteractionEnabled = false
         } else {
-            print("Like Disabled")
             cell.likeButton.setImage(UIImage(named: "Like_Disabled"), for: .normal)
             cell.likeButton.isUserInteractionEnabled = true
         }

@@ -17,6 +17,7 @@ import SwiftyJSON
 class ChatViewController: UIViewController {
     
     // Mark: - Properties
+    
     private let tableView = UITableView()
     private var sections: [ChatSections] = []
     private var myUid: String!
@@ -24,9 +25,10 @@ class ChatViewController: UIViewController {
     private var existingChats: [Chat] = []
     private let headerTitles = ["New Matches", "Chat"]
     private let hud = JGProgressHUD(style: .dark)
-    private let illustration = UIImageView()
-    private let label = UILabel()
     private let refreshControl = UIRefreshControl()
+    private let noChatsBackground = UIImageView()
+    private let noChatsTitle = UILabel()
+    private let noChatsDescription = UILabel()
     
     
     // Mark: - Lifecycle
@@ -35,6 +37,7 @@ class ChatViewController: UIViewController {
         view.backgroundColor = .white
         setupNavigationBar()
         setupTableView()
+        setupNoChats()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -64,6 +67,51 @@ class ChatViewController: UIViewController {
     }
     
     // Mark: - Methods
+    
+    private func setupNoChats() {
+        view.addSubview(noChatsBackground)
+        noChatsBackground.snp.makeConstraints { (make) in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
+            make.right.left.equalToSuperview()
+        }
+        noChatsBackground.image = UIImage(named: "No_Chats_Background")
+        noChatsBackground.contentMode = .scaleAspectFill
+        noChatsBackground.clipsToBounds = true
+        
+        view.addSubview(noChatsTitle)
+        noChatsTitle.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().inset(view.frame.height / 3.0)
+            make.centerX.equalToSuperview()
+        }
+        noChatsTitle.text = "No Chats"
+        noChatsTitle.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
+        
+        view.addSubview(noChatsDescription)
+        noChatsDescription.snp.makeConstraints { (make) in
+            make.top.equalTo(noChatsTitle.snp.bottom).offset(8)
+            make.left.equalToSuperview().offset(32)
+            make.right.equalToSuperview().inset(32)
+        }
+        noChatsDescription.text = "Better get to liking. You can chat with matched lesbians here."
+        noChatsDescription.numberOfLines = 2
+        noChatsDescription.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        noChatsDescription.textAlignment = .center
+        
+        hideEmptyState()
+    }
+    
+    private func hideEmptyState() {
+        noChatsBackground.isHidden = true
+        noChatsTitle.isHidden = true
+        noChatsDescription.isHidden = true
+    }
+    
+    private func showEmptyState() {
+        noChatsBackground.isHidden = false
+        noChatsTitle.isHidden = false
+        noChatsDescription.isHidden = false
+    }
     
     @objc fileprivate func refreshChats(_ sender: Any) {
         fetchChats()
@@ -107,48 +155,17 @@ class ChatViewController: UIViewController {
             }
         }
     }
-    
-    fileprivate func showEmptyState() {
-        if emptyChats.isEmpty && existingChats.isEmpty {
-            tableView.isHidden = true
-            
-            view.addSubview(illustration)
-            illustration.snp.makeConstraints { (make) in
-                make.centerX.equalToSuperview()
-                make.width.height.equalTo(64)
-                make.top.equalToSuperview().inset(view.frame.height / 4.0)
-            }
-            illustration.image = UIImage(named: "EmptyChat")
-            
-            view.addSubview(label)
-            label.snp.makeConstraints { (make) in
-                make.top.equalTo(illustration.snp.bottom).offset(24)
-                make.left.equalToSuperview().offset(32)
-                make.right.equalToSuperview().inset(32)
-            }
-            label.text = "When you get your first match, you will be able to chat here. Keep on liking!"
-            label.numberOfLines = 3
-            label.textColor = .gray
-            label.textAlignment = .center
-            label.font = UIFont.systemFont(ofSize: 21, weight: .medium)
-        }
-    }
-    
-    fileprivate func hideEmptyState() {
-        illustration.isHidden = true
-        label.isHidden = true
-    }
 
-    fileprivate func startSpinner() {
+    private func startSpinner() {
         hud.textLabel.text = "Loading"
         hud.show(in: self.view)
     }
     
-    fileprivate func stopSpinner() {
+    private func stopSpinner() {
         hud.dismiss(animated: true)
     }
     
-    fileprivate func setupNavigationBar() {
+    private func setupNavigationBar() {
         navigationItem.title = "Chats & Matches"
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.setBackgroundImage(UIImage(named: "White"), for: UIBarMetrics.default)
@@ -160,7 +177,7 @@ class ChatViewController: UIViewController {
         navigationController?.navigationBar.layer.shadowRadius = 4
     }
     
-    fileprivate func setupTableView() {
+    private func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
         

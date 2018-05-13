@@ -145,7 +145,6 @@ class UserProfileFormViewController: FormViewController {
             "isBanned": false,
             "isHidden": false,
             "likes": [],
-            "dislikes": [],
             "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
             "blockedUsers": [],
             "chats": [],
@@ -253,12 +252,12 @@ class UserProfileFormViewController: FormViewController {
                                 let imageGalleryViewController = ImagesViewController()
                                 self.navigationController?.pushViewController(imageGalleryViewController, animated: true)
                             }
-                        } else {
-                            if let data = parseFormIntoData() {
-                                FirestoreManager.shared.addUser(uid: currentUser.uid, data: data).then { (success) in
-                                    let imageGalleryViewController = ImagesViewController()
-                                    self.navigationController?.pushViewController(imageGalleryViewController, animated: true)
-                                }
+                        }
+                    } else {
+                        if let data = parseFormIntoData() {
+                            FirestoreManager.shared.addUser(uid: currentUser.uid, data: data).then { (success) in
+                                let imageGalleryViewController = ImagesViewController()
+                                self.navigationController?.pushViewController(imageGalleryViewController, animated: true)
                             }
                         }
                     }
