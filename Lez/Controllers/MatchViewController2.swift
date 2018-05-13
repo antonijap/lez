@@ -352,9 +352,15 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                                 self.user = user
                                 UIView.performWithoutAnimation {
                                     self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
-                                    self.addImagesToMatch(myUrl: me.images.first!, herUrl: self.users[sender.tag].images.first!)
+                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: me.uid, likedUserUid: self.users[sender.tag].uid).then({ (success) in
+                                        if success {
+                                            self.addImagesToMatch(myUrl: me.images.first!, herUrl: self.users[sender.tag].images.first!)
+                                            self.showMatch()
+                                        }
+                                    })
+                                    
                                 }
-                                self.showMatch()
+                                
                             })
                         }
                     }
