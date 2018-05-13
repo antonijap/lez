@@ -7,8 +7,6 @@
 //
 
 import UIKit
-import moa
-import Auk
 import Firebase
 
 class CardFullscreenViewController: UIViewController {
@@ -135,11 +133,15 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
             
             case .profileImages:
                 let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
-                let url = user.images
-                for u in url {
-                    profileImagesCell.scrollView.auk.show(url: u)
+                profileImagesCell.slideshow.setImageInputs([])
+                var sources: [SDWebImageSource] = []
+                for url in user.images {
+                    let sdWebImageSource = SDWebImageSource(urlString: url)
+                    sources.append(sdWebImageSource!)
                 }
+                profileImagesCell.slideshow.setImageInputs(sources)
                 cell = profileImagesCell
+            
             case .iconMenu:
                 let iconMenuCell = tableView.dequeueReusableCell(withIdentifier: IconMenuCell.reuseID) as! IconMenuCell
                 cell = iconMenuCell
@@ -171,7 +173,7 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
         if indexPath == [7, 0] {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.showBlockActionSheet(currentUser: user, blockedUser: fullscreenUser.uid, completion: {
-                    self.delegate?.dislikeUser()
+                    print("User added to blocked list.")
                 })
             }
         }

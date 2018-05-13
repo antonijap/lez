@@ -93,7 +93,7 @@ class FilterViewController: FormViewController {
             }
         }
         
-        delegate?.refreshKolodaData()
+        delegate?.refreshTableView()
         dismissController()
     }
     

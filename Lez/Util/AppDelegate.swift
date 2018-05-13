@@ -15,25 +15,27 @@ import TwitterKit
 class CustomTabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
+        let top: CGFloat = 6
+        let bottom: CGFloat = -6
         
         let heart = UIImage(named: "Heart")
         let heartFull = UIImage(named: "Heart_Full")
         let matchViewController = UINavigationController(rootViewController: MatchViewController2())
         matchViewController.tabBarItem = UITabBarItem.init(title: "", image: heart, selectedImage: heartFull)
-        matchViewController.tabBarItem.imageInsets = UIEdgeInsets(top: 5, left: 0, bottom: -5, right: 0)
+        matchViewController.tabBarItem.imageInsets = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
         
         
         let chat = UIImage(named: "Chat")
         let chatFull = UIImage(named: "Chat_Full")
         let chatController = UINavigationController(rootViewController: ChatViewController())
         chatController.tabBarItem = UITabBarItem.init(title: "", image: chat, selectedImage: chatFull)
-        chatController.tabBarItem.imageInsets = UIEdgeInsets(top: 5, left: 0, bottom: -5, right: 0)
+        chatController.tabBarItem.imageInsets = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
         
         let profile = UIImage(named: "Profile")
         let profileFull = UIImage(named: "Profile_Full")
         let profileController = UINavigationController(rootViewController: ProfileViewController())
         profileController.tabBarItem = UITabBarItem.init(title: "", image: profile, selectedImage: profileFull)
-        profileController.tabBarItem.imageInsets = UIEdgeInsets(top: 5, left: 0, bottom: -5, right: 0)
+        profileController.tabBarItem.imageInsets = UIEdgeInsets(top: top, left: 0, bottom: bottom, right: 0)
         
         viewControllers = [matchViewController, chatController, profileController]
     }

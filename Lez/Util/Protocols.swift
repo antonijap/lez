@@ -8,10 +8,14 @@
 
 import Foundation
 
+//protocol MatchViewControllerDelegate {
+//    func refreshKolodaData()
+//    func dislikeUser()
+//    func showTimer()
+//}
+
 protocol MatchViewControllerDelegate {
-    func refreshKolodaData()
-    func dislikeUser()
-    func showTimer()
+    func refreshTableView()
 }
 
 protocol ProfileViewControllerDelegate {

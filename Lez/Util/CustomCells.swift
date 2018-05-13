@@ -9,8 +9,8 @@
 import UIKit
 import Firebase
 import SnapKit
-import moa
 import JGProgressHUD
+import ImageSlideshow
 
 enum MenuSections {
     case titleWithDescription
@@ -506,24 +506,30 @@ class SimpleMenuCell: UITableViewCell {
 }
 
 class ProfileImagesCell: UITableViewCell {
-    var scrollView = UIScrollView()
+    var slideshow = ImageSlideshow()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupScrollView()
+        setupImageSlideshow()
+        
+        slideshow.backgroundColor = UIColor.white
+        slideshow.pageControlPosition = PageControlPosition.insideScrollView
+        slideshow.pageControl.currentPageIndicatorTintColor = .white
+        slideshow.pageControl.pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.5)
+        slideshow.contentScaleMode = UIViewContentMode.scaleAspectFill
+        
         layoutIfNeeded()
     }
     
-    private func setupScrollView() {
-        addSubview(scrollView)
+    private func setupImageSlideshow() {
+        addSubview(slideshow)
         let x = frame.width * 1.6
-        scrollView.snp.makeConstraints { (make) in
+        slideshow.snp.makeConstraints { (make) in
             make.top.left.right.equalToSuperview()
             make.height.equalTo(x)
             make.bottom.equalToSuperview().inset(16).priority(999)
         }
-        scrollView.snp.setLabel("SCROLL_VIEW")
-        scrollView.auk.settings.contentMode = .scaleAspectFill
+        slideshow.snp.setLabel("IMAGESLIDESHOW_VIEW")
     }
     
     required init?(coder aDecoder: NSCoder) {

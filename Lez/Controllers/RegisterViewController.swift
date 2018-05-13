@@ -20,18 +20,27 @@ class RegisterViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        navigationController?.setNavigationBarHidden(true, animated: animated)
         stopSpinner()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupButtons()
+        
+        if let currentUser = Auth.auth().currentUser {
+            let setupProfileViewController = UserProfileFormViewController()
+            setupProfileViewController.name = currentUser.displayName!
+            setupProfileViewController.email = currentUser.email!
+            setupProfileViewController.uid = currentUser.uid
+            navigationItem.hidesBackButton = true
+            navigationController?.pushViewController(setupProfileViewController, animated: true)
+        }
     }
     
     fileprivate func startSpinner() {
@@ -50,37 +59,34 @@ class RegisterViewController: UIViewController {
             if let session = session {
                 self.startSpinner()
                 let credential = TwitterAuthProvider.credential(withToken: session.authToken, secret: session.authTokenSecret)
-                Auth.auth().signIn(with: credential) { (user, error) in
+                Auth.auth().signInAndRetrieveData(with: credential) { (user, error) in
                     if let error = error {
                         print(error.localizedDescription)
                         return
                     }
                     // User is signed in
                     guard let current = user else { return }
-                    print("User signed in. \(current.uid)")
-                    FirestoreManager.shared.checkIfUserExists(uid: current.uid).then({ (exists) in
+                    FirestoreManager.shared.checkIfUserExists(uid: current.user.uid).then({ (exists) in
                         if exists {
-                            print("User exists. Skipping onboarding.")
-                            FirestoreManager.shared.fetchUser(uid: current.uid).then { (user) in
+                            FirestoreManager.shared.fetchUser(uid: current.user.uid).then { (user) in
                                 if user.isOnboarded {
                                     self.stopSpinner()
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
-                                    let setupProfileViewController = SetupProfileViewController()
-                                    setupProfileViewController.uid = current.uid
-                                    self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                                    let setupProfileViewController = UserProfileFormViewController()
+                                    setupProfileViewController.uid = current.user.uid
                                     self.navigationItem.setHidesBackButton(true, animated: true)
+                                    self.navigationController?.pushViewController(setupProfileViewController, animated: true)
                                 }
                             }
                         } else {
-                            let setupProfileViewController = SetupProfileViewController()
-                            setupProfileViewController.uid = current.uid
-                            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                            let setupProfileViewController = UserProfileFormViewController()
+                            setupProfileViewController.uid = current.user.uid
                             self.navigationItem.setHidesBackButton(true, animated: true)
+                            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
                         }
                     })
                 }
-            } else {
             }
         })
         
@@ -116,41 +122,37 @@ class RegisterViewController: UIViewController {
             case .cancelled:
                 print("User cancelled login.")
             case .success(_, _, let accessToken):
-                print("Logged in!")
+                print("Logged in")
                 self.startSpinner()
                 let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
-                Auth.auth().signIn(with: credential) { (user, error) in
+                Auth.auth().signInAndRetrieveData(with: credential) { (user, error) in
                     if let error = error {
                         print(error)
                         return
                     }
-                    // User is signed in
                     guard let currentUser = user else { return }
-                    FirestoreManager.shared.checkIfUserExists(uid: currentUser.uid).then({ (exists) in
+                    FirestoreManager.shared.checkIfUserExists(uid: currentUser.user.uid).then({ (exists) in
                         if exists {
-                            print("User exists")
-                            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                            FirestoreManager.shared.fetchUser(uid: currentUser.user.uid).then { (user) in
                                 if user.isOnboarded {
-                                    print("User is onboarded")
                                     self.stopSpinner()
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
-                                    let setupProfileViewController = SetupProfileViewController()
-                                    setupProfileViewController.name = currentUser.displayName!
-                                    setupProfileViewController.email = currentUser.email!
-                                    setupProfileViewController.uid = currentUser.uid
-                                    self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                                    let setupProfileViewController = UserProfileFormViewController()
+                                    setupProfileViewController.name = currentUser.user.displayName!
+                                    setupProfileViewController.email = currentUser.user.email!
+                                    setupProfileViewController.uid = currentUser.user.uid
                                     self.navigationItem.setHidesBackButton(true, animated: true)
+                                    self.navigationController?.pushViewController(setupProfileViewController, animated: true)
                                 }
                             }
                         } else {
-                            print("User doesn't exist")
-                            let setupProfileViewController = SetupProfileViewController()
-                            setupProfileViewController.name = currentUser.displayName!
-                            setupProfileViewController.email = currentUser.email!
-                            setupProfileViewController.uid = currentUser.uid
-                            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                            let setupProfileViewController = UserProfileFormViewController()
+                            setupProfileViewController.name = currentUser.user.displayName!
+                            setupProfileViewController.email = currentUser.user.email!
+                            setupProfileViewController.uid = currentUser.user.uid
                             self.navigationItem.setHidesBackButton(true, animated: true)
+                            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
                         }
                     })
                 }

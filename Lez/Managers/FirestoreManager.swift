@@ -679,6 +679,20 @@ final class FirestoreManager {
         }
     }
     
+    func addUserToBlocked(myUid: String, herUid: String) -> Promise<Bool> {
+        return Promise { fulfill, reject in
+            self.fetchUser(uid: myUid).then({ (user) in
+                var blockedUsers = user.blockedUsers
+                blockedUsers?.append(herUid)
+                self.updateUser(uid: myUid, data: ["blockedUsers": blockedUsers!]).then({ (success) in
+                    if success {
+                        fulfill(true)
+                    }
+                })
+            })
+        }
+    }
+    
     func updateLike(myUid: String, herUid: String) -> Promise<Bool> {
         return Promise { fulfill, reject in
             let ref = Firestore.firestore().collection("users").document(myUid)

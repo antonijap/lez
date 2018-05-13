@@ -10,26 +10,14 @@ import UIKit
 import SnapKit
 import Jelly
 import Firebase
-import moa
 import Jelly
 import Promises
 import Alamofire
-import AlamofireImage
 import SwiftDate
 import SDWebImage
 import Spring
 
-class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
-    
-    
-    func refreshKolodaData() {
-        tableView.reloadData()
-    }
-    
-    func showTimer() {
-        
-    }
-    
+class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     
     // MARK: - Properties
     let tableView = UITableView()
@@ -43,11 +31,13 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
     let matchCloseButton = UIButton()
     let matchView = SpringView()
     let matchOverlayView = SpringView()
+    let matchDescriptionLabel = SpringLabel()
     var users: [User] = []
-    var me: User?
+    var user: User?
     var jellyAnimator: JellyAnimator?
     var seconds = 86400
     var timer = Timer()
+    var handle: AuthStateDidChangeListenerHandle?
     
     // MARK: - Life Cycle
     
@@ -55,29 +45,64 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         super.viewDidLoad()
         setupTableView()
         setupNavigationBar()
+        setupMatchView()
         
         // Get all users and reload tableView
         guard let currentUser = Auth.auth().currentUser else { return }
         fetchUsers(for: currentUser.uid)
         setupLikesWidget()
 
-        guard let me = Auth.auth().currentUser else { return }
-        Firestore.firestore().collection("users").document(me.uid)
-            .addSnapshotListener { documentSnapshot, error in
-                guard let document = documentSnapshot else {
-                    print("Error fetching document: \(error!)")
-                    return
+//        try! Auth.auth().signOut()
+        handle = Auth.auth().addStateDidChangeListener { auth, user in
+            if let user = user {
+                Firestore.firestore().collection("users").document(user.uid)
+                    .getDocument { documentSnapshot, error in
+                        guard let document = documentSnapshot else {
+                            print("Error fetching document: \(error!)")
+                            return
+                        }
+                        guard let data = document.data() else { return }
+                        
+                        guard let isOnboarded = data["isOnboarded"] as? Bool else {
+                            print("Problem with parsing isOnboarded.")
+                            return
+                        }
+                        
+                        if isOnboarded {
+                            Firestore.firestore().collection("users").document(user.uid)
+                                .getDocument { documentSnapshot, error in
+                                    guard let document = documentSnapshot else {
+                                        print("Error fetching document: \(error!)")
+                                        return
+                                    }
+                                    let newUser = FirestoreManager.shared.parseFirebaseUser(document: document)
+                                    self.user = newUser
+                            }
+                        } else {
+                            let registerViewController = RegisterViewController()
+                            let navigationController = UINavigationController(rootViewController: registerViewController)
+                            self.present(navigationController, animated: false, completion: nil)
+                        }
                 }
-                let newUser = FirestoreManager.shared.parseFirebaseUser(document: document)
-                self.me = newUser
+            } else {
+                let registerViewController = RegisterViewController()
+                let navigationController = UINavigationController(rootViewController: registerViewController)
+                self.present(navigationController, animated: false, completion: nil)
+            }
         }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        setupMatchView()
+        tableView.reloadData()
     }
+    
+    
     // MARK: - Methods
+    func refreshTableView() {
+        tableView.reloadData()
+    }
+    
     private func setupTableView() {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.separatorColor = .clear
@@ -96,7 +121,9 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         let filterButton = UIButton(type: .custom)
         filterButton.setImage(UIImage(named: "Filter"), for: .normal)
         filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        filterButton.addTarget(self, action: #selector(self.showFilters), for: .touchUpInside)
         let rightItem = UIBarButtonItem(customView: filterButton)
+        
         self.navigationItem.title = "Match Room"
         self.navigationItem.setRightBarButtonItems([rightItem], animated: true)
         self.navigationController?.navigationBar.backgroundColor = .white
@@ -185,41 +212,53 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         
         matchView.addSubview(matchYourImageView)
         matchYourImageView.snp.makeConstraints { (make) in
-            make.height.width.equalTo(100)
-            make.centerX.equalToSuperview().inset(20)
+            make.height.width.equalTo(48)
+            make.centerX.equalToSuperview().inset(10)
             make.top.equalToSuperview().offset(40)
         }
         matchYourImageView.backgroundColor = UIColor(red:0.77, green:0.77, blue:0.77, alpha:1.00)
-        matchYourImageView.layer.cornerRadius = 50
+        matchYourImageView.layer.cornerRadius = 48 / 2
         matchYourImageView.clipsToBounds = true
         
         matchView.addSubview(matchHerImageView)
         matchHerImageView.snp.makeConstraints { (make) in
-            make.height.width.equalTo(100)
-            make.centerX.equalToSuperview().inset(-20)
+            make.height.width.equalTo(48)
+            make.centerX.equalToSuperview().inset(-10)
             make.top.equalTo(matchYourImageView.snp.top)
         }
         matchHerImageView.backgroundColor = UIColor(red:0.69, green:0.69, blue:0.69, alpha:1.00)
-        matchHerImageView.layer.cornerRadius = 50
+        matchHerImageView.layer.cornerRadius = 48 / 2
         matchHerImageView.clipsToBounds = true
         
         matchView.addSubview(matchLabel)
         matchLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(matchYourImageView.snp.bottom).offset(64)
+            make.top.equalTo(matchYourImageView.snp.bottom).offset(32)
             make.centerX.equalToSuperview()
         }
         matchLabel.text = "Match"
         matchLabel.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
         
+        matchView.addSubview(matchDescriptionLabel)
+        matchDescriptionLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(matchLabel.snp.bottom).offset(8)
+            make.centerX.equalToSuperview()
+            make.left.equalToSuperview().inset(24)
+            make.right.equalToSuperview().offset(-24)
+        }
+        matchDescriptionLabel.text = "Niiiiceee! You can go and chat or continue browsing."
+        matchDescriptionLabel.font = UIFont.systemFont(ofSize: 21, weight: .regular)
+        matchDescriptionLabel.numberOfLines = 2
+        matchDescriptionLabel.textAlignment = .center
+        
         matchView.addSubview(matchCTA)
         matchCTA.snp.makeConstraints { (make) in
-            make.top.equalTo(matchLabel.snp.bottom).offset(40)
+            make.top.equalTo(matchDescriptionLabel.snp.bottom).offset(32)
             make.left.equalToSuperview().offset(32)
             make.right.equalToSuperview().inset(32)
             make.height.equalTo(44)
             make.bottom.equalToSuperview().inset(40)
         }
-        matchCTA.setTitle("Go To Chat", for: .normal)
+        matchCTA.setTitle("Go to Chat", for: .normal)
         
         matchView.addSubview(matchCloseButton)
         matchCloseButton.snp.makeConstraints { (make) in
@@ -254,12 +293,6 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         matchView.curve = "spring"
         matchView.velocity = 20
         matchView.animate()
-//        matchYourImageView.animation = "slideLeft"
-//        matchYourImageView.delay = 1
-//        matchYourImageView.animate()
-//        matchHerImageView.animation = "slideRight"
-//        matchHerImageView.delay = 1
-//        matchHerImageView.animate()
     }
     
     private func addImagesToMatch(myUrl: String, herUrl: String) {
@@ -269,7 +302,7 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
     
     private func fetchUsers(for uid: String) {
         FirestoreManager.shared.fetchUser(uid: uid).then { (user) in
-            self.me = user
+            self.user = user
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                 self.users = users
                 self.tableView.reloadData()
@@ -290,7 +323,7 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
     @objc func updateTimer() {
         if (seconds - 1) <= 0 {
             timer.invalidate()
-            guard let user = me else { return }
+            guard let user = user else { return }
             let data: [String: Any] = [
                 "likesLeft": 5,
                 "cooldownTime": ""
@@ -310,7 +343,7 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         UIView.animate(withDuration: 0.5, animations: { () -> Void in
             cell.likeButton.transform = CGAffineTransform(scaleX: 1,y: 1)
         })
-        if let me = me {
+        if let me = user {
             FirestoreManager.shared.checkIfUserHasAvailableMatches(for: me.uid).then { (success) in
                 if success {
                     FirestoreManager.shared.classicUpdateLike(myUid: me.uid, herUid: self.users[sender.tag].uid).then { (success) in
@@ -339,6 +372,13 @@ class MatchViewController2: UIViewController, GetPremiumViewControllerDelegate {
         let minutes = Int(time) / 60 % 60
         let seconds = Int(time) % 60
         return String(format:"%02i:%02i:%02i", hours, minutes, seconds)
+    }
+    
+    @objc func showFilters() {
+        let filterViewController = FilterViewController()
+        filterViewController.delegate = self
+        let navigationController = UINavigationController(rootViewController: filterViewController)
+        self.present(navigationController, animated: false, completion: nil)
     }
 }
 
@@ -370,7 +410,7 @@ extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, Matc
         cell.userImageView.sd_setImage(with: URL(string: users[indexPath.row].images.first!), placeholderImage: UIImage(named: "Placeholder_Image"))
         cell.nameAndAgeLabel.text = "\(users[indexPath.row].name), \(users[indexPath.row].age)"
         cell.locationLabel.text = users[indexPath.row].location.city
-        guard let user = me else { return UITableViewCell() }
+        guard let user = user else { return UITableViewCell() }
         guard let likes = user.likes else { return UITableViewCell() }
         if likes.contains(users[indexPath.row].uid) {
             cell.likeButton.setImage(UIImage(named: "Like"), for: .normal)

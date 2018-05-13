@@ -7,10 +7,6 @@ target 'Lez' do
 
   # Pods for Lez
   pod 'SnapKit', '~> 4.0.0'
-  pod 'moa', '~> 9.0'
-  pod 'Koloda', '~> 4.3.1'
-  pod 'Auk', '~> 8.0'
-  pod 'lottie-ios'
   pod 'Jelly'
   pod 'GooglePlacesRow'
   pod 'FacebookCore'
@@ -21,8 +17,6 @@ target 'Lez' do
   pod 'Firebase/Firestore'
   pod 'Firebase/Auth'
   pod 'Firebase/Storage'
-  pod 'ImagePicker'
-  pod 'Lightbox'
   pod 'Alertift', '~> 3.0'
   pod 'JGProgressHUD'
 #  pod 'SkeletonView'
@@ -38,6 +32,7 @@ target 'Lez' do
   pod 'AlamofireImage', '~> 3.3'
   pod 'SDWebImage', '~> 4.0'
   pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
+  pod 'ImageSlideshow', '~> 1.5'
   
   target 'LezTests' do
     inherit! :search_paths

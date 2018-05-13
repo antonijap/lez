@@ -19,7 +19,7 @@ class GetPremiumViewController: UIViewController {
     let descriptionLabel = UILabel()
     let backgroundImageView = UIImageView()
     let buyButton = CustomButton()
-    var delegate: GetPremiumViewControllerDelegate?
+    var delegate: MatchViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -80,7 +80,7 @@ class GetPremiumViewController: UIViewController {
             if success {
                 self.showPremiumPurchased {
                     self.dismiss(animated: true, completion: {
-                        self.delegate?.refreshKolodaData()
+                        self.delegate?.refreshTableView()
                     })
                 }
             } else {
@@ -106,7 +106,6 @@ class GetPremiumViewController: UIViewController {
     }
     
     @objc func closeButtonTapped(_ sender: UIButton) {
-        delegate?.showTimer()
         dismiss(animated: true, completion: nil)
     }
     

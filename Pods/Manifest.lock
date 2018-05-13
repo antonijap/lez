@@ -3,8 +3,6 @@ PODS:
   - AlamofireImage (3.3.1):
     - Alamofire (~> 4.5)
   - Alertift (3.2)
-  - Auk (8.0.2):
-    - moa
   - Bolts (1.9.0):
     - Bolts/AppLinks (= 1.9.0)
     - Bolts/Tasks (= 1.9.0)
@@ -17,7 +15,6 @@ PODS:
   - BoringSSL/Implementation (10.0.2):
     - BoringSSL/Interface (= 10.0.2)
   - BoringSSL/Interface (10.0.2)
-  - Cache (4.2.0)
   - Eureka (4.1.1)
   - FacebookCore (0.3.0):
     - Bolts (~> 1.8)
@@ -103,26 +100,17 @@ PODS:
     - gRPC-Core (= 1.11.0)
     - gRPC-RxLibrary (= 1.11.0)
   - GTMSessionFetcher/Core (1.1.15)
-  - Hue (3.0.1)
-  - ImagePicker (3.0.0)
-  - Imaginary (3.0.3):
-    - Cache (~> 4.0)
+  - ImageSlideshow (1.5.3):
+    - ImageSlideshow/Core (= 1.5.3)
+  - ImageSlideshow/Core (1.5.3)
   - Jelly (1.2.4)
   - JGProgressHUD (2.0.3)
-  - Koloda (4.3.1):
-    - pop (~> 1.0)
   - leveldb-library (1.20)
-  - Lightbox (2.1.2):
-    - Hue (~> 3.0)
-    - Imaginary (~> 3.0)
-  - lottie-ios (2.5.0)
-  - moa (9.0.2)
   - nanopb (0.3.8):
     - nanopb/decode (= 0.3.8)
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
-  - pop (1.0.10)
   - PromisesObjC (1.2)
   - PromisesSwift (1.2):
     - PromisesObjC (= 1.2)
@@ -143,7 +131,6 @@ DEPENDENCIES:
   - Alamofire (~> 4.7)
   - AlamofireImage (~> 3.3)
   - Alertift (~> 3.0)
-  - Auk (~> 8.0)
   - FacebookCore
   - FacebookLogin
   - FacebookShare
@@ -152,13 +139,9 @@ DEPENDENCIES:
   - Firebase/Firestore
   - Firebase/Storage
   - GooglePlacesRow
-  - ImagePicker
+  - ImageSlideshow (~> 1.5)
   - Jelly
   - JGProgressHUD
-  - Koloda (~> 4.3.1)
-  - Lightbox
-  - lottie-ios
-  - moa (~> 9.0)
   - PromisesSwift (~> 1.0)
   - SDWebImage (~> 4.0)
   - SnapKit (~> 4.0.0)
@@ -173,10 +156,8 @@ SPEC REPOS:
     - Alamofire
     - AlamofireImage
     - Alertift
-    - Auk
     - Bolts
     - BoringSSL
-    - Cache
     - Eureka
     - FacebookCore
     - FacebookLogin
@@ -198,18 +179,11 @@ SPEC REPOS:
     - gRPC-ProtoRPC
     - gRPC-RxLibrary
     - GTMSessionFetcher
-    - Hue
-    - ImagePicker
-    - Imaginary
+    - ImageSlideshow
     - Jelly
     - JGProgressHUD
-    - Koloda
     - leveldb-library
-    - Lightbox
-    - lottie-ios
-    - moa
     - nanopb
-    - pop
     - PromisesObjC
     - PromisesSwift
     - Protobuf
@@ -234,10 +208,8 @@ SPEC CHECKSUMS:
   Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
   AlamofireImage: 3b35b586853abaf94ca1250f4e94cff3c21a4c0d
   Alertift: df0df24a557e47360180092f5f3fceb675c96b51
-  Auk: 82be62a2cf650437fe745c81b12ac2440a0f682c
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
-  Cache: f28f8dd64b632155aabf9b3906b036a659048251
   Eureka: b88fb930e42c79f8c03c373d0fcdc28c1d6c50ed
   FacebookCore: 3ffa190a3f1f96cec0e44d3fc221bc322c595ffa
   FacebookLogin: 0af839ea858faef99550d16596b87b4a8e8906e6
@@ -259,18 +231,11 @@ SPEC CHECKSUMS:
   gRPC-ProtoRPC: bb5fddf3424aa4fad74d76736578a79fe40e244e
   gRPC-RxLibrary: 26d53d1b1f306befd4ad4e15bd6de27839a82481
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
-  Hue: 93e852fa6211ab35922ad8c293f51c43d6c79eb2
-  ImagePicker: 973953c25960fe04729a7082a56194321c6762d2
-  Imaginary: 9b45836a5af881f452a86e0a1215772ae4712d00
+  ImageSlideshow: 24a1184909f589379ba2527ebcc77996881bb1f2
   Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
   JGProgressHUD: 12b20a8f4ffe05258f8635c1ab92816e451f904d
-  Koloda: 0d39b2aa188ccd1fac48d752acaf9802e683c625
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
-  Lightbox: 2dc267df8be2285bc7724cb11cbbf4aaaf59dced
-  lottie-ios: d699fdee68d7b63e721d949388b015fef1aaa4ac
-  moa: b73dc5e0efa1fad00711c4608e41b197f4d15b12
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
-  pop: 82ca6b068ce9278fd350fd9dd09482a0ce9492e6
   PromisesObjC: 7358d6a58e012d77f9af3831e3d1390b78319c71
   PromisesSwift: 1ff253725dee00d711561b2c482b0cce789029c6
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
@@ -283,6 +248,6 @@ SPEC CHECKSUMS:
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: 3c112d87e12621328bcee6a28bd45d22dc1de034
+PODFILE CHECKSUM: 623b26f0f078cb335cec52a6c7703dac2870a5f1
 
 COCOAPODS: 1.5.2
