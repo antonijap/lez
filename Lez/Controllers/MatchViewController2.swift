@@ -94,7 +94,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
+//        tableView.reloadData()
     }
     
     
@@ -348,11 +348,14 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                 if success {
                     FirestoreManager.shared.classicUpdateLike(myUid: me.uid, herUid: self.users[sender.tag].uid).then { (success) in
                         if success {
-                            UIView.performWithoutAnimation {
-                                self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
-                                self.addImagesToMatch(myUrl: me.images.first!, herUrl: self.users[sender.tag].images.first!)
-                            }
-                            self.showMatch()
+                            FirestoreManager.shared.fetchUser(uid: me.uid).then({ (user) in
+                                self.user = user
+                                UIView.performWithoutAnimation {
+                                    self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
+                                    self.addImagesToMatch(myUrl: me.images.first!, herUrl: self.users[sender.tag].images.first!)
+                                }
+                                self.showMatch()
+                            })
                         }
                     }
                 } else {
@@ -412,10 +415,13 @@ extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, Matc
         cell.locationLabel.text = users[indexPath.row].location.city
         guard let user = user else { return UITableViewCell() }
         guard let likes = user.likes else { return UITableViewCell() }
+        print(likes)
         if likes.contains(users[indexPath.row].uid) {
+            print("Like")
             cell.likeButton.setImage(UIImage(named: "Like"), for: .normal)
             cell.likeButton.isUserInteractionEnabled = false
         } else {
+            print("Like Disabled")
             cell.likeButton.setImage(UIImage(named: "Like_Disabled"), for: .normal)
             cell.likeButton.isUserInteractionEnabled = true
         }

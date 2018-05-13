@@ -301,7 +301,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 chatCell.titleLabel.text = notMe?.name
                 chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
 //                chatCell.userPictureView.moa.url = notMe?.images.first
-                
+//                chatCell.userPictureView.sd_setImage(with: notMe?.images.first, completed: nil)
                 cell = chatCell
             }
         }
