@@ -29,7 +29,7 @@ class FilterViewController: FormViewController {
         if let cu = Auth.auth().currentUser {
             uid = cu.uid
             FirestoreManager.shared.fetchUser(uid: cu.uid).then { (user) in
-                self.form.setValues(["from": user.preferences.ageRange.from, "to": user.preferences.ageRange.to, "lookingFor": Set(user.preferences.lookingFor)])
+                self.form.setValues(["from": user.preferences.ageRange.from, "to": user.preferences.ageRange.to, "lookingFor": Set(user.preferences.lookingFor), "agePreference": [20, 30]])
                 self.tableView.reloadData()
             }
         }
@@ -112,17 +112,22 @@ class FilterViewController: FormViewController {
             
             +++ Section("Prefered Age Range")
             
-            <<< IntRow() { row in
-                row.title = "From age"
-                row.placeholder = ""
-                row.tag = "from"
+//            <<< IntRow() { row in
+//                row.title = "From age"
+//                row.placeholder = ""
+//                row.tag = "from"
+//            }
+            
+            <<< RangeSliderRow() { row in
+                // Slider uredi da je aksesibilan
+                row.tag = "agePreference"
             }
             
-            <<< IntRow() { row in
-                row.title = "To age"
-                row.placeholder = ""
-                row.tag = "to"
-        }
+//            <<< IntRow() { row in
+//                row.title = "To age"
+//                row.placeholder = ""
+//                row.tag = "to"
+        
     }
 }
 

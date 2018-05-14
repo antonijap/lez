@@ -115,6 +115,7 @@ PODS:
   - PromisesSwift (1.2):
     - PromisesObjC (= 1.2)
   - Protobuf (3.5.0)
+  - RangeSeekSlider (1.8.0)
   - SDWebImage (4.3.3):
     - SDWebImage/Core (= 4.3.3)
   - SDWebImage/Core (4.3.3)
@@ -143,6 +144,7 @@ DEPENDENCIES:
   - Jelly
   - JGProgressHUD
   - PromisesSwift (~> 1.0)
+  - RangeSeekSlider (from `https://github.com/WorldDownTown/RangeSeekSlider.git`, branch `swift_4`)
   - SDWebImage (~> 4.0)
   - SnapKit (~> 4.0.0)
   - Spring (from `https://github.com/MengTo/Spring.git`)
@@ -196,10 +198,16 @@ SPEC REPOS:
     - TwitterKit
 
 EXTERNAL SOURCES:
+  RangeSeekSlider:
+    :branch: swift_4
+    :git: https://github.com/WorldDownTown/RangeSeekSlider.git
   Spring:
     :git: https://github.com/MengTo/Spring.git
 
 CHECKOUT OPTIONS:
+  RangeSeekSlider:
+    :commit: 77c29321a97c7f029e878e1479ab5ed5e4b2edb2
+    :git: https://github.com/WorldDownTown/RangeSeekSlider.git
   Spring:
     :commit: c540239f3590bbaf4a35c3959c329dd5ed4e3eee
     :git: https://github.com/MengTo/Spring.git
@@ -239,6 +247,7 @@ SPEC CHECKSUMS:
   PromisesObjC: 7358d6a58e012d77f9af3831e3d1390b78319c71
   PromisesSwift: 1ff253725dee00d711561b2c482b0cce789029c6
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
+  RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   Spring: 3c7666eccefdeb87140008dc81043f89f8dbb787
@@ -248,6 +257,6 @@ SPEC CHECKSUMS:
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: 623b26f0f078cb335cec52a6c7703dac2870a5f1
+PODFILE CHECKSUM: 44e60f4abc0869b0125fc4b6b86c78b58318f88b
 
 COCOAPODS: 1.5.2

@@ -28,7 +28,7 @@ target 'Lez' do
   pod 'SDWebImage', '~> 4.0'
   pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
   pod 'ImageSlideshow', '~> 1.5'
-  pod 'RangeSeekSlider'
+  pod 'RangeSeekSlider', :git => 'https://github.com/WorldDownTown/RangeSeekSlider.git', :branch => 'swift_4'
   
   target 'LezTests' do
     inherit! :search_paths
