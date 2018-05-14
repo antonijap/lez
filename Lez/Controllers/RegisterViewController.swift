@@ -17,6 +17,7 @@ class RegisterViewController: UIViewController {
     
     let facebookLoginButton = UIButton()
     let hud = JGProgressHUD(style: .dark)
+    var imageGalleryViewController: ImagesViewController?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -73,21 +74,23 @@ class RegisterViewController: UIViewController {
                                     self.stopSpinner()
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
-                                    let setupProfileViewController = UserProfileFormViewController()
-                                    setupProfileViewController.name = currentUser.user.displayName!
-                                    setupProfileViewController.email = currentUser.user.email!
-                                    setupProfileViewController.uid = currentUser.user.uid
+                                    let userProfileFormViewController = UserProfileFormViewController()
+                                    userProfileFormViewController.name = currentUser.user.displayName!
+                                    userProfileFormViewController.email = currentUser.user.email!
+                                    userProfileFormViewController.uid = currentUser.user.uid
+                                    userProfileFormViewController.imageGalleryViewController = self.imageGalleryViewController!
                                     self.navigationItem.setHidesBackButton(true, animated: true)
-                                    self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                                    self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                                 }
                             }
                         } else {
-                            let setupProfileViewController = UserProfileFormViewController()
-                            setupProfileViewController.name = currentUser.user.displayName!
-                            setupProfileViewController.email = currentUser.user.email!
-                            setupProfileViewController.uid = currentUser.user.uid
+                            let userProfileFormViewController = UserProfileFormViewController()
+                            userProfileFormViewController.name = currentUser.user.displayName!
+                            userProfileFormViewController.email = currentUser.user.email!
+                            userProfileFormViewController.uid = currentUser.user.uid
+                            userProfileFormViewController.imageGalleryViewController = self.imageGalleryViewController!
                             self.navigationItem.setHidesBackButton(true, animated: true)
-                            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                            self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                         }
                     })
                 }
@@ -116,14 +119,17 @@ class RegisterViewController: UIViewController {
     }
    
     @objc func facebookButtonTapped() {
+        startSpinner()
         let loginManager = LoginManager()
         loginManager.logOut()
         loginManager.logIn(readPermissions: [.email, .publicProfile], viewController: self) { (result) in
             switch result {
             case .failed(let error):
                 print("Error")
+                self.stopSpinner()
                 print(error)
             case .cancelled:
+                self.stopSpinner()
                 print("User cancelled login.")
             case .success(_, _, let accessToken):
                 print("Logged in")
@@ -131,32 +137,35 @@ class RegisterViewController: UIViewController {
                 let credential = FacebookAuthProvider.credential(withAccessToken: accessToken.authenticationToken)
                 Auth.auth().signInAndRetrieveData(with: credential) { (user, error) in
                     if let error = error {
+                        self.stopSpinner()
                         print(error)
                         return
                     }
+                    self.stopSpinner()
                     guard let currentUser = user else { return }
                     FirestoreManager.shared.checkIfUserExists(uid: currentUser.user.uid).then({ (exists) in
                         if exists {
                             FirestoreManager.shared.fetchUser(uid: currentUser.user.uid).then { (user) in
                                 if user.isOnboarded {
-                                    self.stopSpinner()
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
-                                    let setupProfileViewController = UserProfileFormViewController()
-                                    setupProfileViewController.name = currentUser.user.displayName!
-                                    setupProfileViewController.email = currentUser.user.email!
-                                    setupProfileViewController.uid = currentUser.user.uid
+                                    let userProfileFormViewController = UserProfileFormViewController()
+                                    userProfileFormViewController.name = currentUser.user.displayName!
+                                    userProfileFormViewController.email = currentUser.user.email!
+                                    userProfileFormViewController.uid = currentUser.user.uid
+                                    userProfileFormViewController.imageGalleryViewController = self.imageGalleryViewController!
                                     self.navigationItem.setHidesBackButton(true, animated: true)
-                                    self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                                    self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                                 }
                             }
                         } else {
-                            let setupProfileViewController = UserProfileFormViewController()
-                            setupProfileViewController.name = currentUser.user.displayName!
-                            setupProfileViewController.email = currentUser.user.email!
-                            setupProfileViewController.uid = currentUser.user.uid
+                            let userProfileFormViewController = UserProfileFormViewController()
+                            userProfileFormViewController.name = currentUser.user.displayName!
+                            userProfileFormViewController.email = currentUser.user.email!
+                            userProfileFormViewController.uid = currentUser.user.uid
+                            userProfileFormViewController.imageGalleryViewController = self.imageGalleryViewController!
                             self.navigationItem.setHidesBackButton(true, animated: true)
-                            self.navigationController?.pushViewController(setupProfileViewController, animated: true)
+                            self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                         }
                     })
                 }

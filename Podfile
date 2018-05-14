@@ -19,20 +19,16 @@ target 'Lez' do
   pod 'Firebase/Storage'
   pod 'Alertift', '~> 3.0'
   pod 'JGProgressHUD'
-#  pod 'SkeletonView'
   pod 'SwiftDate', '~> 4.0'
   pod 'TwitterKit'
   pod 'SwiftyStoreKit'
-#  pod 'Ably'
   pod 'SwiftyJSON', '~> 4.0'
   pod 'Alamofire', '~> 4.7'
-#  pod 'Alamofire-SwiftyJSON'
-#  pod 'PusherChatkit'
-#  pod 'IGListKit', '~> 3.0'
   pod 'AlamofireImage', '~> 3.3'
   pod 'SDWebImage', '~> 4.0'
   pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
   pod 'ImageSlideshow', '~> 1.5'
+  pod 'RangeSeekSlider'
   
   target 'LezTests' do
     inherit! :search_paths

@@ -54,9 +54,11 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         setupNoUsersState()
         setupLikesWidget()
         runLikesWidget()
+        
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
+                print("I am in listener!")
                 Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
                     guard let document = documentSnapshot else {
                         print("Error fetching document: \(error!)")
@@ -98,24 +100,13 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("viewWillAppear")
-        guard let user = Auth.auth().currentUser else {
-            print("Error getting user uid")
-            return
-        }
-        fetchUsers(for: user.uid)
-        
     }
-    
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        print("viewDidAppear")
-        tableView.reloadData()
-    }
-    
     
     // MARK: - Methods
     private func presentRegisterViewController() {
         let registerViewController = RegisterViewController()
+        registerViewController.imageGalleryViewController = ImagesViewController()
+        registerViewController.imageGalleryViewController?.matchViewControllerDelegate = self
         let navigationController = UINavigationController(rootViewController: registerViewController)
         self.present(navigationController, animated: false, completion: nil)
     }
@@ -410,7 +401,8 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         matchHerImageView.sd_setImage(with: URL(string: herUrl), placeholderImage: UIImage(named: "Placeholder_Image"))
     }
     
-    private func fetchUsers(for uid: String) {
+    @objc func fetchUsers(for uid: String) {
+        print("Fetching users for \(uid)")
         FirestoreManager.shared.fetchUser(uid: uid).then { (user) in
             self.user = user
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in

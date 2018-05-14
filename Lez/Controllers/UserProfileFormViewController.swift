@@ -20,9 +20,10 @@ class UserProfileFormViewController: FormViewController {
     var email: String?
     var uid: String?
     var user: User?
-    var delegate: ProfileViewControllerDelegate?
+    var profileViewControllerDelegate: ProfileViewControllerDelegate?
     var handle: AuthStateDidChangeListenerHandle?
     var onboardingContinues = false
+    var imageGalleryViewController: ImagesViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,7 +59,6 @@ class UserProfileFormViewController: FormViewController {
                 }
             }
         }
-        
     }
     
     func setupNavigationBar() {
@@ -234,7 +234,7 @@ class UserProfileFormViewController: FormViewController {
                 } else {
                     if let data = parseFormIntoDataForUpdatingUser() {
                         FirestoreManager.shared.updateUser(uid: user.uid, data: data).then { (success) in
-                            self.delegate?.refreshProfile()
+                            self.profileViewControllerDelegate?.refreshProfile()
                             self.navigationController?.popViewController(animated: true)
                         }
                     }
@@ -249,15 +249,14 @@ class UserProfileFormViewController: FormViewController {
                     if onboardingContinues {
                         if let data = parseFormIntoData() {
                             FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).then { (success) in
-                                let imageGalleryViewController = ImagesViewController()
-                                self.navigationController?.pushViewController(imageGalleryViewController, animated: true)
+                                self.navigationController?.pushViewController(self.imageGalleryViewController!, animated: true)
                             }
                         }
                     } else {
                         if let data = parseFormIntoData() {
                             FirestoreManager.shared.addUser(uid: currentUser.uid, data: data).then { (success) in
-                                let imageGalleryViewController = ImagesViewController()
-                                self.navigationController?.pushViewController(imageGalleryViewController, animated: true)
+//                                let imageGalleryViewController = ImagesViewController()
+                                self.navigationController?.pushViewController(self.imageGalleryViewController!, animated: true)
                             }
                         }
                     }

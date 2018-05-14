@@ -29,7 +29,8 @@ class ImagesViewController: UIViewController {
     var activeImage = ""
     var dataForNewUser: [String: Any]?
     var user: User?
-    var delegate: ProfileViewControllerDelegate?
+    var profileViewControllerDelegate: ProfileViewControllerDelegate?
+    var matchViewControllerDelegate: MatchViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -184,7 +185,8 @@ class ImagesViewController: UIViewController {
                 FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageURLs, "isOnboarded": true]).then({ (success) in
                     // Images uploaded
                     self.stopSpinner()
-                    self.showOkayModal(messageTitle: "Success", messageAlert: "Profile setup completed. Enjoy Lez.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+                    self.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+                        self.matchViewControllerDelegate?.fetchUsers(for: user.uid)
                         self.dismiss(animated: true, completion: nil)
                     })
                 })

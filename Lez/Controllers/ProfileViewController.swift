@@ -238,7 +238,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let setupProfileViewController = UserProfileFormViewController()
             guard let user = user else { return }
             setupProfileViewController.user = user
-            setupProfileViewController.delegate = self
+            setupProfileViewController.profileViewControllerDelegate = self
             setupProfileViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(setupProfileViewController, animated: true)
         }
@@ -246,7 +246,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             let imageGalleryViewController = ImagesViewController()
             guard let user = user else { return }
             imageGalleryViewController.user = user
-            imageGalleryViewController.delegate = self
+            imageGalleryViewController.profileViewControllerDelegate = self
             imageGalleryViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }

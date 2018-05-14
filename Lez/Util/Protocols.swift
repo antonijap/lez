@@ -16,6 +16,7 @@ import Foundation
 
 protocol MatchViewControllerDelegate {
     func refreshTableView()
+    func fetchUsers(for uid: String)
 }
 
 protocol ProfileViewControllerDelegate {
