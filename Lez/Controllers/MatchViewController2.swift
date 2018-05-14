@@ -36,7 +36,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     private let noUsersTitle = UILabel()
     private let noUsersDescription = UILabel()
     private let noUsersCTA = CustomButton()
-    private let nousersRefreshButton = SpringButton()
+    private let noUsersRefreshButton = SpringButton()
     private var users: [User] = []
     private var user: User?
     private var jellyAnimator: JellyAnimator?
@@ -52,11 +52,11 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         setupNavigationBar()
         setupMatchView()
         setupNoUsersState()
-        
+        setupLikesWidget()
+        runLikesWidget()
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
-                print(user.displayName)
                 Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
                     guard let document = documentSnapshot else {
                         print("Error fetching document: \(error!)")
@@ -74,7 +74,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                     
                     // Get all users and reload tableView
                     self.fetchUsers(for: user.uid)
-                    self.setupLikesWidget()
+                    self.runLikesWidget()
                     
                     if isOnboarded {
                         Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
@@ -97,12 +97,18 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        tableView.reloadData()
+        print("viewWillAppear")
+        guard let user = Auth.auth().currentUser else {
+            print("Error getting user uid")
+            return
+        }
+        fetchUsers(for: user.uid)
+        
     }
     
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        print("User registered")
+        print("viewDidAppear")
         tableView.reloadData()
     }
     
@@ -160,15 +166,15 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.shareWebsite))
         noUsersCTA.addGestureRecognizer(buttonTap)
         
-        view.addSubview(nousersRefreshButton)
-        nousersRefreshButton.snp.makeConstraints { (make) in
+        view.addSubview(noUsersRefreshButton)
+        noUsersRefreshButton.snp.makeConstraints { (make) in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).inset(32)
             make.centerX.equalToSuperview()
         }
-        nousersRefreshButton.setTitle("Try refresh?", for: .normal)
-        nousersRefreshButton.addTarget(self, action: #selector(self.refreshTableView), for: .touchUpInside)
-        nousersRefreshButton.setTitleColor(.gray, for: .normal)
-        nousersRefreshButton.setTitleColor(UIColor.gray.withAlphaComponent(0.5), for: .highlighted)
+        noUsersRefreshButton.setTitle("Try refresh?", for: .normal)
+        noUsersRefreshButton.addTarget(self, action: #selector(self.refreshTableView), for: .touchUpInside)
+        noUsersRefreshButton.setTitleColor(.gray, for: .normal)
+        noUsersRefreshButton.setTitleColor(UIColor.gray.withAlphaComponent(0.5), for: .highlighted)
         
         hideEmptyState()
     }
@@ -178,6 +184,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         noUsersTitle.isHidden = true
         noUsersDescription.isHidden = true
         noUsersCTA.isHidden = true
+        noUsersRefreshButton.isHidden = true
     }
     
     private func showEmptyState() {
@@ -185,6 +192,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         noUsersTitle.isHidden = false
         noUsersDescription.isHidden = false
         noUsersCTA.isHidden = false
+        noUsersRefreshButton.isHidden = false
     }
     
     @objc private func shareWebsite() {
@@ -250,10 +258,15 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
             make.left.equalTo(likesCounterWidgetImageView.snp.right).offset(4)
             make.right.equalToSuperview().inset(12)
         }
-        
+      
+        likesCounterWidgetView.layoutIfNeeded()
+    }
+    
+    private func runLikesWidget() {
         guard let me = Auth.auth().currentUser else { return }
         Firestore.firestore().collection("users").document(me.uid)
             .addSnapshotListener { documentSnapshot, error in
+                print("Listener deteced change")
                 guard let document = documentSnapshot else {
                     print("Error fetching document: \(error!)")
                     return
@@ -282,8 +295,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                 }
                 
         }
-                
-        likesCounterWidgetView.layoutIfNeeded()
     }
     
     private func setupMatchView() {
@@ -404,7 +415,9 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
             self.user = user
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                 self.users = users
+                print(users)
                 if users.count > 0 {
+                    self.hideEmptyState()
                     self.tableView.reloadData()
                 } else {
                     self.showEmptyState()

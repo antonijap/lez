@@ -65,23 +65,27 @@ class RegisterViewController: UIViewController {
                         return
                     }
                     // User is signed in
-                    guard let current = user else { return }
-                    FirestoreManager.shared.checkIfUserExists(uid: current.user.uid).then({ (exists) in
+                    guard let currentUser = user else { return }
+                    FirestoreManager.shared.checkIfUserExists(uid: currentUser.user.uid).then({ (exists) in
                         if exists {
-                            FirestoreManager.shared.fetchUser(uid: current.user.uid).then { (user) in
+                            FirestoreManager.shared.fetchUser(uid: currentUser.user.uid).then { (user) in
                                 if user.isOnboarded {
                                     self.stopSpinner()
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
                                     let setupProfileViewController = UserProfileFormViewController()
-                                    setupProfileViewController.uid = current.user.uid
+                                    setupProfileViewController.name = currentUser.user.displayName!
+                                    setupProfileViewController.email = currentUser.user.email!
+                                    setupProfileViewController.uid = currentUser.user.uid
                                     self.navigationItem.setHidesBackButton(true, animated: true)
                                     self.navigationController?.pushViewController(setupProfileViewController, animated: true)
                                 }
                             }
                         } else {
                             let setupProfileViewController = UserProfileFormViewController()
-                            setupProfileViewController.uid = current.user.uid
+                            setupProfileViewController.name = currentUser.user.displayName!
+                            setupProfileViewController.email = currentUser.user.email!
+                            setupProfileViewController.uid = currentUser.user.uid
                             self.navigationItem.setHidesBackButton(true, animated: true)
                             self.navigationController?.pushViewController(setupProfileViewController, animated: true)
                         }
