@@ -11,6 +11,7 @@ import Alertift
 import Firebase
 import Promises
 import JGProgressHUD
+import Alamofire
 
 class ImagesViewController: UIViewController {
     
@@ -25,7 +26,7 @@ class ImagesViewController: UIViewController {
     let storage = Storage.storage()
     let hud = JGProgressHUD(style: .dark)
     var imageViews: [UIImageView] = []
-    var imageURLs: [String] = []
+    var imageNames: [String] = []
     var activeImage = ""
     var dataForNewUser: [String: Any]?
     var user: User?
@@ -40,6 +41,22 @@ class ImagesViewController: UIViewController {
         navigationController?.navigationBar.backgroundColor = .white
         navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
+        
+        if let user = user {
+            // Now in editing mode
+            // Load all images
+            self.user = user
+            let images = user.images
+            for image in images {
+                for imageView in imageViews {
+                    if imageView.image == UIImage(named: "Empty_Image") || imageView.image == UIImage(named: "Empty_Image_Profile") {
+                        imageView.sd_setImage(with: URL(string: image.url), completed: nil)
+                        imageView.contentMode = .scaleAspectFill
+                        break
+                    }
+                }
+            }
+        }
     }
     
     private func startSpinner() {
@@ -172,53 +189,177 @@ class ImagesViewController: UIViewController {
                     self.stopSpinner()
                 })
         } else {
-            for imageView in getAllImageViews() {
-                group.enter()
-                uploadImage(image: imageView.image!).then { (url) in
-                    self.imageURLs.append(url)
-                    group.leave()
+//            if let user = self.user {
+//                for imageView in self.getAllImageViews() {
+//                    group.enter()
+//                    self.uploadImage(image: imageView.image!).then { (url) in
+//                        self.imageURLs.append(url)
+//                        group.leave()
+//                    }
+//                }
+//                group.notify(queue: .main) {
+//                    FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageURLs]).then({ (success) in
+//                        self.stopSpinner()
+//                        self.profileViewControllerDelegate?.refreshProfile()
+//                        self.navigationController?.popToRootViewController(animated: true)
+//                    })
+//                }
+//            } else {
+//                for imageView in self.getAllImageViews() {
+//                    group.enter()
+//                    self.uploadImage(image: imageView.image!).then { (url) in
+//                        self.imageURLs.append(url)
+//                        group.leave()
+//                    }
+//                }
+//                group.notify(queue: .main) {
+//                    guard let user = Auth.auth().currentUser else { return }
+//                    FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageURLs, "isOnboarded": true]).then({ (success) in
+//                        self.stopSpinner()
+//                        self.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+//                            self.matchViewControllerDelegate?.fetchUsers(for: user.uid)
+//                            self.dismiss(animated: true, completion: nil)
+//                        })
+//                    })
+//                }
+//            }
+            
+            if let user = self.user {
+                deleteImages(url: user.images).then { success in
+                    if success {
+                        for imageView in self.getAllImageViews() {
+                            group.enter()
+                            self.uploadImage(image: imageView.image!).then { (name) in
+                                self.imageNames.append(name)
+                                group.leave()
+                            }
+                        }
+                        group.notify(queue: .main) {
+                            FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageNames]).then({ (success) in
+                                self.stopSpinner()
+                                self.profileViewControllerDelegate?.refreshProfile()
+                                self.navigationController?.popToRootViewController(animated: true)
+                            })
+                        }
+                    }
+                }
+                group.notify(queue: .main) {
+                    FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageNames]).then({ (success) in
+                        self.stopSpinner()
+                        self.profileViewControllerDelegate?.refreshProfile()
+                        self.navigationController?.popToRootViewController(animated: true)
+                    })
+                }
+            } else {
+                for imageView in self.getAllImageViews() {
+                    group.enter()
+                    self.uploadImage(image: imageView.image!).then { (url) in
+                        self.imageNames.append(url)
+                        group.leave()
+                    }
+                }
+                group.notify(queue: .main) {
+                    guard let user = Auth.auth().currentUser else { return }
+                    FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageNames, "isOnboarded": true]).then({ (success) in
+                        self.stopSpinner()
+                        self.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+                            self.matchViewControllerDelegate?.fetchUsers(for: user.uid)
+                            self.dismiss(animated: true, completion: nil)
+                        })
+                    })
                 }
             }
-            
-            group.notify(queue: .main) {
-                guard let user = Auth.auth().currentUser else { return }
-                FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageURLs, "isOnboarded": true]).then({ (success) in
-                    // Images uploaded
-                    self.stopSpinner()
-                    self.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                        self.matchViewControllerDelegate?.fetchUsers(for: user.uid)
-                        self.dismiss(animated: true, completion: nil)
-                    })
-                })
+        }
+    }
+    
+    func compressImage(image: UIImage) -> Data? {
+        // Reducing file size to a 10th
+        var actualHeight : CGFloat = image.size.height
+        var actualWidth : CGFloat = image.size.width
+        let maxHeight : CGFloat = 1136.0
+        let maxWidth : CGFloat = 640.0
+        var imgRatio : CGFloat = actualWidth/actualHeight
+        let maxRatio : CGFloat = maxWidth/maxHeight
+        var compressionQuality : CGFloat = 0.5
+        
+        if (actualHeight > maxHeight || actualWidth > maxWidth){
+            if(imgRatio < maxRatio){
+                //adjust width according to maxHeight
+                imgRatio = maxHeight / actualHeight
+                actualWidth = imgRatio * actualWidth
+                actualHeight = maxHeight
+            }
+            else if(imgRatio > maxRatio){
+                //adjust height according to maxWidth
+                imgRatio = maxWidth / actualWidth
+                actualHeight = imgRatio * actualHeight
+                actualWidth = maxWidth
+            }
+            else{
+                actualHeight = maxHeight
+                actualWidth = maxWidth
+                compressionQuality = 1
             }
         }
+        
+        let rect = CGRect(x: 0.0, y: 0.0, width: actualWidth, height: actualHeight)
+        UIGraphicsBeginImageContext(rect.size)
+        image.draw(in: rect)
+        guard let img = UIGraphicsGetImageFromCurrentImageContext() else {
+            return nil
+        }
+        UIGraphicsEndImageContext()
+        guard let imageData = UIImageJPEGRepresentation(img, compressionQuality)else{
+            return nil
+        }
+        return imageData
     }
     
     private func uploadImage(image: UIImage) -> Promise<String> {
         return Promise { fulfill, reject in
             guard let user = Auth.auth().currentUser else { return }
             let ref = self.storage.reference().child("images").child(user.uid).child("\(String.random()).jpg")
-            guard let data = UIImageJPEGRepresentation(image, 90.00) else {
-                print("Error happened")
+            let optimisedImage = self.compressImage(image: image)
+            guard let data = optimisedImage else {
+                print("Error with optimising image.")
                 return
             }
-            let uploadTask = ref.putData(data, metadata: nil) { (metadata, error) in
+            ref.putData(data, metadata: nil) { (metadata, error) in
                 if let error = error {
                     print(error)
                 }
+                guard let metadata = metadata else {
+                    print("Problem with metadata.")
+                    return
+                }
+                fulfill(metadata.name!)
             }
-            uploadTask.observe(.success) { (snapshot) in
-                ref.downloadURL { url, error in
-                    if let error = error {
-                        reject(error)
-                    } else {
-                        guard let url = url else {
-                            print("Error getting download URL.")
-                            return
+        }
+    }
+    
+    private func deleteImages(url: [LezImage]) -> Promise<Bool> {
+        return Promise { fulfill, reject in
+            if let user = self.user {
+                let group = DispatchGroup()
+                for image in user.images {
+                    group.enter()
+                    let ref = self.storage.reference().child("images").child(user.uid).child(image.name)
+                    print(ref.fullPath)
+                    ref.delete { error in
+                        if let error = error {
+                            print(error.localizedDescription)
+                            reject(error)
+                        } else {
+                            print("Image deleted succesfully.")
+                            group.leave()
                         }
-                        fulfill(url.absoluteString)
                     }
                 }
+                group.notify(queue: .main) {
+                    fulfill(true)
+                }
+            } else {
+                fulfill(false)
             }
         }
     }

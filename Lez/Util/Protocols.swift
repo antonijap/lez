@@ -20,6 +20,5 @@ protocol MatchViewControllerDelegate {
 }
 
 protocol ProfileViewControllerDelegate {
-    var shouldRefresh: Bool { get set }
     func refreshProfile()
 }

@@ -135,8 +135,8 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
                 let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
                 profileImagesCell.slideshow.setImageInputs([])
                 var sources: [SDWebImageSource] = []
-                for url in user.images {
-                    let sdWebImageSource = SDWebImageSource(urlString: url)
+                for image in user.images {
+                    let sdWebImageSource = SDWebImageSource(urlString: image.url)
                     sources.append(sdWebImageSource!)
                 }
                 profileImagesCell.slideshow.setImageInputs(sources)

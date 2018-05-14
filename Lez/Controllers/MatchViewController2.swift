@@ -37,12 +37,14 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     private let noUsersDescription = UILabel()
     private let noUsersCTA = CustomButton()
     private let noUsersRefreshButton = SpringButton()
+    private let refreshControl = UIRefreshControl()
     private var users: [User] = []
     private var user: User?
     private var jellyAnimator: JellyAnimator?
     private var seconds = 86400
     private var timer = Timer()
     private var handle: AuthStateDidChangeListenerHandle?
+    
     
     // MARK: - Life Cycle
     
@@ -58,7 +60,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
-                print("I am in listener!")
                 Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
                     guard let document = documentSnapshot else {
                         print("Error fetching document: \(error!)")
@@ -84,8 +85,9 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                                 print("Error fetching document: \(error!)")
                                 return
                             }
-                            let newUser = FirestoreManager.shared.parseFirebaseUser(document: document)
-                            self.user = newUser
+                            FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
+                                self.user = user!
+                            })
                         }
                     } else {
                         self.presentRegisterViewController()
@@ -112,7 +114,11 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     }
     
     @objc func refreshTableView() {
-        tableView.reloadData()
+        guard let user = user else {
+            print("No user. Error happened.")
+            return
+        }
+        fetchUsers(for: user.uid)
     }
     
     private func setupNoUsersState() {
@@ -203,6 +209,8 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
         }
         tableView.register(MatchCell.self, forCellReuseIdentifier: "MatchCell")
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(self.refreshTableView), for: .valueChanged)
     }
     
     private func setupNavigationBar() {
@@ -402,7 +410,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     }
     
     @objc func fetchUsers(for uid: String) {
-        print("Fetching users for \(uid)")
+        refreshControl.endRefreshing()
         FirestoreManager.shared.fetchUser(uid: uid).then { (user) in
             self.user = user
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
@@ -462,7 +470,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                                     self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
                                     FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: me.uid, likedUserUid: self.users[sender.tag].uid).then({ (success) in
                                         if success {
-                                            self.addImagesToMatch(myUrl: me.images.first!, herUrl: self.users[sender.tag].images.first!)
+                                            self.addImagesToMatch(myUrl: me.images.first!.url, herUrl: self.users[sender.tag].images.first!.url)
                                             self.showMatch()
                                         }
                                     })
@@ -524,7 +532,7 @@ extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, Matc
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MatchCell.reuseID) as! MatchCell
         cell.delegate = self
-        cell.userImageView.sd_setImage(with: URL(string: users[indexPath.row].images.first!), placeholderImage: UIImage(named: "Placeholder_Image"))
+        cell.userImageView.sd_setImage(with: URL(string: (users[indexPath.row].images.first)!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
         cell.nameAndAgeLabel.text = "\(users[indexPath.row].name), \(users[indexPath.row].age)"
         cell.locationLabel.text = users[indexPath.row].location.city
         guard let user = user else { return UITableViewCell() }

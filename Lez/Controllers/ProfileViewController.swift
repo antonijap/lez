@@ -164,13 +164,16 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 let profileImagesCell = tableView.dequeueReusableCell(withIdentifier: ProfileImagesCell.reuseID) as! ProfileImagesCell
                 profileImagesCell.slideshow.setImageInputs([])
                 var sources: [SDWebImageSource] = []
-                for url in user.images {
-                    let sdWebImageSource = SDWebImageSource(urlString: url)
-                    sources.append(sdWebImageSource!)
+                for image in user.images {
+                    let sdWebImageSource = SDWebImageSource(urlString: image.url)
+                    if let image = sdWebImageSource {
+                        sources.append(image)
+                    }
                 }
+                
                 profileImagesCell.slideshow.setImageInputs(sources)
                 cell = profileImagesCell
-            
+        
             case .iconMenu:
                 let iconMenuCell = tableView.dequeueReusableCell(withIdentifier: IconMenuCell.reuseID) as! IconMenuCell
                 cell = iconMenuCell

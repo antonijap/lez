@@ -31,6 +31,7 @@
 		CF9C7B9520A49B710044043B /* MatchViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9C7B9420A49B710044043B /* MatchViewController2.swift */; };
 		CF9C7B9720A4B83A0044043B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF9C7B9620A4B83A0044043B /* Assets.xcassets */; };
 		CFA7842C20A9F2B4000DA074 /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA7842B20A9F2B4000DA074 /* SliderCell.swift */; };
+		CFA7842E20A9FC3F000DA074 /* CustomUIElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */; };
 		CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C12066B15900114EC4 /* Extensions.swift */; };
 		CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */; };
 		CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */; };
@@ -94,6 +95,7 @@
 		CF9C7B9420A49B710044043B /* MatchViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController2.swift; sourceTree = "<group>"; };
 		CF9C7B9620A4B83A0044043B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFA7842B20A9F2B4000DA074 /* SliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderCell.swift; sourceTree = "<group>"; };
+		CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUIElements.swift; sourceTree = "<group>"; };
 		CFB7C4C12066B15900114EC4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
 		CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
@@ -238,6 +240,7 @@
 				CFE0BD662073DD810055FC73 /* CustomCells.swift */,
 				CF11E904209EF545007E3D1D /* Protocols.swift */,
 				CFA7842B20A9F2B4000DA074 /* SliderCell.swift */,
+				CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -607,6 +610,7 @@
 				CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */,
 				CF8C5DFE2094C08C00538C67 /* MessagesViewController.swift in Sources */,
 				CF04FAE3204161A7001CB034 /* User.swift in Sources */,
+				CFA7842E20A9FC3F000DA074 /* CustomUIElements.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -88,7 +88,7 @@ final class FirestoreManager {
             let from = user.preferences.ageRange.from
             let to = user.preferences.ageRange.to
             let suitableAges = Array(from...to)
-            
+            let group = DispatchGroup()
             var allUsers: [User] = []
             
             let potentialMatchesRef = self.db.collection("users")
@@ -103,87 +103,60 @@ final class FirestoreManager {
                     print("Error getting documents: \(err)")
                 } else {
                     for document in querySnapshot!.documents {
-                        let user = FirestoreManager.shared.parseFirebaseUser(document: document)
-                        allUsers.append(user!)
+                        group.enter()
+                        FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
+                            allUsers.append(user!)
+                            group.leave()
+                        })
                     }
                 }
                 
-                // Get rid of all users outside suitable ages
-                var filteredAge: [User] = []
-                for match in allUsers {
-                    if suitableAges.contains(match.age) {
-                        filteredAge.append(match)
-                    }
-                }
-                
-                // Get the ones with the same preferences.lookingFor
-                var filteredLookingFor: [User] = []
-                for match in filteredAge {
-                    for lookingFor in user.preferences.lookingFor {
-                        if match.preferences.lookingFor.contains(lookingFor) {
-                            filteredLookingFor.append(match)
+                group.notify(queue: .main, execute: {
+                    // Get rid of all users outside suitable ages
+                    var filteredAge: [User] = []
+                    for match in allUsers {
+                        if suitableAges.contains(match.age) {
+                            filteredAge.append(match)
                         }
                     }
-                }
-                
-                // Remove yourself
-                var filteredMe: [User] = []
-                for match in Array(Set(filteredLookingFor)) {
-                    if match.uid != currentUser.uid {
-                        filteredMe.append(match)
+                    
+                    // Get the ones with the same preferences.lookingFor
+                    var filteredLookingFor: [User] = []
+                    for match in filteredAge {
+                        for lookingFor in user.preferences.lookingFor {
+                            if match.preferences.lookingFor.contains(lookingFor) {
+                                filteredLookingFor.append(match)
+                            }
+                        }
                     }
-                }
-                
-                var finalArray: [User] = Array(Set(filteredMe))
-                
-                // Remove all liked users
-//                for matchedUser in finalArray {
-//                    for like in user.likes! {
-//                        if let index = finalArray.index(where: { _ in like == matchedUser.uid }) {
-//                            finalArray.remove(at: index)
-//                            print("User liked, removing... \(matchedUser.name)")
-//                        }
-//                    }
-//                }
-                
-//                for _ in finalArray {
-//                    if let i = finalArray.index(where: { user.likes!.contains($0.uid) }) {
-//                        finalArray.remove(at: i)
-//                    }
-//                }
-                
-                // Remove all disliked users
-//                for match in finalArray {
-//                    for dislike in user.dislikes! {
-//                        if let index = finalArray.index(where: { _ in dislike == match.uid }) {
-//                            finalArray.remove(at: index)
-//                            print("User disliked, removing...")
-//                        }
-//                    }
-//                }
-                
-//                for _ in finalArray {
-//                    if let i = finalArray.index(where: { user.dislikes!.contains($0.uid) }) {
-//                        finalArray.remove(at: i)
-//                    }
-//                }
-                
-                // Remove blocked users
-//                for match in finalArray {
-//                    for blocked in user.blockedUsers! {
-//                        if let index = finalArray.index(where: { _ in blocked == match.uid }) {
-//                            finalArray.remove(at: index)
-//                            print("User blocked, removing...")
-//                        }
-//                    }
-//                }
-                
-                if let i = finalArray.index(where: { user.blockedUsers!.contains($0.uid) }) {
-                    print("User blocked, removing...")
-                    finalArray.remove(at: i)
-                }
-                
-                fulfill(Array(Set(finalArray)))
+                    
+                    // Remove yourself
+                    var filteredMe: [User] = []
+                    for match in Array(Set(filteredLookingFor)) {
+                        if match.uid != currentUser.uid {
+                            filteredMe.append(match)
+                        }
+                    }
+                    
+                    var finalArray: [User] = Array(Set(filteredMe))
+                    
+                    // Remove blocked users
+                    for match in finalArray {
+                        for blocked in user.blockedUsers! {
+                            if let index = finalArray.index(where: { _ in blocked == match.uid }) {
+                                finalArray.remove(at: index)
+                                print("User blocked, removing...")
+                            }
+                        }
+                    }
+                    
+                    if let i = finalArray.index(where: { user.blockedUsers!.contains($0.uid) }) {
+                        print("User blocked, removing...")
+                        finalArray.remove(at: i)
+                    }
+                    
+                    fulfill(Array(Set(finalArray)))
+                })
             }
         }
     }
@@ -193,9 +166,11 @@ final class FirestoreManager {
             let docRef = self.db.collection("users").document(uid)
             docRef.getDocument { (document, error) in
                 if let document = document {
-                    if let user = self.parseFirebaseUser(document: document) {
-                         fulfill(user)
-                    }
+                    self.parseFirebaseUser(document: document).then({ (user) in
+                        if let user = user {
+                            fulfill(user)
+                        }
+                    })
                 } else {
                     print("Document does not exist")
                     reject(error!)
@@ -271,123 +246,141 @@ final class FirestoreManager {
         }
     }
     
-    func parseFirebaseUser(document: DocumentSnapshot) -> User? {
-        guard let data = document.data() else { return nil }
-        guard let uid = data["uid"] as? String else {
-            print("Problem with parsing uid.")
-            return nil
+    func parseFirebaseUser(document: DocumentSnapshot) -> Promise<User?> {
+        return Promise { fulfill, reject in
+            guard let data = document.data() else { return }
+            guard let uid = data["uid"] as? String else {
+                print("Problem with parsing uid.")
+                return
+            }
+            guard let name = data["name"] as? String else {
+                print("Problem with parsing name.")
+                return
+            }
+            guard let email = data["email"] as? String else {
+                print("Problem with parsing email.")
+                return
+            }
+            guard let age = data["age"] as? Int else {
+                print("Problem with parsing age.")
+                return
+            }
+            guard let locationDict = data["location"] as? [String: String] else {
+                print("Problem with parsing locationDict.")
+                return
+            }
+            guard let city = locationDict["city"] else {
+                print("Problem with parsing city.")
+                return
+            }
+            guard let country = locationDict["country"] else {
+                print("Problem with parsing country.")
+                return
+            }
+            guard let isOnboarded = data["isOnboarded"] as? Bool else {
+                print("Problem with parsing isOnboarded.")
+                return
+            }
+            guard let isPremium = data["isPremium"] as? Bool else {
+                print("Problem with parsing isPremium.")
+                return
+            }
+            guard let isBanned = data["isBanned"] as? Bool else {
+                print("Problem with parsing isBanned.")
+                return
+            }
+            guard let isHidden = data["isHidden"] as? Bool else {
+                print("Problem with parsing isHidden.")
+                return
+            }
+            guard let preferencesDict = data["preferences"] as? [String: Any] else {
+                print("Problem with parsing preferences.")
+                return
+            }
+            guard let ageRangeDict = preferencesDict["ageRange"] as? [String: Int] else {
+                print("Problem with parsing ageRangeDict.")
+                return
+            }
+            guard let from = ageRangeDict["from"] else {
+                print("Problem with parsing from.")
+                return
+            }
+            guard let to = ageRangeDict["to"] else {
+                print("Problem with parsing to.")
+                return
+            }
+            guard let lookingFor = preferencesDict["lookingFor"] as? [String] else {
+                print("Problem with parsing lookingFor.")
+                return
+            }
+            guard let detailsDict = data["details"] as? [String: String] else {
+                print("Problem with parsing details")
+                return
+            }
+            guard let about = detailsDict["about"] else {
+                print("Problem with parsing about.")
+                return
+            }
+            guard let dealBreakers = detailsDict["dealbreakers"] else {
+                print("Problem with parsing dealbreakers.")
+                return
+            }
+            guard let diet = detailsDict["diet"] else {
+                print("Problem with parsing diet.")
+                return
+            }
+            guard let images = data["images"] as? [String] else {
+                print("Problem with parsing images.")
+                return
+            }
+            guard let likes = data["likes"] as? [String] else {
+                print("Problem with parsing likes.")
+                return
+            }
+            
+            guard let blockedUsers = data["blockedUsers"] as? [String] else {
+                print("Problem with parsing blocked users.")
+                return
+            }
+            
+            guard let chats = data["chats"] as? [String] else {
+                print("Problem with parsing chats.")
+                return
+            }
+            
+            guard let likesLeft = data["likesLeft"] as? Int else {
+                print("Problem with parsing likesLeft.")
+                return
+            }
+            
+            guard let cooldownTime = data["cooldownTime"] as? String else {
+                print("Problem with parsing cooldownTime.")
+                return
+            }
+            
+            let group = DispatchGroup()
+            
+            // Create URL
+            var newLezImage: LezImage!
+            var newLezImages: [LezImage] = []
+            
+            for name in images {
+                group.enter()
+                self.generateURL(uid: uid, name: name).then { (url) in
+                    newLezImage = LezImage(name: name, url: url)
+                    newLezImages.append(newLezImage)
+                    group.leave()
+                }
+            }
+            
+            group.notify(queue: .main) {
+                let newLocation = Location(city: city, country: country)
+                let newPreferences = Preferences(ageRange: AgeRange(from: from, to: to), lookingFor: lookingFor)
+                let newDetails = Details(about: about, dealBreakers: dealBreakers, diet: Diet(rawValue: diet)!)
+                let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: newLezImages, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, blockedUsers: blockedUsers, chats: chats, likesLeft: likesLeft, cooldownTime: cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate)
+                fulfill(newUser)
+            }
         }
-        guard let name = data["name"] as? String else {
-            print("Problem with parsing name.")
-            return nil
-        }
-        guard let email = data["email"] as? String else {
-            print("Problem with parsing email.")
-            return nil
-        }
-        guard let age = data["age"] as? Int else {
-            print("Problem with parsing age.")
-            return nil
-        }
-        guard let locationDict = data["location"] as? [String: String] else {
-            print("Problem with parsing locationDict.")
-            return nil
-        }
-        guard let city = locationDict["city"] else {
-            print("Problem with parsing city.")
-            return nil
-        }
-        guard let country = locationDict["country"] else {
-            print("Problem with parsing country.")
-            return nil
-        }
-        guard let isOnboarded = data["isOnboarded"] as? Bool else {
-            print("Problem with parsing isOnboarded.")
-            return nil
-        }
-        guard let isPremium = data["isPremium"] as? Bool else {
-            print("Problem with parsing isPremium.")
-            return nil
-        }
-        guard let isBanned = data["isBanned"] as? Bool else {
-            print("Problem with parsing isBanned.")
-            return nil
-        }
-        guard let isHidden = data["isHidden"] as? Bool else {
-            print("Problem with parsing isHidden.")
-            return nil
-        }
-        guard let preferencesDict = data["preferences"] as? [String: Any] else {
-            print("Problem with parsing preferences.")
-            return nil
-        }
-        guard let ageRangeDict = preferencesDict["ageRange"] as? [String: Int] else {
-            print("Problem with parsing ageRangeDict.")
-            return nil
-        }
-        guard let from = ageRangeDict["from"] else {
-            print("Problem with parsing from.")
-            return nil
-        }
-        guard let to = ageRangeDict["to"] else {
-            print("Problem with parsing to.")
-            return nil
-        }
-        guard let lookingFor = preferencesDict["lookingFor"] as? [String] else {
-            print("Problem with parsing lookingFor.")
-            return nil
-        }
-        guard let detailsDict = data["details"] as? [String: String] else {
-            print("Problem with parsing details")
-            return nil
-        }
-        guard let about = detailsDict["about"] else {
-            print("Problem with parsing about.")
-            return nil
-        }
-        guard let dealBreakers = detailsDict["dealbreakers"] else {
-            print("Problem with parsing dealbreakers.")
-            return nil
-        }
-        guard let diet = detailsDict["diet"] else {
-            print("Problem with parsing diet.")
-            return nil
-        }
-        guard let images = data["images"] as? [String] else {
-            print("Problem with parsing images.")
-            return nil
-        }
-        
-        guard let likes = data["likes"] as? [String] else {
-            print("Problem with parsing likes.")
-            return nil
-        }
-        
-        guard let blockedUsers = data["blockedUsers"] as? [String] else {
-            print("Problem with parsing blocked users.")
-            return nil
-        }
-        
-        guard let chats = data["chats"] as? [String] else {
-            print("Problem with parsing chats.")
-            return nil
-        }
-        
-        guard let likesLeft = data["likesLeft"] as? Int else {
-            print("Problem with parsing likesLeft.")
-            return nil
-        }
-        
-        guard let cooldownTime = data["cooldownTime"] as? String else {
-            print("Problem with parsing cooldownTime.")
-            return nil
-        }
-        
-        let newLocation = Location(city: city, country: country)
-        let newPreferences = Preferences(ageRange: AgeRange(from: from, to: to), lookingFor: lookingFor)
-        let newDetails = Details(about: about, dealBreakers: dealBreakers, diet: Diet(rawValue: diet)!)
-        let newUser = User(uid: uid, name: name, email: email, age: age, location: newLocation, preferences: newPreferences, details: newDetails, images: images, isOnboarded: isOnboarded, isPremium: isPremium, isBanned: isBanned, isHidden: isHidden, likes: likes, blockedUsers: blockedUsers, chats: chats, likesLeft: likesLeft, cooldownTime: cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate)
-        return newUser
     }
     
     func fetchMessages(uid: String) -> Promise<[Message]?> {
@@ -685,6 +678,22 @@ final class FirestoreManager {
                     }
                 })
             })
+        }
+    }
+    
+    func generateURL(uid: String, name: String) -> Promise<String> {
+        return Promise { fufill, reject in
+            // Create a reference to the file you want to download
+            let ref = Storage.storage().reference().child("images/\(uid)/\(name)")
+            // Fetch the download URL
+            ref.downloadURL { url, error in
+                if let error = error {
+                    print(error.localizedDescription)
+                    reject(error)
+                } else {
+                    fufill(url!.absoluteString)
+                }
+            }
         }
     }
     

@@ -34,28 +34,14 @@ class User: Hashable {
     var isHidden: Bool
     var preferences: Preferences
     var details: Details
-    var images: [String]
+    var images: [LezImage]
     var likes: [String]?
     var blockedUsers: [String]?
     var chats: [String]?
     var likesLeft: Int
     var cooldownTime: Date?
-    
-    // Initial user cration, no images, flags are false
-    convenience init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String]) {
-        self.init(uid: uid, name: name, email: email, age: age, location: location, preferences: preferences, details: details, images: images, isOnboarded: false, isPremium: false, isBanned: false, isHidden: false, likes: [], blockedUsers: [], chats: [], likesLeft: 5, cooldownTime: nil)
-        self.uid = uid
-        self.name = name
-        self.email = email
-        self.age = age
-        self.location = location
-        self.preferences = preferences
-        self.details = details
-        self.images = images
-    }
-    
-    // With everything
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [String], isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?) {
+
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [LezImage], isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?) {
         self.uid = uid
         self.name = name
         self.email = email
@@ -99,4 +85,9 @@ struct Details: Encodable {
     var about: String
     var dealBreakers: String
     var diet: Diet
+}
+
+struct LezImage: Encodable {
+    var name: String
+    var url: String
 }
