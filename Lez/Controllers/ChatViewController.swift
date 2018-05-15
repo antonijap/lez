@@ -46,6 +46,7 @@ class ChatViewController: UIViewController {
         guard let currentUser = Auth.auth().currentUser else { return }
         self.myUid = currentUser.uid
         
+        // Listener if you get a new chat
         Firestore.firestore().collection("users").document(myUid)
             .addSnapshotListener { querySnapshot, error in
                 guard let _ = querySnapshot?.data() else {
@@ -55,13 +56,13 @@ class ChatViewController: UIViewController {
                 self.fetchChats()
         }
         
+        // Listener for your chats
         Firestore.firestore().collection("chats").whereField("participants.\(myUid!)", isEqualTo: true)
             .addSnapshotListener { querySnapshot, error in
                 guard let _ = querySnapshot?.documents else {
                     print("Error fetching documents: \(error!)")
                     return
                 }
-                print("Change detected.")
                 self.fetchChats()
         }
     }

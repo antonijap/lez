@@ -15,6 +15,7 @@ PODS:
   - BoringSSL/Implementation (10.0.2):
     - BoringSSL/Interface (= 10.0.2)
   - BoringSSL/Interface (10.0.2)
+  - CryptoSwift (0.9.0)
   - Eureka (4.1.1)
   - FacebookCore (0.3.0):
     - Bolts (~> 1.8)
@@ -115,15 +116,23 @@ PODS:
   - PromisesSwift (1.2):
     - PromisesObjC (= 1.2)
   - Protobuf (3.5.0)
+  - PusherSwift (6.0.0):
+    - CryptoSwift (~> 0.9.0)
+    - ReachabilitySwift (~> 4.1.0)
+    - StarscreamFork (~> 3.0.6)
+    - TaskQueue (~> 1.1.1)
   - RangeSeekSlider (1.8.0)
+  - ReachabilitySwift (4.1.0)
   - SDWebImage (4.3.3):
     - SDWebImage/Core (= 4.3.3)
   - SDWebImage/Core (4.3.3)
   - SnapKit (4.0.0)
   - Spring (1.0.5)
+  - StarscreamFork (3.0.6)
   - SwiftDate (4.5.1)
   - SwiftyJSON (4.1.0)
   - SwiftyStoreKit (0.13.2)
+  - TaskQueue (1.1.1)
   - TwitterCore (3.1.0)
   - TwitterKit (3.3.0):
     - TwitterCore (>= 3.1.0)
@@ -144,6 +153,7 @@ DEPENDENCIES:
   - Jelly
   - JGProgressHUD
   - PromisesSwift (~> 1.0)
+  - PusherSwift
   - RangeSeekSlider (from `https://github.com/WorldDownTown/RangeSeekSlider.git`, branch `swift_4`)
   - SDWebImage (~> 4.0)
   - SnapKit (~> 4.0.0)
@@ -160,6 +170,7 @@ SPEC REPOS:
     - Alertift
     - Bolts
     - BoringSSL
+    - CryptoSwift
     - Eureka
     - FacebookCore
     - FacebookLogin
@@ -189,11 +200,15 @@ SPEC REPOS:
     - PromisesObjC
     - PromisesSwift
     - Protobuf
+    - PusherSwift
+    - ReachabilitySwift
     - SDWebImage
     - SnapKit
+    - StarscreamFork
     - SwiftDate
     - SwiftyJSON
     - SwiftyStoreKit
+    - TaskQueue
     - TwitterCore
     - TwitterKit
 
@@ -218,6 +233,7 @@ SPEC CHECKSUMS:
   Alertift: df0df24a557e47360180092f5f3fceb675c96b51
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
   BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
+  CryptoSwift: bca8c5b653dcc2d9734409242a070ff53bafac86
   Eureka: b88fb930e42c79f8c03c373d0fcdc28c1d6c50ed
   FacebookCore: 3ffa190a3f1f96cec0e44d3fc221bc322c595ffa
   FacebookLogin: 0af839ea858faef99550d16596b87b4a8e8906e6
@@ -247,16 +263,20 @@ SPEC CHECKSUMS:
   PromisesObjC: 7358d6a58e012d77f9af3831e3d1390b78319c71
   PromisesSwift: 1ff253725dee00d711561b2c482b0cce789029c6
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
+  PusherSwift: f9312465c069707c86e9320fc3bedccb0afb38ed
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
+  ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
   SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   Spring: 3c7666eccefdeb87140008dc81043f89f8dbb787
+  StarscreamFork: e95299dfc1d27d55ae622edb9a3d254791dea66d
   SwiftDate: 7b56d42a221f582047287deb256b23fc5ed49a60
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   SwiftyStoreKit: b7563505440a68c9d9fa70bc43d8a97015519409
+  TaskQueue: 53a3cdaf817d9ce3cd50837ff6610aeb7b968997
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: 44e60f4abc0869b0125fc4b6b86c78b58318f88b
+PODFILE CHECKSUM: a8ae935242a33935202c04130264a5803db04c21
 
 COCOAPODS: 1.5.2

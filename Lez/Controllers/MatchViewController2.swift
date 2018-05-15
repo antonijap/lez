@@ -57,6 +57,10 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         setupLikesWidget()
         runLikesWidget()
         
+        let tabArray = self.tabBarController?.tabBar.items as NSArray?
+        let tabItem = tabArray?.object(at: 1) as! UITabBarItem
+        tabItem.badgeValue = "34"
+        
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {

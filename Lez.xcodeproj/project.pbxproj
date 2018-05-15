@@ -36,9 +36,11 @@
 		CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */; };
 		CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */; };
 		CFC4E8FE207232BB00D8B8FA /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */; };
+		CFCB139220AB16ED00CF51A5 /* PusherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCB139120AB16ED00CF51A5 /* PusherManager.swift */; };
 		CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE0BD662073DD810055FC73 /* CustomCells.swift */; };
 		CFE1E4EB206EB88D00A51D7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */; };
 		CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */; };
+		CFF3676720AAF4E30092B948 /* ChatManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF3676620AAF4E30092B948 /* ChatManager.swift */; };
 		CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -101,9 +103,11 @@
 		CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		CFC4E8FC207232B200D8B8FA /* Lez.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Lez.entitlements; sourceTree = "<group>"; };
 		CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		CFCB139120AB16ED00CF51A5 /* PusherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PusherManager.swift; sourceTree = "<group>"; };
 		CFE0BD662073DD810055FC73 /* CustomCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCells.swift; sourceTree = "<group>"; };
 		CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
+		CFF3676620AAF4E30092B948 /* ChatManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManager.swift; sourceTree = "<group>"; };
 		CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManager.swift; sourceTree = "<group>"; };
 		DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -249,6 +253,8 @@
 			isa = PBXGroup;
 			children = (
 				CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */,
+				CFF3676620AAF4E30092B948 /* ChatManager.swift */,
+				CFCB139120AB16ED00CF51A5 /* PusherManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -508,6 +514,7 @@
 				"${BUILT_PRODUCTS_DIR}/Alertift/Alertift.framework",
 				"${BUILT_PRODUCTS_DIR}/Bolts/Bolts.framework",
 				"${BUILT_PRODUCTS_DIR}/BoringSSL/openssl.framework",
+				"${BUILT_PRODUCTS_DIR}/CryptoSwift/CryptoSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/Eureka/Eureka.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKCoreKit/FBSDKCoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/FBSDKLoginKit/FBSDKLoginKit.framework",
@@ -524,13 +531,17 @@
 				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/PromisesSwift/Promises.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/PusherSwift/PusherSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/RangeSeekSlider/RangeSeekSlider.framework",
+				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
+				"${BUILT_PRODUCTS_DIR}/StarscreamFork/StarscreamFork.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftDate/SwiftDate.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyStoreKit/SwiftyStoreKit.framework",
+				"${BUILT_PRODUCTS_DIR}/TaskQueue/TaskQueue.framework",
 				"${PODS_ROOT}/TwitterCore/iOS/TwitterCore.framework",
 				"${PODS_ROOT}/TwitterKit/iOS/TwitterKit.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
@@ -547,6 +558,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Alertift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Bolts.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/openssl.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/CryptoSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Eureka.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKCoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBSDKLoginKit.framework",
@@ -563,13 +575,17 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Promises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PusherSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RangeSeekSlider.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StarscreamFork.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftDate.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyStoreKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TaskQueue.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TwitterCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TwitterKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
@@ -591,6 +607,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				CFCB139220AB16ED00CF51A5 /* PusherManager.swift in Sources */,
 				CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */,
 				CFA7842C20A9F2B4000DA074 /* SliderCell.swift in Sources */,
 				CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */,
@@ -607,6 +624,7 @@
 				CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */,
 				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,
 				CF7877F120A71685004E8693 /* ImagesViewController.swift in Sources */,
+				CFF3676720AAF4E30092B948 /* ChatManager.swift in Sources */,
 				CF9C7B9520A49B710044043B /* MatchViewController2.swift in Sources */,
 				CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */,
 				CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */,

@@ -1,0 +1,6 @@
+framework module StarscreamFork {
+  umbrella header "StarscreamFork-umbrella.h"
+
+  export *
+  module * { export * }
+}
