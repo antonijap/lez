@@ -265,6 +265,14 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         likesCounterWidgetView.layoutIfNeeded()
     }
     
+    func showLikesWidget() {
+        likesCounterWidgetView.isHidden = false
+    }
+    
+    func hideLikesWidget() {
+        likesCounterWidgetView.isHidden = true
+    }
+    
     private func runLikesWidget() {
         guard let me = Auth.auth().currentUser else { return }
         Firestore.firestore().collection("users").document(me.uid)
@@ -414,6 +422,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     }
     
     @objc func fetchUsers(for uid: String) {
+        runLikesWidget()
         refreshControl.endRefreshing()
         FirestoreManager.shared.fetchUser(uid: uid).then { (user) in
             self.user = user
@@ -421,9 +430,11 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                 self.users = users
                 print(users)
                 if users.count > 0 {
+                    self.showLikesWidget()
                     self.hideEmptyState()
                     self.tableView.reloadData()
                 } else {
+                    self.hideLikesWidget()
                     self.showEmptyState()
                 }
             })
