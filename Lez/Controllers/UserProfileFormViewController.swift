@@ -33,30 +33,28 @@ class UserProfileFormViewController: FormViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        handle = Auth.auth().addStateDidChangeListener { auth, user in
-            if let user = user {
-                Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
-                    guard let document = documentSnapshot else {
-                        print("Error fetching document: \(error!)")
-                        return
-                    }
-                    guard let data = document.data() else { return }
-                    
-                    guard let isOnboarded = data["isOnboarded"] as? Bool else {
-                        print("Problem with parsing isOnboarded.")
-                        return
-                    }
-                    
-                    if isOnboarded {
-                        FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
-                            self.user = user
-                            self.loc = Location(city: user.location.city, country: user.location.country)
-                            self.uid = user.uid
-                        }
-                    }
-                    self.onboardingContinues = true
+        // Check if user is onboarded
+        if let user = user {
+            Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
+                guard let document = documentSnapshot else {
+                    print("Error fetching document: \(error!)")
+                    return
                 }
+                guard let data = document.data() else { return }
+                
+                guard let isOnboarded = data["isOnboarded"] as? Bool else {
+                    print("Problem with parsing isOnboarded.")
+                    return
+                }
+                
+                if isOnboarded {
+                    FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
+                        self.user = user
+                        self.loc = Location(city: user.location.city, country: user.location.country)
+                        self.uid = user.uid
+                    }
+                }
+                self.onboardingContinues = true
             }
         }
     }
@@ -104,21 +102,10 @@ class UserProfileFormViewController: FormViewController {
         
         guard let dealbreakersRow: TextRow = form.rowBy(tag: "dealbreakers") else { return nil }
         guard let dealbreakers = dealbreakersRow.value else { return nil }
-        
-        guard let fromRow: IntRow = form.rowBy(tag: "from") else { return nil }
-        guard let from = fromRow.value else { return nil }
-        
-        guard let toRow: IntRow = form.rowBy(tag: "to") else { return nil }
-        guard let to = toRow.value else { return nil }
-        
         guard let location = loc else { return nil }
-        
         guard let uid = uid else { return nil }
-                
-        let ageRange = AgeRange(from: from, to: to)
-        let details = Details(about: about, dealBreakers: dealbreakers, diet: Diet(rawValue: diet)!)
-        let preferences = Preferences(ageRange: ageRange, lookingFor: lookingForArray)
-        
+        guard let agePreferenceObj: RangeSliderRow = form.rowBy(tag: "agePreference") else { return nil }
+
         let data: [String: Any] = [
             "uid": uid,
             "name": name,
@@ -130,15 +117,15 @@ class UserProfileFormViewController: FormViewController {
             ],
             "preferences": [
                 "ageRange": [
-                    "from": preferences.ageRange.from,
-                    "to": preferences.ageRange.to
+                    "from": Int(agePreferenceObj.cell.slider.selectedMinValue),
+                    "to": Int(agePreferenceObj.cell.slider.selectedMaxValue)
                 ],
-                "lookingFor": preferences.lookingFor
+                "lookingFor": lookingForArray
             ],
             "details": [
-                "about": details.about,
-                "dealbreakers": details.dealBreakers,
-                "diet": details.diet.rawValue
+                "about": about,
+                "dealbreakers": dealbreakers,
+                "diet": Diet(rawValue: diet)!
             ],
             "images": "",
             "isOnboarded": false,
@@ -383,24 +370,14 @@ class UserProfileFormViewController: FormViewController {
         
             +++ Section("Prefered Age Range")
         
-            <<< IntRow() { row in
-                row.title = "From age"
-                row.placeholder = ""
-                row.tag = "from"
-                row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.preferences.ageRange.from
-                }
-            }
-            
-            <<< IntRow() { row in
-                row.title = "To age"
-                row.placeholder = ""
-                row.tag = "to"
-                row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.preferences.ageRange.to
-                }
-            }
+            <<< RangeSliderRow() { row in
+                row.tag = "agePreference"
+                }.cellSetup({ (cell, row) in
+                    if let user = self.user {
+                        cell.slider.selectedMaxValue = CGFloat(user.preferences.ageRange.to)
+                        cell.slider.selectedMinValue = CGFloat(user.preferences.ageRange.from)
+                    }
+                    
+                })
     }
 }

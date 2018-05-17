@@ -31,7 +31,6 @@ class FilterViewController: FormViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let user = user {
-            let ageRange = AgeRange(from: user.preferences.ageRange.from, to: user.preferences.ageRange.to)
             form.setValues(["lookingFor": Set(user.preferences.lookingFor)])
             tableView.reloadData()
         }
@@ -113,24 +112,13 @@ class FilterViewController: FormViewController {
             }
             
             +++ Section("Prefered Age Range")
-            
-//            <<< IntRow() { row in
-//                row.title = "From age"
-//                row.placeholder = ""
-//                row.tag = "from"
-//            }
-            
+
             <<< RangeSliderRow() { row in
                 row.tag = "agePreference"
                 }.cellSetup({ (cell, row) in
                     cell.slider.selectedMaxValue = CGFloat(self.user!.preferences.ageRange.to)
                     cell.slider.selectedMinValue = CGFloat(self.user!.preferences.ageRange.from)
                 })
-            
-//            <<< IntRow() { row in
-//                row.title = "To age"
-//                row.placeholder = ""
-//                row.tag = "to"
         
     }
 }
