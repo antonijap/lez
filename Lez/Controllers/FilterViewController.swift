@@ -21,15 +21,16 @@ class FilterViewController: FormViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.setupForm()
-        self.setupNavigationBar()
-        
+        setupForm()
+        setupNavigationBar()
+        tableView.separatorStyle = .none
         view.backgroundColor = .white
         
         if let cu = Auth.auth().currentUser {
             uid = cu.uid
             FirestoreManager.shared.fetchUser(uid: cu.uid).then { (user) in
-                self.form.setValues(["from": user.preferences.ageRange.from, "to": user.preferences.ageRange.to, "lookingFor": Set(user.preferences.lookingFor), "agePreference": [20, 30]])
+                let ageRange = AgeRange(from: user.preferences.ageRange.from - 3, to: user.preferences.ageRange.to + 10)
+                self.form.setValues(["agePreference": ageRange, "lookingFor": Set(user.preferences.lookingFor), "agePreference": [20, 30]])
                 self.tableView.reloadData()
             }
         }
@@ -38,9 +39,17 @@ class FilterViewController: FormViewController {
     func setupNavigationBar() {
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(self.submit))
         navigationItem.leftBarButtonItem = UIBarButtonItem(title: "Back", style: .plain, target: self, action: #selector(self.dismissController))
-        navigationItem.title = "Filter Users"
+        navigationItem.title = "Filter Results"
+        navigationController?.navigationBar.backgroundColor = .white
+        navigationController?.navigationBar.setBackgroundImage(UIImage(named: "White"), for: UIBarMetrics.default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.layer.masksToBounds = false
+        navigationController?.navigationBar.layer.shadowColor = UIColor(red:0.90, green:0.90, blue:0.90, alpha:1.00).cgColor
+        navigationController?.navigationBar.layer.shadowOpacity = 0.8
+        navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 0, height: 2.0)
+        navigationController?.navigationBar.layer.shadowRadius = 4
     }
-    
+
     func setupCloseButton() {
         view.addSubview(closeButton)
         closeButton.snp.makeConstraints { (make) in
@@ -66,35 +75,35 @@ class FilterViewController: FormViewController {
             }
         }
         
-        guard let fromRow: IntRow = form.rowBy(tag: "from") else { return }
-        guard let from = fromRow.value else { return }
+        guard let agePreferenceObj: RangeSliderRow = form.rowBy(tag: "agePreference") else { return }
+        print(agePreferenceObj.value?)
+//        guard let agePreference = agePreferenceObj.value else { return }
+//        print(agePreference.from)
+//        print(agePreference.to)
         
-        guard let toRow: IntRow = form.rowBy(tag: "to") else { return }
-        guard let to = toRow.value else { return }
-        
-        // Update profile in Firebase
-        let data: [String: Any] = [
-            "preferences": [
-                "ageRange": [
-                    "from": from,
-                    "to": to
-                ],
-                "lookingFor": lookingForArray
-            ]
-        ]
-        
-        FirestoreManager.shared.updateUser(uid: uid!, data: data).then { (success) in
-            if success {
-                self.navigationController?.popViewController(animated: true)
-            } else {
-                Alertift.alert(title: "Ooopsie", message: "Updating profile failed. Please, try saving again.")
-                    .action(.default("Okay"))
-                    .show()
-            }
-        }
-        
-        delegate?.refreshTableView()
-        dismissController()
+//        // Update profile in Firebase
+//        let data: [String: Any] = [
+//            "preferences": [
+//                "ageRange": [
+//                    "from": from,
+//                    "to": to
+//                ],
+//                "lookingFor": lookingForArray
+//            ]
+//        ]
+//
+//        FirestoreManager.shared.updateUser(uid: uid!, data: data).then { (success) in
+//            if success {
+//                self.navigationController?.popViewController(animated: true)
+//            } else {
+//                Alertift.alert(title: "Ooopsie", message: "Updating profile failed. Please, try saving again.")
+//                    .action(.default("Okay"))
+//                    .show()
+//            }
+//        }
+//
+//        delegate?.refreshTableView()
+//        dismissController()
     }
     
     @objc func dismissController() {
@@ -120,8 +129,8 @@ class FilterViewController: FormViewController {
             
             <<< RangeSliderRow() { row in
                 // Slider uredi da je aksesibilan
-                row.tag = "agePreference"
-            }
+                    row.tag = "agePreference"
+                }
             
 //            <<< IntRow() { row in
 //                row.title = "To age"

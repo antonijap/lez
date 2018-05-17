@@ -62,6 +62,7 @@ class UserProfileFormViewController: FormViewController {
     }
     
     func setupNavigationBar() {
+        navigationController?.view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(self.submit))
         if let _ = user {
            // There is user show back button

@@ -71,7 +71,7 @@ struct Location: Encodable {
     var country: String
 }
 
-struct AgeRange: Encodable {
+struct AgeRange: Encodable, Equatable {
     var from: Int
     var to: Int
 }
