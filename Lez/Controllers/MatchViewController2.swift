@@ -517,6 +517,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     @objc func showFilters() {
         let filterViewController = FilterViewController()
         filterViewController.delegate = self
+        filterViewController.user = user
         let navigationController = UINavigationController(rootViewController: filterViewController)
         self.present(navigationController, animated: false, completion: nil)
     }

@@ -18,6 +18,7 @@ class FilterViewController: FormViewController {
     
     var uid: String?
     var delegate: MatchViewControllerDelegate?
+    var user: User?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,14 +26,14 @@ class FilterViewController: FormViewController {
         setupNavigationBar()
         tableView.separatorStyle = .none
         view.backgroundColor = .white
-        
-        if let cu = Auth.auth().currentUser {
-            uid = cu.uid
-            FirestoreManager.shared.fetchUser(uid: cu.uid).then { (user) in
-                let ageRange = AgeRange(from: user.preferences.ageRange.from - 3, to: user.preferences.ageRange.to + 10)
-                self.form.setValues(["agePreference": ageRange, "lookingFor": Set(user.preferences.lookingFor), "agePreference": [20, 30]])
-                self.tableView.reloadData()
-            }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let user = user {
+            let ageRange = AgeRange(from: user.preferences.ageRange.from, to: user.preferences.ageRange.to)
+            form.setValues(["lookingFor": Set(user.preferences.lookingFor)])
+            tableView.reloadData()
         }
     }
     
@@ -76,34 +77,26 @@ class FilterViewController: FormViewController {
         }
         
         guard let agePreferenceObj: RangeSliderRow = form.rowBy(tag: "agePreference") else { return }
-        print(agePreferenceObj.value?)
-//        guard let agePreference = agePreferenceObj.value else { return }
-//        print(agePreference.from)
-//        print(agePreference.to)
-        
-//        // Update profile in Firebase
-//        let data: [String: Any] = [
-//            "preferences": [
-//                "ageRange": [
-//                    "from": from,
-//                    "to": to
-//                ],
-//                "lookingFor": lookingForArray
-//            ]
-//        ]
-//
-//        FirestoreManager.shared.updateUser(uid: uid!, data: data).then { (success) in
-//            if success {
-//                self.navigationController?.popViewController(animated: true)
-//            } else {
-//                Alertift.alert(title: "Ooopsie", message: "Updating profile failed. Please, try saving again.")
-//                    .action(.default("Okay"))
-//                    .show()
-//            }
-//        }
-//
-//        delegate?.refreshTableView()
-//        dismissController()
+        let data: [String: Any] = [
+            "preferences": [
+                "ageRange": [
+                    "from": Int(agePreferenceObj.cell.slider.selectedMinValue),
+                    "to": Int(agePreferenceObj.cell.slider.selectedMaxValue)
+                ],
+                "lookingFor": lookingForArray
+            ]
+        ]
+        FirestoreManager.shared.updateUser(uid: user!.uid, data: data).then { (success) in
+            if success {
+                self.navigationController?.popViewController(animated: true)
+            } else {
+                Alertift.alert(title: "Ooopsie", message: "Updating profile failed. Please, try saving again.")
+                    .action(.default("Okay"))
+                    .show()
+            }
+        }
+        delegate?.refreshTableView()
+        dismissController()
     }
     
     @objc func dismissController() {
@@ -128,9 +121,11 @@ class FilterViewController: FormViewController {
 //            }
             
             <<< RangeSliderRow() { row in
-                // Slider uredi da je aksesibilan
-                    row.tag = "agePreference"
-                }
+                row.tag = "agePreference"
+                }.cellSetup({ (cell, row) in
+                    cell.slider.selectedMaxValue = CGFloat(self.user!.preferences.ageRange.to)
+                    cell.slider.selectedMinValue = CGFloat(self.user!.preferences.ageRange.from)
+                })
             
 //            <<< IntRow() { row in
 //                row.title = "To age"

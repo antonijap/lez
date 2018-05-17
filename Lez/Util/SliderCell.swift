@@ -40,10 +40,9 @@ final class RangeSliderCell: Cell<AgeRange>, CellType {
         slider.handleDiameter = 24
         slider.handleImage = UIImage(named: "Handle")
         slider.selectedHandleDiameterMultiplier = 1.0
-        slider.selectedMaxValue = 40
-        slider.selectedMinValue = 20
+        slider.step = 1.0
+        slider.enableStep = true
         backgroundColor = .clear
-        row.value = AgeRange(from: 20, to: 40)
     }
 }
 
