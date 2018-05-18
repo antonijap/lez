@@ -8,6 +8,7 @@
 
 import Foundation
 import PusherSwift
+import SwiftyJSON
 
 class PusherManager {
     
@@ -21,14 +22,19 @@ class PusherManager {
     
     private func connect() {
         let options = PusherClientOptions(
-            host: .cluster("YOUR_CLUSTER")
+            host: .cluster("eu")
         )
-        pusher = Pusher(key: "YOUR_APP_KEY", options: options)
+        pusher = Pusher(key: "b5bd116d3da803ac6d12", options: options)
         pusher.connect()
     }
     
     func subscribe(to uid: String) {
         channel = pusher.subscribe(uid)
+        
+    }
+    
+    func trigger(data: [String: Any]) {
+        channel?.trigger(eventName: "new_message", data: data)
     }
     
     func listen(for event: String) {

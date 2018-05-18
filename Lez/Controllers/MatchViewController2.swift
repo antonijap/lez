@@ -17,6 +17,7 @@ import SwiftDate
 import SDWebImage
 import Spring
 import JGProgressHUD
+import SwiftyJSON
 
 class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     
@@ -61,6 +62,20 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
+                if let chats = user.chats {
+                    for chat in chats {
+                        PusherManager.shared.subscribe(to: chat)
+                    }
+                    print("Subscribed, now off to listening.")
+                    PusherManager.shared.listen(for: "new_message")
+                    
+                    let data: [String: Any] = [
+                        "name": "antonija",
+                        "message": "Iz appa!"
+                    ]
+                    let data1 = data.dict2json()
+                    PusherManager.shared.trigger(data: ["Hello": "World"])
+                }
             }
         }
         
