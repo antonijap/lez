@@ -8,43 +8,27 @@
 
 import Foundation
 import Firebase
+import UIKit
 
 final class ChatManager {
     
     let db = Firestore.firestore()
     static let shared = ChatManager()
     
-    var lastUpdated: Date?
-    
-    func observeChangesInChats(for uid: String, completion: @escaping () -> Void) {
-        db.collection("chats").whereField("participants.\(uid)", isEqualTo: true)
-            .addSnapshotListener { snapshot, error in
-                guard let documents = snapshot?.documents else {
-                    print("Error fetching documents: \(error!)")
-                    return
-                }
-                for document in documents {
-                    let data = document.data()
-                    
-                    guard let newlastUpdated = data["lastUpdated"] as? String else {
-                        print("Problem with parsing lastUpdated.")
-                        return
-                    }
-                    let date = newlastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate
-                }
+    func listenForNewChats(user: String, completion: @escaping (_ number: Int) -> Void) {
+        db.collection("users").document(user).addSnapshotListener { snapshot, error in
+            guard let data = snapshot?.data() else {
+                print("Error fetching documents: \(error!)")
+                return
+            }
+            guard let chats = data["chats"] as? [String] else {
+                print("Problem with parsing isOnboarded.")
+                return
+            }
+            let number = chats.count
+            completion(number)
         }
     }
-    
-//    func observeIfNewCJelhat(for uid: String, completion: @escaping () -> Void) {
-//        Firestore.firestore().collection("users").document(uid)
-//            .addSnapshotListener { document, error in
-//                guard let document = quersnapshotySnapshot?.data() else {
-//                    print("Error fetching documents: \(error!)")
-//                    return
-//                }
-//                completion()
-//        }
-//    }
 }
 
 

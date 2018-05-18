@@ -46,6 +46,11 @@ class ChatViewController: UIViewController {
         guard let currentUser = Auth.auth().currentUser else { return }
         self.myUid = currentUser.uid
         
+        if let tabItems = self.tabBarController?.tabBar.items as NSArray? {
+            let tabItem = tabItems[1] as! UITabBarItem
+            tabItem.badgeValue = nil
+        }
+        
         // Listener if you get a new chat
         Firestore.firestore().collection("users").document(myUid)
             .addSnapshotListener { querySnapshot, error in
@@ -53,16 +58,19 @@ class ChatViewController: UIViewController {
                     print("Error fetching documents: \(error!)")
                     return
                 }
+                // Add a badge
                 self.fetchChats()
         }
         
         // Listener for your chats
+        // Dodaj ovo u ChatManager i napravi funkciju
         Firestore.firestore().collection("chats").whereField("participants.\(myUid!)", isEqualTo: true)
             .addSnapshotListener { querySnapshot, error in
                 guard let _ = querySnapshot?.documents else {
                     print("Error fetching documents: \(error!)")
                     return
                 }
+                // Add a badge
                 self.fetchChats()
         }
     }

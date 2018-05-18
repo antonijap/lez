@@ -567,7 +567,7 @@ final class FirestoreManager {
                                                 fulfill(true)
                                             } else {
                                                 fulfill(false)
-                                                PusherManager.shared.subscribe(to: newChatRef.documentID)
+                                                // Empty chat added, do something with notifications.
                                             }
                                         })
                                     })

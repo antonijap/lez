@@ -62,28 +62,26 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
-                if let chats = user.chats {
-                    for chat in chats {
-                        PusherManager.shared.subscribe(to: chat)
+                var chatCounter = 0
+                var isFirst = true
+                ChatManager.shared.listenForNewChats(user: user.uid) { number in
+                    if isFirst {
+                        chatCounter = number
+                        isFirst = false
+                    } else {
+                        if chatCounter < number {
+                            if let tabItems = self.tabBarController?.tabBar.items as NSArray? {
+                                let tabItem = tabItems[1] as! UITabBarItem
+                                tabItem.badgeValue = "1"
+                            }
+                        }
                     }
-                    print("Subscribed, now off to listening.")
-                    PusherManager.shared.listen(for: "new_message")
-                    
-                    let data: [String: Any] = [
-                        "name": "antonija",
-                        "message": "Iz appa!"
-                    ]
-                    let data1 = data.dict2json()
-                    PusherManager.shared.trigger(data: ["Hello": "World"])
                 }
             }
         }
-        
-//        let tabArray = self.tabBarController?.tabBar.items as NSArray?
-//        let tabItem = tabArray?.object(at: 1) as! UITabBarItem
-//        tabItem.badgeValue = "34"
-        
+                
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
+        
         
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in

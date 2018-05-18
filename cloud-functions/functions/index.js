@@ -26,3 +26,11 @@ exports.createToken = functions.https.onRequest((req, res) => {
     });
     res.status(authData.status).send(authData.body);
 })
+
+exports.triggerEvent = functions.https.onRequest((req, res) => {
+  const channel = req.body.channel
+  const event = req.body.event
+  const data = req.body.data
+  pusher.trigger(channel, event, data);
+  res.status(authData.status).send(authData.body);
+})
