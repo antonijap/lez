@@ -189,41 +189,6 @@ class ImagesViewController: UIViewController {
                     self.stopSpinner()
                 })
         } else {
-//            if let user = self.user {
-//                for imageView in self.getAllImageViews() {
-//                    group.enter()
-//                    self.uploadImage(image: imageView.image!).then { (url) in
-//                        self.imageURLs.append(url)
-//                        group.leave()
-//                    }
-//                }
-//                group.notify(queue: .main) {
-//                    FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageURLs]).then({ (success) in
-//                        self.stopSpinner()
-//                        self.profileViewControllerDelegate?.refreshProfile()
-//                        self.navigationController?.popToRootViewController(animated: true)
-//                    })
-//                }
-//            } else {
-//                for imageView in self.getAllImageViews() {
-//                    group.enter()
-//                    self.uploadImage(image: imageView.image!).then { (url) in
-//                        self.imageURLs.append(url)
-//                        group.leave()
-//                    }
-//                }
-//                group.notify(queue: .main) {
-//                    guard let user = Auth.auth().currentUser else { return }
-//                    FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageURLs, "isOnboarded": true]).then({ (success) in
-//                        self.stopSpinner()
-//                        self.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-//                            self.matchViewControllerDelegate?.fetchUsers(for: user.uid)
-//                            self.dismiss(animated: true, completion: nil)
-//                        })
-//                    })
-//                }
-//            }
-            
             if let user = self.user {
                 deleteImages(url: user.images).then { success in
                     if success {
@@ -264,7 +229,9 @@ class ImagesViewController: UIViewController {
                         self.stopSpinner()
                         self.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
                             self.matchViewControllerDelegate?.fetchUsers(for: user.uid)
-                            self.dismiss(animated: true, completion: nil)
+                            self.dismiss(animated: true, completion: {
+                                NotificationCenter.default.post(name: Notification.Name("RefreshTableView"), object: nil)
+                            })
                         })
                     })
                 }

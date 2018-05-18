@@ -57,9 +57,11 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         setupLikesWidget()
         runLikesWidget()
         
-        let tabArray = self.tabBarController?.tabBar.items as NSArray?
-        let tabItem = tabArray?.object(at: 1) as! UITabBarItem
-        tabItem.badgeValue = "34"
+//        let tabArray = self.tabBarController?.tabBar.items as NSArray?
+//        let tabItem = tabArray?.object(at: 1) as! UITabBarItem
+//        tabItem.badgeValue = "34"
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
         
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
@@ -111,15 +113,19 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     // MARK: - Methods
     private func presentRegisterViewController() {
         let registerViewController = RegisterViewController()
-        registerViewController.imageGalleryViewController = ImagesViewController()
-        registerViewController.imageGalleryViewController?.matchViewControllerDelegate = self
         let navigationController = UINavigationController(rootViewController: registerViewController)
         self.present(navigationController, animated: false, completion: nil)
     }
     
     @objc func refreshTableView() {
         guard let user = user else {
-            print("No user. Error happened.")
+            print("No user. Will fetch from Firebase.")
+            if let currentUser = Auth.auth().currentUser {
+                FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                    self.user = user
+                    self.fetchUsers(for: user.uid)
+                }
+            }
             return
         }
         fetchUsers(for: user.uid)

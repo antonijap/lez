@@ -23,7 +23,6 @@ class UserProfileFormViewController: FormViewController {
     var profileViewControllerDelegate: ProfileViewControllerDelegate?
     var handle: AuthStateDidChangeListenerHandle?
     var onboardingContinues = false
-    var imageGalleryViewController: ImagesViewController?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,11 +102,11 @@ class UserProfileFormViewController: FormViewController {
         guard let dealbreakersRow: TextRow = form.rowBy(tag: "dealbreakers") else { return nil }
         guard let dealbreakers = dealbreakersRow.value else { return nil }
         guard let location = loc else { return nil }
-        guard let uid = uid else { return nil }
+        guard let currentUser = Auth.auth().currentUser else { return nil }
         guard let agePreferenceObj: RangeSliderRow = form.rowBy(tag: "agePreference") else { return nil }
-
+        
         let data: [String: Any] = [
-            "uid": uid,
+            "uid": currentUser.uid,
             "name": name,
             "email": email,
             "age": age,
@@ -125,7 +124,7 @@ class UserProfileFormViewController: FormViewController {
             "details": [
                 "about": about,
                 "dealbreakers": dealbreakers,
-                "diet": Diet(rawValue: diet)!
+                "diet": diet
             ],
             "images": "",
             "isOnboarded": false,
@@ -173,20 +172,11 @@ class UserProfileFormViewController: FormViewController {
         
         guard let dealbreakersRow: TextRow = form.rowBy(tag: "dealbreakers") else { return nil }
         guard let dealbreakers = dealbreakersRow.value else { return nil }
-        
-        guard let fromRow: IntRow = form.rowBy(tag: "from") else { return nil }
-        guard let from = fromRow.value else { return nil }
-        
-        guard let toRow: IntRow = form.rowBy(tag: "to") else { return nil }
-        guard let to = toRow.value else { return nil }
-        
         guard let location = loc else { return nil }
-        
-        let ageRange = AgeRange(from: from, to: to)
-        let details = Details(about: about, dealBreakers: dealbreakers, diet: Diet(rawValue: diet)!)
-        let preferences = Preferences(ageRange: ageRange, lookingFor: lookingForArray)
-        
+        guard let currentUser = Auth.auth().currentUser else { return nil }
+        guard let agePreferenceObj: RangeSliderRow = form.rowBy(tag: "agePreference") else { return nil }
         let data: [String: Any] = [
+            "uid": currentUser.uid,
             "name": name,
             "email": email,
             "age": age,
@@ -196,15 +186,15 @@ class UserProfileFormViewController: FormViewController {
             ],
             "preferences": [
                 "ageRange": [
-                    "from": preferences.ageRange.from,
-                    "to": preferences.ageRange.to
+                    "from": Int(agePreferenceObj.cell.slider.selectedMinValue),
+                    "to": Int(agePreferenceObj.cell.slider.selectedMaxValue)
                 ],
-                "lookingFor": preferences.lookingFor
+                "lookingFor": lookingForArray
             ],
             "details": [
-                "about": details.about,
-                "dealbreakers": details.dealBreakers,
-                "diet": details.diet.rawValue
+                "about": about,
+                "dealbreakers": dealbreakers,
+                "diet": diet
             ]
         ]
         return data
@@ -237,14 +227,17 @@ class UserProfileFormViewController: FormViewController {
                     if onboardingContinues {
                         if let data = parseFormIntoData() {
                             FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).then { (success) in
-                                self.navigationController?.pushViewController(self.imageGalleryViewController!, animated: true)
+                                let imagesViewController = ImagesViewController()
+                                self.navigationItem.hidesBackButton = true
+                                self.navigationController?.pushViewController(imagesViewController, animated: true)
                             }
                         }
                     } else {
                         if let data = parseFormIntoData() {
                             FirestoreManager.shared.addUser(uid: currentUser.uid, data: data).then { (success) in
-//                                let imageGalleryViewController = ImagesViewController()
-                                self.navigationController?.pushViewController(self.imageGalleryViewController!, animated: true)
+                                let imagesViewController = ImagesViewController()
+                                self.navigationItem.hidesBackButton = true
+                                self.navigationController?.pushViewController(imagesViewController, animated: true)
                             }
                         }
                     }
@@ -377,7 +370,6 @@ class UserProfileFormViewController: FormViewController {
                         cell.slider.selectedMaxValue = CGFloat(user.preferences.ageRange.to)
                         cell.slider.selectedMinValue = CGFloat(user.preferences.ageRange.from)
                     }
-                    
                 })
     }
 }

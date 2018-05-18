@@ -17,7 +17,6 @@ class RegisterViewController: UIViewController {
     
     let facebookLoginButton = UIButton()
     let hud = JGProgressHUD(style: .dark)
-    var imageGalleryViewController: ImagesViewController?
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -78,7 +77,6 @@ class RegisterViewController: UIViewController {
                                     userProfileFormViewController.name = currentUser.user.displayName!
                                     userProfileFormViewController.email = currentUser.user.email!
                                     userProfileFormViewController.uid = currentUser.user.uid
-                                    userProfileFormViewController.imageGalleryViewController = self.imageGalleryViewController!
                                     self.navigationItem.setHidesBackButton(true, animated: true)
                                     self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                                 }
@@ -88,7 +86,6 @@ class RegisterViewController: UIViewController {
                             userProfileFormViewController.name = currentUser.user.displayName!
                             userProfileFormViewController.email = currentUser.user.email!
                             userProfileFormViewController.uid = currentUser.user.uid
-                            userProfileFormViewController.imageGalleryViewController = self.imageGalleryViewController!
                             self.navigationItem.setHidesBackButton(true, animated: true)
                             self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                         }
@@ -153,7 +150,6 @@ class RegisterViewController: UIViewController {
                                     userProfileFormViewController.name = currentUser.user.displayName!
                                     userProfileFormViewController.email = currentUser.user.email!
                                     userProfileFormViewController.uid = currentUser.user.uid
-                                    userProfileFormViewController.imageGalleryViewController = self.imageGalleryViewController!
                                     self.navigationItem.setHidesBackButton(true, animated: true)
                                     self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                                 }
@@ -163,7 +159,6 @@ class RegisterViewController: UIViewController {
                             userProfileFormViewController.name = currentUser.user.displayName!
                             userProfileFormViewController.email = currentUser.user.email!
                             userProfileFormViewController.uid = currentUser.user.uid
-                            userProfileFormViewController.imageGalleryViewController = self.imageGalleryViewController!
                             self.navigationItem.setHidesBackButton(true, animated: true)
                             self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                         }
