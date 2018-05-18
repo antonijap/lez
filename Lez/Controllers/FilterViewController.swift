@@ -26,10 +26,6 @@ class FilterViewController: FormViewController {
         setupNavigationBar()
         tableView.separatorStyle = .none
         view.backgroundColor = .white
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
         if let user = user {
             form.setValues(["lookingFor": Set(user.preferences.lookingFor)])
             tableView.reloadData()
@@ -64,6 +60,7 @@ class FilterViewController: FormViewController {
     @objc func submit() {
         guard let lookingForRow: MultipleSelectorRow<String> = form.rowBy(tag: "lookingFor") else { return }
         guard let lookingFor = lookingForRow.value else { return }
+        print(lookingFor)
         var lookingForArray: [String] = []
         for l in lookingFor {
             if l == LookingFor.friendship.rawValue {
@@ -102,6 +99,10 @@ class FilterViewController: FormViewController {
         dismiss(animated: true, completion: nil)
     }
     
+    @objc func multipleSelectorDone(_ item:UIBarButtonItem) {
+        navigationController?.popViewController(animated: true)
+    }
+    
     func setupForm() {
         form +++ Section("Matching Preferences")
             
@@ -109,6 +110,9 @@ class FilterViewController: FormViewController {
                 row.title = "Looking for"
                 row.options = [LookingFor.relationship.rawValue, LookingFor.friendship.rawValue, LookingFor.sex.rawValue]
                 row.tag = "lookingFor"
+            }.onPresent { from, to in
+                let rightButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.multipleSelectorDone(_:)))
+                to.navigationItem.rightBarButtonItem = rightButton
             }
             
             +++ Section("Prefered Age Range")

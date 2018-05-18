@@ -16,6 +16,7 @@ import Alamofire
 import SwiftDate
 import SDWebImage
 import Spring
+import JGProgressHUD
 
 class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     
@@ -44,7 +45,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     private var seconds = 86400
     private var timer = Timer()
     private var handle: AuthStateDidChangeListenerHandle?
-    
+    private let hud = JGProgressHUD(style: .dark)
     
     // MARK: - Life Cycle
     
@@ -56,6 +57,12 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         setupNoUsersState()
         setupLikesWidget()
         runLikesWidget()
+        
+        if let currentUser = Auth.auth().currentUser {
+            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                self.user = user
+            }
+        }
         
 //        let tabArray = self.tabBarController?.tabBar.items as NSArray?
 //        let tabItem = tabArray?.object(at: 1) as! UITabBarItem
@@ -105,12 +112,18 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         }
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        print("viewWillAppear")
+    // MARK: - Methods
+    private func startSpinner() {
+        hud.textLabel.text = "Fetching Users"
+        hud.vibrancyEnabled = true
+        hud.interactionType = .blockAllTouches
+        hud.show(in: view)
     }
     
-    // MARK: - Methods
+    private func stopSpinner() {
+        hud.dismiss(animated: true)
+    }
+    
     private func presentRegisterViewController() {
         let registerViewController = RegisterViewController()
         let navigationController = UINavigationController(rootViewController: registerViewController)
@@ -428,6 +441,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     }
     
     @objc func fetchUsers(for uid: String) {
+        startSpinner()
         runLikesWidget()
         refreshControl.endRefreshing()
         FirestoreManager.shared.fetchUser(uid: uid).then { (user) in
@@ -436,10 +450,12 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                 self.users = users
                 print(users)
                 if users.count > 0 {
+                    self.stopSpinner()
                     self.showLikesWidget()
                     self.hideEmptyState()
                     self.tableView.reloadData()
                 } else {
+                    self.stopSpinner()
                     self.hideLikesWidget()
                     self.showEmptyState()
                 }
@@ -492,7 +508,17 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                                     FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: me.uid, likedUserUid: self.users[sender.tag].uid).then({ (success) in
                                         if success {
                                             self.addImagesToMatch(myUrl: me.images.first!.url, herUrl: self.users[sender.tag].images.first!.url)
-                                            self.showMatch()
+                                            let data: [String: Any] = [
+                                                "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+                                                "participants": [
+                                                    me.uid: true,
+                                                    self.users[sender.tag].uid: true
+                                                ],
+                                                "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+                                                ]
+                                            FirestoreManager.shared.addEmptyChat(data: data, for: me.uid, herUid: self.users[sender.tag].uid).then({ (success) in
+                                                self.showMatch()
+                                            })
                                         }
                                     })
                                     

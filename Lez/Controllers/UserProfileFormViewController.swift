@@ -351,7 +351,6 @@ class UserProfileFormViewController: FormViewController {
                 }
             }
             
-            
             <<< TextRow() { row in
                 row.title = "Dealbreakers"
                 row.tag = "dealbreakers"
