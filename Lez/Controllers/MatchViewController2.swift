@@ -572,10 +572,14 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                 var likes = user.likes!
                 likes.append(her.uid)
                 
-                if (likesLeft - 1) == 0 {
-                    data = ["likes": likes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")]
+                if user.isPremium {
+                    data = ["likes": likes]
                 } else {
-                    data = ["likes": likes, "likesLeft": likesLeft - 1]
+                    if (likesLeft - 1) == 0 {
+                        data = ["likes": likes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")]
+                    } else {
+                        data = ["likes": likes, "likesLeft": likesLeft - 1]
+                    }
                 }
                 
                 Firestore.firestore().collection("users").document(user.uid).updateData(data) { err in
