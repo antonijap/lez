@@ -21,6 +21,7 @@ import SwiftyJSON
 import Alertift
 import PusherSwift
 import Toast_Swift
+import SwiftyStoreKit
 
 class MatchViewController2: UIViewController, MatchViewControllerDelegate, PusherDelegate {
     
@@ -97,6 +98,19 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         runLikesWidget()
         DefaultsManager.shared.save(number: 0)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
+        
+        SwiftyStoreKit.retrieveProductsInfo(["com.antonijapek.Lez.premium"]) { result in
+            if let product = result.retrievedProducts.first {
+                let priceString = product.localizedPrice!
+                print("Product: \(product.localizedDescription), price: \(priceString)")
+            }
+            else if let invalidProductId = result.invalidProductIDs.first {
+                print("Invalid product identifier: \(invalidProductId)")
+            }
+            else {
+                print("Error: \(String(describing: result.error))")
+            }
+        }
         
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
@@ -554,9 +568,10 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                                                 ]
                                             FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[sender.tag].uid).then({ (ref) in
                                                 self.showMatch()
-                                                // Push message
                                                 let parameters: Parameters = ["uid": "\(self.users[sender.tag].uid)"]
                                                 Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/sendPushNotification", method: .post, parameters: parameters, encoding: URLEncoding.default)
+                                                let parameters2: Parameters = ["channel": self.users[sender.tag].uid, "event": Events.newMessage.rawValue, "message": "New Match"]
+                                                Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters2, encoding: URLEncoding.default)
                                                 self.stopSpinner()
                                             })
                                         } else {

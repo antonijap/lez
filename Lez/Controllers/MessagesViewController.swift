@@ -259,7 +259,6 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
                     "message": text
                 ]
                 FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
-                    print("Will send message to: \(self.herUid!)")
                     let parameters: Parameters = ["channel": self.herUid!, "event": Events.newMessage.rawValue, "message": "\(self.name!) sent message"]
                     Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters, encoding: URLEncoding.default)
                     self.populateMessages()
