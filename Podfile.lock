@@ -121,6 +121,7 @@ PODS:
     - ReachabilitySwift (~> 4.1.0)
     - StarscreamFork (~> 3.0.6)
     - TaskQueue (~> 1.1.1)
+  - PushNotifications (0.10.7)
   - RangeSeekSlider (1.8.0)
   - ReachabilitySwift (4.1.0)
   - SDWebImage (4.3.3):
@@ -133,6 +134,7 @@ PODS:
   - SwiftyJSON (4.1.0)
   - SwiftyStoreKit (0.13.2)
   - TaskQueue (1.1.1)
+  - Toast-Swift (3.0.1)
   - TwitterCore (3.1.0)
   - TwitterKit (3.3.0):
     - TwitterCore (>= 3.1.0)
@@ -154,6 +156,7 @@ DEPENDENCIES:
   - JGProgressHUD
   - PromisesSwift (~> 1.0)
   - PusherSwift
+  - PushNotifications
   - RangeSeekSlider (from `https://github.com/WorldDownTown/RangeSeekSlider.git`, branch `swift_4`)
   - SDWebImage (~> 4.0)
   - SnapKit (~> 4.0.0)
@@ -161,6 +164,7 @@ DEPENDENCIES:
   - SwiftDate (~> 4.0)
   - SwiftyJSON (~> 4.0)
   - SwiftyStoreKit
+  - Toast-Swift (~> 3.0.1)
   - TwitterKit
 
 SPEC REPOS:
@@ -201,6 +205,7 @@ SPEC REPOS:
     - PromisesSwift
     - Protobuf
     - PusherSwift
+    - PushNotifications
     - ReachabilitySwift
     - SDWebImage
     - SnapKit
@@ -209,6 +214,7 @@ SPEC REPOS:
     - SwiftyJSON
     - SwiftyStoreKit
     - TaskQueue
+    - Toast-Swift
     - TwitterCore
     - TwitterKit
 
@@ -264,6 +270,7 @@ SPEC CHECKSUMS:
   PromisesSwift: 1ff253725dee00d711561b2c482b0cce789029c6
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   PusherSwift: f9312465c069707c86e9320fc3bedccb0afb38ed
+  PushNotifications: 2e3df1e301e19ae2a100267f8387da5fc471ecc7
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
   SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
@@ -274,9 +281,10 @@ SPEC CHECKSUMS:
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   SwiftyStoreKit: b7563505440a68c9d9fa70bc43d8a97015519409
   TaskQueue: 53a3cdaf817d9ce3cd50837ff6610aeb7b968997
+  Toast-Swift: ba0b01b095aada709d915f9beb1d38184a2721c3
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: a8ae935242a33935202c04130264a5803db04c21
+PODFILE CHECKSUM: b1bd98cc9b95635d9019745e2b00021d367fc18b
 
 COCOAPODS: 1.5.2

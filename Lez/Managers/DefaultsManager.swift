@@ -11,18 +11,16 @@ import Foundation
 final class DefaultsManager {
     
     private init() { }
-    
     static let shared = DefaultsManager()
+    private let defaults = UserDefaults.standard
     
-    let defaults = UserDefaults.standard
-    
-    func saveUid(uid: String) {
-        defaults.set(uid, forKey: "uid")
+    func save(number: Int) {
+        defaults.set(number, forKey: "number")
     }
     
-    func fetchUID() -> String? {
-        let user = defaults.object(forKey: "uid") as? String
-        return user
+    func fetchNumber() -> Int {
+        let number = defaults.object(forKey: "number") as! Int
+        return number
     }
     
 }

@@ -39,7 +39,7 @@
 		CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE0BD662073DD810055FC73 /* CustomCells.swift */; };
 		CFE1E4EB206EB88D00A51D7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */; };
 		CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */; };
-		CFF3676720AAF4E30092B948 /* ChatManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF3676620AAF4E30092B948 /* ChatManager.swift */; };
+		CFF3676720AAF4E30092B948 /* PusherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF3676620AAF4E30092B948 /* PusherManager.swift */; };
 		CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -105,7 +105,7 @@
 		CFE0BD662073DD810055FC73 /* CustomCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCells.swift; sourceTree = "<group>"; };
 		CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
-		CFF3676620AAF4E30092B948 /* ChatManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatManager.swift; sourceTree = "<group>"; };
+		CFF3676620AAF4E30092B948 /* PusherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PusherManager.swift; sourceTree = "<group>"; };
 		CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManager.swift; sourceTree = "<group>"; };
 		DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.debug.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -226,7 +226,6 @@
 			children = (
 				CF2DF208203C13170054CC1A /* MatchViewController.swift */,
 				CF1C6C52206F631A0018DCD9 /* ImageGalleryViewController.swift */,
-				CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */,
 			);
 			path = "Trash Candidate";
 			sourceTree = "<group>";
@@ -250,8 +249,9 @@
 		CFC4E8F92070ED6900D8B8FA /* Managers */ = {
 			isa = PBXGroup;
 			children = (
+				CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */,
 				CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */,
-				CFF3676620AAF4E30092B948 /* ChatManager.swift */,
+				CFF3676620AAF4E30092B948 /* PusherManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -356,6 +356,9 @@
 						CreatedOnToolsVersion = 9.2;
 						ProvisioningStyle = Automatic;
 						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = 1;
+							};
 							com.apple.InAppPurchase = {
 								enabled = 1;
 							};
@@ -528,6 +531,7 @@
 				"${BUILT_PRODUCTS_DIR}/PromisesObjC/FBLPromises.framework",
 				"${BUILT_PRODUCTS_DIR}/PromisesSwift/Promises.framework",
 				"${BUILT_PRODUCTS_DIR}/Protobuf/Protobuf.framework",
+				"${BUILT_PRODUCTS_DIR}/PushNotifications/PushNotifications.framework",
 				"${BUILT_PRODUCTS_DIR}/PusherSwift/PusherSwift.framework",
 				"${BUILT_PRODUCTS_DIR}/RangeSeekSlider/RangeSeekSlider.framework",
 				"${BUILT_PRODUCTS_DIR}/ReachabilitySwift/Reachability.framework",
@@ -539,6 +543,7 @@
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyStoreKit/SwiftyStoreKit.framework",
 				"${BUILT_PRODUCTS_DIR}/TaskQueue/TaskQueue.framework",
+				"${BUILT_PRODUCTS_DIR}/Toast-Swift/Toast_Swift.framework",
 				"${PODS_ROOT}/TwitterCore/iOS/TwitterCore.framework",
 				"${PODS_ROOT}/TwitterKit/iOS/TwitterKit.framework",
 				"${BUILT_PRODUCTS_DIR}/gRPC/GRPCClient.framework",
@@ -572,6 +577,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FBLPromises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Promises.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Protobuf.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PushNotifications.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/PusherSwift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/RangeSeekSlider.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Reachability.framework",
@@ -583,6 +589,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyStoreKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TaskQueue.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Toast_Swift.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TwitterCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/TwitterKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GRPCClient.framework",
@@ -620,7 +627,7 @@
 				CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */,
 				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,
 				CF7877F120A71685004E8693 /* ImagesViewController.swift in Sources */,
-				CFF3676720AAF4E30092B948 /* ChatManager.swift in Sources */,
+				CFF3676720AAF4E30092B948 /* PusherManager.swift in Sources */,
 				CF9C7B9520A49B710044043B /* MatchViewController2.swift in Sources */,
 				CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */,
 				CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */,

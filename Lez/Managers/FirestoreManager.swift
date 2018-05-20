@@ -229,6 +229,15 @@ final class FirestoreManager {
         }
     }
     
+    func checkIfMatch(currentUserUid: String, likedUserUid: String, completion: @escaping (_ isMatch: Bool) -> Void) {
+        fetchUser(uid: likedUserUid).then({ (user) in
+            guard let likes = user.likes else { return }
+            if likes.contains(currentUserUid) {
+                completion(true)
+            }
+        })
+    }
+    
     func updateImages(uid: String, urls: [String]) -> Promise<Bool>  {
         return Promise { fulfill, reject in
             let updateImagesRef = self.db.collection("users").document(uid)
@@ -517,7 +526,7 @@ final class FirestoreManager {
         }
     }
     
-    func addEmptyChat(data: [String: Any], for uid: String, herUid: String) -> Promise<Bool> {
+    func addEmptyChat(data: [String: Any], for uid: String, herUid: String) -> Promise<String> {
         return Promise { fulfill, reject in
             let group = DispatchGroup()
             let newChatRef = self.db.collection("chats").addDocument(data: data, completion: { (err) in
@@ -526,7 +535,6 @@ final class FirestoreManager {
                     print("Error creating report: \(err)")
                     reject(err)
                 } else {
-                    print("Added")
                     group.leave()
                 }
             })
@@ -564,10 +572,7 @@ final class FirestoreManager {
                                         ]
                                         self.updateUser(uid: herUid, data: data).then({ (success) in
                                             if success {
-                                                fulfill(true)
-                                            } else {
-                                                fulfill(false)
-                                                // Empty chat added, do something with notifications.
+                                                fulfill(newChatRef.documentID)
                                             }
                                         })
                                     })
@@ -651,6 +656,9 @@ final class FirestoreManager {
     func classicUpdateLike(myUid: String, herUid: String) -> Promise<Bool> {
         return Promise { fulfill, reject in
             self.fetchUser(uid: myUid).then({ (user) in
+                if user.isPremium {
+                    fulfill(true)
+                }
                 let likesLeft = user.likesLeft
                 var newLikes = user.likes!
                 newLikes.append(herUid)

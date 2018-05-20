@@ -15,10 +15,9 @@ struct Message {
     var message: String
 }
 
-struct Message2: Decodable {
-    var created: String
-    var sender: String
-    var text: String
+struct Participant {
+    var uid: String
+    var hasReadLastMessage: Bool
 }
 
 class Chat {

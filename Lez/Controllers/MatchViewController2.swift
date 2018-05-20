@@ -18,8 +18,11 @@ import SDWebImage
 import Spring
 import JGProgressHUD
 import SwiftyJSON
+import Alertift
+import PusherSwift
+import Toast_Swift
 
-class MatchViewController2: UIViewController, MatchViewControllerDelegate {
+class MatchViewController2: UIViewController, MatchViewControllerDelegate, PusherDelegate {
     
     // MARK: - Properties
     private let tableView = UITableView()
@@ -47,8 +50,42 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     private var timer = Timer()
     private var handle: AuthStateDidChangeListenerHandle?
     private let hud = JGProgressHUD(style: .dark)
+    private var pusher: Pusher!
+    private var options: PusherClientOptions!
     
     // MARK: - Life Cycle
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        if let currentUser = Auth.auth().currentUser {
+            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                self.user = user
+                self.options = PusherClientOptions(host: .cluster("eu"))
+                self.pusher = Pusher(key: "b5bd116d3da803ac6d12", options: self.options)
+                self.pusher.connection.delegate = self
+                self.pusher.connect()
+
+                let channel = self.pusher.subscribe(currentUser.uid)
+
+                let _ = channel.bind(eventName: Events.newMessage.rawValue, callback: { (data: Any?) -> Void in
+                    if let data = data as? [String : AnyObject] {
+                        if let message = data["message"] as? String {
+                            self.view.makeToast(message, duration: 2.0, position: .bottom)
+                            let increment = DefaultsManager.shared.fetchNumber() + 1
+                            if let tabItems = self.tabBarController?.tabBar.items as NSArray? {
+                                let tabItem = tabItems[1] as! UITabBarItem
+                                tabItem.badgeValue = String(increment)
+                                DefaultsManager.shared.save(number: increment)
+                            }
+                        }
+                    }
+                })
+            }
+        }
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        pusher.disconnect()
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -58,30 +95,8 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         setupNoUsersState()
         setupLikesWidget()
         runLikesWidget()
-        
-        if let currentUser = Auth.auth().currentUser {
-            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
-                self.user = user
-                var chatCounter = 0
-                var isFirst = true
-                ChatManager.shared.listenForNewChats(user: user.uid) { number in
-                    if isFirst {
-                        chatCounter = number
-                        isFirst = false
-                    } else {
-                        if chatCounter < number {
-                            if let tabItems = self.tabBarController?.tabBar.items as NSArray? {
-                                let tabItem = tabItems[1] as! UITabBarItem
-                                tabItem.badgeValue = "1"
-                            }
-                        }
-                    }
-                }
-            }
-        }
-                
+        DefaultsManager.shared.save(number: 0)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
-        
         
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
@@ -126,8 +141,16 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     }
     
     // MARK: - Methods
+    func subscribedToChannel(name: String) {
+        print("Subscribed to \(name)")
+    }
+    
+    func failedToSubscribeToChannel(name: String, response: URLResponse?, data: String?, error: NSError?) {
+        print("FAILED to subscribe \(name), \(error.debugDescription)")
+    }
+    
     private func startSpinner() {
-        hud.textLabel.text = "Fetching Users"
+        hud.textLabel.text = "Loading"
         hud.vibrancyEnabled = true
         hud.interactionType = .blockAllTouches
         hud.show(in: view)
@@ -309,7 +332,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
         guard let me = Auth.auth().currentUser else { return }
         Firestore.firestore().collection("users").document(me.uid)
             .addSnapshotListener { documentSnapshot, error in
-                print("Listener deteced change")
                 guard let document = documentSnapshot else {
                     print("Error fetching document: \(error!)")
                     return
@@ -461,7 +483,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
             self.user = user
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
                 self.users = users
-                print(users)
                 if users.count > 0 {
                     self.stopSpinner()
                     self.showLikesWidget()
@@ -504,39 +525,45 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
     }
     
     @objc func likeTouchUpInside(_ sender: MatchCell) {
+        startSpinner()
         let cell = tableView.cellForRow(at: IndexPath(row: sender.tag, section: 0)) as! MatchCell
         cell.likeButton.transform = CGAffineTransform(scaleX: -1, y: 1)
-        UIView.animate(withDuration: 0.5, animations: { () -> Void in
+        UIView.animate(withDuration: 0.3, animations: { () -> Void in
             cell.likeButton.transform = CGAffineTransform(scaleX: 1,y: 1)
-        })
-        if let me = user {
-            FirestoreManager.shared.checkIfUserHasAvailableMatches(for: me.uid).then { (success) in
+            guard let user = self.user else {
+                return
+            }
+            FirestoreManager.shared.checkIfUserHasAvailableMatches(for: user.uid).then { (success) in
                 if success {
-                    FirestoreManager.shared.classicUpdateLike(myUid: me.uid, herUid: self.users[sender.tag].uid).then { (success) in
+                    FirestoreManager.shared.classicUpdateLike(myUid: user.uid, herUid: self.users[sender.tag].uid).then { (success) in
                         if success {
-                            FirestoreManager.shared.fetchUser(uid: me.uid).then({ (user) in
+                            FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
                                 self.user = user
                                 UIView.performWithoutAnimation {
                                     self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
-                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: me.uid, likedUserUid: self.users[sender.tag].uid).then({ (success) in
+                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[sender.tag].uid).then({ (success) in
                                         if success {
-                                            self.addImagesToMatch(myUrl: me.images.first!.url, herUrl: self.users[sender.tag].images.first!.url)
+                                            self.addImagesToMatch(myUrl: user.images.first!.url, herUrl: self.users[sender.tag].images.first!.url)
                                             let data: [String: Any] = [
                                                 "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
                                                 "participants": [
-                                                    me.uid: true,
+                                                    user.uid: true,
                                                     self.users[sender.tag].uid: true
                                                 ],
                                                 "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
                                                 ]
-                                            FirestoreManager.shared.addEmptyChat(data: data, for: me.uid, herUid: self.users[sender.tag].uid).then({ (success) in
+                                            FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[sender.tag].uid).then({ (ref) in
                                                 self.showMatch()
+                                                // Push message
+                                                let parameters: Parameters = ["uid": "\(self.users[sender.tag].uid)"]
+                                                Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/sendPushNotification", method: .post, parameters: parameters, encoding: URLEncoding.default)
+                                                self.stopSpinner()
                                             })
+                                        } else {
+                                            self.stopSpinner()
                                         }
                                     })
-                                    
                                 }
-                                
                             })
                         }
                     }
@@ -549,7 +576,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate {
                     self.present(nextViewController, animated: true, completion: nil)
                 }
             }
-        }
+        })
     }
     
     fileprivate func timeString(time: TimeInterval) -> String {

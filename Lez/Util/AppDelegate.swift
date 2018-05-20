@@ -11,6 +11,7 @@ import GooglePlaces
 import Firebase
 import FBSDKLoginKit
 import TwitterKit
+import PushNotifications
 
 class CustomTabBarController: UITabBarController {
     override func viewDidLoad() {
@@ -45,16 +46,18 @@ class CustomTabBarController: UITabBarController {
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
+    let pushNotifications = PushNotifications.shared
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         FBSDKApplicationDelegate.sharedInstance().application(application, didFinishLaunchingWithOptions: launchOptions)
         FirebaseApp.configure()
         
         UITabBar.appearance().shadowImage = UIImage()
         UITabBar.appearance().backgroundImage = UIImage()
-        UITabBar.appearance().tintColor = UIColor(red:0.95, green:0.67, blue:0.24, alpha:1.00)//UIColor(red:0.45, green:0.96, blue:0.84, alpha:1.00)
+        UITabBar.appearance().tintColor = UIColor(red:0.95, green:0.67, blue:0.24, alpha:1.00)
         UITabBar.appearance().layer.borderColor = UIColor.clear.cgColor
         UITabBar.appearance().layer.borderWidth = 0.0
+        UITabBar.appearance().backgroundColor = .white
         
         window = UIWindow(frame: UIScreen.main.bounds)
         if let window = window {
@@ -67,8 +70,26 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         GMSPlacesClient.provideAPIKey(apiKey)
         
         TWTRTwitter.sharedInstance().start(withConsumerKey:"jCRNWy0U3EoRpvQHDnMubOhNb", consumerSecret:"G4XulpZ0LRHofdELtUShQLMTENvg2H0jJle22vy8WJx0988HRd")
+        
+        self.pushNotifications.start(instanceId: "***REMOVED***")
+        self.pushNotifications.registerForRemoteNotifications()
  
         return true
+    }
+    
+    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
+        self.pushNotifications.registerDeviceToken(deviceToken) {
+            guard let currentUser = Auth.auth().currentUser else {
+                print("There seems to be no auth user.")
+                return
+            }
+            print("OFFICIAL: Subscribed to \(currentUser.uid)")
+            try? self.pushNotifications.subscribe(interest: String(currentUser.uid))
+        }
+    }
+    
+    func application(_ application: UIApplication, didReceiveRemoteNotification userInfo: [AnyHashable : Any], fetchCompletionHandler completionHandler: @escaping (UIBackgroundFetchResult) -> Void) {
+        print(userInfo)
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {

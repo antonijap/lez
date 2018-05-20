@@ -1,36 +1,41 @@
 const functions = require('firebase-functions');
-const Chatkit = require('@pusher/chatkit-server');
+const PushNotifications = require('@pusher/push-notifications-server');
+var Pusher = require('pusher');
 
-const chatkit = new Chatkit.default({
-  instanceLocator: 'v1:us1:451f331c-a7a7-4374-8f78-08e72a680f4c',
-  key: '732c60ea-5e9a-40ca-b964-c14cda4c1fa7:7Zgp160uaUNxoI87xXTGdNSJpgI909qEs4n0EgPSqhc=',
-})
-
-exports.createPusheruser = functions.https.onRequest((req, res) => {
-    const pusherUserUID = req.body.uid;
-    const pusherName = req.body.name;
-    chatkit.createUser({
-      id: pusherUserUID,
-      name: pusherName,
-    })
-      .then(() => {
-        res.status(200).send({ success: true });
-      }).catch((err) => {
-        res.status(400).send({ success: false, error: err});
-      });
+let pushNotifications = new PushNotifications({
+  instanceId: '***REMOVED***',
+  secretKey: 'D647B8574B72AB131F50D5CEF5D760D'
 });
 
-exports.createToken = functions.https.onRequest((req, res) => {
-    const authData = chatkit.authenticate({
-      userId: req.body.uid
-    });
-    res.status(authData.status).send(authData.body);
+var pusher = new Pusher({
+  appId: '521028',
+  key: 'b5bd116d3da803ac6d12',
+  secret: '7fc3579b80f5519a65aa',
+  cluster: 'eu',
+  encrypted: true
+});
+
+exports.sendPushNotification = functions.https.onRequest((req, res) => {
+  const interest = String(req.body.uid)
+  pushNotifications.publish([interest], {
+    apns: {
+      aps: {
+        alert: 'You have a new match!',
+      }
+    }
+  }).then((publishResponse) => {
+    console.log('Just published:', req.body.uid);
+  }).catch((error) => {
+    console.log('Error:' + error + " for uid:" + req.body.uid);
+  });
 })
 
-exports.triggerEvent = functions.https.onRequest((req, res) => {
-  const channel = req.body.channel
-  const event = req.body.event
-  const data = req.body.data
-  pusher.trigger(channel, event, data);
-  res.status(authData.status).send(authData.body);
+exports.triggerPusherChannel = functions.https.onRequest((req, res) => {
+  // pusher.trigger(String(req.body.channel), String(req.body.event), {
+  //   "message": "Hej ja sam poruka koja je u Firebase Cloud Functions"
+  // }).then({
+  //   res.sendStatus(200)
+  // });
+  // firebase deploy --only functions:triggerPusherChannel
+  pusher.trigger(String(req.body.channel), String(req.body.event), { message: String(req.body.message) });
 })

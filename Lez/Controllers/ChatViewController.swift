@@ -13,6 +13,8 @@ import SwiftDate
 import JGProgressHUD
 import Alamofire
 import SwiftyJSON
+import PusherSwift
+import Alertift
 
 class ChatViewController: UIViewController {
     
@@ -20,16 +22,15 @@ class ChatViewController: UIViewController {
     
     private let tableView = UITableView()
     private var sections: [ChatSections] = []
-    private var myUid: String!
+    private var uid: String!
     private var emptyChats: [Chat] = []
     private var existingChats: [Chat] = []
-    private let headerTitles = ["New Matches", "Chat"]
+    private let headerTitles = ["New Matches", "Chats"]
     private let hud = JGProgressHUD(style: .dark)
     private let refreshControl = UIRefreshControl()
     private let noChatsBackground = UIImageView()
     private let noChatsTitle = UILabel()
     private let noChatsDescription = UILabel()
-    
     
     // Mark: - Lifecycle
     override func viewDidLoad() {
@@ -42,9 +43,10 @@ class ChatViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        DefaultsManager.shared.save(number: 0)
         
         guard let currentUser = Auth.auth().currentUser else { return }
-        self.myUid = currentUser.uid
+        self.uid = currentUser.uid
         
         if let tabItems = self.tabBarController?.tabBar.items as NSArray? {
             let tabItem = tabItems[1] as! UITabBarItem
@@ -52,7 +54,7 @@ class ChatViewController: UIViewController {
         }
         
         // Listener if you get a new chat
-        Firestore.firestore().collection("users").document(myUid)
+        Firestore.firestore().collection("users").document(uid)
             .addSnapshotListener { querySnapshot, error in
                 guard let _ = querySnapshot?.data() else {
                     print("Error fetching documents: \(error!)")
@@ -63,8 +65,7 @@ class ChatViewController: UIViewController {
         }
         
         // Listener for your chats
-        // Dodaj ovo u ChatManager i napravi funkciju
-        Firestore.firestore().collection("chats").whereField("participants.\(myUid!)", isEqualTo: true)
+        Firestore.firestore().collection("chats").whereField("participants.\(uid!)", isEqualTo: true)
             .addSnapshotListener { querySnapshot, error in
                 guard let _ = querySnapshot?.documents else {
                     print("Error fetching documents: \(error!)")
@@ -127,8 +128,9 @@ class ChatViewController: UIViewController {
     }
 
     fileprivate func fetchChats() {
+        startSpinner()
         guard let currentUser = Auth.auth().currentUser else { return }
-        myUid = currentUser.uid
+        uid = currentUser.uid
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
             guard let chats = user.chats else { return }
             if chats.count > 0 {
@@ -155,10 +157,13 @@ class ChatViewController: UIViewController {
                     self.tableView.reloadData()
                     self.stopSpinner()
                     self.refreshControl.endRefreshing()
+                    self.stopSpinner()
                 })
             } else if chats.isEmpty {
+                self.stopSpinner()
                 self.showEmptyState()
             } else {
+                self.stopSpinner()
                 self.hideEmptyState()
                 self.tableView.isHidden = false
             }
@@ -198,7 +203,7 @@ class ChatViewController: UIViewController {
         tableView.backgroundColor = .white
         tableView.separatorColor = .clear
         tableView.isUserInteractionEnabled = true
-        let insets = UIEdgeInsets(top: 10, left: 0, bottom: 48, right: 0)
+        let insets = UIEdgeInsets(top: 0, left: 0, bottom: 48, right: 0)
         tableView.contentInset = insets
         tableView.register(NewChatCell.self, forCellReuseIdentifier: "NewChatCell")
         tableView.register(ChatCell.self, forCellReuseIdentifier: "ChatCell")
@@ -214,7 +219,11 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         if emptyChats.isEmpty {
             return 1
         } else {
-            return 2
+            if existingChats.isEmpty {
+                return 1
+            } else {
+                return 2
+            }
         }
     }
     
@@ -247,6 +256,10 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             }
         }
         return nil
+    }
+    
+    func tableView(_ tableView: UITableView, willDisplayHeaderView view: UIView, forSection section: Int) {
+        (view as! UITableViewHeaderFooterView).backgroundView?.backgroundColor = .white
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -285,7 +298,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             let chatCell = tableView.dequeueReusableCell(withIdentifier: ChatCell.reuseID) as! ChatCell
             var notMe: User?
             for participant in existingChats[indexPath.row].participants {
-                if participant.uid != myUid {
+                if participant.uid != uid {
                     notMe = participant
                 }
             }
@@ -296,26 +309,25 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             
             chatCell.titleLabel.text = notMe?.name
             chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
-//            chatCell.userPictureView.moa.url = notMe?.images.first
+            chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
             cell = chatCell
         } else {
             if indexPath.section == 0 {
                 let newChatCell = tableView.dequeueReusableCell(withIdentifier: NewChatCell.reuseID) as! NewChatCell
                 var notMe: User?
                 for participant in emptyChats[indexPath.row].participants {
-                    if participant.uid != myUid {
+                    if participant.uid != uid {
                         notMe = participant
                     }
                 }
                 newChatCell.titleLabel.text = notMe?.name
-//                newChatCell.userPictureView.moa.url = notMe?.images.first
-                
+                newChatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
                 cell = newChatCell
             } else {
                 let chatCell = tableView.dequeueReusableCell(withIdentifier: ChatCell.reuseID) as! ChatCell
                 var notMe: User?
                 for participant in existingChats[indexPath.row].participants {
-                    if participant.uid != myUid {
+                    if participant.uid != uid {
                         notMe = participant
                     }
                 }
@@ -326,8 +338,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 
                 chatCell.titleLabel.text = notMe?.name
                 chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
-//                chatCell.userPictureView.moa.url = notMe?.images.first
-//                chatCell.userPictureView.sd_setImage(with: notMe?.images.first, completed: nil)
+                chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
                 cell = chatCell
             }
         }

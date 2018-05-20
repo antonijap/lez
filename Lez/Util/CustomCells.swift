@@ -187,7 +187,7 @@ class MyMessageCell: UITableViewCell {
             make.bottom.equalTo(timeLabel.snp.top).inset(-4)
             make.left.equalToSuperview().inset(70)
         }
-        bubbleView.backgroundColor = UIColor(red:0.22, green:0.25, blue:0.28, alpha:1.00)
+        bubbleView.backgroundColor = UIColor(red:0.33, green:0.33, blue:0.33, alpha:1.00)
         bubbleView.layer.cornerRadius = 10
         
         setupMessage()
@@ -248,7 +248,7 @@ class HerMessageCell: UITableViewCell {
             make.bottom.equalTo(timeLabel.snp.top).inset(-4)
             make.right.equalToSuperview().inset(70)
         }
-        bubbleView.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
+        bubbleView.backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00)
         bubbleView.layer.cornerRadius = 10
         
         setupMessage()

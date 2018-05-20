@@ -29,6 +29,9 @@ target 'Lez' do
   pod 'Spring', :git => 'https://github.com/MengTo/Spring.git'
   pod 'ImageSlideshow', '~> 1.5'
   pod 'RangeSeekSlider', :git => 'https://github.com/WorldDownTown/RangeSeekSlider.git', :branch => 'swift_4'
+  pod 'PushNotifications'
+  pod 'PusherSwift'
+  pod 'Toast-Swift', '~> 3.0.1'
   
   target 'LezTests' do
     inherit! :search_paths

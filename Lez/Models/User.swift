@@ -21,6 +21,32 @@ enum Diet: String, Encodable {
     case other = "Other"
 }
 
+struct Location: Encodable {
+    var city: String
+    var country: String
+}
+
+struct AgeRange: Encodable, Equatable {
+    var from: Int
+    var to: Int
+}
+
+struct Preferences: Encodable {
+    var ageRange: AgeRange
+    var lookingFor: [String]
+}
+
+struct Details: Encodable {
+    var about: String
+    var dealBreakers: String
+    var diet: Diet
+}
+
+struct LezImage: Encodable {
+    var name: String
+    var url: String
+}
+
 class User: Hashable {
     var hashValue: Int { get { return uid.hashValue } }
     var uid: String
@@ -64,30 +90,4 @@ class User: Hashable {
     static func ==(left:User, right:User) -> Bool {
         return left.uid == right.uid
     }
-}
-
-struct Location: Encodable {
-    var city: String
-    var country: String
-}
-
-struct AgeRange: Encodable, Equatable {
-    var from: Int
-    var to: Int
-}
-
-struct Preferences: Encodable {
-    var ageRange: AgeRange
-    var lookingFor: [String]
-}
-
-struct Details: Encodable {
-    var about: String
-    var dealBreakers: String
-    var diet: Diet
-}
-
-struct LezImage: Encodable {
-    var name: String
-    var url: String
 }
