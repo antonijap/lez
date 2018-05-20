@@ -92,11 +92,9 @@ class GetPremiumViewController: UIViewController {
         ]
         FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
             if success {
-                self.showPremiumPurchased {
-                    self.dismiss(animated: true, completion: {
-                        self.delegate?.refreshTableView()
-                    })
-                }
+                self.dismiss(animated: true, completion: {
+                    self.delegate?.refreshTableView()
+                })
             } else {
                 // Error happened, please contact support@getlez.com
                 self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
@@ -128,8 +126,6 @@ class GetPremiumViewController: UIViewController {
         SwiftyStoreKit.purchaseProduct("premium", quantity: 1, atomically: true) { result in
             switch result {
             case .success(let purchase):
-                print("Purchase Success: \(purchase.productId)")
-                print("Now make user PREMIUM")
                 self.markUserAsPremium(uid: currentUser.uid)
             case .error(let error):
                 switch error.code {

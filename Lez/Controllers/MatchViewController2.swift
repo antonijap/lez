@@ -38,6 +38,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     private let matchView = SpringView()
     private let matchOverlayView = SpringView()
     private let matchDescriptionLabel = SpringLabel()
+    private let matchSubtitle = SpringLabel()
     private let noUsersBackground = UIImageView()
     private let noUsersTitle = UILabel()
     private let noUsersDescription = UILabel()
@@ -152,7 +153,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     }
     
     private func startSpinner() {
-        hud.textLabel.text = "Loading"
+        hud.textLabel.text = "Please wait..."
         hud.vibrancyEnabled = true
         hud.interactionType = .blockAllTouches
         hud.show(in: view)
@@ -416,27 +417,39 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         
         matchView.addSubview(matchLabel)
         matchLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(matchYourImageView.snp.bottom).offset(32)
+            make.top.equalTo(matchHerImageView.snp.bottom).offset(32)
             make.centerX.equalToSuperview()
         }
         matchLabel.text = "Match"
         matchLabel.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
         
-        matchView.addSubview(matchDescriptionLabel)
-        matchDescriptionLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(matchLabel.snp.bottom).offset(8)
+        matchView.addSubview(matchSubtitle)
+        matchSubtitle.snp.makeConstraints { (make) in
+            make.top.equalTo(matchLabel.snp.bottom).offset(24)
             make.centerX.equalToSuperview()
             make.left.equalToSuperview().inset(24)
             make.right.equalToSuperview().offset(-24)
         }
-        matchDescriptionLabel.text = "Niiiiceee! You can go and chat or continue browsing."
-        matchDescriptionLabel.font = UIFont.systemFont(ofSize: 21, weight: .regular)
-        matchDescriptionLabel.numberOfLines = 2
-        matchDescriptionLabel.textAlignment = .center
+        matchSubtitle.font = UIFont.systemFont(ofSize: 21, weight: .regular)
+        matchSubtitle.numberOfLines = 2
+        matchSubtitle.textAlignment = .center
+        
+//        matchView.addSubview(matchDescriptionLabel)
+//        matchDescriptionLabel.snp.makeConstraints { (make) in
+//            make.top.equalTo(matchSubtitle.snp.bottom).offset(8)
+//            make.centerX.equalToSuperview()
+//            make.left.equalToSuperview().inset(24)
+//            make.right.equalToSuperview().offset(-24)
+//        }
+//        matchDescriptionLabel.text = "Niiiiceee! You can go and chat or continue browsing."
+//        matchDescriptionLabel.font = UIFont.systemFont(ofSize: 21, weight: .regular)
+//        matchDescriptionLabel.numberOfLines = 2
+//        matchDescriptionLabel.textAlignment = .center
+//        matchDescriptionLabel.textColor = UIColor(red:0.52, green:0.52, blue:0.52, alpha:1.00)
         
         matchView.addSubview(matchCTA)
         matchCTA.snp.makeConstraints { (make) in
-            make.top.equalTo(matchDescriptionLabel.snp.bottom).offset(32)
+            make.top.equalTo(matchSubtitle.snp.bottom).offset(32)
             make.left.equalToSuperview().offset(32)
             make.right.equalToSuperview().inset(32)
             make.height.equalTo(44)
@@ -579,7 +592,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                 UIView.performWithoutAnimation {
                     self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
                 }
-                
+                self.stopSpinner()
                 Firestore.firestore().collection("users").document(her.uid).getDocument { documentSnapshot, error in
                     guard let document = documentSnapshot else {
                         print("Error fetching document: \(error!)")
@@ -590,10 +603,11 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                         print("Problem with parsing likes.")
                         return
                     }
-                    self.stopSpinner()
+                    
                     if likes.contains(user.uid) {
                         // It's a match
                         self.addImagesToMatch(myUrl: user.images.first!.url, herUrl: her.images.first!.url)
+                        self.matchSubtitle.text = "You and \(her.name) liked each other."
                         let data: [String: Any] = [
                             "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
                             "participants": [
@@ -614,6 +628,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                 }
             } else {
                 // What happens when user can't like?
+                self.stopSpinner()
                 let nextViewController = GetPremiumViewController()
                 let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
                 self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)

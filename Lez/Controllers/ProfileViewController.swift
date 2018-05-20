@@ -14,6 +14,7 @@ import Alertift
 import Jelly
 import ImageSlideshow
 import SDWebImage
+import SwiftyStoreKit
 
 class ProfileViewController: UIViewController, ProfileViewControllerDelegate {    
 
@@ -31,8 +32,8 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
         self.navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
         if shouldRefresh {
             startSpinner(title: "Loading Profile")
@@ -103,6 +104,24 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     func stopSpinner() {
         // Start Animating
         hud.dismiss(animated: true)
+    }
+    
+    fileprivate func markUserAsPremium(uid: String) {
+        let data: [String: Any] = [
+            "isPremium": true,
+            "cooldownTime": "",
+            "likesLeft": 5
+        ]
+        FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
+            if success {
+                self.dismiss(animated: true, completion: {})
+            } else {
+                // Error happened, please contact support@getlez.com
+                self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+                    print("Error happened")
+                })
+            }
+        }
     }
     
 }
@@ -185,7 +204,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     if user.isPremium {
                         simpleMenuCell.titleLabel.text = "You are Premium"
                     } else {
-                        simpleMenuCell.titleLabel.text = "Likes: \(user.likesLeft). Unlock unlimited likes."
+                        simpleMenuCell.titleLabel.text = "Likes left: \(user.likesLeft). Unlock unlimited likes."
                     }
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
@@ -254,7 +273,18 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }
         if indexPath == [9, 0] {
-            print("Restoring subscription...")
+            SwiftyStoreKit.restorePurchases(atomically: true) { results in
+                if results.restoreFailedPurchases.count > 0 {
+                    print("Restore Failed: \(results.restoreFailedPurchases)")
+                }
+                else if results.restoredPurchases.count > 0 {
+                    print("Restore Success: \(results.restoredPurchases)")
+                    self.markUserAsPremium(uid: self.user!.uid)
+                }
+                else {
+                    print("Nothing to Restore")
+                }
+            }
         }
         if indexPath == [10, 0] {
             self.showSignoutAlert(CTA: "Sign out")
