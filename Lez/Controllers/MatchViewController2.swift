@@ -608,7 +608,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                         return
                     }
                     if likes.contains(user.uid) {
-                        // It's a match
                         self.addImagesToMatch(myUrl: user.images.first!.url, herUrl: her.images.first!.url)
                         self.matchSubtitle.text = "You and \(her.name) liked each other."
                         let data: [String: Any] = [
@@ -630,7 +629,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                     }
                 }
             } else {
-                // What happens when user can't like?
                 self.stopSpinner()
                 let nextViewController = GetPremiumViewController()
                 let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
