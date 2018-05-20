@@ -48,40 +48,6 @@ final class FirestoreManager {
             }
         }
     }
-    
-    func fetchMatchedUsers() -> Promise<[User]> {
-        return Promise { fulfill, reject in
-            var matchedUsers: [String] = []
-            var users: [User] = []
-            let group = DispatchGroup()
-            
-            if let currentUser = Auth.auth().currentUser {
-                self.fetchUser(uid: currentUser.uid).then({ (user) in
-                    for like in user.likes! {
-                        group.enter()
-                        self.checkIfLikedUserIsMatch(currentUserUid: currentUser.uid, likedUserUid: like).then({ (success) in
-                            if success {
-                                matchedUsers.append(like)
-                                group.leave()
-                            }
-                        })
-                    }
-                    group.notify(queue: .main, execute: {
-                        for uid in matchedUsers {
-                            group.enter()
-                            self.fetchUser(uid: uid).then({ (user) in
-                                users.append(user)
-                                group.leave()
-                            })
-                        }
-                        group.notify(queue: .main, execute: {
-                            fulfill(users)
-                        })
-                    })
-                })
-            }
-        }
-    }
 
     func fetchPotentialMatches(for user: User) -> Promise<[User]> {
         return Promise { fulfill, reject in
@@ -213,29 +179,6 @@ final class FirestoreManager {
                 }
             }
         }
-    }
-    
-    
-    func checkIfLikedUserIsMatch(currentUserUid: String, likedUserUid: String) -> Promise<Bool> {
-        return Promise { fulfill, reject in
-            self.fetchUser(uid: likedUserUid).then({ (user) in
-                guard let likes = user.likes else { return }
-                if likes.contains(currentUserUid) {
-                    fulfill(true)
-                } else {
-                    fulfill(false)
-                }
-            })
-        }
-    }
-    
-    func checkIfMatch(currentUserUid: String, likedUserUid: String, completion: @escaping (_ isMatch: Bool) -> Void) {
-        fetchUser(uid: likedUserUid).then({ (user) in
-            guard let likes = user.likes else { return }
-            if likes.contains(currentUserUid) {
-                completion(true)
-            }
-        })
     }
     
     func updateImages(uid: String, urls: [String]) -> Promise<Bool>  {
@@ -614,93 +557,6 @@ final class FirestoreManager {
         }
     }
     
-    func updateIsReadState(to chat: String, value: Bool) {
-        let data: [String: Any] = [
-            "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
-            "isRead": value
-        ]
-        self.db.collection("chats").document(chat).updateData(data, completion: { (error) in
-            if let error = error {
-                print("Error writing document: \(error)")
-            }
-        })
-    }
-    
-    func checkIfUserHasAvailableMatches(for uid: String) -> Promise<Bool> {
-        return Promise { fulfill, _ in
-            self.checkIfUserIsPremium(for: uid).then({ (isPremium) in
-                if isPremium {
-                    // Allow Match for all Premium users
-                    fulfill(true)
-                } else {
-                    self.fetchUser(uid: uid).then { (user) in
-                        if user.likesLeft > 0 {
-                            // Allow Match
-                            fulfill(true)
-                        } else {
-                            fulfill(false)
-                        }
-                    }
-                }
-            })
-        }
-    }
-    
-    func checkIfUserIsPremium(for uid: String) -> Promise<Bool> {
-        return Promise { fulfill, _ in
-            self.fetchUser(uid: uid).then { (user) in
-                if user.isPremium {
-                    fulfill(true)
-                } else {
-                    fulfill(false)
-                }
-            }
-        }
-    }
-    
-    func classicUpdateLike(myUid: String, herUid: String) -> Promise<Bool> {
-        return Promise { fulfill, reject in
-            self.fetchUser(uid: myUid).then({ (user) in
-                if user.isPremium {
-                    var newLikes = user.likes!
-                    newLikes.append(herUid)
-                    self.updateUser(uid: myUid, data: ["likes": newLikes]).then({ (success) in
-                        fulfill(true)
-                    })
-                } else {
-                    let likesLeft = user.likesLeft
-                    var newLikes = user.likes!
-                    newLikes.append(herUid)
-                    if (likesLeft - 1) == 0 {
-                        // Add countdown as well
-                        self.updateUser(uid: myUid, data: ["likes": newLikes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")]).then({ (success) in
-                            fulfill(true)
-                        })
-                    } else {
-                        self.updateUser(uid: myUid, data: ["likes": newLikes, "likesLeft": likesLeft - 1]).then({ (success) in
-                            fulfill(true)
-                        })
-                    }
-                }
-                
-            })
-        }
-    }
-    
-    func addUserToBlocked(myUid: String, herUid: String) -> Promise<Bool> {
-        return Promise { fulfill, reject in
-            self.fetchUser(uid: myUid).then({ (user) in
-                var blockedUsers = user.blockedUsers
-                blockedUsers?.append(herUid)
-                self.updateUser(uid: myUid, data: ["blockedUsers": blockedUsers!]).then({ (success) in
-                    if success {
-                        fulfill(true)
-                    }
-                })
-            })
-        }
-    }
-    
     func generateURL(uid: String, name: String) -> Promise<String> {
         return Promise { fufill, reject in
             // Create a reference to the file you want to download
@@ -712,64 +568,6 @@ final class FirestoreManager {
                     reject(error)
                 } else {
                     fufill(url!.absoluteString)
-                }
-            }
-        }
-    }
-    
-    func updateLike(myUid: String, herUid: String) -> Promise<Bool> {
-        return Promise { fulfill, reject in
-            let ref = Firestore.firestore().collection("users").document(myUid)
-            Firestore.firestore().runTransaction({ (transaction, errorPointer) -> Any? in
-                let document: DocumentSnapshot
-                do {
-                    try document = transaction.getDocument(ref)
-                } catch let fetchError as NSError {
-                    errorPointer?.pointee = fetchError
-                    return nil
-                }
-                
-                guard let oldLikes = document.data()?["likes"] as? [String] else {
-                    let error = NSError(
-                        domain: "AppErrorDomain",
-                        code: -1,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: "Unable to retrieve likes from snapshot \(document)"
-                        ]
-                    )
-                    errorPointer?.pointee = error
-                    return nil
-                }
-                
-                guard let likesLeft = document.data()?["likesLeft"] as? Int else {
-                    let error = NSError(
-                        domain: "AppErrorDomain",
-                        code: -1,
-                        userInfo: [
-                            NSLocalizedDescriptionKey: "Unable to retrieve likes from snapshot \(document)"
-                        ]
-                    )
-                    errorPointer?.pointee = error
-                    return nil
-                }
-                
-                var newLikes = oldLikes
-                newLikes.append(herUid)
-                if (likesLeft - 1) == 0 {
-                    // Add countdown as well
-                    transaction.updateData(["likes": newLikes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")], forDocument: ref)
-                } else {
-                    transaction.updateData(["likes": newLikes, "likesLeft": likesLeft - 1], forDocument: ref)
-                }
-                
-                return nil
-            }) { (object, error) in
-                if let error = error {
-                    print("Transaction failed: \(error)")
-                    reject(error)
-                } else {
-                    print("Transaction successfully committed!")
-                    fulfill(true)
                 }
             }
         }
