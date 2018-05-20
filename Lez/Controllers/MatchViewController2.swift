@@ -607,7 +607,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                         print("Problem with parsing likes.")
                         return
                     }
-                    
                     if likes.contains(user.uid) {
                         // It's a match
                         self.addImagesToMatch(myUrl: user.images.first!.url, herUrl: her.images.first!.url)
