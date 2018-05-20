@@ -12,6 +12,7 @@ import Firebase
 import FBSDKLoginKit
 import TwitterKit
 import PushNotifications
+import SwiftyStoreKit
 
 class CustomTabBarController: UITabBarController {
     override func viewDidLoad() {
@@ -73,6 +74,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.pushNotifications.start(instanceId: "***REMOVED***")
         self.pushNotifications.registerForRemoteNotifications()
+        
+        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
+            for purchase in purchases {
+                switch purchase.transaction.transactionState {
+                case .purchased, .restored:
+                    if purchase.needsFinishTransaction {
+                        // Deliver content from server, then:
+                        SwiftyStoreKit.finishTransaction(purchase.transaction)
+                    }
+                // Unlock content
+                case .failed, .purchasing, .deferred:
+                    break // do nothing
+                }
+            }
+        }
  
         return true
     }

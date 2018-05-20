@@ -53,6 +53,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     private let hud = JGProgressHUD(style: .dark)
     private var pusher: Pusher!
     private var options: PusherClientOptions!
+    private var canLike: Bool!
     
     // MARK: - Life Cycle
     override func viewWillAppear(_ animated: Bool) {
@@ -98,19 +99,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         runLikesWidget()
         DefaultsManager.shared.save(number: 0)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
-        
-        SwiftyStoreKit.retrieveProductsInfo(["com.antonijapek.Lez.premium"]) { result in
-            if let product = result.retrievedProducts.first {
-                let priceString = product.localizedPrice!
-                print("Product: \(product.localizedDescription), price: \(priceString)")
-            }
-            else if let invalidProductId = result.invalidProductIDs.first {
-                print("Invalid product identifier: \(invalidProductId)")
-            }
-            else {
-                print("Error: \(String(describing: result.error))")
-            }
-        }
         
 //        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
@@ -362,15 +350,28 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                     return
                 }
                 
-                // Calculate whether to show number or a counter
-                if likesLeft <= 0 {
-                    // Show countdown
-                    self.runTimer(cooldownTime: cooldownTime)
-                    self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
-                } else {
+                guard let isPremium = data["isPremium"] as? Bool else {
+                    print("Problem with parsing isPremium.")
+                    return
+                }
+                
+                if isPremium {
                     // Show likesLeft
-                    self.likesCounterWidgetLabel.text = "\(likesLeft)"
+                    self.canLike = true
+                    self.likesCounterWidgetLabel.text = "Unlimited"
                     self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+                } else {
+                    if likesLeft <= 0 {
+                        // Show countdown
+                        self.canLike = false
+                        self.runTimer(cooldownTime: cooldownTime)
+                        self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
+                    } else {
+                        // Show likesLeft
+                        self.canLike = true
+                        self.likesCounterWidgetLabel.text = "\(likesLeft)"
+                        self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+                    }
                 }
                 
         }
@@ -547,50 +548,129 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
             guard let user = self.user else {
                 return
             }
-            FirestoreManager.shared.checkIfUserHasAvailableMatches(for: user.uid).then { (success) in
-                if success {
-                    FirestoreManager.shared.classicUpdateLike(myUid: user.uid, herUid: self.users[sender.tag].uid).then { (success) in
-                        if success {
-                            FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
-                                self.user = user
-                                UIView.performWithoutAnimation {
-                                    self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
-                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[sender.tag].uid).then({ (success) in
-                                        if success {
-                                            self.addImagesToMatch(myUrl: user.images.first!.url, herUrl: self.users[sender.tag].images.first!.url)
-                                            let data: [String: Any] = [
-                                                "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
-                                                "participants": [
-                                                    user.uid: true,
-                                                    self.users[sender.tag].uid: true
-                                                ],
-                                                "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
-                                                ]
-                                            FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[sender.tag].uid).then({ (ref) in
-                                                self.showMatch()
-                                                let parameters: Parameters = ["uid": "\(self.users[sender.tag].uid)"]
-                                                Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/sendPushNotification", method: .post, parameters: parameters, encoding: URLEncoding.default)
-                                                let parameters2: Parameters = ["channel": self.users[sender.tag].uid, "event": Events.newMessage.rawValue, "message": "New Match"]
-                                                Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters2, encoding: URLEncoding.default)
-                                                self.stopSpinner()
-                                            })
-                                        } else {
-                                            self.stopSpinner()
-                                        }
-                                    })
-                                }
-                            })
-                        }
-                    }
+            // Faster Liking Start
+            if self.canLike {
+                // Then like
+                // Add like to Firestore
+                let likesLeft = user.likesLeft
+                var data: [String: Any] = [:]
+                let her = self.users[sender.tag]
+                
+                var likes = user.likes!
+                likes.append(her.uid)
+                
+                if (likesLeft - 1) == 0 {
+                    data = ["likes": likes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")]
                 } else {
-                    // No likes left. Show Premium screen.
-                    let nextViewController = GetPremiumViewController()
-                    let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
-                    self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
-                    self.jellyAnimator?.prepare(viewController: nextViewController)
-                    self.present(nextViewController, animated: true, completion: nil)
+                    data = ["likes": likes, "likesLeft": likesLeft - 1]
                 }
+                
+                Firestore.firestore().collection("users").document(user.uid).updateData(data) { err in
+                    if let err = err {
+                        print("Error updating document: \(err)")
+                    } else {
+                        print("Document successfully updated")
+                    }
+                }
+                // Now modify user in local model
+                user.likes?.append(her.uid)
+                
+                // Reload table
+                UIView.performWithoutAnimation {
+                    self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
+                }
+                
+                Firestore.firestore().collection("users").document(her.uid).getDocument { documentSnapshot, error in
+                    guard let document = documentSnapshot else {
+                        print("Error fetching document: \(error!)")
+                        return
+                    }
+                    guard let data = document.data() else { return }
+                    guard let likes = data["likes"] as? [String] else {
+                        print("Problem with parsing likes.")
+                        return
+                    }
+                    self.stopSpinner()
+                    if likes.contains(user.uid) {
+                        // It's a match
+                        self.addImagesToMatch(myUrl: user.images.first!.url, herUrl: her.images.first!.url)
+                        let data: [String: Any] = [
+                            "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+                            "participants": [
+                                user.uid: true,
+                                self.users[sender.tag].uid: true
+                            ],
+                            "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+                            "isDisabled": false
+                        ]
+                        FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[sender.tag].uid).then({ (ref) in
+                            self.showMatch()
+                            let parameters: Parameters = ["uid": "\(self.users[sender.tag].uid)"]
+                            Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/sendPushNotification", method: .post, parameters: parameters, encoding: URLEncoding.default)
+                            let parameters2: Parameters = ["channel": self.users[sender.tag].uid, "event": Events.newMessage.rawValue, "message": "New Match"]
+                            Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters2, encoding: URLEncoding.default)
+                        })
+                    }
+                }
+            } else {
+                // What happens when user can't like?
+                let nextViewController = GetPremiumViewController()
+                let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
+                self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+                self.jellyAnimator?.prepare(viewController: nextViewController)
+                self.present(nextViewController, animated: true, completion: nil)
             }
+            
+            // Faster Liking End
+            
+            
+            
+//            FirestoreManager.shared.checkIfUserHasAvailableMatches(for: user.uid).then { (success) in
+//                if success {
+//                    FirestoreManager.shared.classicUpdateLike(myUid: user.uid, herUid: self.users[sender.tag].uid).then { (success) in
+//                        if success {
+//                            FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
+//                                self.user = user
+//                                UIView.performWithoutAnimation {
+//                                    self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
+//                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[sender.tag].uid).then({ (success) in
+//                                        if success {
+//                                            self.addImagesToMatch(myUrl: user.images.first!.url, herUrl: self.users[sender.tag].images.first!.url)
+//                                            let data: [String: Any] = [
+//                                                "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+//                                                "participants": [
+//                                                    user.uid: true,
+//                                                    self.users[sender.tag].uid: true
+//                                                ],
+//                                                "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+//                                                "isDisabled": false
+//                                                ]
+//                                            FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[sender.tag].uid).then({ (ref) in
+//                                                self.showMatch()
+//                                                let parameters: Parameters = ["uid": "\(self.users[sender.tag].uid)"]
+//                                                Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/sendPushNotification", method: .post, parameters: parameters, encoding: URLEncoding.default)
+//                                                let parameters2: Parameters = ["channel": self.users[sender.tag].uid, "event": Events.newMessage.rawValue, "message": "New Match"]
+//                                                Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters2, encoding: URLEncoding.default)
+//                                                self.stopSpinner()
+//                                            })
+//                                        } else {
+//                                            self.stopSpinner()
+//                                        }
+//                                    })
+//                                }
+//                            })
+//                        }
+//                    }
+//                } else {
+//                    // No likes left. Show Premium screen.
+//                    let nextViewController = GetPremiumViewController()
+//                    let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
+//                    self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+//                    self.jellyAnimator?.prepare(viewController: nextViewController)
+//                    self.present(nextViewController, animated: true, completion: nil)
+//                }
+//            }
+            
         })
     }
     

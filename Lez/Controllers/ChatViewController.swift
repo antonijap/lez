@@ -137,11 +137,12 @@ class ChatViewController: UIViewController {
                 FirestoreManager.shared.fetchChats(chats: chats).then({ (chats) in
                     self.emptyChats.removeAll()
                     self.existingChats.removeAll()
-                    for c in chats {
-                        if c.messages == nil {
-                            self.emptyChats.append(c)
+                    
+                    for chat in chats {
+                        if chat.messages == nil {
+                            self.emptyChats.append(chat)
                         } else {
-                            self.existingChats.append(c)
+                            self.existingChats.append(chat)
                         }
                     }
                     
@@ -303,13 +304,18 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
             
-            self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ (messages) in
-                chatCell.messageLabel.text = messages.last!.message
-            })
-            
             chatCell.titleLabel.text = notMe?.name
             chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
             chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
+            if existingChats[indexPath.row].isDisabled {
+                chatCell.isUserInteractionEnabled = false
+                chatCell.layer.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:0.3).cgColor
+                chatCell.messageLabel.text = "Disabled"
+            } else {
+                self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ (messages) in
+                    chatCell.messageLabel.text = messages.last!.message
+                })
+            }
             cell = chatCell
         } else {
             if indexPath.section == 0 {
@@ -322,6 +328,8 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 }
                 newChatCell.titleLabel.text = notMe?.name
                 newChatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
+                newChatCell.isUserInteractionEnabled = true
+                newChatCell.alpha = 1
                 cell = newChatCell
             } else {
                 let chatCell = tableView.dequeueReusableCell(withIdentifier: ChatCell.reuseID) as! ChatCell
@@ -331,14 +339,20 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                         notMe = participant
                     }
                 }
-                
-                self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ (messages) in
-                    chatCell.messageLabel.text = messages.last?.message
-                })
+
                 
                 chatCell.titleLabel.text = notMe?.name
                 chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
                 chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
+                if existingChats[indexPath.row].isDisabled {
+                    chatCell.isUserInteractionEnabled = false
+                    chatCell.layer.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:0.3).cgColor
+                    chatCell.messageLabel.text = "Disabled"
+                } else {
+                    self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ (messages) in
+                        chatCell.messageLabel.text = messages.last!.message
+                    })
+                }
                 cell = chatCell
             }
         }

@@ -52,9 +52,31 @@ class MessagesViewController: UIViewController {
         setupTextField()
         setupTableView()
         
-        Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created").addSnapshotListener { (snapshot, error) in
-            self.populateMessages()
+        // Slusaj izmjene u chatu (sluzi da vidim ako postane disabled)
+        let ref = Firestore.firestore().collection("chats").document(chatUid)
+        ref.addSnapshotListener { (document, error) in
+            if let document = document {
+                FirestoreManager.shared.parseFirebaseChat(document: document).then({ (chat) in
+                    guard let data = document.data() else { return }
+                    guard let isDisabled = data["isDisabled"] as? Bool else {
+                        print("Problem with parsing isDisabled.")
+                        return
+                    }
+                    
+                    if isDisabled {
+                        self.textFieldContainer.isHidden = true
+                    } else {
+                        self.textFieldContainer.isHidden = false
+                        Firestore.firestore().collection("chats").document(self.chatUid).collection("messages").order(by: "created").addSnapshotListener { (snapshot, error) in
+                            self.populateMessages()
+                        }
+                    }
+                })
+            } else {
+                print("Document does not exist")
+            }
         }
+        
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -89,20 +111,39 @@ class MessagesViewController: UIViewController {
                 if index == 0 {
                     Alertift.alert(message: "Blocked")
                         .action(.default("Okay"), handler: { (_, _, _) in
-                            FirestoreManager.shared.fetchUser(uid: self.myUid).then({ (user) in
-                                var blockedUsersArray: [String] = user.blockedUsers!
-                                blockedUsersArray.append(self.herUid)
-                                let data: [String: Any] = [
-                                    "blockedUsers": blockedUsersArray
-                                ]
-                                FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
-                                    if success {
-                                        self.dismiss(animated: true, completion: nil)
-                                    } else {
-                                        self.showOkayModal(messageTitle: "Error happened", messageAlert: "Blocking failed. Please, try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+                            // Flag chat as isDisabled
+                            Firestore.firestore().collection("chats").document(self.chatUid).updateData(["isDisabled": true], completion: { (error) in
+                                if let error = error {
+                                    print(error.localizedDescription)
+                                }
+                                // Now update user values
+                                FirestoreManager.shared.fetchUser(uid: self.myUid).then({ (user) in
+                                    var blockedUsersArray: [String] = user.blockedUsers!
+                                    blockedUsersArray.append(self.herUid)
+                                    var chats: [String] = []
+                                    
+                                    // Remove blocked users
+                                    for chat in user.chats! {
+                                        if user.chats?.contains(self.chatUid) != true {
+                                            chats.append(chat)
+                                        }
                                     }
+                                    
+                                    let data: [String: Any] = [
+                                        "blockedUsers": blockedUsersArray,
+                                        "chats": chats
+                                    ]
+                                    
+                                    FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
+                                        if success {
+                                            self.navigationController?.popToRootViewController(animated: true)
+                                        } else {
+                                            self.showOkayModal(messageTitle: "Error happened", messageAlert: "Blocking failed. Please, try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+                                        }
+                                    })
                                 })
                             })
+                            
                         })
                         .show()
                 }
@@ -252,6 +293,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
     
     @objc func sendMessage() {
         if textField.text != "" {
+            
             if let text = textField.text {
                 let data: [String: Any] = [
                     "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
@@ -259,10 +301,10 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
                     "message": text
                 ]
                 FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
+                    self.textField.text = ""
                     let parameters: Parameters = ["channel": self.herUid!, "event": Events.newMessage.rawValue, "message": "\(self.name!) sent message"]
                     Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters, encoding: URLEncoding.default)
                     self.populateMessages()
-                    self.textField.text = ""
                     self.textField.resignFirstResponder()
                 }
             }

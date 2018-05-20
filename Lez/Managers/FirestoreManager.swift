@@ -480,6 +480,11 @@ final class FirestoreManager {
                 return
             }
             
+            guard let isDisabled = data["isDisabled"] as? Bool else {
+                print("Problem with parsing isDisabled.")
+                return
+            }
+            
             for item in participantsDictionary {
                 group.enter()
                 FirestoreManager.shared.fetchUser(uid: item.key).then { (user) in
@@ -492,9 +497,9 @@ final class FirestoreManager {
                 self.fetchMessages(uid: uid).then({ (messages) in
                     if let messages = messages {
                         if messages.count > 0 {
-                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: messages))
+                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: messages, isDisabled: isDisabled))
                         } else {
-                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: nil))
+                            fulfill(Chat(uid: uid, created: created, lastUpdated: lastUpdated, participants: participants, messages: nil, isDisabled: isDisabled))
                         }
                     }
                 })
@@ -657,21 +662,27 @@ final class FirestoreManager {
         return Promise { fulfill, reject in
             self.fetchUser(uid: myUid).then({ (user) in
                 if user.isPremium {
-                    fulfill(true)
-                }
-                let likesLeft = user.likesLeft
-                var newLikes = user.likes!
-                newLikes.append(herUid)
-                if (likesLeft - 1) == 0 {
-                    // Add countdown as well
-                    self.updateUser(uid: myUid, data: ["likes": newLikes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")]).then({ (success) in
+                    var newLikes = user.likes!
+                    newLikes.append(herUid)
+                    self.updateUser(uid: myUid, data: ["likes": newLikes]).then({ (success) in
                         fulfill(true)
                     })
                 } else {
-                    self.updateUser(uid: myUid, data: ["likes": newLikes, "likesLeft": likesLeft - 1]).then({ (success) in
-                        fulfill(true)
-                    })
+                    let likesLeft = user.likesLeft
+                    var newLikes = user.likes!
+                    newLikes.append(herUid)
+                    if (likesLeft - 1) == 0 {
+                        // Add countdown as well
+                        self.updateUser(uid: myUid, data: ["likes": newLikes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")]).then({ (success) in
+                            fulfill(true)
+                        })
+                    } else {
+                        self.updateUser(uid: myUid, data: ["likes": newLikes, "likesLeft": likesLeft - 1]).then({ (success) in
+                            fulfill(true)
+                        })
+                    }
                 }
+                
             })
         }
     }
