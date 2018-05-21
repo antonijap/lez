@@ -26,6 +26,7 @@
 		CF425B4620679D8F00D6A1FE /* UserProfileFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF425B4520679D8F00D6A1FE /* UserProfileFormViewController.swift */; };
 		CF6CE927209CE12D00EED316 /* GetPremiumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */; };
 		CF7877F120A71685004E8693 /* ImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7877F020A71685004E8693 /* ImagesViewController.swift */; };
+		CF7C6C6520B2BFF700CEE0D1 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */; };
 		CF8C5DFE2094C08C00538C67 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */; };
 		CF8C5E002094C84F00538C67 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C5DFF2094C84F00538C67 /* Chat.swift */; };
 		CF9C7B9520A49B710044043B /* MatchViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9C7B9420A49B710044043B /* MatchViewController2.swift */; };
@@ -91,6 +92,7 @@
 		CF425B4520679D8F00D6A1FE /* UserProfileFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileFormViewController.swift; sourceTree = "<group>"; };
 		CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPremiumViewController.swift; sourceTree = "<group>"; };
 		CF7877F020A71685004E8693 /* ImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesViewController.swift; sourceTree = "<group>"; };
+		CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
 		CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
 		CF8C5DFF2094C84F00538C67 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
 		CF9C7B9420A49B710044043B /* MatchViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController2.swift; sourceTree = "<group>"; };
@@ -252,6 +254,7 @@
 				CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */,
 				CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */,
 				CFF3676620AAF4E30092B948 /* PusherManager.swift */,
+				CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -538,7 +541,7 @@
 				"${BUILT_PRODUCTS_DIR}/SDWebImage/SDWebImage.framework",
 				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
 				"${BUILT_PRODUCTS_DIR}/Spring/Spring.framework",
-				"${BUILT_PRODUCTS_DIR}/StarscreamFork/StarscreamFork.framework",
+				"${BUILT_PRODUCTS_DIR}/Starscream/Starscream.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftDate/SwiftDate.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyJSON/SwiftyJSON.framework",
 				"${BUILT_PRODUCTS_DIR}/SwiftyStoreKit/SwiftyStoreKit.framework",
@@ -584,7 +587,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SDWebImage.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Spring.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/StarscreamFork.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Starscream.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftDate.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyJSON.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SwiftyStoreKit.framework",
@@ -623,6 +626,7 @@
 				CF11E905209EF545007E3D1D /* Protocols.swift in Sources */,
 				CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */,
 				CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */,
+				CF7C6C6520B2BFF700CEE0D1 /* AnalyticsManager.swift in Sources */,
 				CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */,
 				CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */,
 				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,

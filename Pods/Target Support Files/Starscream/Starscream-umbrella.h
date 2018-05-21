@@ -11,6 +11,6 @@
 #endif
 
 
-FOUNDATION_EXPORT double StarscreamForkVersionNumber;
-FOUNDATION_EXPORT const unsigned char StarscreamForkVersionString[];
+FOUNDATION_EXPORT double StarscreamVersionNumber;
+FOUNDATION_EXPORT const unsigned char StarscreamVersionString[];
 

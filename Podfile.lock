@@ -112,14 +112,14 @@ PODS:
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
-  - PromisesObjC (1.2)
-  - PromisesSwift (1.2):
-    - PromisesObjC (= 1.2)
+  - PromisesObjC (1.2.1)
+  - PromisesSwift (1.2.1):
+    - PromisesObjC (= 1.2.1)
   - Protobuf (3.5.0)
-  - PusherSwift (6.0.0):
+  - PusherSwift (6.1.0):
     - CryptoSwift (~> 0.9.0)
     - ReachabilitySwift (~> 4.1.0)
-    - StarscreamFork (~> 3.0.6)
+    - Starscream (~> 3.0.5)
     - TaskQueue (~> 1.1.1)
   - PushNotifications (0.10.7)
   - RangeSeekSlider (1.8.0)
@@ -129,7 +129,7 @@ PODS:
   - SDWebImage/Core (4.3.3)
   - SnapKit (4.0.0)
   - Spring (1.0.5)
-  - StarscreamFork (3.0.6)
+  - Starscream (3.0.5)
   - SwiftDate (4.5.1)
   - SwiftyJSON (4.1.0)
   - SwiftyStoreKit (0.13.2)
@@ -209,7 +209,7 @@ SPEC REPOS:
     - ReachabilitySwift
     - SDWebImage
     - SnapKit
-    - StarscreamFork
+    - Starscream
     - SwiftDate
     - SwiftyJSON
     - SwiftyStoreKit
@@ -266,17 +266,17 @@ SPEC CHECKSUMS:
   JGProgressHUD: 12b20a8f4ffe05258f8635c1ab92816e451f904d
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
-  PromisesObjC: 7358d6a58e012d77f9af3831e3d1390b78319c71
-  PromisesSwift: 1ff253725dee00d711561b2c482b0cce789029c6
+  PromisesObjC: 3d668fb816bf83d13275fd86f66b02ab9f27a1a9
+  PromisesSwift: 622cfb428b861469e5634ec9319051df3f2d3ef8
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
-  PusherSwift: f9312465c069707c86e9320fc3bedccb0afb38ed
+  PusherSwift: 6f2535d616cf0d6867a58bee501999995ad37999
   PushNotifications: 2e3df1e301e19ae2a100267f8387da5fc471ecc7
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
   SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   Spring: 3c7666eccefdeb87140008dc81043f89f8dbb787
-  StarscreamFork: e95299dfc1d27d55ae622edb9a3d254791dea66d
+  Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
   SwiftDate: 7b56d42a221f582047287deb256b23fc5ed49a60
   SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
   SwiftyStoreKit: b7563505440a68c9d9fa70bc43d8a97015519409
