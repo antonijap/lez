@@ -62,7 +62,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
-                AnalyticsManager.shared.logEvent(name: .test, user: user)
+//                AnalyticsManager.shared.logEvent(name: .test, user: user)
                 self.options = PusherClientOptions(host: .cluster("eu"))
                 self.pusher = Pusher(key: "b5bd116d3da803ac6d12", options: self.options)
                 self.pusher.connection.delegate = self
@@ -88,7 +88,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if let currentUser = Auth.auth().currentUser {
+        if let _ = Auth.auth().currentUser {
             pusher.disconnect()
         }
     }
@@ -104,7 +104,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         DefaultsManager.shared.save(number: 0)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
         
-//        try! Auth.auth().signOut()
+        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
                 Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
