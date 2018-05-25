@@ -15,8 +15,10 @@ import TwitterKit
 
 class RegisterViewController: UIViewController {
     
-    let facebookLoginButton = UIButton()
-    let hud = JGProgressHUD(style: .dark)
+    private let facebookLoginButton = UIButton()
+    private let twitterLoginButton = UIButton()
+    private let hud = JGProgressHUD(style: .dark)
+    private let backgroundImageView = UIImageView()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -31,6 +33,7 @@ class RegisterViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        setupBackground()
         setupButtons()
         
         if let currentUser = Auth.auth().currentUser {
@@ -43,19 +46,52 @@ class RegisterViewController: UIViewController {
         }
     }
     
-    fileprivate func startSpinner() {
+    private func setupBackground() {
+        view.addSubview(backgroundImageView)
+        backgroundImageView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        backgroundImageView.image = UIImage(named: "Register")
+        backgroundImageView.contentMode = .scaleAspectFill
+    }
+    
+    private func startSpinner() {
         hud.textLabel.text = "Logging in"
         hud.show(in: view)
         hud.interactionType = .blockAllTouches
         hud.detailTextLabel.font = UIFont.systemFont(ofSize: 9.0, weight: .regular)
     }
     
-    fileprivate func stopSpinner() {
+    private func stopSpinner() {
         hud.dismiss(animated: true)
     }
 
-    fileprivate func setupButtons() {
-        let twitterLoginButton = TWTRLogInButton(logInCompletion: { session, error in
+    private func setupButtons() {
+        view.addSubview(twitterLoginButton)
+        twitterLoginButton.setTitle("Login with Twitter", for: .normal)
+        twitterLoginButton.addTarget(self, action: #selector(self.twitterButtonTapped), for:.touchUpInside)
+        twitterLoginButton.snp.makeConstraints { (make) in
+            make.left.right.equalToSuperview().inset(48)
+            make.bottom.equalToSuperview().inset(100)
+            make.height.equalTo(48)
+        }
+        twitterLoginButton.backgroundColor = UIColor(red:0.30, green:0.62, blue:0.93, alpha:1.00)
+        twitterLoginButton.layer.cornerRadius = 48 / 2
+        
+        facebookLoginButton.setTitle("Login with Facebook", for: .normal)
+        facebookLoginButton.addTarget(self, action: #selector(self.facebookButtonTapped), for:.touchUpInside)
+        view.addSubview(facebookLoginButton)
+        facebookLoginButton.snp.makeConstraints { (make) in
+            make.left.right.equalToSuperview().inset(48)
+            make.bottom.equalTo(twitterLoginButton.snp.top).inset(-8)
+            make.height.equalTo(48)
+        }
+        facebookLoginButton.backgroundColor = UIColor(red:0.28, green:0.37, blue:0.60, alpha:1.00)
+        facebookLoginButton.layer.cornerRadius = 48 / 2
+    }
+    
+    @objc func twitterButtonTapped() {
+        TWTRTwitter.sharedInstance().logIn(completion: { (session, error) in
             if let session = session {
                 self.startSpinner()
                 let credential = TwitterAuthProvider.credential(withToken: session.authToken, secret: session.authTokenSecret)
@@ -75,7 +111,9 @@ class RegisterViewController: UIViewController {
                                 } else {
                                     let userProfileFormViewController = UserProfileFormViewController()
                                     userProfileFormViewController.name = currentUser.user.displayName!
-                                    userProfileFormViewController.email = currentUser.user.email!
+                                    if let email = currentUser.user.email {
+                                        userProfileFormViewController.email = email
+                                    }
                                     userProfileFormViewController.uid = currentUser.user.uid
                                     self.navigationItem.setHidesBackButton(true, animated: true)
                                     self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
@@ -84,35 +122,16 @@ class RegisterViewController: UIViewController {
                         } else {
                             let userProfileFormViewController = UserProfileFormViewController()
                             userProfileFormViewController.name = currentUser.user.displayName!
-                            userProfileFormViewController.email = currentUser.user.email!
                             userProfileFormViewController.uid = currentUser.user.uid
                             self.navigationItem.setHidesBackButton(true, animated: true)
                             self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                         }
                     })
                 }
+            } else {
+                print(error.debugDescription)
             }
         })
-        
-        view.addSubview(twitterLoginButton)
-        twitterLoginButton.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview().inset(48)
-            make.bottom.equalToSuperview().inset(100)
-            make.height.equalTo(48)
-        }
-        twitterLoginButton.backgroundColor = UIColor(red:0.30, green:0.62, blue:0.93, alpha:1.00)
-        twitterLoginButton.layer.cornerRadius = 48 / 2
-        
-        facebookLoginButton.setTitle("Login with Facebook", for: .normal)
-        facebookLoginButton.addTarget(self, action: #selector(self.facebookButtonTapped), for:.touchUpInside)
-        view.addSubview(facebookLoginButton)
-        facebookLoginButton.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview().inset(48)
-            make.bottom.equalTo(twitterLoginButton.snp.top).inset(-8)
-            make.height.equalTo(48)
-        }
-        facebookLoginButton.backgroundColor = UIColor(red:0.28, green:0.37, blue:0.60, alpha:1.00)
-        facebookLoginButton.layer.cornerRadius = 48 / 2
     }
    
     @objc func facebookButtonTapped() {

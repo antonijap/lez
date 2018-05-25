@@ -1,5 +1,3 @@
-# This is a fork that's used because of a CocoaPods dependency
-
 ![starscream](https://raw.githubusercontent.com/daltoniam/starscream/assets/starscream.jpg)
 
 Starscream is a conforming WebSocket ([RFC 6455](http://tools.ietf.org/html/rfc6455)) client library in Swift.
