@@ -87,7 +87,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        pusher.disconnect()
+//        pusher.disconnect()
     }
     
     override func viewDidLoad() {

@@ -572,4 +572,15 @@ final class FirestoreManager {
             }
         }
     }
+    
+    func deleteUser(uid: String) {
+        db.collection("users").document(uid).delete() { err in
+            if let err = err {
+                print("Error removing document: \(err)")
+                // Log error in my Dashboard
+            } else {
+                print("Document successfully removed!")
+            }
+        }
+    }
 }

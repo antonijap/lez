@@ -50,6 +50,7 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.signOut), name: Notification.Name("SignOut"), object: nil)
         startSpinner(title: "Loading Profile")
         guard let currentUser = Auth.auth().currentUser else { return }
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
@@ -93,7 +94,7 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
         tableView.register(HeaderCell.self, forCellReuseIdentifier: "HeaderCell")
     }
     
-    func startSpinner(title: String) {
+    private func startSpinner(title: String) {
         // Start Animating
         hud.textLabel.text = title
         hud.vibrancyEnabled = true
@@ -101,12 +102,12 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
         hud.show(in: view)
     }
     
-    func stopSpinner() {
+    private func stopSpinner() {
         // Start Animating
         hud.dismiss(animated: true)
     }
     
-    fileprivate func markUserAsPremium(uid: String) {
+    private func markUserAsPremium(uid: String) {
         let data: [String: Any] = [
             "isPremium": true,
             "cooldownTime": "",
@@ -121,6 +122,15 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
                     print("Error happened")
                 })
             }
+        }
+    }
+    
+    @objc private func signOut() {
+        do {
+            try Auth.auth().signOut()
+            tabBarController?.selectedIndex = 0
+        } catch let signOutError as NSError {
+            print ("Error signing out: %@", signOutError)
         }
     }
     
@@ -212,9 +222,11 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 if indexPath.section == 7 {
                     simpleMenuCell.titleLabel.text = "Edit Profile"
                     simpleMenuCell.titleLabel.textColor = .black
+                    simpleMenuCell.isUserInteractionEnabled = true
                 }
                 if indexPath.section == 8 {
                     simpleMenuCell.titleLabel.text = "Edit Images"
+                    simpleMenuCell.isUserInteractionEnabled = true
                 }
                 if indexPath.section == 9 {
                     if user.isPremium {
@@ -257,12 +269,13 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             }
         }
         if indexPath == [7, 0] {
-            let setupProfileViewController = UserProfileFormViewController()
+            print("Edit Profile")
+            let userProfileFormViewController = UserProfileFormViewController()
             guard let user = user else { return }
-            setupProfileViewController.user = user
-            setupProfileViewController.profileViewControllerDelegate = self
-            setupProfileViewController.hidesBottomBarWhenPushed = true
-            navigationController?.pushViewController(setupProfileViewController, animated: true)
+            userProfileFormViewController.user = user
+            userProfileFormViewController.profileViewControllerDelegate = self
+            userProfileFormViewController.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(userProfileFormViewController, animated: true)
         }
         if indexPath == [8, 0] {
             let imageGalleryViewController = ImagesViewController()

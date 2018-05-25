@@ -26,7 +26,6 @@ class UserProfileFormViewController: FormViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupForm()
         setupNavigationBar()
     }
     
@@ -34,6 +33,7 @@ class UserProfileFormViewController: FormViewController {
         super.viewWillAppear(animated)
         // Check if user is onboarded
         if let user = user {
+            setupEditForm(uid: user.uid)
             Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
                 guard let document = documentSnapshot else {
                     print("Error fetching document: \(error!)")
@@ -55,6 +55,8 @@ class UserProfileFormViewController: FormViewController {
                 }
                 self.onboardingContinues = true
             }
+        } else {
+            setupBasicForm()
         }
     }
     
@@ -246,7 +248,7 @@ class UserProfileFormViewController: FormViewController {
         }
     }
     
-    func setupForm() {
+    func setupBasicForm() {
         var rules = RuleSet<String>()
         rules.add(rule: RuleRequired())
 
@@ -369,6 +371,151 @@ class UserProfileFormViewController: FormViewController {
                         cell.slider.selectedMaxValue = CGFloat(user.preferences.ageRange.to)
                         cell.slider.selectedMinValue = CGFloat(user.preferences.ageRange.from)
                     }
+            })
+    }
+    
+    func setupEditForm(uid: String) {
+        var rules = RuleSet<String>()
+        rules.add(rule: RuleRequired())
+        
+        form
+            
+            +++ Section("About Me")
+            
+            <<< NameRow() { row in
+                row.title = "Name"
+                row.tag = "name"
+                if let cu = user {
+                    row.value = cu.name
+                } else {
+                    guard let name = name else { return }
+                    row.value = name
+                }
+                row.add(ruleSet: rules)
+                row.validationOptions = .validatesOnChangeAfterBlurred
+                }
+                .cellUpdate { cell, row in
+                    if !row.isValid {
+                        cell.titleLabel?.textColor = .red
+                    }
+            }
+            
+            <<< EmailRow() { row in
+                row.title = "Email"
+                row.tag = "email"
+                if let cu = user {
+                    row.value = cu.email
+                } else {
+                    guard let email = email else { return }
+                    row.value = email
+                }
+                row.add(ruleSet: rules)
+                row.add(rule: RuleEmail())
+                row.validationOptions = .validatesOnChangeAfterBlurred
+                }
+                .cellUpdate { cell, row in
+                    if !row.isValid {
+                        cell.titleLabel?.textColor = .red
+                    }
+            }
+            
+            <<< IntRow() { row in
+                row.title = "Age"
+                row.tag = "age"
+                row.add(rule: RuleRequired())
+                if let cu = user {
+                    row.value = cu.age
+                }
+            }
+            
+            
+            <<< TextRow() { row in
+                row.title = "About"
+                row.tag = "about"
+                row.add(rule: RuleRequired())
+                if let cu = user {
+                    row.value = cu.details.about
+                }
+            }
+            
+            <<< GooglePlacesTableRow() { row in
+                row.title = "Location"
+                row.tag = "location"
+                if let cu = user {
+                    row.value = GooglePlace(string: "\(cu.location.city), \(cu.location.country)")
+                }
+                row.add(ruleSet: RuleSet<GooglePlace>())
+                row.validationOptions = .validatesOnChangeAfterBlurred
+                }.onChange({ (row) in
+                    row.value.map({ (place) in
+                        switch place {
+                        case .userInput(let value):
+                            print(value)
+                        case .prediction(let prediction):
+                            self.loc = Location(city:  prediction.attributedPrimaryText.string, country: (prediction.attributedSecondaryText?.string)!)
+                        }
+                    })
+                })
+            
+            <<< PushRow<String>() { row in
+                row.title = "Diet"
+                row.options = [Diet.vegan.rawValue, Diet.vegetarian.rawValue, Diet.omnivore.rawValue, Diet.other.rawValue]
+                row.tag = "diet"
+                row.add(rule: RuleRequired())
+                if let cu = user {
+                    row.value = cu.details.diet.rawValue
+                }
+            }
+            
+            +++ Section("Matching Preferences")
+            
+            <<< MultipleSelectorRow<String>() { row in
+                row.title = "Looking for"
+                row.add(rule: RuleRequired())
+                row.options = [LookingFor.relationship.rawValue, LookingFor.friendship.rawValue, LookingFor.sex.rawValue]
+                row.tag = "lookingFor"
+                if let cu = user {
+                    row.value = Set(cu.preferences.lookingFor)
+                }
+            }
+            
+            <<< TextRow() { row in
+                row.title = "Dealbreakers"
+                row.tag = "dealbreakers"
+                row.add(rule: RuleRequired())
+                if let cu = user {
+                    row.value = cu.details.dealBreakers
+                }
+            }
+            
+            +++ Section("Prefered Age Range")
+            
+            <<< RangeSliderRow() { row in
+                row.tag = "agePreference"
+                }.cellSetup({ (cell, row) in
+                    if let user = self.user {
+                        cell.slider.selectedMaxValue = CGFloat(user.preferences.ageRange.to)
+                        cell.slider.selectedMinValue = CGFloat(user.preferences.ageRange.from)
+                    }
+            })
+        
+            +++ Section("Danger Area")
+        
+            <<< ButtonRow() { row in
+                row.tag = "delete"
+                row.title = "Delete Account"
+                }.onCellSelection({ (cell, row) in
+                    Alertift.alert(title: "Delete Account", message: "Do you want to delete your account? This action is irreversable.")
+                        .action(.destructive("Delete My Account Forever"), handler: { (_, _, _) in
+                            // 1. Delete user
+//                            FirestoreManager.shared.deleteUser(uid: uid)
+                            // 2. Sign out
+                            NotificationCenter.default.post(name: Notification.Name("SignOut"), object: nil)
+                            // 3. Trigger sign out
+                            self.navigationController?.popToRootViewController(animated: false)
+                        })
+                        .action(Alertift.Action.cancel("Cancel"))
+                        .show(on: self, completion: nil)
                 })
     }
 }

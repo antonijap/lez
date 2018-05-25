@@ -36,6 +36,7 @@
 		CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */; };
 		CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */; };
 		CFC4E8FE207232BB00D8B8FA /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */; };
+		CFDAE34F20B8647A0084A845 /* DeleteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDAE34E20B8647A0084A845 /* DeleteCell.swift */; };
 		CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE0BD662073DD810055FC73 /* CustomCells.swift */; };
 		CFE1E4EB206EB88D00A51D7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */; };
 		CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */; };
@@ -102,6 +103,7 @@
 		CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		CFC4E8FC207232B200D8B8FA /* Lez.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Lez.entitlements; sourceTree = "<group>"; };
 		CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		CFDAE34E20B8647A0084A845 /* DeleteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteCell.swift; sourceTree = "<group>"; };
 		CFE0BD662073DD810055FC73 /* CustomCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCells.swift; sourceTree = "<group>"; };
 		CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
@@ -241,6 +243,7 @@
 				CFE0BD662073DD810055FC73 /* CustomCells.swift */,
 				CF11E904209EF545007E3D1D /* Protocols.swift */,
 				CFA7842B20A9F2B4000DA074 /* SliderCell.swift */,
+				CFDAE34E20B8647A0084A845 /* DeleteCell.swift */,
 				CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */,
 			);
 			path = Util;
@@ -616,6 +619,7 @@
 				CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */,
 				CF8C5E002094C84F00538C67 /* Chat.swift in Sources */,
 				CF425B4620679D8F00D6A1FE /* UserProfileFormViewController.swift in Sources */,
+				CFDAE34F20B8647A0084A845 /* DeleteCell.swift in Sources */,
 				CF1C6C55206F68650018DCD9 /* ChatViewController.swift in Sources */,
 				CF1C6C53206F631A0018DCD9 /* ImageGalleryViewController.swift in Sources */,
 				CF6CE927209CE12D00EED316 /* GetPremiumViewController.swift in Sources */,
