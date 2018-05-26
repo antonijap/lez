@@ -50,7 +50,6 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        NotificationCenter.default.addObserver(self, selector: #selector(self.signOut), name: Notification.Name("SignOut"), object: nil)
         startSpinner(title: "Loading Profile")
         guard let currentUser = Auth.auth().currentUser else { return }
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
@@ -124,16 +123,6 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
             }
         }
     }
-    
-    @objc private func signOut() {
-        do {
-            try Auth.auth().signOut()
-            tabBarController?.selectedIndex = 0
-        } catch let signOutError as NSError {
-            print ("Error signing out: %@", signOutError)
-        }
-    }
-    
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {

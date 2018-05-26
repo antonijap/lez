@@ -89,7 +89,9 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     
     override func viewWillDisappear(_ animated: Bool) {
         if let _ = Auth.auth().currentUser {
-            pusher.disconnect()
+            if let _ = user {
+                pusher.disconnect()
+            }
         }
     }
     
@@ -104,7 +106,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         DefaultsManager.shared.save(number: 0)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
         
-        try! Auth.auth().signOut()
+//        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
                 Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in

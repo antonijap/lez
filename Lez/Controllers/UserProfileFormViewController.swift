@@ -27,11 +27,6 @@ class UserProfileFormViewController: FormViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        // Check if user is onboarded
         if let user = user {
             setupEditForm(uid: user.uid)
             Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
@@ -58,6 +53,10 @@ class UserProfileFormViewController: FormViewController {
         } else {
             setupBasicForm()
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
     }
     
     func setupNavigationBar() {
@@ -505,14 +504,20 @@ class UserProfileFormViewController: FormViewController {
                 row.tag = "delete"
                 row.title = "Delete Account"
                 }.onCellSelection({ (cell, row) in
-                    Alertift.alert(title: "Delete Account", message: "Do you want to delete your account? This action is irreversable.")
-                        .action(.destructive("Delete My Account Forever"), handler: { (_, _, _) in
-                            // 1. Delete user
-//                            FirestoreManager.shared.deleteUser(uid: uid)
-                            // 2. Sign out
-                            NotificationCenter.default.post(name: Notification.Name("SignOut"), object: nil)
-                            // 3. Trigger sign out
-                            self.navigationController?.popToRootViewController(animated: false)
+                    Alertift.alert(title: "Last Warning", message: "This action is irreversable.")
+                        .action(.destructive("Delete Account"), handler: { (_, _, _) in
+                            FirestoreManager.shared.deleteUser(uid: uid).then({ (success) in
+                                if success {
+                                    do {
+                                        try Auth.auth().signOut()
+                                        self.tabBarController?.selectedIndex = 0
+                                    } catch let signOutError as NSError {
+                                        print ("Error signing out: %@", signOutError)
+                                    }
+                                }
+                            })
+                            
+                            
                         })
                         .action(Alertift.Action.cancel("Cancel"))
                         .show(on: self, completion: nil)
