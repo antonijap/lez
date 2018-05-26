@@ -19,6 +19,8 @@ class RegisterViewController: UIViewController {
     private let twitterLoginButton = UIButton()
     private let hud = JGProgressHUD(style: .dark)
     private let backgroundImageView = UIImageView()
+    private let bottomButtonsContainer = UIView()
+    private let privacyPolicyButton = UIButton()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -35,7 +37,7 @@ class RegisterViewController: UIViewController {
         super.viewDidLoad()
         setupBackground()
         setupButtons()
-        
+        setupPrivacyPolicy()
         if let currentUser = Auth.auth().currentUser {
             let setupProfileViewController = UserProfileFormViewController()
             setupProfileViewController.name = currentUser.displayName!
@@ -45,6 +47,25 @@ class RegisterViewController: UIViewController {
             navigationController?.pushViewController(setupProfileViewController, animated: true)
         }
     }
+    
+    private func setupPrivacyPolicy() {
+        view.addSubview(privacyPolicyButton)
+        privacyPolicyButton.snp.makeConstraints { (make) in
+            make.bottom.equalToSuperview().inset(16)
+            make.centerX.equalToSuperview()
+        }
+        privacyPolicyButton.setTitle("Privacy Policy", for: .normal)
+        privacyPolicyButton.setTitleColor(.gray, for: .normal)
+        privacyPolicyButton.addTarget(self, action: #selector(self.privacyPolicyButtontapped), for: .touchUpInside)
+        privacyPolicyButton.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+    }
+    
+    @objc private func privacyPolicyButtontapped() {
+        if let url = URL(string: "https://www.iubenda.com/privacy-policy/89963959") {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+    
     
     private func setupBackground() {
         view.addSubview(backgroundImageView)
