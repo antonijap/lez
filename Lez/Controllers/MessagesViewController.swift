@@ -12,6 +12,7 @@ import Alertift
 import SwiftyJSON
 import SwiftDate
 import Alamofire
+import Spring
 
 class MessagesViewController: UIViewController {
     
@@ -19,7 +20,7 @@ class MessagesViewController: UIViewController {
     var chatUid: String!
     var participants: [User] = [User]()
     private let textField = UITextField()
-    private var keyboardHeightLayoutConstraint: NSLayoutConstraint?
+    private var bottomConstraint = KeyboardLayoutConstraint()
     private let tableView = UITableView()
     private var messages = [Message]()
     private var myUid: String!
@@ -81,22 +82,41 @@ class MessagesViewController: UIViewController {
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        removeKeyboardObserver()
+        removeKeyboardObservers()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         hideKeyboardWhenTappedAround()
-        addKeyboardChangeFrameObserver(willShow: { [weak self](height) in
-            self?.textFieldContainer.snp.updateConstraints({ (make) in
-                make.bottom.equalToSuperview().inset(height)
+        addKeyboardObservers()
+    }
+
+    func addKeyboardObservers() {
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+    }
+    
+    func removeKeyboardObservers() {
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: self.textFieldContainer)
+        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: self.textFieldContainer)
+    }
+    
+    @objc func keyboardWillShow(notification: NSNotification) {
+        let keyboardHeight = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue.height
+        UIView.animate(withDuration: 1.1, animations: { () -> Void in
+            self.textFieldContainer.snp.updateConstraints({ (make) in
+                make.bottom.equalTo(-1 * keyboardHeight!)
             })
-            self?.view.setNeedsUpdateConstraints()
-            }, willHide: { [weak self](height) in
-                self?.textFieldContainer.snp.updateConstraints({ (make) in
-                    make.bottom.equalToSuperview()
-                })
-                self?.view.setNeedsUpdateConstraints()
+            self.textFieldContainer.superview?.layoutIfNeeded()
+        })
+    }
+    
+    @objc func keyboardWillHide(notification: NSNotification) {
+        UIView.animate(withDuration: 0.1, animations: { () -> Void in
+            self.textFieldContainer.snp.updateConstraints({ (make) in
+                make.bottom.equalToSuperview()
+            })
+            self.textFieldContainer.superview?.layoutIfNeeded()
         })
     }
     
@@ -293,8 +313,8 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
     
     @objc func sendMessage() {
         if textField.text != "" {
-            
             if let text = textField.text {
+                print(text)
                 let data: [String: Any] = [
                     "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
                     "from": myUid,
@@ -304,8 +324,8 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
                     self.textField.text = ""
                     let parameters: Parameters = ["channel": self.herUid!, "event": Events.newMessage.rawValue, "message": "\(self.name!) sent message"]
                     Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters, encoding: URLEncoding.default)
+//                    self.textField.resignFirstResponder()
                     self.populateMessages()
-                    self.textField.resignFirstResponder()
                 }
             }
         }
@@ -317,7 +337,7 @@ extension MessagesViewController: UITextFieldDelegate {
     
     func textFieldShouldBeginEditing(_ textField: UITextField) -> Bool {
         // return NO to disallow editing.
-        print("TextField should begin editing method called")
+//        print("TextField should begin editing method called")
         return true
     }
     

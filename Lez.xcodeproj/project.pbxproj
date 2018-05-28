@@ -24,6 +24,7 @@
 		CF321442209B61820035E235 /* SafariServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CF321441209B61820035E235 /* SafariServices.framework */; };
 		CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */; };
 		CF425B4620679D8F00D6A1FE /* UserProfileFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF425B4520679D8F00D6A1FE /* UserProfileFormViewController.swift */; };
+		CF660D2020B96F040027E3AE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF660D1F20B96F040027E3AE /* Device.swift */; };
 		CF6CE927209CE12D00EED316 /* GetPremiumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */; };
 		CF7877F120A71685004E8693 /* ImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7877F020A71685004E8693 /* ImagesViewController.swift */; };
 		CF7C6C6520B2BFF700CEE0D1 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */; };
@@ -91,6 +92,7 @@
 		CF321441209B61820035E235 /* SafariServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SafariServices.framework; path = System/Library/Frameworks/SafariServices.framework; sourceTree = SDKROOT; };
 		CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFullscreenViewController.swift; sourceTree = "<group>"; };
 		CF425B4520679D8F00D6A1FE /* UserProfileFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileFormViewController.swift; sourceTree = "<group>"; };
+		CF660D1F20B96F040027E3AE /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPremiumViewController.swift; sourceTree = "<group>"; };
 		CF7877F020A71685004E8693 /* ImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesViewController.swift; sourceTree = "<group>"; };
 		CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
@@ -258,6 +260,7 @@
 				CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */,
 				CFF3676620AAF4E30092B948 /* PusherManager.swift */,
 				CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */,
+				CF660D1F20B96F040027E3AE /* Device.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -300,6 +303,7 @@
 				CF2DF201203C13170054CC1A /* Resources */,
 				C25547941FA7A89D98F58EEB /* [CP] Embed Pods Frameworks */,
 				B615843F6B279E3ABB85A8CA /* [CP] Copy Pods Resources */,
+				CF682BE720B97C0500D3107E /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -528,6 +532,7 @@
 				"${BUILT_PRODUCTS_DIR}/FacebookCore/FacebookCore.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookLogin/FacebookLogin.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookShare/FacebookShare.framework",
+				"${BUILT_PRODUCTS_DIR}/GBDeviceInfo/GBDeviceInfo.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GooglePlacesRow/GooglePlacesRow.framework",
 				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
@@ -574,6 +579,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookLogin.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookShare.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GBDeviceInfo.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GooglePlacesRow.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
@@ -610,6 +616,19 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		CF682BE720B97C0500D3107E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\"";
+		};
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -630,6 +649,7 @@
 				CF11E905209EF545007E3D1D /* Protocols.swift in Sources */,
 				CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */,
 				CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */,
+				CF660D2020B96F040027E3AE /* Device.swift in Sources */,
 				CF7C6C6520B2BFF700CEE0D1 /* AnalyticsManager.swift in Sources */,
 				CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */,
 				CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */,
@@ -721,7 +741,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
-				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;

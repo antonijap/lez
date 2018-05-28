@@ -9,14 +9,17 @@ PODS:
   - Bolts/AppLinks (1.9.0):
     - Bolts/Tasks
   - Bolts/Tasks (1.9.0)
-  - BoringSSL (10.0.2):
-    - BoringSSL/Implementation (= 10.0.2)
-    - BoringSSL/Interface (= 10.0.2)
-  - BoringSSL/Implementation (10.0.2):
-    - BoringSSL/Interface (= 10.0.2)
-  - BoringSSL/Interface (10.0.2)
+  - BoringSSL (10.0.3):
+    - BoringSSL/Implementation (= 10.0.3)
+    - BoringSSL/Interface (= 10.0.3)
+  - BoringSSL/Implementation (10.0.3):
+    - BoringSSL/Interface (= 10.0.3)
+  - BoringSSL/Interface (10.0.3)
+  - Crashlytics (3.10.2):
+    - Fabric (~> 1.7.7)
   - CryptoSwift (0.9.0)
   - Eureka (4.1.1)
+  - Fabric (1.7.7)
   - FacebookCore (0.3.0):
     - Bolts (~> 1.8)
     - FBSDKCoreKit (~> 4.27)
@@ -76,6 +79,9 @@ PODS:
   - FirebaseStorage (3.0.0):
     - FirebaseCore (~> 5.0)
     - GTMSessionFetcher/Core (~> 1.1)
+  - GBDeviceInfo (5.2.0):
+    - GBDeviceInfo/Core (= 5.2.0)
+  - GBDeviceInfo/Core (5.2.0)
   - GooglePlacesRow (3.0.0):
     - Eureka (~> 4.0)
   - GoogleToolboxForMac/Defines (2.1.4)
@@ -112,9 +118,9 @@ PODS:
     - nanopb/encode (= 0.3.8)
   - nanopb/decode (0.3.8)
   - nanopb/encode (0.3.8)
-  - PromisesObjC (1.2.1)
-  - PromisesSwift (1.2.1):
-    - PromisesObjC (= 1.2.1)
+  - PromisesObjC (1.2.2)
+  - PromisesSwift (1.2.2):
+    - PromisesObjC (= 1.2.2)
   - Protobuf (3.5.0)
   - PusherSwift (6.1.0):
     - CryptoSwift (~> 0.9.0)
@@ -143,6 +149,8 @@ DEPENDENCIES:
   - Alamofire (~> 4.7)
   - AlamofireImage (~> 3.3)
   - Alertift (~> 3.0)
+  - Crashlytics (~> 3.10.2)
+  - Fabric (~> 1.7.7)
   - FacebookCore
   - FacebookLogin
   - FacebookShare
@@ -150,6 +158,7 @@ DEPENDENCIES:
   - Firebase/Core
   - Firebase/Firestore
   - Firebase/Storage
+  - GBDeviceInfo
   - GooglePlacesRow
   - ImageSlideshow (~> 1.5)
   - Jelly
@@ -174,8 +183,10 @@ SPEC REPOS:
     - Alertift
     - Bolts
     - BoringSSL
+    - Crashlytics
     - CryptoSwift
     - Eureka
+    - Fabric
     - FacebookCore
     - FacebookLogin
     - FacebookShare
@@ -189,6 +200,7 @@ SPEC REPOS:
     - FirebaseFirestore
     - FirebaseInstanceID
     - FirebaseStorage
+    - GBDeviceInfo
     - GooglePlacesRow
     - GoogleToolboxForMac
     - gRPC
@@ -238,15 +250,17 @@ SPEC CHECKSUMS:
   AlamofireImage: 3b35b586853abaf94ca1250f4e94cff3c21a4c0d
   Alertift: df0df24a557e47360180092f5f3fceb675c96b51
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
-  BoringSSL: 60dd24df4af296bf41d78e5841dbb95d75f88c0d
+  BoringSSL: c46efb47593135382bc0934196f16d2f726f5f36
+  Crashlytics: 0360624eea1c978a743feddb2fb1ef8b37fb7a0d
   CryptoSwift: bca8c5b653dcc2d9734409242a070ff53bafac86
   Eureka: b88fb930e42c79f8c03c373d0fcdc28c1d6c50ed
+  Fabric: bda89e242bce1b7b8ab264248cf3407774ce0095
   FacebookCore: 3ffa190a3f1f96cec0e44d3fc221bc322c595ffa
   FacebookLogin: 0af839ea858faef99550d16596b87b4a8e8906e6
   FacebookShare: 0469964297ebd75f052be2c5083389a4208e82b7
   FBSDKCoreKit: 572b047a7e029bc44542bcf8a59414e7ff2b543e
   FBSDKLoginKit: 88cb456349cfb3b554427ce4f8b43729d85dfb40
-  FBSDKShareKit: b7b5002833a4104fbecad75e8e4e082e91c7a08a
+  FBSDKShareKit: 1869cb24db2cea90666a50cb9d568deb38e2d16e
   Firebase: d6861c2059d8c32d1e6dd8932e22ada346d90a3a
   FirebaseAnalytics: 19812b49fa5f283dd6b23edf8a14b5d477029ab8
   FirebaseAuth: acbeef02fe7c3a26624e309849f3fe30c84115af
@@ -254,6 +268,7 @@ SPEC CHECKSUMS:
   FirebaseFirestore: f686b8e83f3cf8bbc37db6e98e01029a14f01f55
   FirebaseInstanceID: 83e0040351565df711a5db3d8ebe5ea21aca998a
   FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
+  GBDeviceInfo: 2c65ceb9404f9079264d4c238f5b81916fdfc5e2
   GooglePlacesRow: c0bb6bc0acf8b2ab690986ef5c5ecb1085dd1d9e
   GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
   gRPC: 9362451032695e2dfb7bafcd3740e3a27939e4ff
@@ -266,8 +281,8 @@ SPEC CHECKSUMS:
   JGProgressHUD: 12b20a8f4ffe05258f8635c1ab92816e451f904d
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
-  PromisesObjC: 3d668fb816bf83d13275fd86f66b02ab9f27a1a9
-  PromisesSwift: 622cfb428b861469e5634ec9319051df3f2d3ef8
+  PromisesObjC: 3db4112f796a05782b4442364748f9126fea0b88
+  PromisesSwift: a87c9b5fba61711bce16ac11d8d8bf96fc93fde0
   Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
   PusherSwift: 6f2535d616cf0d6867a58bee501999995ad37999
   PushNotifications: 2e3df1e301e19ae2a100267f8387da5fc471ecc7
@@ -285,6 +300,6 @@ SPEC CHECKSUMS:
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: b1bd98cc9b95635d9019745e2b00021d367fc18b
+PODFILE CHECKSUM: d14d87e60097121378b708645b2a5ff70a620e5f
 
-COCOAPODS: 1.5.2
+COCOAPODS: 1.5.3

@@ -66,8 +66,8 @@ class UserProfileFormViewController: FormViewController {
            // There is user show back button
             navigationItem.title = "Your Profile"
         } else {
-            navigationItem.title = "Edit Profile"
-            navigationItem.setHidesBackButton(true, animated: true)
+            navigationItem.title = "Setup Profile"
+//            navigationItem.setHidesBackButton(true, animated: true)
         }
     }
     

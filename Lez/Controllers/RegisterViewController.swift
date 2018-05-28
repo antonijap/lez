@@ -12,6 +12,7 @@ import FacebookLogin
 import Firebase
 import JGProgressHUD
 import TwitterKit
+import Crashlytics
 
 class RegisterViewController: UIViewController {
     
@@ -19,15 +20,30 @@ class RegisterViewController: UIViewController {
     private let twitterLoginButton = UIButton()
     private let hud = JGProgressHUD(style: .dark)
     private let backgroundImageView = UIImageView()
-    private let bottomButtonsContainer = UIView()
+    private let scrollView = UIScrollView()
+    private let contentView = UIView()
+    
+    private let bureaucracyCrapButtonsView = UIView()
     private let privacyPolicyButton = UIButton()
+    private let termsOfServiceButton = UIButton()
+    private let subscriptionText = UILabel()
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
         stopSpinner()
+        
+        let button = UIButton(type: .roundedRect)
+        button.frame = CGRect(x: 20, y: 50, width: 100, height: 30)
+        button.setTitle("Crash", for: [])
+        button.addTarget(self, action: #selector(self.crashButtonTapped(_:)), for: .touchUpInside)
+//        view.addSubview(button)
     }
     
+    @objc func crashButtonTapped(_ sender: AnyObject) {
+        Crashlytics.sharedInstance().crash()
+    }
+
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -37,7 +53,7 @@ class RegisterViewController: UIViewController {
         super.viewDidLoad()
         setupBackground()
         setupButtons()
-        setupPrivacyPolicy()
+        setupBureaucracyCrapButtons()
         if let currentUser = Auth.auth().currentUser {
             let setupProfileViewController = UserProfileFormViewController()
             setupProfileViewController.name = currentUser.displayName!
@@ -48,16 +64,51 @@ class RegisterViewController: UIViewController {
         }
     }
     
-    private func setupPrivacyPolicy() {
-        view.addSubview(privacyPolicyButton)
+    private func setupBureaucracyCrapButtons() {
+        contentView.addSubview(bureaucracyCrapButtonsView)
+        if Device.IS_4_7_INCHES_OR_LARGER() {
+            bureaucracyCrapButtonsView.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.width.equalToSuperview().dividedBy(2)
+                make.top.equalTo(twitterLoginButton.snp.bottom).offset(40)
+            }
+        } else {
+            bureaucracyCrapButtonsView.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.width.equalToSuperview().dividedBy(1.7)
+                make.top.equalTo(twitterLoginButton.snp.bottom).offset(40)
+            }
+        }
+        
+        bureaucracyCrapButtonsView.addSubview(privacyPolicyButton)
         privacyPolicyButton.snp.makeConstraints { (make) in
-            make.bottom.equalToSuperview().inset(16)
-            make.centerX.equalToSuperview()
+            make.left.top.bottom.equalToSuperview()
         }
         privacyPolicyButton.setTitle("Privacy Policy", for: .normal)
         privacyPolicyButton.setTitleColor(.gray, for: .normal)
         privacyPolicyButton.addTarget(self, action: #selector(self.privacyPolicyButtontapped), for: .touchUpInside)
         privacyPolicyButton.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        
+        bureaucracyCrapButtonsView.addSubview(termsOfServiceButton)
+        termsOfServiceButton.snp.makeConstraints { (make) in
+            make.right.top.bottom.equalToSuperview()
+        }
+        termsOfServiceButton.setTitle("Terms of Service", for: .normal)
+        termsOfServiceButton.setTitleColor(.gray, for: .normal)
+        termsOfServiceButton.addTarget(self, action: #selector(self.termsOfServiceButtontapped), for: .touchUpInside)
+        termsOfServiceButton.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        
+        contentView.addSubview(subscriptionText)
+        subscriptionText.snp.makeConstraints { (make) in
+            make.top.equalTo(bureaucracyCrapButtonsView.snp.bottom).offset(40)
+            make.bottom.equalToSuperview().inset(32)
+            make.left.equalToSuperview().inset(32)
+            make.right.equalToSuperview().inset(32)
+        }
+        subscriptionText.text = "You may access and use the Service for free, but you agree and acknowledge that some features of the service will not be available to you through this Free Membership. Some parts of the Service are billed on a subscription \"Subscription\"). Premium is monthly auto-renewable subscription of Lez and it offers subscription with price 2.99€ per month. Payment will be charged to iTunes Account at confirmation of purchase. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period. Account will be charged for renewal within 24-hours prior to the end of the current period. Subscriptions may be managed by the user and auto-renewal may be turned off by going to the iPhone’s settings."
+        subscriptionText.numberOfLines = 20
+        subscriptionText.font = UIFont.systemFont(ofSize: 9, weight: .regular)
+        subscriptionText.textColor = .gray
     }
     
     @objc private func privacyPolicyButtontapped() {
@@ -66,11 +117,28 @@ class RegisterViewController: UIViewController {
         }
     }
     
+    @objc private func termsOfServiceButtontapped() {
+        if let url = URL(string: "https://www.iubenda.com/privacy-policy/89963959") {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+    
     
     private func setupBackground() {
-        view.addSubview(backgroundImageView)
-        backgroundImageView.snp.makeConstraints { (make) in
+        view.addSubview(scrollView)
+        scrollView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
+        }
+        scrollView.addSubview(contentView)
+        contentView.snp.makeConstraints { (make) in
+            make.top.bottom.equalTo(scrollView)
+            make.left.right.equalTo(view)
+        }
+        
+        contentView.addSubview(backgroundImageView)
+        backgroundImageView.snp.makeConstraints { (make) in
+            make.top.left.right.equalToSuperview()
+            make.height.equalTo(view.frame.height)
         }
         backgroundImageView.image = UIImage(named: "Register")
         backgroundImageView.contentMode = .scaleAspectFill
@@ -88,27 +156,29 @@ class RegisterViewController: UIViewController {
     }
 
     private func setupButtons() {
-        view.addSubview(twitterLoginButton)
-        twitterLoginButton.setTitle("Login with Twitter", for: .normal)
-        twitterLoginButton.addTarget(self, action: #selector(self.twitterButtonTapped), for:.touchUpInside)
-        twitterLoginButton.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview().inset(48)
-            make.bottom.equalToSuperview().inset(100)
-            make.height.equalTo(48)
-        }
-        twitterLoginButton.backgroundColor = UIColor(red:0.30, green:0.62, blue:0.93, alpha:1.00)
-        twitterLoginButton.layer.cornerRadius = 48 / 2
-        
         facebookLoginButton.setTitle("Login with Facebook", for: .normal)
         facebookLoginButton.addTarget(self, action: #selector(self.facebookButtonTapped), for:.touchUpInside)
-        view.addSubview(facebookLoginButton)
+        scrollView.addSubview(facebookLoginButton)
         facebookLoginButton.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview().inset(48)
-            make.bottom.equalTo(twitterLoginButton.snp.top).inset(-8)
+            make.top.equalToSuperview().offset(view.frame.height / 1.5)
             make.height.equalTo(48)
+            make.width.equalToSuperview().dividedBy(1.2)
+            make.centerX.equalToSuperview()
         }
         facebookLoginButton.backgroundColor = UIColor(red:0.28, green:0.37, blue:0.60, alpha:1.00)
         facebookLoginButton.layer.cornerRadius = 48 / 2
+        
+        scrollView.addSubview(twitterLoginButton)
+        twitterLoginButton.setTitle("Login with Twitter", for: .normal)
+        twitterLoginButton.addTarget(self, action: #selector(self.twitterButtonTapped), for:.touchUpInside)
+        twitterLoginButton.snp.makeConstraints { (make) in
+            make.top.equalTo(facebookLoginButton.snp.bottom).offset(8)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(48)
+            make.width.equalToSuperview().dividedBy(1.2)
+        }
+        twitterLoginButton.backgroundColor = UIColor(red:0.30, green:0.62, blue:0.93, alpha:1.00)
+        twitterLoginButton.layer.cornerRadius = 48 / 2
     }
     
     @objc func twitterButtonTapped() {
@@ -122,6 +192,7 @@ class RegisterViewController: UIViewController {
                         return
                     }
                     // User is signed in
+                    self.startSpinner()
                     guard let currentUser = user else { return }
                     FirestoreManager.shared.checkIfUserExists(uid: currentUser.user.uid).then({ (exists) in
                         if exists {
@@ -130,6 +201,7 @@ class RegisterViewController: UIViewController {
                                     self.stopSpinner()
                                     self.dismiss(animated: true, completion: nil)
                                 } else {
+                                    self.stopSpinner()
                                     let userProfileFormViewController = UserProfileFormViewController()
                                     userProfileFormViewController.name = currentUser.user.displayName!
                                     if let email = currentUser.user.email {
@@ -141,6 +213,7 @@ class RegisterViewController: UIViewController {
                                 }
                             }
                         } else {
+                            self.stopSpinner()
                             let userProfileFormViewController = UserProfileFormViewController()
                             userProfileFormViewController.name = currentUser.user.displayName!
                             userProfileFormViewController.uid = currentUser.user.uid

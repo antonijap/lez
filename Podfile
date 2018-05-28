@@ -32,6 +32,9 @@ target 'Lez' do
   pod 'PushNotifications'
   pod 'PusherSwift'
   pod 'Toast-Swift', '~> 3.0.1'
+  pod 'GBDeviceInfo'
+  pod 'Fabric', '~> 1.7.7'
+  pod 'Crashlytics', '~> 3.10.2'
   
   target 'LezTests' do
     inherit! :search_paths
