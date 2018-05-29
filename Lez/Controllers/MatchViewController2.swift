@@ -520,7 +520,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     @objc private func runTimer(cooldownTime: String) {
         timer.invalidate()
         let timeWhenZeroHappened = cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate
-        let timeUntilNewLikesUnlock = timeWhenZeroHappened?.add(components: 10.seconds)
+        let timeUntilNewLikesUnlock = timeWhenZeroHappened?.add(components: 10.minutes)
         let differenceBetweenNowAndTimeUntilNewLikesUnlock = timeUntilNewLikesUnlock?.timeIntervalSinceNow
         seconds = Int(differenceBetweenNowAndTimeUntilNewLikesUnlock!)
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
