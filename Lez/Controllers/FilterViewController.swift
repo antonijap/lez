@@ -92,6 +92,7 @@ class FilterViewController: FormViewController {
             }
         }
         delegate?.refreshTableView()
+        AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userAdjustedFilters, user: user!)
         dismissController()
     }
     

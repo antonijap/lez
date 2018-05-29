@@ -105,7 +105,7 @@ class RegisterViewController: UIViewController {
             make.left.equalToSuperview().inset(32)
             make.right.equalToSuperview().inset(32)
         }
-        subscriptionText.text = "You may access and use the Service for free, but you agree and acknowledge that some features of the service will not be available to you through this Free Membership. Some parts of the Service are billed on a subscription \"Subscription\"). Premium is monthly auto-renewable subscription of Lez and it offers subscription with price 2.99€ per month. Payment will be charged to iTunes Account at confirmation of purchase. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period. Account will be charged for renewal within 24-hours prior to the end of the current period. Subscriptions may be managed by the user and auto-renewal may be turned off by going to the iPhone’s settings."
+        subscriptionText.text = "Premium is monthly auto-renewable subscription of Lez and it offers subscription with price 2.99€ per month. Payment will be charged to iTunes Account at confirmation of purchase. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period. Account will be charged for renewal within 24-hours prior to the end of the current period. Subscriptions may be managed by the user and auto-renewal may be turned off by going to the iPhone’s settings."
         subscriptionText.numberOfLines = 20
         subscriptionText.font = UIFont.systemFont(ofSize: 9, weight: .regular)
         subscriptionText.textColor = .gray

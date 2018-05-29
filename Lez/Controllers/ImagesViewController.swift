@@ -49,7 +49,7 @@ class ImagesViewController: UIViewController {
             let images = user.images
             for image in images {
                 for imageView in imageViews {
-                    if imageView.image == UIImage(named: "Empty_Image") || imageView.image == UIImage(named: "Empty_Image_Profile") {
+                    if imageView.image == UIImage(named: "Empty_Image") {
                         imageView.sd_setImage(with: URL(string: image.url), completed: nil)
                         imageView.contentMode = .scaleAspectFill
                         break
@@ -84,7 +84,7 @@ class ImagesViewController: UIViewController {
         imageViewOne.clipsToBounds = true
         imageViewOne.layer.cornerRadius = 8
         imageViewOne.contentMode = .center
-        imageViewOne.image = UIImage(named: "Empty_Image_Profile")
+        imageViewOne.image = UIImage(named: "Empty_Image")
         
         view.addSubview(imageViewTwo)
         imageViewTwo.snp.makeConstraints { (make) in
@@ -172,7 +172,7 @@ class ImagesViewController: UIViewController {
     private func getAllImageViews() -> [UIImageView] {
         var filledImageViews: [UIImageView] = []
         for imageView in imageViews {
-            if imageView.image != UIImage(named: "Empty_Image") && imageView.image != UIImage(named: "Empty_Image_Profile") {
+            if imageView.image != UIImage(named: "Empty_Image") {
                 filledImageViews.append(imageView)
             }
         }
@@ -231,6 +231,9 @@ class ImagesViewController: UIViewController {
                             self.matchViewControllerDelegate?.fetchUsers(for: user.uid)
                             self.dismiss(animated: true, completion: {
                                 NotificationCenter.default.post(name: Notification.Name("RefreshTableView"), object: nil)
+                                FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
+                                    AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userRegistered, user: user)
+                                })
                             })
                         })
                     })
@@ -367,7 +370,7 @@ class ImagesViewController: UIViewController {
                             return
                         }
                         if view.tag == 0 {
-                            self.imageViewOne.image = UIImage(named: "Empty_Image_Profile")
+                            self.imageViewOne.image = UIImage(named: "Empty_Image")
                             self.imageViewOne.contentMode = .center
                         } else if view.tag == 1 {
                             self.imageViewTwo.image = UIImage(named: "Empty_Image")

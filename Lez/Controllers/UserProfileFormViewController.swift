@@ -213,6 +213,7 @@ class UserProfileFormViewController: FormViewController {
                 } else {
                     if let data = parseFormIntoDataForUpdatingUser() {
                         FirestoreManager.shared.updateUser(uid: user.uid, data: data).then { (success) in
+                            AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userEditedProfile, user: user)
                             self.profileViewControllerDelegate?.refreshProfile()
                             self.navigationController?.popViewController(animated: true)
                         }
@@ -509,6 +510,7 @@ class UserProfileFormViewController: FormViewController {
                             FirestoreManager.shared.deleteUser(uid: uid).then({ (success) in
                                 if success {
                                     do {
+                                        AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userDeletedAccount, user: self.user!)
                                         try Auth.auth().signOut()
                                         self.tabBarController?.selectedIndex = 0
                                     } catch let signOutError as NSError {

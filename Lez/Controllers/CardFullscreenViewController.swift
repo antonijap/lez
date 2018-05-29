@@ -12,12 +12,13 @@ import Firebase
 class CardFullscreenViewController: UIViewController {
     
     // MARK: - Variables
-    let tableView = UITableView()
-    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu]
+    private let tableView = UITableView()
+    private let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu]
     var user: User?
-    let closeButton = UIButton()
-    let tabBar = UITabBar()
+    private let closeButton = UIButton()
+    private let tabBar = UITabBar()
     var delegate: MatchViewControllerDelegate?
+    var me: User?
     
     // MARK: - Lifecycle
     
@@ -169,10 +170,12 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
 
         if indexPath == [6, 0] {
             showReportActionSheet(report: fullscreenUser, reportOwner: currentUser.uid)
+            AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userReportedSomebody, user: self.me!)
         }
         if indexPath == [7, 0] {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.showBlockActionSheet(currentUser: user, blockedUser: fullscreenUser.uid, completion: {
+                    AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userBlockedSomebody, user: self.me!)
                     print("User added to blocked list.")
                 })
             }

@@ -128,7 +128,6 @@ class ChatViewController: UIViewController {
     }
 
     fileprivate func fetchChats() {
-        startSpinner()
         guard let currentUser = Auth.auth().currentUser else { return }
         uid = currentUser.uid
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
@@ -156,15 +155,11 @@ class ChatViewController: UIViewController {
                     self.hideEmptyState()
                     self.tableView.isHidden = false
                     self.tableView.reloadData()
-                    self.stopSpinner()
                     self.refreshControl.endRefreshing()
-                    self.stopSpinner()
                 })
             } else if chats.isEmpty {
-                self.stopSpinner()
                 self.showEmptyState()
             } else {
-                self.stopSpinner()
                 self.hideEmptyState()
                 self.tableView.isHidden = false
             }

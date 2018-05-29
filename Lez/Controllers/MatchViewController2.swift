@@ -62,7 +62,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
-//                AnalyticsManager.shared.logEvent(name: .test, user: user)
                 self.options = PusherClientOptions(host: .cluster("eu"))
                 self.pusher = Pusher(key: "b5bd116d3da803ac6d12", options: self.options)
                 self.pusher.connection.delegate = self
@@ -261,6 +260,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     
     @objc private func shareWebsite() {
         let web = NSURL(string: "http://getlez.com")
+        AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userSharedURL, user: user!)
         web.share()
     }
     
@@ -439,19 +439,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         matchSubtitle.numberOfLines = 2
         matchSubtitle.textAlignment = .center
         
-//        matchView.addSubview(matchDescriptionLabel)
-//        matchDescriptionLabel.snp.makeConstraints { (make) in
-//            make.top.equalTo(matchSubtitle.snp.bottom).offset(8)
-//            make.centerX.equalToSuperview()
-//            make.left.equalToSuperview().inset(24)
-//            make.right.equalToSuperview().offset(-24)
-//        }
-//        matchDescriptionLabel.text = "Niiiiceee! You can go and chat or continue browsing."
-//        matchDescriptionLabel.font = UIFont.systemFont(ofSize: 21, weight: .regular)
-//        matchDescriptionLabel.numberOfLines = 2
-//        matchDescriptionLabel.textAlignment = .center
-//        matchDescriptionLabel.textColor = UIColor(red:0.52, green:0.52, blue:0.52, alpha:1.00)
-        
         matchView.addSubview(matchCTA)
         matchCTA.snp.makeConstraints { (make) in
             make.top.equalTo(matchSubtitle.snp.bottom).offset(32)
@@ -626,6 +613,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                         ]
                         FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[sender.tag].uid).then({ (ref) in
                             self.showMatch()
+                            AnalyticsManager.shared.logEvent(name: AnalyticsEvents.matchHappened, user: user)
                             let parameters: Parameters = ["uid": "\(self.users[sender.tag].uid)"]
                             Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/sendPushNotification", method: .post, parameters: parameters, encoding: URLEncoding.default)
                             let parameters2: Parameters = ["channel": self.users[sender.tag].uid, "event": Events.newMessage.rawValue, "message": "New Match"]
@@ -641,57 +629,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                 self.jellyAnimator?.prepare(viewController: nextViewController)
                 self.present(nextViewController, animated: true, completion: nil)
             }
-            
-            // Faster Liking End
-            
-            
-            
-//            FirestoreManager.shared.checkIfUserHasAvailableMatches(for: user.uid).then { (success) in
-//                if success {
-//                    FirestoreManager.shared.classicUpdateLike(myUid: user.uid, herUid: self.users[sender.tag].uid).then { (success) in
-//                        if success {
-//                            FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
-//                                self.user = user
-//                                UIView.performWithoutAnimation {
-//                                    self.tableView.reloadRows(at: [IndexPath(row: sender.tag, section: 0)], with: .top)
-//                                    FirestoreManager.shared.checkIfLikedUserIsMatch(currentUserUid: user.uid, likedUserUid: self.users[sender.tag].uid).then({ (success) in
-//                                        if success {
-//                                            self.addImagesToMatch(myUrl: user.images.first!.url, herUrl: self.users[sender.tag].images.first!.url)
-//                                            let data: [String: Any] = [
-//                                                "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
-//                                                "participants": [
-//                                                    user.uid: true,
-//                                                    self.users[sender.tag].uid: true
-//                                                ],
-//                                                "lastUpdated": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
-//                                                "isDisabled": false
-//                                                ]
-//                                            FirestoreManager.shared.addEmptyChat(data: data, for: user.uid, herUid: self.users[sender.tag].uid).then({ (ref) in
-//                                                self.showMatch()
-//                                                let parameters: Parameters = ["uid": "\(self.users[sender.tag].uid)"]
-//                                                Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/sendPushNotification", method: .post, parameters: parameters, encoding: URLEncoding.default)
-//                                                let parameters2: Parameters = ["channel": self.users[sender.tag].uid, "event": Events.newMessage.rawValue, "message": "New Match"]
-//                                                Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters2, encoding: URLEncoding.default)
-//                                                self.stopSpinner()
-//                                            })
-//                                        } else {
-//                                            self.stopSpinner()
-//                                        }
-//                                    })
-//                                }
-//                            })
-//                        }
-//                    }
-//                } else {
-//                    // No likes left. Show Premium screen.
-//                    let nextViewController = GetPremiumViewController()
-//                    let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
-//                    self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
-//                    self.jellyAnimator?.prepare(viewController: nextViewController)
-//                    self.present(nextViewController, animated: true, completion: nil)
-//                }
-//            }
-            
         })
     }
     
@@ -713,8 +650,11 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
 
 extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, MatchCellDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        guard let user = user else { return }
+        AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userViewedProfile, user: user)
         let nextViewController = CardFullscreenViewController()
         nextViewController.user = self.users[indexPath.row]
+        nextViewController.me = user
         let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
         self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
         self.jellyAnimator?.prepare(viewController: nextViewController)

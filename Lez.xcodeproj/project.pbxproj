@@ -25,6 +25,7 @@
 		CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */; };
 		CF425B4620679D8F00D6A1FE /* UserProfileFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF425B4520679D8F00D6A1FE /* UserProfileFormViewController.swift */; };
 		CF660D2020B96F040027E3AE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF660D1F20B96F040027E3AE /* Device.swift */; };
+		CF682BEB20BD697200D3107E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF682BEA20BD697200D3107E /* GoogleService-Info.plist */; };
 		CF6CE927209CE12D00EED316 /* GetPremiumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */; };
 		CF7877F120A71685004E8693 /* ImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7877F020A71685004E8693 /* ImagesViewController.swift */; };
 		CF7C6C6520B2BFF700CEE0D1 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */; };
@@ -40,7 +41,6 @@
 		CFC4E8FE207232BB00D8B8FA /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */; };
 		CFDAE34F20B8647A0084A845 /* DeleteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDAE34E20B8647A0084A845 /* DeleteCell.swift */; };
 		CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE0BD662073DD810055FC73 /* CustomCells.swift */; };
-		CFE1E4EB206EB88D00A51D7A /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */; };
 		CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */; };
 		CFF3676720AAF4E30092B948 /* PusherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF3676620AAF4E30092B948 /* PusherManager.swift */; };
 		CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */; };
@@ -93,6 +93,7 @@
 		CF3469A3204AD1B000550D3B /* CardFullscreenViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CardFullscreenViewController.swift; sourceTree = "<group>"; };
 		CF425B4520679D8F00D6A1FE /* UserProfileFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileFormViewController.swift; sourceTree = "<group>"; };
 		CF660D1F20B96F040027E3AE /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
+		CF682BEA20BD697200D3107E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPremiumViewController.swift; sourceTree = "<group>"; };
 		CF7877F020A71685004E8693 /* ImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesViewController.swift; sourceTree = "<group>"; };
 		CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
@@ -109,7 +110,6 @@
 		CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
 		CFDAE34E20B8647A0084A845 /* DeleteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteCell.swift; sourceTree = "<group>"; };
 		CFE0BD662073DD810055FC73 /* CustomCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCells.swift; sourceTree = "<group>"; };
-		CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
 		CFF3676620AAF4E30092B948 /* PusherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PusherManager.swift; sourceTree = "<group>"; };
 		CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManager.swift; sourceTree = "<group>"; };
@@ -240,8 +240,8 @@
 			isa = PBXGroup;
 			children = (
 				CF9C7B9620A4B83A0044043B /* Assets.xcassets */,
+				CF682BEA20BD697200D3107E /* GoogleService-Info.plist */,
 				CF0C3F042066F57D0033ECCA /* MatchAnimation.json */,
-				CFE1E4EA206EB88D00A51D7A /* GoogleService-Info.plist */,
 				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
 				CFB7C4C12066B15900114EC4 /* Extensions.swift */,
 				CFE0BD662073DD810055FC73 /* CustomCells.swift */,
@@ -415,7 +415,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF0C3F052066F57D0033ECCA /* MatchAnimation.json in Resources */,
-				CFE1E4EB206EB88D00A51D7A /* GoogleService-Info.plist in Resources */,
+				CF682BEB20BD697200D3107E /* GoogleService-Info.plist in Resources */,
 				CF9C7B9720A4B83A0044043B /* Assets.xcassets in Resources */,
 				CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */,
 			);

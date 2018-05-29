@@ -20,7 +20,7 @@ class GetPremiumViewController: UIViewController {
     let descriptionLabel = UILabel()
     let backgroundImageView = UIImageView()
     let buyButton = CustomButton()
-    var delegate: MatchViewControllerDelegate?
+    var matchViewControllerDelegate: MatchViewControllerDelegate?
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -93,7 +93,7 @@ class GetPremiumViewController: UIViewController {
         FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
             if success {
                 self.dismiss(animated: true, completion: {
-                    self.delegate?.refreshTableView()
+                    self.matchViewControllerDelegate?.refreshTableView()
                 })
             } else {
                 // Error happened, please contact support@getlez.com
@@ -125,7 +125,10 @@ class GetPremiumViewController: UIViewController {
         guard let currentUser = Auth.auth().currentUser else { return }
         SwiftyStoreKit.purchaseProduct("premium", quantity: 1, atomically: true) { result in
             switch result {
-            case .success(let purchase):
+            case .success:
+                FirestoreManager.shared.fetchUser(uid: currentUser.uid).then({ (user) in
+                    AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userPurchasedPremium, user: user)
+                })
                 self.markUserAsPremium(uid: currentUser.uid)
             case .error(let error):
                 switch error.code {

@@ -70,7 +70,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let apiKey = "***REMOVED***"
         GMSPlacesClient.provideAPIKey(apiKey)
         
-        TWTRTwitter.sharedInstance().start(withConsumerKey:"jCRNWy0U3EoRpvQHDnMubOhNb", consumerSecret:"G4XulpZ0LRHofdELtUShQLMTENvg2H0jJle22vy8WJx0988HRd")
+        TWTRTwitter.sharedInstance().start(withConsumerKey:"***REMOVED***", consumerSecret:"***REMOVED***")
         
         self.pushNotifications.start(instanceId: "***REMOVED***")
         self.pushNotifications.registerForRemoteNotifications()

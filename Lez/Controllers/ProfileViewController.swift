@@ -15,6 +15,7 @@ import Jelly
 import ImageSlideshow
 import SDWebImage
 import SwiftyStoreKit
+import Toast_Swift
 
 class ProfileViewController: UIViewController, ProfileViewControllerDelegate {    
 
@@ -114,7 +115,11 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
         ]
         FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
             if success {
-                self.dismiss(animated: true, completion: {})
+                FirestoreManager.shared.fetchUser(uid: uid).then({ (user) in
+                    self.user = user
+                    self.tableView.reloadData()
+                    self.view.makeToast("Premium activated", duration: 2.0, position: .bottom)
+                })
             } else {
                 // Error happened, please contact support@getlez.com
                 self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
@@ -247,13 +252,28 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath == [6, 0] {
             if let user = user {
                 if !user.isPremium {
-                    let nextViewController = GetPremiumViewController()
-                    let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut,
-                                                                               presentationCurve: .easeInEaseOut,
-                                                                               backgroundStyle: .blur(effectStyle: .light))
-                    self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
-                    self.jellyAnimator?.prepare(viewController: nextViewController)
-                    self.present(nextViewController, animated: true, completion: nil)
+                    guard let currentUser = Auth.auth().currentUser else { return }
+                    SwiftyStoreKit.purchaseProduct("premium", quantity: 1, atomically: true) { result in
+                        switch result {
+                        case .success:
+                            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then({ (user) in
+                                AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userPurchasedPremium, user: user)
+                            })
+                            self.markUserAsPremium(uid: currentUser.uid)
+                        case .error(let error):
+                            switch error.code {
+                            case .unknown: print("Unknown error. Please contact support")
+                            case .clientInvalid: print("Not allowed to make the payment")
+                            case .paymentCancelled: break
+                            case .paymentInvalid: print("The purchase identifier was invalid")
+                            case .paymentNotAllowed: print("The device is not allowed to make the payment")
+                            case .storeProductNotAvailable: print("The product is not available in the current storefront")
+                            case .cloudServicePermissionDenied: print("Access to cloud service information is not allowed")
+                            case .cloudServiceNetworkConnectionFailed: print("Could not connect to the network")
+                            case .cloudServiceRevoked: print("User has revoked permission to use this cloud service")
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -275,9 +295,11 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }
         if indexPath == [9, 0] {
+            print("Restore purchase tapped")
             SwiftyStoreKit.restorePurchases(atomically: true) { results in
                 if results.restoreFailedPurchases.count > 0 {
                     print("Restore Failed: \(results.restoreFailedPurchases)")
+                    self.view.makeToast("Restore Failed: \(results.restoreFailedPurchases)", duration: 2.0, position: .bottom)
                 }
                 else if results.restoredPurchases.count > 0 {
                     print("Restore Success: \(results.restoredPurchases)")
@@ -285,6 +307,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 }
                 else {
                     print("Nothing to Restore")
+                    self.view.makeToast("Nothing to Restore", duration: 1.0, position: .bottom)
                 }
             }
         }
