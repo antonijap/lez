@@ -56,7 +56,7 @@ struct Device {
     }
     
     static var SIMULATOR_OR_DEVICE: String {
-        #if (arch(i386) || arch(x86_64)) && os(iOS)
+        #if targetEnvironment(simulator)
         return "Simulator"
         #else
         return "Device"
@@ -255,7 +255,7 @@ struct Device {
     // MARK: Retina Check
     
     static func IS_RETINA() -> Bool {
-        return UIScreen.main.responds(to: "scale")
+        return UIScreen.main.responds(to: #selector(NSDecimalNumberBehaviors.scale))
     }
     
     // MARK: 3.5 Inch Checks
