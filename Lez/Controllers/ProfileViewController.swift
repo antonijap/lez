@@ -27,7 +27,7 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     let hud = JGProgressHUD(style: .dark)
     var shouldRefresh = false
     var jellyAnimator: JellyAnimator?
-    var sharedSecret = "TIOYZpYpJ{#kQvMGlfCBg3Ij"
+    let secret = "fdedb790950649388f3863bf6602ca66"
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -254,23 +254,19 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             if let user = user {
                 if !user.isPremium {
                     guard let currentUser = Auth.auth().currentUser else { return }
-                    
                     let productId = "premium"
                     SwiftyStoreKit.purchaseProduct(productId, atomically: true) { result in
                         if case .success(let purchase) = result {
                             if purchase.needsFinishTransaction {
                                 SwiftyStoreKit.finishTransaction(purchase.transaction)
                             }
-                            let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: self.sharedSecret)
+                            let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: self.secret)
                             SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
-                                print("APPLE VALIDATOR")
-                                print(result)
                                 if case .success(let receipt) = result {
                                     let purchaseResult = SwiftyStoreKit.verifySubscription(
                                         ofType: .autoRenewable,
                                         productId: productId,
                                         inReceipt: receipt)
-                                    
                                     switch purchaseResult {
                                     case .purchased(let expiryDate, let receiptItems):
                                         print("Product is valid until \(expiryDate)")
@@ -283,7 +279,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                                     case .notPurchased:
                                         print("This product has never been purchased")
                                     }
-                                    
                                 } else {
                                     // receipt verification error
                                 }
@@ -292,8 +287,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                             // purchase error
                         }
                     }
-                    
-                    
                 }
             }
         }

@@ -119,7 +119,6 @@ class GetPremiumViewController: UIViewController {
                 }
                 let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: self.sharedSecret)
                 SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
-                    print("APPLE VALIDATOR")
                     print(result)
                     if case .success(let receipt) = result {
                         let purchaseResult = SwiftyStoreKit.verifySubscription(
