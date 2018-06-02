@@ -253,38 +253,17 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath == [6, 0] {
             if let user = user {
                 if !user.isPremium {
-                    guard let currentUser = Auth.auth().currentUser else { return }
-                    let productId = "premium"
-                    SwiftyStoreKit.purchaseProduct(productId, atomically: true) { result in
+                    SwiftyStoreKit.purchaseProduct("premium", atomically: true) { result in
                         if case .success(let purchase) = result {
                             if purchase.needsFinishTransaction {
                                 SwiftyStoreKit.finishTransaction(purchase.transaction)
                             }
-                            let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: self.secret)
-                            SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
-                                if case .success(let receipt) = result {
-                                    let purchaseResult = SwiftyStoreKit.verifySubscription(
-                                        ofType: .autoRenewable,
-                                        productId: productId,
-                                        inReceipt: receipt)
-                                    switch purchaseResult {
-                                    case .purchased(let expiryDate, let receiptItems):
-                                        print("Product is valid until \(expiryDate)")
-                                        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then({ (user) in
-                                            AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userPurchasedPremium, user: user)
-                                        })
-                                        self.markUserAsPremium(uid: currentUser.uid)
-                                    case .expired(let expiryDate, let receiptItems):
-                                        print("Product is expired since \(expiryDate)")
-                                    case .notPurchased:
-                                        print("This product has never been purchased")
-                                    }
-                                } else {
-                                    // receipt verification error
-                                }
+                            if let currentUser = Auth.auth().currentUser {
+                                self.markUserAsPremium(uid: currentUser.uid)
                             }
                         } else {
                             // purchase error
+                            self.view.makeToast("Purchase failed", duration: 2.0, position: .bottom)
                         }
                     }
                 }

@@ -60,8 +60,8 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     // MARK: - Life Cycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        checkIfPremiumStillExists()
         if let currentUser = Auth.auth().currentUser {
+            checkIfPremiumStillExists(uid: currentUser.uid)
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
                 self.options = PusherClientOptions(host: .cluster("eu"))
@@ -150,8 +150,8 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     }
     
     // MARK: - Methods
-    private func checkIfPremiumStillExists() {
-        let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: secret)
+    private func checkIfPremiumStillExists(uid: String) {
+        let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: secret)
         SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
             switch result {
             case .success(let receipt):
@@ -160,7 +160,31 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                     ofType: .autoRenewable,
                     productId: productId,
                     inReceipt: receipt)
-                print("Purchase result is \(purchaseResult)")
+                switch purchaseResult {
+                case .purchased(let purchaseDate):
+                    print("Purchased date \(purchaseDate)")
+                case .expired(let expiryDate):
+                    print("Expiry date \(expiryDate)")
+                    if expiryDate.expiryDate.isInPast {
+                        let data: [String: Any] = [
+                            "isPremium": false,
+                            "cooldownTime": "",
+                            "likesLeft": 5
+                        ]
+                        FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
+                            if success {
+                                self.refreshTableView()
+                            } else {
+                                // Error happened, please contact support@getlez.com
+                                self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+                                    print("Error happened")
+                                })
+                            }
+                        }
+                    }
+                case .notPurchased:
+                    print("Not purchased.")
+                }
             case .error(let error):
                 print("Receipt verification failed: \(error)")
             }
