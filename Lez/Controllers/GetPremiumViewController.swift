@@ -27,19 +27,6 @@ class GetPremiumViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .white
         setupInterface()
-        
-        SwiftyStoreKit.retrieveProductsInfo(["premium"]) { result in
-            if let product = result.retrievedProducts.first {
-                let priceString = product.localizedPrice!
-                print("Product: \(product.localizedDescription), price: \(priceString)")
-            }
-            else if let invalidProductId = result.invalidProductIDs.first {
-                print("Invalid product identifier: \(invalidProductId)")
-            }
-            else {
-                print("Error: \(String(describing: result.error))")
-            }
-        }
     }
     
     fileprivate func setupInterface() {
