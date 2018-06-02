@@ -55,6 +55,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     private var pusher: Pusher!
     private var options: PusherClientOptions!
     private var canLike: Bool!
+    private let secret = "fdedb790950649388f3863bf6602ca66"
     
     // MARK: - Life Cycle
     override func viewWillAppear(_ animated: Bool) {
@@ -150,7 +151,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     
     // MARK: - Methods
     private func checkIfPremiumStillExists() {
-        let secret = "fdedb790950649388f3863bf6602ca66"
         let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: secret)
         SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
             switch result {
@@ -166,6 +166,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
             }
         }
     }
+    
     func subscribedToChannel(name: String) {
     }
     
@@ -709,7 +710,6 @@ extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, Matc
         cell.likeButton.tag = indexPath.row
         return cell
     }
-    
 }
 
 protocol MatchCellDelegate: class {
