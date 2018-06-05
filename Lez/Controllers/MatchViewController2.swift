@@ -55,13 +55,12 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     private var pusher: Pusher!
     private var options: PusherClientOptions!
     private var canLike: Bool!
-    private let secret = "fdedb790950649388f3863bf6602ca66"
     
     // MARK: - Life Cycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let currentUser = Auth.auth().currentUser {
-            checkIfPremiumStillExists(uid: currentUser.uid)
+            PurchaseManager.shared.checkIfSubscribed(uid: currentUser.uid)
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
                 self.options = PusherClientOptions(host: .cluster("eu"))
@@ -150,50 +149,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     }
     
     // MARK: - Methods
-    private func checkIfPremiumStillExists(uid: String) {
-        let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: secret)
-        SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
-            switch result {
-            case .success(let receipt):
-                let productId = "premium"
-                let purchaseResult = SwiftyStoreKit.verifySubscription(
-                    ofType: .autoRenewable,
-                    productId: productId,
-                    inReceipt: receipt)
-                switch purchaseResult {
-                case .purchased(let purchaseDate):
-                    print("Purchased date \(purchaseDate)")
-                case .expired(let expiryDate):
-                    print("Expiry date \(expiryDate)")
-                    if expiryDate.expiryDate.isInPast {
-                        let data: [String: Any] = [
-                            "isPremium": false,
-                            "cooldownTime": "",
-                            "likesLeft": 5
-                        ]
-                        FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
-                            if success {
-                                self.refreshTableView()
-                            } else {
-                                // Error happened, please contact support@getlez.com
-                                self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                                    print("Error happened")
-                                })
-                            }
-                        }
-                    }
-                case .notPurchased:
-                    print("Not purchased.")
-                }
-            case .error(let error):
-                print("Receipt verification failed: \(error)")
-            }
-        }
-    }
-    
-    func subscribedToChannel(name: String) {
-    }
-    
     func failedToSubscribeToChannel(name: String, response: URLResponse?, data: String?, error: NSError?) {
         print("FAILED to subscribe \(name), \(error.debugDescription)")
     }

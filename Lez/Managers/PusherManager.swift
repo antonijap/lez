@@ -52,5 +52,4 @@ final class PusherManager {
         Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", parameters: parameters, encoding: URLEncoding.default)
     }
     
-    
 }

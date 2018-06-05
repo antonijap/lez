@@ -14,6 +14,7 @@
 		CF0C3F052066F57D0033ECCA /* MatchAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = CF0C3F042066F57D0033ECCA /* MatchAnimation.json */; };
 		CF11E905209EF545007E3D1D /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF11E904209EF545007E3D1D /* Protocols.swift */; };
 		CF1A78AC20C32FD2001245B3 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1A78AB20C32FD2001245B3 /* Constants.swift */; };
+		CF1A78AE20C33D6F001245B3 /* PurchaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1A78AD20C33D6F001245B3 /* PurchaseManager.swift */; };
 		CF1C6C53206F631A0018DCD9 /* ImageGalleryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C52206F631A0018DCD9 /* ImageGalleryViewController.swift */; };
 		CF1C6C55206F68650018DCD9 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C54206F68650018DCD9 /* ChatViewController.swift */; };
 		CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */; };
@@ -77,6 +78,7 @@
 		CF0C3F042066F57D0033ECCA /* MatchAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MatchAnimation.json; sourceTree = "<group>"; };
 		CF11E904209EF545007E3D1D /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		CF1A78AB20C32FD2001245B3 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		CF1A78AD20C33D6F001245B3 /* PurchaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PurchaseManager.swift; sourceTree = "<group>"; };
 		CF1C6C52206F631A0018DCD9 /* ImageGalleryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageGalleryViewController.swift; sourceTree = "<group>"; };
 		CF1C6C54206F68650018DCD9 /* ChatViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
@@ -264,6 +266,7 @@
 				CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */,
 				CF660D1F20B96F040027E3AE /* Device.swift */,
 				CF1A78AB20C32FD2001245B3 /* Constants.swift */,
+				CF1A78AD20C33D6F001245B3 /* PurchaseManager.swift */,
 			);
 			path = Managers;
 			sourceTree = "<group>";
@@ -661,6 +664,7 @@
 				CFF3676720AAF4E30092B948 /* PusherManager.swift in Sources */,
 				CF9C7B9520A49B710044043B /* MatchViewController2.swift in Sources */,
 				CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */,
+				CF1A78AE20C33D6F001245B3 /* PurchaseManager.swift in Sources */,
 				CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */,
 				CF8C5DFE2094C08C00538C67 /* MessagesViewController.swift in Sources */,
 				CF04FAE3204161A7001CB034 /* User.swift in Sources */,
