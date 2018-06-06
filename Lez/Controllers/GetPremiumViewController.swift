@@ -52,7 +52,18 @@ class GetPremiumViewController: UIViewController {
             make.left.equalToSuperview().offset(40)
             make.right.equalToSuperview().inset(40)
         }
-        descriptionLabel.text = "Unlimited matches for only 2,99 € per month"
+        SwiftyStoreKit.retrieveProductsInfo(["premium"]) { result in
+            if let product = result.retrievedProducts.first {
+                let priceString = product.localizedPrice!
+                self.descriptionLabel.text = "Unlimited matches for only \(priceString) per month."
+            }
+            else if let invalidProductId = result.invalidProductIDs.first {
+                print("Invalid product identifier: \(invalidProductId)")
+            }
+            else {
+                print("Error: \(String(describing: result.error))")
+            }
+        }
         descriptionLabel.font = UIFont.systemFont(ofSize: 21, weight: .medium)
         descriptionLabel.numberOfLines = 2
         descriptionLabel.textAlignment = .center
@@ -71,27 +82,7 @@ class GetPremiumViewController: UIViewController {
         
         setupCloseButton()
     }
-    
-    fileprivate func markUserAsPremium(uid: String) {
-        let data: [String: Any] = [
-            "isPremium": true,
-            "cooldownTime": "",
-            "likesLeft": 5
-        ]
-        FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
-            if success {
-                self.dismiss(animated: true, completion: {
-                    self.matchViewControllerDelegate?.refreshTableView()
-                })
-            } else {
-                // Error happened, please contact support@getlez.com
-                self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                    print("Error happened")
-                })
-            }
-        }
-    }
-    
+
     fileprivate func setupCloseButton() {
         view.addSubview(closeButton)
         closeButton.snp.makeConstraints { (make) in
@@ -110,65 +101,18 @@ class GetPremiumViewController: UIViewController {
     }
     
     @objc func buyTapped(_ sender: UIButton) {
-        guard let currentUser = Auth.auth().currentUser else { return }
-        let productId = "premium"
-        SwiftyStoreKit.purchaseProduct(productId, atomically: true) { result in
-            if case .success(let purchase) = result {
-                if purchase.needsFinishTransaction {
-                    SwiftyStoreKit.finishTransaction(purchase.transaction)
-                }
-                let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: self.sharedSecret)
-                SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
-                    print(result)
-                    if case .success(let receipt) = result {
-                        let purchaseResult = SwiftyStoreKit.verifySubscription(
-                            ofType: .autoRenewable,
-                            productId: productId,
-                            inReceipt: receipt)
-                        
-                        switch purchaseResult {
-                        case .purchased(let expiryDate, let receiptItems):
-                            print("Product is valid until \(expiryDate)")
-                            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then({ (user) in
-                                AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userPurchasedPremium, user: user)
-                            })
-                            self.markUserAsPremium(uid: currentUser.uid)
-                        case .expired(let expiryDate, let receiptItems):
-                            print("Product is expired since \(expiryDate)")
-                        case .notPurchased:
-                            print("This product has never been purchased")
-                        }
-                        
-                    } else {
-                        // receipt verification error
-                    }
-                }
-            } else {
-                // purchase error
+        PurchaseManager.shared.purchasePremium { (outcome) in
+            switch outcome {
+            case .failed:
+                Alertift.actionSheet(title: "Error ", message: "Something went wrong, purchase failed.")
+                    .action(Alertift.Action.cancel("Okay"))
+                    .show(on: self, completion: nil)
+            case .success:
+                self.dismiss(animated: true, completion: {
+                    self.matchViewControllerDelegate?.refreshTableView()
+                })
             }
         }
-
-//        SwiftyStoreKit.purchaseProduct("premium", quantity: 1, atomically: true) { result in
-//            switch result {
-//            case .success:
-//                FirestoreManager.shared.fetchUser(uid: currentUser.uid).then({ (user) in
-//                    AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userPurchasedPremium, user: user)
-//                })
-//                self.markUserAsPremium(uid: currentUser.uid)
-//            case .error(let error):
-//                switch error.code {
-//                case .unknown: print("Unknown error. Please contact support")
-//                case .clientInvalid: print("Not allowed to make the payment")
-//                case .paymentCancelled: break
-//                case .paymentInvalid: print("The purchase identifier was invalid")
-//                case .paymentNotAllowed: print("The device is not allowed to make the payment")
-//                case .storeProductNotAvailable: print("The product is not available in the current storefront")
-//                case .cloudServicePermissionDenied: print("Access to cloud service information is not allowed")
-//                case .cloudServiceNetworkConnectionFailed: print("Could not connect to the network")
-//                case .cloudServiceRevoked: print("User has revoked permission to use this cloud service")
-//                }
-//            }
-//        }
     }
     
 }

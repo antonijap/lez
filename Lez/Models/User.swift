@@ -66,8 +66,9 @@ class User: Hashable {
     var chats: [String]?
     var likesLeft: Int
     var cooldownTime: Date?
+    var isManuallyPromoted: Bool
 
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [LezImage], isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?) {
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [LezImage], isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?, isManuallyPromoted: Bool) {
         self.uid = uid
         self.name = name
         self.email = email
@@ -85,6 +86,7 @@ class User: Hashable {
         self.chats = chats
         self.likesLeft = likesLeft
         self.cooldownTime = cooldownTime
+        self.isManuallyPromoted = isManuallyPromoted
     }
     
     static func ==(left:User, right:User) -> Bool {

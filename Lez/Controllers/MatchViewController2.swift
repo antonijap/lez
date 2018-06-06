@@ -55,14 +55,17 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     private var pusher: Pusher!
     private var options: PusherClientOptions!
     private var canLike: Bool!
+    private var likesLeft: Int!
     
     // MARK: - Life Cycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let currentUser = Auth.auth().currentUser {
-            PurchaseManager.shared.checkIfSubscribed(uid: currentUser.uid)
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
+//                PurchaseManager.shared.checkIfSubscribed(uid: currentUser.uid, ifManuallyPromoted: user.isManuallyPromoted)
+                PurchaseManager.shared.checkIfSubscribed(uid: currentUser.uid, ifManuallyPromoted: false)
+
                 self.options = PusherClientOptions(host: .cluster("eu"))
                 self.pusher = Pusher(key: "b5bd116d3da803ac6d12", options: self.options)
                 self.pusher.connection.delegate = self
@@ -361,17 +364,20 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                 if isPremium {
                     // Show likesLeft
                     self.canLike = true
+                    self.likesLeft = likesLeft
                     self.likesCounterWidgetLabel.text = "Unlimited"
                     self.likesCounterWidgetImageView.image = UIImage(named: "Like")
                 } else {
                     if likesLeft <= 0 {
                         // Show countdown
                         self.canLike = false
+                        self.likesLeft = likesLeft
                         self.runTimer(cooldownTime: cooldownTime)
                         self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
                     } else {
                         // Show likesLeft
                         self.canLike = true
+                        self.likesLeft = likesLeft
                         self.likesCounterWidgetLabel.text = "\(likesLeft)"
                         self.likesCounterWidgetImageView.image = UIImage(named: "Like")
                     }
@@ -554,7 +560,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
             if self.canLike {
                 // Then like
                 // Add like to Firestore
-                let likesLeft = user.likesLeft
+                let likesLeft = self.likesLeft
                 var data: [String: Any] = [:]
                 let her = self.users[sender.tag]
                 
@@ -564,10 +570,11 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                 if user.isPremium {
                     data = ["likes": likes]
                 } else {
-                    if (likesLeft - 1) == 0 {
-                        data = ["likes": likes, "likesLeft": likesLeft - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")]
+                    if (likesLeft! - 1) == 0 {
+                        data = ["likes": likes, "likesLeft": likesLeft! - 1, "cooldownTime": Date().string(custom: "yyyy-MM-dd HH:mm:ss")]
                     } else {
-                        data = ["likes": likes, "likesLeft": likesLeft - 1]
+                        print("Will reduce one. Likes left: \(likesLeft! - 1)")
+                        data = ["likes": likes, "likesLeft": likesLeft! - 1]
                     }
                 }
                 

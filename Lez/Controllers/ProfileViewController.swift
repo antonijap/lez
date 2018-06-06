@@ -27,7 +27,6 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     let hud = JGProgressHUD(style: .dark)
     var shouldRefresh = false
     var jellyAnimator: JellyAnimator?
-    let secret = "fdedb790950649388f3863bf6602ca66"
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -108,27 +107,27 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
         hud.dismiss(animated: true)
     }
     
-    private func markUserAsPremium(uid: String) {
-        let data: [String: Any] = [
-            "isPremium": true,
-            "cooldownTime": "",
-            "likesLeft": 5
-        ]
-        FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
-            if success {
-                FirestoreManager.shared.fetchUser(uid: uid).then({ (user) in
-                    self.user = user
-                    self.tableView.reloadData()
-                    self.view.makeToast("Premium activated", duration: 2.0, position: .bottom)
-                })
-            } else {
-                // Error happened, please contact support@getlez.com
-                self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                    print("Error happened")
-                })
-            }
-        }
-    }
+//    private func markUserAsPremium(uid: String) {
+//        let data: [String: Any] = [
+//            "isPremium": true,
+//            "cooldownTime": "",
+//            "likesLeft": 5
+//        ]
+//        FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
+//            if success {
+//                FirestoreManager.shared.fetchUser(uid: uid).then({ (user) in
+//                    self.user = user
+//                    self.tableView.reloadData()
+//                    self.view.makeToast("Premium activated", duration: 2.0, position: .bottom)
+//                })
+//            } else {
+//                // Error happened, please contact support@getlez.com
+//                self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+//                    print("Error happened")
+//                })
+//            }
+//        }
+//    }
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
@@ -209,7 +208,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     if user.isPremium {
                         simpleMenuCell.titleLabel.text = "You are Premium"
                     } else {
-                        simpleMenuCell.titleLabel.text = "Likes left: \(user.likesLeft). Unlock unlimited likes."
+                        simpleMenuCell.titleLabel.text = "Unlock unlimited likes"
                     }
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
@@ -253,24 +252,23 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath == [6, 0] {
             if let user = user {
                 if !user.isPremium {
-                    SwiftyStoreKit.purchaseProduct("premium", atomically: true) { result in
-                        if case .success(let purchase) = result {
-                            if purchase.needsFinishTransaction {
-                                SwiftyStoreKit.finishTransaction(purchase.transaction)
-                            }
-                            if let currentUser = Auth.auth().currentUser {
-                                self.markUserAsPremium(uid: currentUser.uid)
-                            }
-                        } else {
-                            // purchase error
-                            self.view.makeToast("Purchase failed", duration: 2.0, position: .bottom)
+                    PurchaseManager.shared.purchasePremium { (error) in
+                        switch error {
+                            case .failed:
+                                self.view.makeToast("Purchase failed", duration: 2.0, position: .bottom)
+                            case .success:
+                                self.view.makeToast("Purchase successful", duration: 2.0, position: .bottom)
+                                print("Should reload tableview")
+                                FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
+                                    self.user = user
+                                    self.tableView.reloadData()
+                                })
                         }
                     }
                 }
             }
         }
         if indexPath == [7, 0] {
-            print("Edit Profile")
             let userProfileFormViewController = UserProfileFormViewController()
             guard let user = user else { return }
             userProfileFormViewController.user = user
@@ -287,19 +285,16 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }
         if indexPath == [9, 0] {
-            print("Restore purchase tapped")
-            SwiftyStoreKit.restorePurchases(atomically: true) { results in
-                if results.restoreFailedPurchases.count > 0 {
-                    print("Restore Failed: \(results.restoreFailedPurchases)")
-                    self.view.makeToast("Restore Failed: \(results.restoreFailedPurchases)", duration: 2.0, position: .bottom)
-                }
-                else if results.restoredPurchases.count > 0 {
-                    print("Restore Success: \(results.restoredPurchases)")
-                    self.markUserAsPremium(uid: self.user!.uid)
-                }
-                else {
-                    print("Nothing to Restore")
-                    self.view.makeToast("Nothing to Restore", duration: 1.0, position: .bottom)
+            PurchaseManager.shared.restore { (outcome) in
+                switch outcome {
+                    case .failed:
+                        self.view.makeToast("Restore failed", duration: 1.0, position: .bottom)
+                    case .nothingToRestore:
+                        self.view.makeToast("Nothing to Restore", duration: 1.0, position: .bottom)
+                    case .success:
+                        self.view.makeToast("Restore success!", duration: 1.0, position: .bottom)
+                    case .expired:
+                        self.view.makeToast("Sorry, subscription expired", duration: 1.0, position: .bottom)
                 }
             }
         }
