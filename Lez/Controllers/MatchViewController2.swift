@@ -63,9 +63,9 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
-//                PurchaseManager.shared.checkIfSubscribed(uid: currentUser.uid, ifManuallyPromoted: user.isManuallyPromoted)
-                PurchaseManager.shared.checkIfSubscribed(uid: currentUser.uid, ifManuallyPromoted: false)
-
+                print("user is")
+                print(user)
+                PurchaseManager.shared.checkIfSubscribed(uid: currentUser.uid, ifManuallyPromoted: user.isManuallyPromoted)
                 self.options = PusherClientOptions(host: .cluster("eu"))
                 self.pusher = Pusher(key: "b5bd116d3da803ac6d12", options: self.options)
                 self.pusher.connection.delegate = self
@@ -100,12 +100,13 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        print("ViewDidLoad")
         setupTableView()
         setupNavigationBar()
         setupMatchView()
         setupNoUsersState()
         setupLikesWidget()
-        runLikesWidget()
+        
         DefaultsManager.shared.save(number: 0)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
         
@@ -175,7 +176,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     
     @objc func refreshTableView() {
         guard let user = user else {
-            print("No user. Will fetch from Firebase.")
             if let currentUser = Auth.auth().currentUser {
                 FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                     self.user = user
@@ -352,7 +352,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                 }
                 
                 guard let cooldownTime = data["cooldownTime"] as? String else {
-                    print("Problem with parsing likesLeft.")
+                    print("Problem with parsing cooldownTime.")
                     return
                 }
                 
@@ -362,7 +362,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                 }
                 
                 if isPremium {
-                    // Show likesLeft
                     self.canLike = true
                     self.likesLeft = likesLeft
                     self.likesCounterWidgetLabel.text = "Unlimited"
@@ -523,6 +522,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     @objc private func runTimer(cooldownTime: String) {
         timer.invalidate()
         let timeWhenZeroHappened = cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate
+        // Adjust cooldown time
         let timeUntilNewLikesUnlock = timeWhenZeroHappened?.add(components: 10.minutes)
         let differenceBetweenNowAndTimeUntilNewLikesUnlock = timeUntilNewLikesUnlock?.timeIntervalSinceNow
         seconds = Int(differenceBetweenNowAndTimeUntilNewLikesUnlock!)

@@ -137,7 +137,8 @@ class UserProfileFormViewController: FormViewController {
             "blockedUsers": [],
             "chats": [],
             "likesLeft": 5,
-            "cooldownTime": ""
+            "cooldownTime": "",
+            "isManuallyPromoted": false
         ]
         return data
     }

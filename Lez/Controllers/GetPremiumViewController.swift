@@ -22,11 +22,28 @@ class GetPremiumViewController: UIViewController {
     let buyButton = CustomButton()
     var matchViewControllerDelegate: MatchViewControllerDelegate?
     var sharedSecret = "TIOYZpYpJ{#kQvMGlfCBg3Ij"
+    var priceString = ""
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        SwiftyStoreKit.retrieveProductsInfo(["premium"]) { result in
+            if let product = result.retrievedProducts.first {
+                self.priceString = product.localizedPrice!
+                self.setupInterface()
+            }
+            else if let invalidProductId = result.invalidProductIDs.first {
+                print("Invalid product identifier: \(invalidProductId)")
+            }
+            else {
+                print("Error: \(String(describing: result.error))")
+            }
+        }
+    }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        setupInterface()
+//        setupInterface()
     }
     
     fileprivate func setupInterface() {
@@ -52,18 +69,7 @@ class GetPremiumViewController: UIViewController {
             make.left.equalToSuperview().offset(40)
             make.right.equalToSuperview().inset(40)
         }
-        SwiftyStoreKit.retrieveProductsInfo(["premium"]) { result in
-            if let product = result.retrievedProducts.first {
-                let priceString = product.localizedPrice!
-                self.descriptionLabel.text = "Unlimited matches for only \(priceString) per month."
-            }
-            else if let invalidProductId = result.invalidProductIDs.first {
-                print("Invalid product identifier: \(invalidProductId)")
-            }
-            else {
-                print("Error: \(String(describing: result.error))")
-            }
-        }
+        descriptionLabel.text = "Unlimited matches for only \(priceString) per month."
         descriptionLabel.font = UIFont.systemFont(ofSize: 21, weight: .medium)
         descriptionLabel.numberOfLines = 2
         descriptionLabel.textAlignment = .center

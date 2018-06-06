@@ -84,8 +84,6 @@ final class PurchaseManager {
     func restore(completion: @escaping (_ error: RestoreOutcomes) -> Void) {
         guard let currentUser = Auth.auth().currentUser else { return }
         SwiftyStoreKit.restorePurchases(atomically: true) { results in
-            print("RESULTS")
-            print(results)
             if results.restoreFailedPurchases.count > 0 {
                 completion(.failed)
             }
@@ -151,7 +149,6 @@ final class PurchaseManager {
         let data: [String: Any] = [
             "isPremium": false,
             "cooldownTime": "",
-            "likesLeft": 5
         ]
         FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
             if success {
