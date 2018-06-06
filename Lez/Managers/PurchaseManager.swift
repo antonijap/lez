@@ -17,9 +17,9 @@ final class PurchaseManager {
     static let shared = PurchaseManager()
     private let secret = "fdedb790950649388f3863bf6602ca66"
     
-    func checkIfSubscribed(uid: String, ifManuallyPromoted: Bool) {
+    func checkIfSubscribed(user: User, ifManuallyPromoted: Bool) {
         if ifManuallyPromoted {
-            
+            print("User manually promoted.")
         } else {
             let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: self.secret)
             SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
@@ -32,8 +32,11 @@ final class PurchaseManager {
                         case .expired(let expiryDate):
                             print("Expiry date \(expiryDate)")
                             if expiryDate.expiryDate.isInPast {
-                                print("BUREK Will remove cooldownTime now, fuck you")
-                                self.deactivatePremiumInFirestore(uid: uid)
+                                guard let _ = user.cooldownTime else {
+                                    print("BUREK Will remove cooldownTime now, fuck you AHHAHAHA")
+                                    self.deactivatePremiumInFirestore(uid: user.uid)
+                                    return
+                                }
                             }
                         case .notPurchased:
                             print("Not purchased.")

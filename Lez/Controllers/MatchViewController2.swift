@@ -22,7 +22,6 @@ import Alertift
 import PusherSwift
 import Toast_Swift
 import SwiftyStoreKit
-import Repeat
 
 class MatchViewController2: UIViewController, MatchViewControllerDelegate, PusherDelegate {
     
@@ -123,10 +122,10 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                         return
                     }
                     
-                    FirestoreManager.shared.parseFirebaseUser(document: document).then({ (me) in
-                        guard let me = me else { return }
+                    FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
+                        guard let me = user else { return }
                         self.fetchUsers(for: me.uid)
-//                        PurchaseManager.shared.checkIfSubscribed(uid: user.uid, ifManuallyPromoted: me.isManuallyPromoted)
+                        PurchaseManager.shared.checkIfSubscribed(user: me, ifManuallyPromoted: me.isManuallyPromoted)
                         if me.isOnboarded == false {
                             self.presentRegisterViewController()
                         }

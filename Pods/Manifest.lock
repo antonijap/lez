@@ -130,7 +130,6 @@ PODS:
   - PushNotifications (0.10.7)
   - RangeSeekSlider (1.8.0)
   - ReachabilitySwift (4.1.0)
-  - Repeat (0.5.4)
   - SDWebImage (4.4.0):
     - SDWebImage/Core (= 4.4.0)
   - SDWebImage/Core (4.4.0)
@@ -168,7 +167,6 @@ DEPENDENCIES:
   - PusherSwift
   - PushNotifications
   - RangeSeekSlider (from `https://github.com/WorldDownTown/RangeSeekSlider.git`, branch `swift_4`)
-  - Repeat
   - SDWebImage (~> 4.0)
   - SnapKit (~> 4.0.0)
   - Spring (from `https://github.com/MengTo/Spring.git`)
@@ -221,7 +219,6 @@ SPEC REPOS:
     - PusherSwift
     - PushNotifications
     - ReachabilitySwift
-    - Repeat
     - SDWebImage
     - SnapKit
     - Starscream
@@ -291,7 +288,6 @@ SPEC CHECKSUMS:
   PushNotifications: 2e3df1e301e19ae2a100267f8387da5fc471ecc7
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
-  Repeat: 6e9ea5147b87470c9ceb4b8b090e3be301dd3461
   SDWebImage: b534502786e43dde36dfcaee89356fe6df30e203
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   Spring: 3c7666eccefdeb87140008dc81043f89f8dbb787
@@ -304,6 +300,6 @@ SPEC CHECKSUMS:
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: 97b34caa00d14559b224f1f4b8f0af83314cbfb4
+PODFILE CHECKSUM: d14d87e60097121378b708645b2a5ff70a620e5f
 
 COCOAPODS: 1.5.2
