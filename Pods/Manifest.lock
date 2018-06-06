@@ -39,21 +39,21 @@ PODS:
     - FBSDKCoreKit
   - FBSDKShareKit (4.33.0):
     - FBSDKCoreKit (~> 4.33.0)
-  - Firebase/Auth (5.0.1):
+  - Firebase/Auth (5.1.0):
     - Firebase/CoreOnly
     - FirebaseAuth (= 5.0.0)
-  - Firebase/Core (5.0.1):
+  - Firebase/Core (5.1.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 5.0.0)
-  - Firebase/CoreOnly (5.0.1):
-    - FirebaseCore (= 5.0.1)
-  - Firebase/Firestore (5.0.1):
+    - FirebaseAnalytics (= 5.0.1)
+  - Firebase/CoreOnly (5.1.0):
+    - FirebaseCore (= 5.0.2)
+  - Firebase/Firestore (5.1.0):
     - Firebase/CoreOnly
-    - FirebaseFirestore (= 0.12.1)
-  - Firebase/Storage (5.0.1):
+    - FirebaseFirestore (= 0.12.2)
+  - Firebase/Storage (5.1.0):
     - Firebase/CoreOnly
     - FirebaseStorage (= 3.0.0)
-  - FirebaseAnalytics (5.0.0):
+  - FirebaseAnalytics (5.0.1):
     - FirebaseCore (~> 5.0)
     - FirebaseInstanceID (~> 3.0)
     - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
@@ -61,15 +61,15 @@ PODS:
   - FirebaseAuth (5.0.0):
     - FirebaseCore (~> 5.0)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (5.0.1):
+  - FirebaseCore (5.0.2):
     - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-  - FirebaseFirestore (0.12.1):
+  - FirebaseFirestore (0.12.2):
     - FirebaseCore (~> 5.0)
-    - FirebaseFirestore/abseil-cpp (= 0.12.1)
+    - FirebaseFirestore/abseil-cpp (= 0.12.2)
     - gRPC-ProtoRPC (~> 1.0)
     - leveldb-library (~> 1.18)
     - Protobuf (~> 3.1)
-  - FirebaseFirestore/abseil-cpp (0.12.1):
+  - FirebaseFirestore/abseil-cpp (0.12.2):
     - FirebaseCore (~> 5.0)
     - gRPC-ProtoRPC (~> 1.0)
     - leveldb-library (~> 1.18)
@@ -107,9 +107,9 @@ PODS:
     - gRPC-Core (= 1.12.0)
     - gRPC-RxLibrary (= 1.12.0)
   - GTMSessionFetcher/Core (1.1.15)
-  - ImageSlideshow (1.5.3):
-    - ImageSlideshow/Core (= 1.5.3)
-  - ImageSlideshow/Core (1.5.3)
+  - ImageSlideshow (1.6.0):
+    - ImageSlideshow/Core (= 1.6.0)
+  - ImageSlideshow/Core (1.6.0)
   - Jelly (1.2.4)
   - JGProgressHUD (2.0.3)
   - leveldb-library (1.20)
@@ -130,9 +130,10 @@ PODS:
   - PushNotifications (0.10.7)
   - RangeSeekSlider (1.8.0)
   - ReachabilitySwift (4.1.0)
-  - SDWebImage (4.3.3):
-    - SDWebImage/Core (= 4.3.3)
-  - SDWebImage/Core (4.3.3)
+  - Repeat (0.5.4)
+  - SDWebImage (4.4.0):
+    - SDWebImage/Core (= 4.4.0)
+  - SDWebImage/Core (4.4.0)
   - SnapKit (4.0.0)
   - Spring (1.0.5)
   - Starscream (3.0.5)
@@ -167,6 +168,7 @@ DEPENDENCIES:
   - PusherSwift
   - PushNotifications
   - RangeSeekSlider (from `https://github.com/WorldDownTown/RangeSeekSlider.git`, branch `swift_4`)
+  - Repeat
   - SDWebImage (~> 4.0)
   - SnapKit (~> 4.0.0)
   - Spring (from `https://github.com/MengTo/Spring.git`)
@@ -219,6 +221,7 @@ SPEC REPOS:
     - PusherSwift
     - PushNotifications
     - ReachabilitySwift
+    - Repeat
     - SDWebImage
     - SnapKit
     - Starscream
@@ -261,11 +264,11 @@ SPEC CHECKSUMS:
   FBSDKCoreKit: 572b047a7e029bc44542bcf8a59414e7ff2b543e
   FBSDKLoginKit: 88cb456349cfb3b554427ce4f8b43729d85dfb40
   FBSDKShareKit: 1869cb24db2cea90666a50cb9d568deb38e2d16e
-  Firebase: d6861c2059d8c32d1e6dd8932e22ada346d90a3a
-  FirebaseAnalytics: 19812b49fa5f283dd6b23edf8a14b5d477029ab8
+  Firebase: e08fb0795f35707aeb1d8a715c731c45bdf6fd56
+  FirebaseAnalytics: b3628aea54c50464c32c393fb2ea032566e7ecc2
   FirebaseAuth: acbeef02fe7c3a26624e309849f3fe30c84115af
-  FirebaseCore: cafc814b2d84fc8733f09e653041cc2165332ad7
-  FirebaseFirestore: f686b8e83f3cf8bbc37db6e98e01029a14f01f55
+  FirebaseCore: b81044df1044c0857a0737c6324678b72d4f7f00
+  FirebaseFirestore: 93b8bf70484c92c271ae93940fe1e2ca9e35f92b
   FirebaseInstanceID: 83e0040351565df711a5db3d8ebe5ea21aca998a
   FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
   GBDeviceInfo: 2c65ceb9404f9079264d4c238f5b81916fdfc5e2
@@ -276,7 +279,7 @@ SPEC CHECKSUMS:
   gRPC-ProtoRPC: a1bd56fb1991a8dae4581250d7259eddabb66779
   gRPC-RxLibrary: 1ed5314e8b38cd6e55c9bfa048387136ae925ce9
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
-  ImageSlideshow: 24a1184909f589379ba2527ebcc77996881bb1f2
+  ImageSlideshow: 9a1038da5669d2d337ae5ecda2ee8282ff14e9c5
   Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
   JGProgressHUD: 12b20a8f4ffe05258f8635c1ab92816e451f904d
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
@@ -288,7 +291,8 @@ SPEC CHECKSUMS:
   PushNotifications: 2e3df1e301e19ae2a100267f8387da5fc471ecc7
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
-  SDWebImage: de4d90b5bff3571eae7bd16202b1f43135409fa5
+  Repeat: 6e9ea5147b87470c9ceb4b8b090e3be301dd3461
+  SDWebImage: b534502786e43dde36dfcaee89356fe6df30e203
   SnapKit: a42d492c16e80209130a3379f73596c3454b7694
   Spring: 3c7666eccefdeb87140008dc81043f89f8dbb787
   Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
@@ -300,6 +304,6 @@ SPEC CHECKSUMS:
   TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
   TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
 
-PODFILE CHECKSUM: d14d87e60097121378b708645b2a5ff70a620e5f
+PODFILE CHECKSUM: 97b34caa00d14559b224f1f4b8f0af83314cbfb4
 
-COCOAPODS: 1.5.3
+COCOAPODS: 1.5.2

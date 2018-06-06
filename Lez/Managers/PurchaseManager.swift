@@ -21,25 +21,22 @@ final class PurchaseManager {
         if ifManuallyPromoted {
             
         } else {
-            let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: self.secret)
+            let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: self.secret)
             SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
                 switch result {
                 case .success(let receipt):
-                    let productId = "premium"
-                    let purchaseResult = SwiftyStoreKit.verifySubscription(
-                        ofType: .autoRenewable,
-                        productId: productId,
-                        inReceipt: receipt)
+                    let purchaseResult = SwiftyStoreKit.verifySubscription(ofType: .autoRenewable, productId: "premium", inReceipt: receipt)
                     switch purchaseResult {
-                    case .purchased(let purchaseDate):
-                        print("Purchased date \(purchaseDate)")
-                    case .expired(let expiryDate):
-                        print("Expiry date \(expiryDate)")
-                        if expiryDate.expiryDate.isInPast {
-                            self.deactivatePremiumInFirestore(uid: uid)
-                        }
-                    case .notPurchased:
-                        print("Not purchased.")
+                        case .purchased(let purchaseDate):
+                            print("Purchased date \(purchaseDate)")
+                        case .expired(let expiryDate):
+                            print("Expiry date \(expiryDate)")
+                            if expiryDate.expiryDate.isInPast {
+                                print("BUREK Will remove cooldownTime now, fuck you")
+                                self.deactivatePremiumInFirestore(uid: uid)
+                            }
+                        case .notPurchased:
+                            print("Not purchased.")
                     }
                 case .error(let error):
                     print("Receipt verification failed: \(error)")
@@ -89,7 +86,7 @@ final class PurchaseManager {
             }
             else if results.restoredPurchases.count > 0 {
                 // Check if restore is valid
-                let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: self.secret)
+                let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: self.secret)
                 SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
                     switch result {
                     case .success(let receipt):
@@ -101,6 +98,7 @@ final class PurchaseManager {
                         switch purchaseResult {
                         case .purchased(let purchaseDate):
                             print("Purchased date \(purchaseDate)")
+                            print("BUREK sacu da obrisem cooldown! Purchased")
                             self.markUserAsPremium(uid: currentUser.uid, completion: { (error) in
                                 if error {
                                     completion(.failed)
@@ -112,6 +110,7 @@ final class PurchaseManager {
                             print("Expiry date \(expiryDate)")
                             if expiryDate.expiryDate.isInPast {
                                 completion(.expired)
+                                print("BUREK sacu da obrisem cooldown! expired")
                                 self.deactivatePremiumInFirestore(uid: currentUser.uid)
                             }
                         case .notPurchased:

@@ -22,6 +22,7 @@ import Alertift
 import PusherSwift
 import Toast_Swift
 import SwiftyStoreKit
+import Repeat
 
 class MatchViewController2: UIViewController, MatchViewControllerDelegate, PusherDelegate {
     
@@ -49,23 +50,21 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     private var user: User?
     private var jellyAnimator: JellyAnimator?
     private var seconds = 86400
-    private var timer = Timer()
     private var handle: AuthStateDidChangeListenerHandle?
     private let hud = JGProgressHUD(style: .dark)
     private var pusher: Pusher!
     private var options: PusherClientOptions!
     private var canLike: Bool!
     private var likesLeft: Int!
+    private var timer = Timer()
     
     // MARK: - Life Cycle
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        print("viewWillAppear")
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
-                print("user is")
-                print(user)
-                PurchaseManager.shared.checkIfSubscribed(uid: currentUser.uid, ifManuallyPromoted: user.isManuallyPromoted)
                 self.options = PusherClientOptions(host: .cluster("eu"))
                 self.pusher = Pusher(key: "b5bd116d3da803ac6d12", options: self.options)
                 self.pusher.connection.delegate = self
@@ -109,8 +108,9 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         
         DefaultsManager.shared.save(number: 0)
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.updateAfterAppComesToForeground), name:
+            NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         
-//        try! Auth.auth().signOut()
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
                 Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
@@ -118,33 +118,19 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                         print("Error fetching document: \(error!)")
                         return
                     }
-                    guard let data = document.data() else {
+                    guard let _ = document.data() else {
                         self.presentRegisterViewController()
                         return
                     }
                     
-                    guard let isOnboarded = data["isOnboarded"] as? Bool else {
-                        print("Problem with parsing isOnboarded.")
-                        return
-                    }
-                    
-                    // Get all users and reload tableView
-                    self.fetchUsers(for: user.uid)
-                    self.runLikesWidget()
-                    
-                    if isOnboarded {
-                        Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
-                            guard let document = documentSnapshot else {
-                                print("Error fetching document: \(error!)")
-                                return
-                            }
-                            FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
-                                self.user = user!
-                            })
+                    FirestoreManager.shared.parseFirebaseUser(document: document).then({ (me) in
+                        guard let me = me else { return }
+                        self.fetchUsers(for: me.uid)
+//                        PurchaseManager.shared.checkIfSubscribed(uid: user.uid, ifManuallyPromoted: me.isManuallyPromoted)
+                        if me.isOnboarded == false {
+                            self.presentRegisterViewController()
                         }
-                    } else {
-                        self.presentRegisterViewController()
-                    }
+                    })
                 }
             } else {
                 self.presentRegisterViewController()
@@ -155,6 +141,15 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     // MARK: - Methods
     func failedToSubscribeToChannel(name: String, response: URLResponse?, data: String?, error: NSError?) {
         print("FAILED to subscribe \(name), \(error.debugDescription)")
+    }
+    
+    @objc func updateAfterAppComesToForeground() {
+        print("I have come to foreground.")
+        guard let currentUser = Auth.auth().currentUser else { return }
+        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+            guard let cooldownTime = user.cooldownTime else { return }
+            self.runTimer(cooldownTime: cooldownTime)
+        }
     }
     
     private func startSpinner() {
@@ -337,55 +332,41 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     }
     
     private func runLikesWidget() {
-        guard let me = Auth.auth().currentUser else { return }
-        Firestore.firestore().collection("users").document(me.uid).addSnapshotListener { documentSnapshot, error in
+        guard let user = Auth.auth().currentUser else { return }
+        Firestore.firestore().collection("users").document(user.uid).addSnapshotListener { documentSnapshot, error in
             guard let document = documentSnapshot else {
                 print("Error fetching document: \(error!)")
                 return
             }
-            guard let data = document.data() else { return }
-            
-            guard let likesLeft = data["likesLeft"] as? Int else {
-                print("Problem with parsing likesLeft.")
-                return
-            }
-            
-            guard let cooldownTime = data["cooldownTime"] as? String else {
-                print("Problem with parsing cooldownTime.")
-                return
-            }
-            
-            guard let isPremium = data["isPremium"] as? Bool else {
-                print("Problem with parsing isPremium.")
-                return
-            }
-            
-            print("BUREK Premium state is > \(isPremium)")
-            
-            if isPremium {
-                print("BUREK Will adjust widget to show unlimited")
-                self.timer.invalidate()
-                self.canLike = true
-                self.likesLeft = likesLeft
-                self.likesCounterWidgetLabel.text = "Unlimited"
-                self.likesCounterWidgetImageView.image = UIImage(named: "Like")
-            } else {
-                if likesLeft <= 0 {
-                    // Show countdown
-                    print("BUREK User has to wait")
-                    self.canLike = false
-                    self.likesLeft = likesLeft
-                    self.runTimer(cooldownTime: cooldownTime)
-                    self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
-                } else {
-                    // Show likesLeft
-                    print("BUREK User has more likes...")
+            FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
+                guard let user = user else { return }
+                print("User downloaded: \(String(describing: user))")
+                self.user = user
+                if user.isPremium {
+                    print("BUREK Will adjust widget to show unlimited")
                     self.canLike = true
-                    self.likesLeft = likesLeft
-                    self.likesCounterWidgetLabel.text = "\(likesLeft)"
+                    self.likesLeft = user.likesLeft
+                    self.likesCounterWidgetLabel.text = "Unlimited"
                     self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+                } else {
+                    if user.likesLeft <= 0 {
+                        // Show countdown
+                        print("BUREK User has to wait")
+                        self.canLike = false
+                        self.likesLeft = user.likesLeft
+                        guard let cooldownTime = user.cooldownTime else { return }
+                        self.runTimer(cooldownTime: cooldownTime)
+                        self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
+                    } else {
+                        // Show likesLeft
+                        print("BUREK User has more likes...")
+                        self.canLike = true
+                        self.likesLeft = user.likesLeft
+                        self.likesCounterWidgetLabel.text = "\(self.likesLeft!)"
+                        self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+                    }
                 }
-            }
+            })
         }
     }
     
@@ -523,13 +504,13 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         }
     }
     
-    @objc private func runTimer(cooldownTime: String) {
+    @objc private func runTimer(cooldownTime: Date) {
         timer.invalidate()
-        let timeWhenZeroHappened = cooldownTime.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.absoluteDate
         // Adjust cooldown time
-        let timeUntilNewLikesUnlock = timeWhenZeroHappened?.add(components: 10.minutes)
-        let differenceBetweenNowAndTimeUntilNewLikesUnlock = timeUntilNewLikesUnlock?.timeIntervalSinceNow
-        seconds = Int(differenceBetweenNowAndTimeUntilNewLikesUnlock!)
+        let timeUntilNewLikesUnlock = cooldownTime.add(components: 10.minutes)
+        let differenceBetweenNowAndTimeUntilNewLikesUnlock = timeUntilNewLikesUnlock.timeIntervalSinceNow
+        print("BUREK Difference is \(differenceBetweenNowAndTimeUntilNewLikesUnlock)")
+        seconds = Int(differenceBetweenNowAndTimeUntilNewLikesUnlock)
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
     }
     
@@ -550,7 +531,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
             self.likesCounterWidgetLabel.text = timeString(time: TimeInterval(seconds))
         }
     }
-    
+
     @objc func likeTouchUpInside(_ sender: MatchCell) {
         startSpinner()
         let cell = tableView.cellForRow(at: IndexPath(row: sender.tag, section: 0)) as! MatchCell

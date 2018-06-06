@@ -35,6 +35,7 @@ target 'Lez' do
   pod 'GBDeviceInfo'
   pod 'Fabric', '~> 1.7.7'
   pod 'Crashlytics', '~> 3.10.2'
+  pod 'Repeat'
   
   target 'LezTests' do
     inherit! :search_paths
