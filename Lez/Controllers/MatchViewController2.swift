@@ -338,50 +338,54 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     
     private func runLikesWidget() {
         guard let me = Auth.auth().currentUser else { return }
-        Firestore.firestore().collection("users").document(me.uid)
-            .addSnapshotListener { documentSnapshot, error in
-                guard let document = documentSnapshot else {
-                    print("Error fetching document: \(error!)")
-                    return
-                }
-                guard let data = document.data() else { return }
-                
-                guard let likesLeft = data["likesLeft"] as? Int else {
-                    print("Problem with parsing likesLeft.")
-                    return
-                }
-                
-                guard let cooldownTime = data["cooldownTime"] as? String else {
-                    print("Problem with parsing cooldownTime.")
-                    return
-                }
-                
-                guard let isPremium = data["isPremium"] as? Bool else {
-                    print("Problem with parsing isPremium.")
-                    return
-                }
-                
-                if isPremium {
+        Firestore.firestore().collection("users").document(me.uid).addSnapshotListener { documentSnapshot, error in
+            guard let document = documentSnapshot else {
+                print("Error fetching document: \(error!)")
+                return
+            }
+            guard let data = document.data() else { return }
+            
+            guard let likesLeft = data["likesLeft"] as? Int else {
+                print("Problem with parsing likesLeft.")
+                return
+            }
+            
+            guard let cooldownTime = data["cooldownTime"] as? String else {
+                print("Problem with parsing cooldownTime.")
+                return
+            }
+            
+            guard let isPremium = data["isPremium"] as? Bool else {
+                print("Problem with parsing isPremium.")
+                return
+            }
+            
+            print("BUREK Premium state is > \(isPremium)")
+            
+            if isPremium {
+                print("BUREK Will adjust widget to show unlimited")
+                self.timer.invalidate()
+                self.canLike = true
+                self.likesLeft = likesLeft
+                self.likesCounterWidgetLabel.text = "Unlimited"
+                self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+            } else {
+                if likesLeft <= 0 {
+                    // Show countdown
+                    print("BUREK User has to wait")
+                    self.canLike = false
+                    self.likesLeft = likesLeft
+                    self.runTimer(cooldownTime: cooldownTime)
+                    self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
+                } else {
+                    // Show likesLeft
+                    print("BUREK User has more likes...")
                     self.canLike = true
                     self.likesLeft = likesLeft
-                    self.likesCounterWidgetLabel.text = "Unlimited"
+                    self.likesCounterWidgetLabel.text = "\(likesLeft)"
                     self.likesCounterWidgetImageView.image = UIImage(named: "Like")
-                } else {
-                    if likesLeft <= 0 {
-                        // Show countdown
-                        self.canLike = false
-                        self.likesLeft = likesLeft
-                        self.runTimer(cooldownTime: cooldownTime)
-                        self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
-                    } else {
-                        // Show likesLeft
-                        self.canLike = true
-                        self.likesLeft = likesLeft
-                        self.likesCounterWidgetLabel.text = "\(likesLeft)"
-                        self.likesCounterWidgetImageView.image = UIImage(named: "Like")
-                    }
                 }
-                
+            }
         }
     }
     

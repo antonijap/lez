@@ -258,7 +258,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                                 self.view.makeToast("Purchase failed", duration: 2.0, position: .bottom)
                             case .success:
                                 self.view.makeToast("Purchase successful", duration: 2.0, position: .bottom)
-                                print("Should reload tableview")
                                 FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
                                     self.user = user
                                     self.tableView.reloadData()

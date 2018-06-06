@@ -22,7 +22,7 @@ class GetPremiumViewController: UIViewController {
     let buyButton = CustomButton()
     var matchViewControllerDelegate: MatchViewControllerDelegate?
     var sharedSecret = "TIOYZpYpJ{#kQvMGlfCBg3Ij"
-    var priceString = ""
+    var priceString = "2.99€"
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
