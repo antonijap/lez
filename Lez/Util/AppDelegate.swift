@@ -75,44 +75,47 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.pushNotifications.start(instanceId: "***REMOVED***")
         self.pushNotifications.registerForRemoteNotifications()
         
-        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
-            for purchase in purchases {
-                switch purchase.transaction.transactionState {
-                case .purchased, .restored:
-                    if purchase.needsFinishTransaction {
-                        // Deliver content from server, then:
-                        SwiftyStoreKit.finishTransaction(purchase.transaction)
-                    }
-                // Unlock content
-                case .failed, .purchasing, .deferred:
-                    break // do nothing
-                }
-            }
-        }
         
-        let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: "your-shared-secret")
-        SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
-            switch result {
-            case .success(let receipt):
-                let productId = "premium"
-                // Verify the purchase of a Subscription
-                let purchaseResult = SwiftyStoreKit.verifySubscription(
-                    ofType: .autoRenewable, // or .nonRenewing (see below)
-                    productId: productId,
-                    inReceipt: receipt)
-                switch purchaseResult {
-                case .purchased(let expiryDate, let items):
-                    print("\(productId) is valid until \(expiryDate)\n\(items)\n")
-                case .expired(let expiryDate, let items):
-                    print("\(productId) is expired since \(expiryDate)\n\(items)\n")
-                case .notPurchased:
-                    print("The user has never purchased \(productId)")
-                }
-                
-            case .error(let error):
-                print("Receipt verification failed: \(error)")
-            }
-        }
+        completeIAPTransactions()
+        
+//        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
+//            for purchase in purchases {
+//                switch purchase.transaction.transactionState {
+//                case .purchased, .restored:
+//                    if purchase.needsFinishTransaction {
+//                        // Deliver content from server, then:
+//                        SwiftyStoreKit.finishTransaction(purchase.transaction)
+//                    }
+//                // Unlock content
+//                case .failed, .purchasing, .deferred:
+//                    break // do nothing
+//                }
+//            }
+//        }
+        
+//        let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: "your-shared-secret")
+//        SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
+//            switch result {
+//            case .success(let receipt):
+//                let productId = "premium"
+//                // Verify the purchase of a Subscription
+//                let purchaseResult = SwiftyStoreKit.verifySubscription(
+//                    ofType: .autoRenewable, // or .nonRenewing (see below)
+//                    productId: productId,
+//                    inReceipt: receipt)
+//                switch purchaseResult {
+//                case .purchased(let expiryDate, let items):
+//                    print("\(productId) is valid until \(expiryDate)\n\(items)\n")
+//                case .expired(let expiryDate, let items):
+//                    print("\(productId) is expired since \(expiryDate)\n\(items)\n")
+//                case .notPurchased:
+//                    print("The user has never purchased \(productId)")
+//                }
+//
+//            case .error(let error):
+//                print("Receipt verification failed: \(error)")
+//            }
+//        }
 
  
         return true
@@ -153,12 +156,37 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationDidBecomeActive(_ application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        checkSubscription()
     }
 
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
 }
+
+extension AppDelegate {
+ 
+    fileprivate func completeIAPTransactions() {
+        
+        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
+            
+            for purchase in purchases {
+                if purchase.transaction.transactionState == .purchased || purchase.transaction.transactionState == .restored {
+                    if purchase.needsFinishTransaction {
+                        SwiftyStoreKit.finishTransaction(purchase.transaction)
+                    }
+                    print("purchased: \(purchase.productId)")
+                }
+            }
+        }
+    }
+    
+    /// Checks if the subscription still active
+    fileprivate func checkSubscription(){
+        if Auth.auth().currentUser != nil {
+            PurchaseManager.verifyPurchase("premium")
+        }
+    }
+}
+
 

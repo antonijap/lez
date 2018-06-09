@@ -252,18 +252,34 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath == [6, 0] {
             if let user = user {
                 if !user.isPremium {
-                    PurchaseManager.shared.purchasePremium { (error) in
-                        switch error {
-                            case .failed:
-                                self.view.makeToast("Purchase failed", duration: 2.0, position: .bottom)
-                            case .success:
-                                self.view.makeToast("Purchase successful", duration: 2.0, position: .bottom)
-                                FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
-                                    self.user = user
-                                    self.tableView.reloadData()
-                                })
+                 
+                    PurchaseManager.purchase("premium") { (outcome) in
+                        switch outcome {
+                        case .failed :
+                            self.view.makeToast("Purchase failed", duration: 2.0, position: .bottom)
+                       
+                        case .success :
+                            self.view.makeToast("Purchase successful", duration: 2.0, position: .bottom)
+                           
+                            FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
+                                self.user = user
+                                self.tableView.reloadData()
+                            })
                         }
                     }
+                    
+//                    PurchaseManager.shared.purchasePremium { (error) in
+//                        switch error {
+//                            case .failed:
+//                                self.view.makeToast("Purchase failed", duration: 2.0, position: .bottom)
+//                            case .success:
+//                                self.view.makeToast("Purchase successful", duration: 2.0, position: .bottom)
+//                                FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
+//                                    self.user = user
+//                                    self.tableView.reloadData()
+//                                })
+//                        }
+//                    }
                 }
             }
         }
@@ -283,8 +299,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             imageGalleryViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
         }
+        
         if indexPath == [9, 0] {
-            PurchaseManager.shared.restore { (outcome) in
+
+            PurchaseManager.restorePurchase { (outcome) in
                 switch outcome {
                     case .failed:
                         self.view.makeToast("Restore failed", duration: 1.0, position: .bottom)
@@ -297,6 +315,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
         }
+        
         if indexPath == [10, 0] {
             self.showSignoutAlert(CTA: "Sign out")
         }

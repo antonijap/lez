@@ -8,10 +8,10 @@
 
 import Foundation
 import UIKit
+import StoreKit
 import SnapKit
 import Alertift
 import Firebase
-import SwiftyStoreKit
 
 class GetPremiumViewController: UIViewController {
     
@@ -21,32 +21,36 @@ class GetPremiumViewController: UIViewController {
     let backgroundImageView = UIImageView()
     let buyButton = CustomButton()
     var matchViewControllerDelegate: MatchViewControllerDelegate?
-    var sharedSecret = "TIOYZpYpJ{#kQvMGlfCBg3Ij"
     var priceString = "2.99€"
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        SwiftyStoreKit.retrieveProductsInfo(["premium"]) { result in
-            if let product = result.retrievedProducts.first {
-                self.priceString = product.localizedPrice!
-                self.setupInterface()
-            }
-            else if let invalidProductId = result.invalidProductIDs.first {
-                print("Invalid product identifier: \(invalidProductId)")
-            }
-            else {
-                print("Error: \(String(describing: result.error))")
-            }
+    var products = Set<SKProduct>() {
+        didSet {
+            setupInterface(with: products)
         }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-//        setupInterface()
+        
+        fetchProducts()
     }
     
-    fileprivate func setupInterface() {
+    // MARK: - Methods
+    
+    fileprivate func fetchProducts() {
+        // Start Activity indicator
+        
+        PurchaseManager.fetchProducts { (products) in
+            self.products = products
+            
+            // End Activity indicator
+        }
+    }
+    
+    fileprivate func setupInterface(with products: Set<SKProduct>) {
+        let product = products.first
+        
         view.addSubview(backgroundImageView)
         backgroundImageView.snp.makeConstraints { (make) in
             make.edges.equalToSuperview()
@@ -69,7 +73,7 @@ class GetPremiumViewController: UIViewController {
             make.left.equalToSuperview().offset(40)
             make.right.equalToSuperview().inset(40)
         }
-        descriptionLabel.text = "Unlimited matches for only \(priceString) per month."
+        descriptionLabel.text = "Unlimited matches for only \(product!.localizedPrice ?? priceString) per month."
         descriptionLabel.font = UIFont.systemFont(ofSize: 21, weight: .medium)
         descriptionLabel.numberOfLines = 2
         descriptionLabel.textAlignment = .center
@@ -107,13 +111,14 @@ class GetPremiumViewController: UIViewController {
     }
     
     @objc func buyTapped(_ sender: UIButton) {
-        PurchaseManager.shared.purchasePremium { (outcome) in
+      
+        PurchaseManager.purchase("premium") { (outcome) in
             switch outcome {
             case .failed:
                 Alertift.actionSheet(title: "Error ", message: "Something went wrong, purchase failed.")
                     .action(Alertift.Action.cancel("Okay"))
                     .show(on: self, completion: nil)
-            case .success:
+            case .success :
                 self.dismiss(animated: true, completion: {
                     self.matchViewControllerDelegate?.refreshTableView()
                 })
@@ -122,3 +127,5 @@ class GetPremiumViewController: UIViewController {
     }
     
 }
+
+
