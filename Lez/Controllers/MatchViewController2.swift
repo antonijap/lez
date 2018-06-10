@@ -205,10 +205,8 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
             }
             FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
                 guard let user = user else { return }
-                print("User downloaded: \(String(describing: user))")
                 self.user = user
                 if user.isPremium {
-                    print("BUREK Will adjust widget to show unlimited")
                     self.canLike = true
                     self.likesLeft = user.likesLeft
                     self.likesCounterWidgetLabel.text = "Unlimited"
@@ -216,7 +214,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                 } else {
                     if user.likesLeft <= 0 {
                         // Show countdown
-                        print("BUREK User has to wait")
                         self.canLike = false
                         self.likesLeft = user.likesLeft
                         guard let cooldownTime = user.cooldownTime else { return }
@@ -224,7 +221,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                         self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
                     } else {
                         // Show likesLeft
-                        print("BUREK User has more likes...")
                         self.canLike = true
                         self.likesLeft = user.likesLeft
                         self.likesCounterWidgetLabel.text = "\(self.likesLeft!)"
