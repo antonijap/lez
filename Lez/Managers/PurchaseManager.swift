@@ -36,7 +36,7 @@ enum RestoreOutcomes {
     case expired
 }
 
- struct PurchaseManager {
+struct PurchaseManager {
     
     // MARK: - Properties
     
@@ -65,7 +65,7 @@ enum RestoreOutcomes {
             switch result {
             case .success          : completion(.success) ; self.markUserAsPremium()
             case let .error(error) : completion(.failed) ; self.deactivatePremiumInFirestore()
-                handleError(error)
+            handleError(error)
             }
         }
     }
@@ -74,7 +74,7 @@ enum RestoreOutcomes {
         verifyReceipt { (result) in
             switch result {
             case .success(let receipt):
-                verifySubscription(productID, with: receipt, completion: nil)
+                verifySubscription(productID, with: receipt, isRestore: false, completion: nil)
             case .error(let error):
                 print("There was an error \(error)")
             }
@@ -102,7 +102,7 @@ enum RestoreOutcomes {
     fileprivate static func verifyPurchaseRestoreWith(_ productID: String, completion: @escaping RestoreOutcomeCompletion) {
         verifyReceipt { (result) in
             switch result {
-            case let .success(receipt): verifySubscription(productID, with: receipt, completion: completion)
+            case let .success(receipt): verifySubscription(productID, with: receipt, isRestore: true, completion: completion)
             case let .error(error):
                 completion(.failed)
                 print("There was an Error: \(error.localizedDescription) in PurchaseManager")
@@ -118,13 +118,14 @@ enum RestoreOutcomes {
         }
     }
     
-    fileprivate static func verifySubscription(_ productID: ProductID, with receipt: ReceiptInfo, completion: RestoreOutcomeCompletion?) {
+    fileprivate static func verifySubscription(_ productID: ProductID, with receipt: ReceiptInfo, isRestore: Bool, completion: RestoreOutcomeCompletion?) {
         let result = SwiftyStoreKit.verifySubscription(
             ofType: .autoRenewable,
             productId: productID,
             inReceipt: receipt,
             validUntil: Date())
-        handleSubscription(result, completion: completion)
+        
+        handleSubscription(result, isRestore: isRestore, completion: completion)
     }
     
     /// Checks if the result has products and if their ID's are valid
@@ -143,18 +144,31 @@ enum RestoreOutcomes {
         }
     }
     
-    fileprivate static func handleSubscription(_ result: VerifySubscriptionResult, completion: RestoreOutcomeCompletion?) {
+    fileprivate static func handleSubscription(_ result: VerifySubscriptionResult, isRestore: Bool, completion: RestoreOutcomeCompletion?) {
         switch result {
+            
         case .purchased:
-            completion!(.success)
-            markUserAsPremium()
-        case .expired:
-            if let completion = completion {
-                completion(.expired)
-                deactivatePremiumInFirestore()
+            
+            if isRestore {
+                completion!(.success)
             }
+            
+            markUserAsPremium()
+            
+        case .expired:
+            
+            if isRestore {
+                completion!(.expired)
+            }
+            
+            deactivatePremiumInFirestore()
+            
         case .notPurchased:
-            completion!(.nothingToRestore)
+            
+            if isRestore {
+                completion!(.nothingToRestore)
+            }
+            
             deactivatePremiumInFirestore()
         }
     }
@@ -191,7 +205,7 @@ extension PurchaseManager {
     
     fileprivate static func deactivatePremiumInFirestore() {
         guard let currentUser = Auth.auth().currentUser else { return }
-     
+        
         let data: [String: Any] = [
             "isPremium": false,
             "cooldownTime": "",
@@ -201,8 +215,8 @@ extension PurchaseManager {
         FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).fulfill(true)
     }
 }
-    
-    
+
+
 //
 //
 //    func checkIfSubscribed(user: User, ifManuallyPromoted: Bool) {
