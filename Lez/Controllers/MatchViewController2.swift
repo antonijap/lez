@@ -121,12 +121,13 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
                         self.presentRegisterViewController()
                         return
                     }
-                    
                     FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
-                        guard let me = user else { return }
-                        self.fetchUsers(for: me.uid)
-                        PurchaseManager.shared.checkIfSubscribed(user: me, ifManuallyPromoted: me.isManuallyPromoted)
-                        if me.isOnboarded == false {
+                        guard let user = user else { return }
+                        self.fetchUsers(for: user.uid)
+                        if !user.isManuallyPromoted {
+                            PurchaseManager.verifyPurchase(ProductID("premium"))
+                        }
+                        if !user.isOnboarded {
                             self.presentRegisterViewController()
                         }
                     })
@@ -180,148 +181,13 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         }
         fetchUsers(for: user.uid)
     }
-    
-    private func setupNoUsersState() {
-        view.addSubview(noUsersBackground)
-        noUsersBackground.snp.makeConstraints { (make) in
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
-            make.right.left.equalToSuperview()
-        }
-        noUsersBackground.image = UIImage(named: "No_Users_Background")
-        noUsersBackground.contentMode = .scaleAspectFill
-        noUsersBackground.clipsToBounds = true
-        
-        view.addSubview(noUsersTitle)
-        noUsersTitle.snp.makeConstraints { (make) in
-            make.top.equalToSuperview().inset(view.frame.height / 3.0)
-            make.centerX.equalToSuperview()
-        }
-        noUsersTitle.text = "Bummer"
-        noUsersTitle.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
-        
-        view.addSubview(noUsersDescription)
-        noUsersDescription.snp.makeConstraints { (make) in
-            make.top.equalTo(noUsersTitle.snp.bottom).offset(8)
-            make.left.equalToSuperview().offset(32)
-            make.right.equalToSuperview().inset(32)
-        }
-        noUsersDescription.text = "No lesbians with your criteria. Try changing preferences."
-        noUsersDescription.numberOfLines = 2
-        noUsersDescription.font = UIFont.systemFont(ofSize: 21, weight: .medium)
-        noUsersDescription.textAlignment = .center
-        
-        view.addSubview(noUsersCTA)
-        noUsersCTA.snp.makeConstraints { (make) in
-            make.top.equalTo(noUsersDescription.snp.bottom).offset(32)
-            make.left.equalToSuperview().offset(48)
-            make.right.equalToSuperview().inset(48)
-            make.height.equalTo(48)
-        }
-        noUsersCTA.setTitle("Spread Word", for: .normal)
-        noUsersCTA.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
-        let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.shareWebsite))
-        noUsersCTA.addGestureRecognizer(buttonTap)
-        
-        view.addSubview(noUsersRefreshButton)
-        noUsersRefreshButton.snp.makeConstraints { (make) in
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).inset(32)
-            make.centerX.equalToSuperview()
-        }
-        noUsersRefreshButton.setTitle("Try refresh?", for: .normal)
-        noUsersRefreshButton.addTarget(self, action: #selector(self.refreshTableView), for: .touchUpInside)
-        noUsersRefreshButton.setTitleColor(.gray, for: .normal)
-        noUsersRefreshButton.setTitleColor(UIColor.gray.withAlphaComponent(0.5), for: .highlighted)
-        
-        hideEmptyState()
-    }
-    
-    private func hideEmptyState() {
-        noUsersBackground.isHidden = true
-        noUsersTitle.isHidden = true
-        noUsersDescription.isHidden = true
-        noUsersCTA.isHidden = true
-        noUsersRefreshButton.isHidden = true
-    }
-    
-    private func showEmptyState() {
-        noUsersBackground.isHidden = false
-        noUsersTitle.isHidden = false
-        noUsersDescription.isHidden = false
-        noUsersCTA.isHidden = false
-        noUsersRefreshButton.isHidden = false
-    }
-    
+
     @objc private func shareWebsite() {
         let web = NSURL(string: "http://getlez.com")
         AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userSharedURL, user: user!)
         web.share()
     }
-    
-    private func setupTableView() {
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        tableView.separatorColor = .clear
-        tableView.delegate = self
-        tableView.dataSource = self
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
-            make.right.left.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
-        }
-        tableView.register(MatchCell.self, forCellReuseIdentifier: "MatchCell")
-        tableView.refreshControl = refreshControl
-        refreshControl.addTarget(self, action: #selector(self.refreshTableView), for: .valueChanged)
-    }
-    
-    private func setupNavigationBar() {
-        navigationItem.title = "Match Room"
-        navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.setBackgroundImage(UIImage(named: "White"), for: UIBarMetrics.default)
-        navigationController?.navigationBar.shadowImage = UIImage()
-        navigationController?.navigationBar.layer.masksToBounds = false
-        navigationController?.navigationBar.layer.shadowColor = UIColor(red:0.90, green:0.90, blue:0.90, alpha:1.00).cgColor
-        navigationController?.navigationBar.layer.shadowOpacity = 0.8
-        navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 0, height: 2.0)
-        navigationController?.navigationBar.layer.shadowRadius = 4
-        let filterButton = UIButton(type: .custom)
-        filterButton.setImage(UIImage(named: "Filter"), for: .normal)
-        filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        filterButton.addTarget(self, action: #selector(self.showFilters), for: .touchUpInside)
-        let rightItem = UIBarButtonItem(customView: filterButton)
-        navigationItem.setRightBarButtonItems([rightItem], animated: true)
-    }
-    
-    private func setupLikesWidget() {
-        view.addSubview(likesCounterWidgetView)
-        likesCounterWidgetView.snp.makeConstraints { (make) in
-            make.height.equalTo(32)
-            make.left.equalToSuperview().offset(16)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).inset(16)
-        }
-        likesCounterWidgetView.layer.cornerRadius = 16
-        likesCounterWidgetView.clipsToBounds = false
-        likesCounterWidgetView.backgroundColor = .white
-        likesCounterWidgetView.dropShadow()
-        
-        likesCounterWidgetView.addSubview(likesCounterWidgetImageView)
-        likesCounterWidgetImageView.snp.makeConstraints { (make) in
-            make.height.width.equalTo(20)
-            make.centerY.equalToSuperview()
-            make.left.equalToSuperview().offset(8)
-        }
-        likesCounterWidgetImageView.image = UIImage(named: "Like")
-        
-        likesCounterWidgetView.addSubview(likesCounterWidgetLabel)
-        likesCounterWidgetLabel.snp.makeConstraints { (make) in
-            make.centerY.equalToSuperview()
-            make.left.equalTo(likesCounterWidgetImageView.snp.right).offset(4)
-            make.right.equalToSuperview().inset(12)
-        }
-      
-        likesCounterWidgetView.layoutIfNeeded()
-    }
-    
+
     func showLikesWidget() {
         likesCounterWidgetView.isHidden = false
     }
@@ -684,4 +550,141 @@ extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, Matc
 
 protocol MatchCellDelegate: class {
     func likeTouchUpInside(_ sender: MatchCell)
+}
+
+extension MatchViewController2 {
+    private func setupNoUsersState() {
+        view.addSubview(noUsersBackground)
+        noUsersBackground.snp.makeConstraints { (make) in
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
+            make.right.left.equalToSuperview()
+        }
+        noUsersBackground.image = UIImage(named: "No_Users_Background")
+        noUsersBackground.contentMode = .scaleAspectFill
+        noUsersBackground.clipsToBounds = true
+        
+        view.addSubview(noUsersTitle)
+        noUsersTitle.snp.makeConstraints { (make) in
+            make.top.equalToSuperview().inset(view.frame.height / 3.0)
+            make.centerX.equalToSuperview()
+        }
+        noUsersTitle.text = "Bummer"
+        noUsersTitle.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
+        
+        view.addSubview(noUsersDescription)
+        noUsersDescription.snp.makeConstraints { (make) in
+            make.top.equalTo(noUsersTitle.snp.bottom).offset(8)
+            make.left.equalToSuperview().offset(32)
+            make.right.equalToSuperview().inset(32)
+        }
+        noUsersDescription.text = "No lesbians with your criteria. Try changing preferences."
+        noUsersDescription.numberOfLines = 2
+        noUsersDescription.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        noUsersDescription.textAlignment = .center
+        
+        view.addSubview(noUsersCTA)
+        noUsersCTA.snp.makeConstraints { (make) in
+            make.top.equalTo(noUsersDescription.snp.bottom).offset(32)
+            make.left.equalToSuperview().offset(48)
+            make.right.equalToSuperview().inset(48)
+            make.height.equalTo(48)
+        }
+        noUsersCTA.setTitle("Spread Word", for: .normal)
+        noUsersCTA.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
+        let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.shareWebsite))
+        noUsersCTA.addGestureRecognizer(buttonTap)
+        
+        view.addSubview(noUsersRefreshButton)
+        noUsersRefreshButton.snp.makeConstraints { (make) in
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).inset(32)
+            make.centerX.equalToSuperview()
+        }
+        noUsersRefreshButton.setTitle("Try refresh?", for: .normal)
+        noUsersRefreshButton.addTarget(self, action: #selector(self.refreshTableView), for: .touchUpInside)
+        noUsersRefreshButton.setTitleColor(.gray, for: .normal)
+        noUsersRefreshButton.setTitleColor(UIColor.gray.withAlphaComponent(0.5), for: .highlighted)
+        
+        hideEmptyState()
+    }
+    
+    private func hideEmptyState() {
+        noUsersBackground.isHidden = true
+        noUsersTitle.isHidden = true
+        noUsersDescription.isHidden = true
+        noUsersCTA.isHidden = true
+        noUsersRefreshButton.isHidden = true
+    }
+    
+    private func showEmptyState() {
+        noUsersBackground.isHidden = false
+        noUsersTitle.isHidden = false
+        noUsersDescription.isHidden = false
+        noUsersCTA.isHidden = false
+        noUsersRefreshButton.isHidden = false
+    }
+    
+    private func setupTableView() {
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        tableView.separatorColor = .clear
+        tableView.delegate = self
+        tableView.dataSource = self
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { (make) in
+            make.right.left.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+        }
+        tableView.register(MatchCell.self, forCellReuseIdentifier: "MatchCell")
+        tableView.refreshControl = refreshControl
+        refreshControl.addTarget(self, action: #selector(self.refreshTableView), for: .valueChanged)
+    }
+    
+    private func setupNavigationBar() {
+        navigationItem.title = "Match Room"
+        navigationController?.navigationBar.backgroundColor = .white
+        navigationController?.navigationBar.setBackgroundImage(UIImage(named: "White"), for: UIBarMetrics.default)
+        navigationController?.navigationBar.shadowImage = UIImage()
+        navigationController?.navigationBar.layer.masksToBounds = false
+        navigationController?.navigationBar.layer.shadowColor = UIColor(red:0.90, green:0.90, blue:0.90, alpha:1.00).cgColor
+        navigationController?.navigationBar.layer.shadowOpacity = 0.8
+        navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 0, height: 2.0)
+        navigationController?.navigationBar.layer.shadowRadius = 4
+        let filterButton = UIButton(type: .custom)
+        filterButton.setImage(UIImage(named: "Filter"), for: .normal)
+        filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+        filterButton.addTarget(self, action: #selector(self.showFilters), for: .touchUpInside)
+        let rightItem = UIBarButtonItem(customView: filterButton)
+        navigationItem.setRightBarButtonItems([rightItem], animated: true)
+    }
+    
+    private func setupLikesWidget() {
+        view.addSubview(likesCounterWidgetView)
+        likesCounterWidgetView.snp.makeConstraints { (make) in
+            make.height.equalTo(32)
+            make.left.equalToSuperview().offset(16)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).inset(16)
+        }
+        likesCounterWidgetView.layer.cornerRadius = 16
+        likesCounterWidgetView.clipsToBounds = false
+        likesCounterWidgetView.backgroundColor = .white
+        likesCounterWidgetView.dropShadow()
+        
+        likesCounterWidgetView.addSubview(likesCounterWidgetImageView)
+        likesCounterWidgetImageView.snp.makeConstraints { (make) in
+            make.height.width.equalTo(20)
+            make.centerY.equalToSuperview()
+            make.left.equalToSuperview().offset(8)
+        }
+        likesCounterWidgetImageView.image = UIImage(named: "Like")
+        
+        likesCounterWidgetView.addSubview(likesCounterWidgetLabel)
+        likesCounterWidgetLabel.snp.makeConstraints { (make) in
+            make.centerY.equalToSuperview()
+            make.left.equalTo(likesCounterWidgetImageView.snp.right).offset(4)
+            make.right.equalToSuperview().inset(12)
+        }
+        
+        likesCounterWidgetView.layoutIfNeeded()
+    }
 }
