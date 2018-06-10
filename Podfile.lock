@@ -1,0 +1,305 @@
+PODS:
+  - Alamofire (4.7.2)
+  - AlamofireImage (3.3.1):
+    - Alamofire (~> 4.5)
+  - Alertift (3.2)
+  - Bolts (1.9.0):
+    - Bolts/AppLinks (= 1.9.0)
+    - Bolts/Tasks (= 1.9.0)
+  - Bolts/AppLinks (1.9.0):
+    - Bolts/Tasks
+  - Bolts/Tasks (1.9.0)
+  - BoringSSL (10.0.3):
+    - BoringSSL/Implementation (= 10.0.3)
+    - BoringSSL/Interface (= 10.0.3)
+  - BoringSSL/Implementation (10.0.3):
+    - BoringSSL/Interface (= 10.0.3)
+  - BoringSSL/Interface (10.0.3)
+  - Crashlytics (3.10.2):
+    - Fabric (~> 1.7.7)
+  - CryptoSwift (0.9.0)
+  - Eureka (4.1.1)
+  - Fabric (1.7.7)
+  - FacebookCore (0.3.0):
+    - Bolts (~> 1.8)
+    - FBSDKCoreKit (~> 4.27)
+  - FacebookLogin (0.3.0):
+    - Bolts (~> 1.8)
+    - FacebookCore (~> 0.3)
+    - FBSDKCoreKit (~> 4.27)
+    - FBSDKLoginKit (~> 4.27)
+  - FacebookShare (0.3.0):
+    - Bolts (~> 1.8)
+    - FacebookCore (~> 0.3)
+    - FBSDKCoreKit (~> 4.27)
+    - FBSDKShareKit (~> 4.27)
+  - FBSDKCoreKit (4.33.0):
+    - Bolts (~> 1.7)
+  - FBSDKLoginKit (4.33.0):
+    - FBSDKCoreKit
+  - FBSDKShareKit (4.33.0):
+    - FBSDKCoreKit (~> 4.33.0)
+  - Firebase/Auth (5.1.0):
+    - Firebase/CoreOnly
+    - FirebaseAuth (= 5.0.0)
+  - Firebase/Core (5.1.0):
+    - Firebase/CoreOnly
+    - FirebaseAnalytics (= 5.0.1)
+  - Firebase/CoreOnly (5.1.0):
+    - FirebaseCore (= 5.0.2)
+  - Firebase/Firestore (5.1.0):
+    - Firebase/CoreOnly
+    - FirebaseFirestore (= 0.12.2)
+  - Firebase/Storage (5.1.0):
+    - Firebase/CoreOnly
+    - FirebaseStorage (= 3.0.0)
+  - FirebaseAnalytics (5.0.1):
+    - FirebaseCore (~> 5.0)
+    - FirebaseInstanceID (~> 3.0)
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+    - nanopb (~> 0.3)
+  - FirebaseAuth (5.0.0):
+    - FirebaseCore (~> 5.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - FirebaseCore (5.0.2):
+    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+  - FirebaseFirestore (0.12.2):
+    - FirebaseCore (~> 5.0)
+    - FirebaseFirestore/abseil-cpp (= 0.12.2)
+    - gRPC-ProtoRPC (~> 1.0)
+    - leveldb-library (~> 1.18)
+    - Protobuf (~> 3.1)
+  - FirebaseFirestore/abseil-cpp (0.12.2):
+    - FirebaseCore (~> 5.0)
+    - gRPC-ProtoRPC (~> 1.0)
+    - leveldb-library (~> 1.18)
+    - Protobuf (~> 3.1)
+  - FirebaseInstanceID (3.0.0):
+    - FirebaseCore (~> 5.0)
+  - FirebaseStorage (3.0.0):
+    - FirebaseCore (~> 5.0)
+    - GTMSessionFetcher/Core (~> 1.1)
+  - GBDeviceInfo (5.2.0):
+    - GBDeviceInfo/Core (= 5.2.0)
+  - GBDeviceInfo/Core (5.2.0)
+  - GooglePlacesRow (3.0.0):
+    - Eureka (~> 4.0)
+  - GoogleToolboxForMac/Defines (2.1.4)
+  - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
+    - GoogleToolboxForMac/Defines (= 2.1.4)
+  - gRPC (1.12.0):
+    - gRPC-RxLibrary (= 1.12.0)
+    - gRPC/Main (= 1.12.0)
+  - gRPC-Core (1.12.0):
+    - gRPC-Core/Implementation (= 1.12.0)
+    - gRPC-Core/Interface (= 1.12.0)
+  - gRPC-Core/Implementation (1.12.0):
+    - BoringSSL (~> 10.0)
+    - gRPC-Core/Interface (= 1.12.0)
+    - nanopb (~> 0.3)
+  - gRPC-Core/Interface (1.12.0)
+  - gRPC-ProtoRPC (1.12.0):
+    - gRPC (= 1.12.0)
+    - gRPC-RxLibrary (= 1.12.0)
+    - Protobuf (~> 3.0)
+  - gRPC-RxLibrary (1.12.0)
+  - gRPC/Main (1.12.0):
+    - gRPC-Core (= 1.12.0)
+    - gRPC-RxLibrary (= 1.12.0)
+  - GTMSessionFetcher/Core (1.1.15)
+  - ImageSlideshow (1.6.0):
+    - ImageSlideshow/Core (= 1.6.0)
+  - ImageSlideshow/Core (1.6.0)
+  - Jelly (1.2.4)
+  - JGProgressHUD (2.0.3)
+  - leveldb-library (1.20)
+  - nanopb (0.3.8):
+    - nanopb/decode (= 0.3.8)
+    - nanopb/encode (= 0.3.8)
+  - nanopb/decode (0.3.8)
+  - nanopb/encode (0.3.8)
+  - PromisesObjC (1.2.2)
+  - PromisesSwift (1.2.2):
+    - PromisesObjC (= 1.2.2)
+  - Protobuf (3.5.0)
+  - PusherSwift (6.1.0):
+    - CryptoSwift (~> 0.9.0)
+    - ReachabilitySwift (~> 4.1.0)
+    - Starscream (~> 3.0.5)
+    - TaskQueue (~> 1.1.1)
+  - PushNotifications (0.10.7)
+  - RangeSeekSlider (1.8.0)
+  - ReachabilitySwift (4.1.0)
+  - SDWebImage (4.4.0):
+    - SDWebImage/Core (= 4.4.0)
+  - SDWebImage/Core (4.4.0)
+  - SnapKit (4.0.0)
+  - Spring (1.0.5)
+  - Starscream (3.0.5)
+  - SwiftDate (4.5.1)
+  - SwiftyJSON (4.1.0)
+  - SwiftyStoreKit (0.13.2)
+  - TaskQueue (1.1.1)
+  - Toast-Swift (3.0.1)
+  - TwitterCore (3.1.0)
+  - TwitterKit (3.3.0):
+    - TwitterCore (>= 3.1.0)
+
+DEPENDENCIES:
+  - Alamofire (~> 4.7)
+  - AlamofireImage (~> 3.3)
+  - Alertift (~> 3.0)
+  - Crashlytics (~> 3.10.2)
+  - Fabric (~> 1.7.7)
+  - FacebookCore
+  - FacebookLogin
+  - FacebookShare
+  - Firebase/Auth
+  - Firebase/Core
+  - Firebase/Firestore
+  - Firebase/Storage
+  - GBDeviceInfo
+  - GooglePlacesRow
+  - ImageSlideshow (~> 1.5)
+  - Jelly
+  - JGProgressHUD
+  - PromisesSwift (~> 1.0)
+  - PusherSwift
+  - PushNotifications
+  - RangeSeekSlider (from `https://github.com/WorldDownTown/RangeSeekSlider.git`, branch `swift_4`)
+  - SDWebImage (~> 4.0)
+  - SnapKit (~> 4.0.0)
+  - Spring (from `https://github.com/MengTo/Spring.git`)
+  - SwiftDate (~> 4.0)
+  - SwiftyJSON (~> 4.0)
+  - SwiftyStoreKit
+  - Toast-Swift (~> 3.0.1)
+  - TwitterKit
+
+SPEC REPOS:
+  https://github.com/cocoapods/specs.git:
+    - Alamofire
+    - AlamofireImage
+    - Alertift
+    - Bolts
+    - BoringSSL
+    - Crashlytics
+    - CryptoSwift
+    - Eureka
+    - Fabric
+    - FacebookCore
+    - FacebookLogin
+    - FacebookShare
+    - FBSDKCoreKit
+    - FBSDKLoginKit
+    - FBSDKShareKit
+    - Firebase
+    - FirebaseAnalytics
+    - FirebaseAuth
+    - FirebaseCore
+    - FirebaseFirestore
+    - FirebaseInstanceID
+    - FirebaseStorage
+    - GBDeviceInfo
+    - GooglePlacesRow
+    - GoogleToolboxForMac
+    - gRPC
+    - gRPC-Core
+    - gRPC-ProtoRPC
+    - gRPC-RxLibrary
+    - GTMSessionFetcher
+    - ImageSlideshow
+    - Jelly
+    - JGProgressHUD
+    - leveldb-library
+    - nanopb
+    - PromisesObjC
+    - PromisesSwift
+    - Protobuf
+    - PusherSwift
+    - PushNotifications
+    - ReachabilitySwift
+    - SDWebImage
+    - SnapKit
+    - Starscream
+    - SwiftDate
+    - SwiftyJSON
+    - SwiftyStoreKit
+    - TaskQueue
+    - Toast-Swift
+    - TwitterCore
+    - TwitterKit
+
+EXTERNAL SOURCES:
+  RangeSeekSlider:
+    :branch: swift_4
+    :git: https://github.com/WorldDownTown/RangeSeekSlider.git
+  Spring:
+    :git: https://github.com/MengTo/Spring.git
+
+CHECKOUT OPTIONS:
+  RangeSeekSlider:
+    :commit: 77c29321a97c7f029e878e1479ab5ed5e4b2edb2
+    :git: https://github.com/WorldDownTown/RangeSeekSlider.git
+  Spring:
+    :commit: c540239f3590bbaf4a35c3959c329dd5ed4e3eee
+    :git: https://github.com/MengTo/Spring.git
+
+SPEC CHECKSUMS:
+  Alamofire: e4fa87002c137ba2d8d634d2c51fabcda0d5c223
+  AlamofireImage: 3b35b586853abaf94ca1250f4e94cff3c21a4c0d
+  Alertift: df0df24a557e47360180092f5f3fceb675c96b51
+  Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
+  BoringSSL: c46efb47593135382bc0934196f16d2f726f5f36
+  Crashlytics: 0360624eea1c978a743feddb2fb1ef8b37fb7a0d
+  CryptoSwift: bca8c5b653dcc2d9734409242a070ff53bafac86
+  Eureka: b88fb930e42c79f8c03c373d0fcdc28c1d6c50ed
+  Fabric: bda89e242bce1b7b8ab264248cf3407774ce0095
+  FacebookCore: 3ffa190a3f1f96cec0e44d3fc221bc322c595ffa
+  FacebookLogin: 0af839ea858faef99550d16596b87b4a8e8906e6
+  FacebookShare: 0469964297ebd75f052be2c5083389a4208e82b7
+  FBSDKCoreKit: 572b047a7e029bc44542bcf8a59414e7ff2b543e
+  FBSDKLoginKit: 88cb456349cfb3b554427ce4f8b43729d85dfb40
+  FBSDKShareKit: 1869cb24db2cea90666a50cb9d568deb38e2d16e
+  Firebase: e08fb0795f35707aeb1d8a715c731c45bdf6fd56
+  FirebaseAnalytics: b3628aea54c50464c32c393fb2ea032566e7ecc2
+  FirebaseAuth: acbeef02fe7c3a26624e309849f3fe30c84115af
+  FirebaseCore: b81044df1044c0857a0737c6324678b72d4f7f00
+  FirebaseFirestore: 93b8bf70484c92c271ae93940fe1e2ca9e35f92b
+  FirebaseInstanceID: 83e0040351565df711a5db3d8ebe5ea21aca998a
+  FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
+  GBDeviceInfo: 2c65ceb9404f9079264d4c238f5b81916fdfc5e2
+  GooglePlacesRow: c0bb6bc0acf8b2ab690986ef5c5ecb1085dd1d9e
+  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
+  gRPC: 9362451032695e2dfb7bafcd3740e3a27939e4ff
+  gRPC-Core: 9696b220565b283e021cf2722d473a4a74b7622a
+  gRPC-ProtoRPC: a1bd56fb1991a8dae4581250d7259eddabb66779
+  gRPC-RxLibrary: 1ed5314e8b38cd6e55c9bfa048387136ae925ce9
+  GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
+  ImageSlideshow: 9a1038da5669d2d337ae5ecda2ee8282ff14e9c5
+  Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
+  JGProgressHUD: 12b20a8f4ffe05258f8635c1ab92816e451f904d
+  leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
+  nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
+  PromisesObjC: 3db4112f796a05782b4442364748f9126fea0b88
+  PromisesSwift: a87c9b5fba61711bce16ac11d8d8bf96fc93fde0
+  Protobuf: 8a9838fba8dae3389230e1b7f8c104aa32389c03
+  PusherSwift: 6f2535d616cf0d6867a58bee501999995ad37999
+  PushNotifications: 2e3df1e301e19ae2a100267f8387da5fc471ecc7
+  RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
+  ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
+  SDWebImage: b534502786e43dde36dfcaee89356fe6df30e203
+  SnapKit: a42d492c16e80209130a3379f73596c3454b7694
+  Spring: 3c7666eccefdeb87140008dc81043f89f8dbb787
+  Starscream: faf918b2f2eff7d5dd21180646bf015a669673bd
+  SwiftDate: 7b56d42a221f582047287deb256b23fc5ed49a60
+  SwiftyJSON: c29297daf073d2aa016295d5809cdd68045c39b3
+  SwiftyStoreKit: b7563505440a68c9d9fa70bc43d8a97015519409
+  TaskQueue: 53a3cdaf817d9ce3cd50837ff6610aeb7b968997
+  Toast-Swift: ba0b01b095aada709d915f9beb1d38184a2721c3
+  TwitterCore: 644d59e75abccb26cf0a9050d2c4dea0e5412241
+  TwitterKit: a2e60ddcedbf54091eac6f27685ca7a87681e1d7
+
+PODFILE CHECKSUM: d14d87e60097121378b708645b2a5ff70a620e5f
+
+COCOAPODS: 1.5.2
