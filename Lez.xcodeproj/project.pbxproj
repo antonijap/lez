@@ -19,7 +19,6 @@
 		CF1C6C55206F68650018DCD9 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C54206F68650018DCD9 /* ChatViewController.swift */; };
 		CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */; };
 		CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF206203C13170054CC1A /* AppDelegate.swift */; };
-		CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF208203C13170054CC1A /* MatchViewController.swift */; };
 		CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = CF2DF20F203C13170054CC1A /* LaunchScreen.storyboard */; };
 		CF2DF21C203C13180054CC1A /* LezTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF21B203C13180054CC1A /* LezTests.swift */; };
 		CF2DF227203C13180054CC1A /* LezUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF2DF226203C13180054CC1A /* LezUITests.swift */; };
@@ -33,7 +32,7 @@
 		CF7C6C6520B2BFF700CEE0D1 /* AnalyticsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */; };
 		CF8C5DFE2094C08C00538C67 /* MessagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */; };
 		CF8C5E002094C84F00538C67 /* Chat.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF8C5DFF2094C84F00538C67 /* Chat.swift */; };
-		CF9C7B9520A49B710044043B /* MatchViewController2.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9C7B9420A49B710044043B /* MatchViewController2.swift */; };
+		CF9C7B9520A49B710044043B /* MatchViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF9C7B9420A49B710044043B /* MatchViewController.swift */; };
 		CF9C7B9720A4B83A0044043B /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = CF9C7B9620A4B83A0044043B /* Assets.xcassets */; };
 		CFA7842C20A9F2B4000DA074 /* SliderCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA7842B20A9F2B4000DA074 /* SliderCell.swift */; };
 		CFA7842E20A9FC3F000DA074 /* CustomUIElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */; };
@@ -84,7 +83,6 @@
 		CF1C6C56206F68BE0018DCD9 /* ProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
 		CF2DF203203C13170054CC1A /* Lez.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Lez.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF2DF206203C13170054CC1A /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
-		CF2DF208203C13170054CC1A /* MatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController.swift; sourceTree = "<group>"; };
 		CF2DF210203C13170054CC1A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		CF2DF212203C13170054CC1A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		CF2DF217203C13180054CC1A /* LezTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LezTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -103,7 +101,7 @@
 		CF7C6C6420B2BFF700CEE0D1 /* AnalyticsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AnalyticsManager.swift; sourceTree = "<group>"; };
 		CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MessagesViewController.swift; sourceTree = "<group>"; };
 		CF8C5DFF2094C84F00538C67 /* Chat.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Chat.swift; sourceTree = "<group>"; };
-		CF9C7B9420A49B710044043B /* MatchViewController2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController2.swift; sourceTree = "<group>"; };
+		CF9C7B9420A49B710044043B /* MatchViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MatchViewController.swift; sourceTree = "<group>"; };
 		CF9C7B9620A4B83A0044043B /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		CFA7842B20A9F2B4000DA074 /* SliderCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderCell.swift; sourceTree = "<group>"; };
 		CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUIElements.swift; sourceTree = "<group>"; };
@@ -217,7 +215,7 @@
 				CF1C6C54206F68650018DCD9 /* ChatViewController.swift */,
 				CF8C5DFD2094C08C00538C67 /* MessagesViewController.swift */,
 				CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */,
-				CF9C7B9420A49B710044043B /* MatchViewController2.swift */,
+				CF9C7B9420A49B710044043B /* MatchViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -234,7 +232,6 @@
 		CF425B492067EA6000D6A1FE /* Trash Candidate */ = {
 			isa = PBXGroup;
 			children = (
-				CF2DF208203C13170054CC1A /* MatchViewController.swift */,
 				CF1C6C52206F631A0018DCD9 /* ImageGalleryViewController.swift */,
 			);
 			path = "Trash Candidate";
@@ -659,10 +656,9 @@
 				CF7C6C6520B2BFF700CEE0D1 /* AnalyticsManager.swift in Sources */,
 				CF1C6C57206F68BE0018DCD9 /* ProfileViewController.swift in Sources */,
 				CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */,
-				CF2DF209203C13170054CC1A /* MatchViewController.swift in Sources */,
 				CF7877F120A71685004E8693 /* ImagesViewController.swift in Sources */,
 				CFF3676720AAF4E30092B948 /* PusherManager.swift in Sources */,
-				CF9C7B9520A49B710044043B /* MatchViewController2.swift in Sources */,
+				CF9C7B9520A49B710044043B /* MatchViewController.swift in Sources */,
 				CF2DF207203C13170054CC1A /* AppDelegate.swift in Sources */,
 				CF1A78AE20C33D6F001245B3 /* PurchaseManager.swift in Sources */,
 				CF3469A4204AD1B000550D3B /* CardFullscreenViewController.swift in Sources */,

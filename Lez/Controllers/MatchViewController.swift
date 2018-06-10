@@ -1,5 +1,5 @@
 //
-//  MatchViewController2.swift
+//  MatchViewController.swift
 //  Lez
 //
 //  Created by Antonija Pek on 10/05/2018.
@@ -23,7 +23,7 @@ import PusherSwift
 import Toast_Swift
 import SwiftyStoreKit
 
-class MatchViewController2: UIViewController, MatchViewControllerDelegate, PusherDelegate {
+class MatchViewController: UIViewController, MatchViewControllerDelegate, PusherDelegate {
     
     // MARK: - Properties
     private let tableView = UITableView()
@@ -113,26 +113,6 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
                 self.fetchUsers(for: user.uid)
-//                Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
-//                    guard let document = documentSnapshot else {
-//                        print("Error fetching document: \(error!)")
-//                        return
-//                    }
-//                    guard let _ = document.data() else {
-//                        self.presentRegisterViewController()
-//                        return
-//                    }
-//                    FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
-//                        guard let user = user else { return }
-//                        self.fetchUsers(for: user.uid)
-//                        if !user.isManuallyPromoted {
-//                            PurchaseManager.verifyPurchase(ProductID("premium"))
-//                        }
-//                        if !user.isOnboarded {
-//                            self.presentRegisterViewController()
-//                        }
-//                    })
-//                }
             } else {
                 self.presentRegisterViewController()
             }
@@ -512,7 +492,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     }
 }
 
-extension MatchViewController2: UITableViewDelegate, UITableViewDataSource, MatchCellDelegate {
+extension MatchViewController: UITableViewDelegate, UITableViewDataSource, MatchCellDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         guard let user = user else { return }
         AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userViewedProfile, user: user)
@@ -562,7 +542,7 @@ protocol MatchCellDelegate: class {
     func likeTouchUpInside(_ sender: MatchCell)
 }
 
-extension MatchViewController2 {
+extension MatchViewController {
     private func setupNoUsersState() {
         view.addSubview(noUsersBackground)
         noUsersBackground.snp.makeConstraints { (make) in

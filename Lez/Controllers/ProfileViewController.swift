@@ -86,6 +86,7 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
         tableView.isUserInteractionEnabled = true
         let insets = UIEdgeInsets(top: -20, left: 0, bottom: 48, right: 0)
         tableView.contentInset = insets
+        tableView.allowsMultipleSelection = false
         tableView.register(ProfileImagesCell.self, forCellReuseIdentifier: "ProfileImagesCell")
         tableView.register(TitleWithDescriptionCell.self, forCellReuseIdentifier: "TitleWithDescriptionCell")
         tableView.register(SimpleMenuCell.self, forCellReuseIdentifier: "SimpleMenuCell")

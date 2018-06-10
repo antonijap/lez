@@ -49,7 +49,6 @@ enum RestoreOutcomes {
     /// - Parameter completion: Fetched Products
     static func fetchProducts(completion: @escaping Completion) {
         SwiftyStoreKit.retrieveProductsInfo(productsIDs) { (productsInfo) in
-            
             handleProducts(from: productsInfo, { (products) in
                 completion(products)
             })
@@ -62,7 +61,6 @@ enum RestoreOutcomes {
     ///   - productID: The product ID we want to purchase
     ///   - completion: The result if the product was succesfully purchased or if it failed
     static func purchase(_ productID: String, _ completion: @escaping (PurchaseOutcomes) -> Void) {
-        
         SwiftyStoreKit.purchaseProduct(productID, atomically: true) { (result) in
             switch result {
             case .success          : completion(.success) ; self.markUserAsPremium()
@@ -72,23 +70,21 @@ enum RestoreOutcomes {
         }
     }
     
-    static func verifyPurchase(_ producID: ProductID) {
-        
+    static func verifyPurchase(_ productID: ProductID) {
         verifyReceipt { (result) in
             switch result {
-            case let .success(receipt) : verify(producID, with: receipt, completion: nil)
-            case let .error(error)     : print("There was an error \(error)")
+            case .success(let receipt):
+                verifySubscription(productID, with: receipt, completion: nil)
+            case .error(let error):
+                print("There was an error \(error)")
             }
         }
     }
     
     static func restorePurchase(_ completion: @escaping RestoreOutcomeCompletion) {
-
         SwiftyStoreKit.restorePurchases(atomically: true) { (result) in
-           
             if result.restoreFailedPurchases.count > 0 {
                 completion(.failed)
-            
             } else if result.restoredPurchases.count > 0 {
                 if let product = result.restoredPurchases.last {
                     verifyPurchaseRestoreWith(product.productId, completion: { (outcome) in
@@ -104,11 +100,10 @@ enum RestoreOutcomes {
     // MARK: - Helper Methods
     
     fileprivate static func verifyPurchaseRestoreWith(_ productID: String, completion: @escaping RestoreOutcomeCompletion) {
-        
         verifyReceipt { (result) in
             switch result {
-            case let .success(receipt) : verify(productID, with: receipt, completion: completion)
-            case let .error(error) :
+            case let .success(receipt): verifySubscription(productID, with: receipt, completion: completion)
+            case let .error(error):
                 completion(.failed)
                 print("There was an Error: \(error.localizedDescription) in PurchaseManager")
             }
@@ -118,17 +113,17 @@ enum RestoreOutcomes {
     fileprivate static func verifyReceipt(completion: @escaping (VerifyReceiptResult) -> Void) {
         let sharedSecret = "fdedb790950649388f3863bf6602ca66"
         let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: sharedSecret)
-        SwiftyStoreKit.verifyReceipt(using: appleValidator, forceRefresh: false, completion: completion)
+        SwiftyStoreKit.verifyReceipt(using: appleValidator) { (result) in
+            completion(result)
+        }
     }
     
-    fileprivate static func verify(_ productID: ProductID, with receipt: ReceiptInfo, completion: RestoreOutcomeCompletion?){
-        
+    fileprivate static func verifySubscription(_ productID: ProductID, with receipt: ReceiptInfo, completion: RestoreOutcomeCompletion?) {
         let result = SwiftyStoreKit.verifySubscription(
             ofType: .autoRenewable,
             productId: productID,
             inReceipt: receipt,
             validUntil: Date())
-       
         handleSubscription(result, completion: completion)
     }
     
@@ -137,7 +132,6 @@ enum RestoreOutcomes {
     ///   - result: The products information result
     ///   - completion: Sends a Set of the received products if there are any
     fileprivate static func handleProducts(from result: RetrieveResults, _ completion: @escaping Completion ) {
-        
         if let invalidProductsIDs = result.invalidProductIDs.first {
             print("Invalid Product ID's: \(invalidProductsIDs)")
         } else if !result.retrievedProducts.isEmpty {
@@ -149,12 +143,17 @@ enum RestoreOutcomes {
         }
     }
     
-    
     fileprivate static func handleSubscription(_ result: VerifySubscriptionResult, completion:  RestoreOutcomeCompletion?){
         switch result {
-        case .purchased    : completion!(.success) ; markUserAsPremium()
-        case .expired      : completion!(.expired) ; deactivatePremiumInFirestore()
-        case .notPurchased : completion!(.nothingToRestore) ; deactivatePremiumInFirestore()
+        case .purchased:
+            completion!(.success)
+            markUserAsPremium()
+        case .expired:
+            completion!(.expired)
+            deactivatePremiumInFirestore()
+        case .notPurchased:
+            completion!(.nothingToRestore)
+            deactivatePremiumInFirestore()
         }
     }
     
