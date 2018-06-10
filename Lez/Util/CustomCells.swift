@@ -500,6 +500,14 @@ class SimpleMenuCell: UITableViewCell {
         separatorView.backgroundColor = UIColor(red:0.94, green:0.94, blue:0.94, alpha:1.00)
     }
     
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        self.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:1.00)
+        UIView.animate(withDuration: 1) {
+            self.backgroundColor = .white
+        }
+    }
+    
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

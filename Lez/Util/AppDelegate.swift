@@ -127,7 +127,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 print("There seems to be no auth user.")
                 return
             }
-            print("OFFICIAL: Subscribed to \(currentUser.uid)")
             try? self.pushNotifications.subscribe(interest: String(currentUser.uid))
         }
     }

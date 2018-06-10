@@ -112,26 +112,27 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
-                Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
-                    guard let document = documentSnapshot else {
-                        print("Error fetching document: \(error!)")
-                        return
-                    }
-                    guard let _ = document.data() else {
-                        self.presentRegisterViewController()
-                        return
-                    }
-                    FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
-                        guard let user = user else { return }
-                        self.fetchUsers(for: user.uid)
-                        if !user.isManuallyPromoted {
-                            PurchaseManager.verifyPurchase(ProductID("premium"))
-                        }
-                        if !user.isOnboarded {
-                            self.presentRegisterViewController()
-                        }
-                    })
-                }
+                self.fetchUsers(for: user.uid)
+//                Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
+//                    guard let document = documentSnapshot else {
+//                        print("Error fetching document: \(error!)")
+//                        return
+//                    }
+//                    guard let _ = document.data() else {
+//                        self.presentRegisterViewController()
+//                        return
+//                    }
+//                    FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
+//                        guard let user = user else { return }
+//                        self.fetchUsers(for: user.uid)
+//                        if !user.isManuallyPromoted {
+//                            PurchaseManager.verifyPurchase(ProductID("premium"))
+//                        }
+//                        if !user.isOnboarded {
+//                            self.presentRegisterViewController()
+//                        }
+//                    })
+//                }
             } else {
                 self.presentRegisterViewController()
             }
@@ -196,35 +197,48 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
         likesCounterWidgetView.isHidden = true
     }
     
-    private func runLikesWidget() {
-        guard let user = Auth.auth().currentUser else { return }
-        Firestore.firestore().collection("users").document(user.uid).addSnapshotListener { documentSnapshot, error in
+    private func runLikesWidget(uid: String) {
+        Firestore.firestore().collection("users").document(uid).addSnapshotListener { documentSnapshot, error in
             guard let document = documentSnapshot else {
                 print("Error fetching document: \(error!)")
                 return
             }
+            guard let _ = document.data() else {
+                self.presentRegisterViewController()
+                return
+            }
+
             FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
-                guard let user = user else { return }
+                guard let user = user else {
+                    print("Failed to parse user in runLikesWidget.")
+                    return
+                }
                 self.user = user
-                if user.isPremium {
-                    self.canLike = true
-                    self.likesLeft = user.likesLeft
-                    self.likesCounterWidgetLabel.text = "Unlimited"
-                    self.likesCounterWidgetImageView.image = UIImage(named: "Like")
-                } else {
-                    if user.likesLeft <= 0 {
-                        // Show countdown
-                        self.canLike = false
-                        self.likesLeft = user.likesLeft
-                        guard let cooldownTime = user.cooldownTime else { return }
-                        self.runTimer(cooldownTime: cooldownTime)
-                        self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
-                    } else {
-                        // Show likesLeft
+                if !user.isOnboarded {
+                    self.presentRegisterViewController()
+                }
+                if !user.isManuallyPromoted {
+                    PurchaseManager.verifyPurchase(ProductID("premium"))
+                    if user.isPremium {
                         self.canLike = true
                         self.likesLeft = user.likesLeft
-                        self.likesCounterWidgetLabel.text = "\(self.likesLeft!)"
+                        self.likesCounterWidgetLabel.text = "Unlimited"
                         self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+                    } else {
+                        if user.likesLeft <= 0 {
+                            // Show countdown
+                            self.canLike = false
+                            self.likesLeft = user.likesLeft
+                            guard let cooldownTime = user.cooldownTime else { return }
+                            self.runTimer(cooldownTime: cooldownTime)
+                            self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
+                        } else {
+                            // Show likesLeft
+                            self.canLike = true
+                            self.likesLeft = user.likesLeft
+                            self.likesCounterWidgetLabel.text = "\(self.likesLeft!)"
+                            self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+                        }
                     }
                 }
             })
@@ -345,7 +359,7 @@ class MatchViewController2: UIViewController, MatchViewControllerDelegate, Pushe
     
     @objc func fetchUsers(for uid: String) {
         startSpinner()
-        runLikesWidget()
+        runLikesWidget(uid: uid)
         refreshControl.endRefreshing()
         FirestoreManager.shared.fetchUser(uid: uid).then { (user) in
             self.user = user

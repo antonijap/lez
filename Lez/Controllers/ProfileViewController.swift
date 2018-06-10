@@ -106,28 +106,6 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
         // Start Animating
         hud.dismiss(animated: true)
     }
-    
-//    private func markUserAsPremium(uid: String) {
-//        let data: [String: Any] = [
-//            "isPremium": true,
-//            "cooldownTime": "",
-//            "likesLeft": 5
-//        ]
-//        FirestoreManager.shared.updateUser(uid: uid, data: data).then { (success) in
-//            if success {
-//                FirestoreManager.shared.fetchUser(uid: uid).then({ (user) in
-//                    self.user = user
-//                    self.tableView.reloadData()
-//                    self.view.makeToast("Premium activated", duration: 2.0, position: .bottom)
-//                })
-//            } else {
-//                // Error happened, please contact support@getlez.com
-//                self.showOkayModal(messageTitle: "Error", messageAlert: "Something happened and we couldn't update your profile, please contact us on support@getlez.com", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-//                    print("Error happened")
-//                })
-//            }
-//        }
-//    }
 }
 
 extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
@@ -252,7 +230,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         if indexPath == [6, 0] {
             if let user = user {
                 if !user.isPremium {
-                 
                     PurchaseManager.purchase("premium") { (outcome) in
                         switch outcome {
                         case .failed :
@@ -267,19 +244,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                             })
                         }
                     }
-                    
-//                    PurchaseManager.shared.purchasePremium { (error) in
-//                        switch error {
-//                            case .failed:
-//                                self.view.makeToast("Purchase failed", duration: 2.0, position: .bottom)
-//                            case .success:
-//                                self.view.makeToast("Purchase successful", duration: 2.0, position: .bottom)
-//                                FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
-//                                    self.user = user
-//                                    self.tableView.reloadData()
-//                                })
-//                        }
-//                    }
                 }
             }
         }
