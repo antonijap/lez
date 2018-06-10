@@ -247,6 +247,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     }
                 }
             }
+            highlightCell(indexPath: indexPath)
         }
         if indexPath == [7, 0] {
             let userProfileFormViewController = UserProfileFormViewController()
@@ -255,6 +256,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             userProfileFormViewController.profileViewControllerDelegate = self
             userProfileFormViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(userProfileFormViewController, animated: true)
+            highlightCell(indexPath: indexPath)
         }
         if indexPath == [8, 0] {
             let imageGalleryViewController = ImagesViewController()
@@ -263,6 +265,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             imageGalleryViewController.profileViewControllerDelegate = self
             imageGalleryViewController.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
+            highlightCell(indexPath: indexPath)
         }
         
         if indexPath == [9, 0] {
@@ -279,10 +282,22 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                         self.view.makeToast("Sorry, subscription expired", duration: 1.0, position: .bottom)
                 }
             }
+            highlightCell(indexPath: indexPath)
         }
         
         if indexPath == [10, 0] {
             self.showSignoutAlert(CTA: "Sign out")
+            highlightCell(indexPath: indexPath)
+        }
+    }
+}
+
+extension ProfileViewController {
+    func highlightCell(indexPath: IndexPath) {
+        let currentCell = tableView.cellForRow(at: indexPath) as! SimpleMenuCell
+        currentCell.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:1.00)
+        UIView.animate(withDuration: 1) {
+            currentCell.backgroundColor = .white
         }
     }
 }

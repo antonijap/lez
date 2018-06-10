@@ -120,8 +120,8 @@ class GetPremiumViewController: UIViewController {
                     .show(on: self, completion: nil)
             case .success :
                 self.dismiss(animated: true, completion: {
-                    guard let currentUser = Auth.auth().currentUser else { return }
-                    self.matchViewControllerDelegate?.runLikesWidget(uid: currentUser.uid)
+//                    guard let currentUser = Auth.auth().currentUser else { return }
+//                    self.matchViewControllerDelegate?.runLikesWidget(uid: currentUser.uid)
                 })
             }
         }

@@ -200,6 +200,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                 if !user.isManuallyPromoted {
                     if user.isPremium {
                         print("user is PREMIUM")
+                        self.stopTimer()
                         self.canLike = true
                         self.likesLeft = user.likesLeft
                         self.likesCounterWidgetLabel.text = "Unlimited"
@@ -220,6 +221,11 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                             self.likesCounterWidgetImageView.image = UIImage(named: "Like")
                         }
                     }
+                } else {
+                    self.stopTimer()
+                    self.canLike = true
+                    self.likesCounterWidgetLabel.text = "Unlimited"
+                    self.likesCounterWidgetImageView.image = UIImage(named: "Like")
                 }
             })
         }
@@ -362,10 +368,14 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     @objc private func runTimer(cooldownTime: Date) {
         timer.invalidate()
         // Adjust cooldown time
-        let timeUntilNewLikesUnlock = cooldownTime.add(components: 10.minutes)
+        let timeUntilNewLikesUnlock = cooldownTime.add(components: 5.minutes)
         let differenceBetweenNowAndTimeUntilNewLikesUnlock = timeUntilNewLikesUnlock.timeIntervalSinceNow
         seconds = Int(differenceBetweenNowAndTimeUntilNewLikesUnlock)
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
+    }
+    
+    private func stopTimer() {
+        timer.invalidate()
     }
     
     // Ovo ne diraj
