@@ -143,14 +143,16 @@ enum RestoreOutcomes {
         }
     }
     
-    fileprivate static func handleSubscription(_ result: VerifySubscriptionResult, completion:  RestoreOutcomeCompletion?){
+    fileprivate static func handleSubscription(_ result: VerifySubscriptionResult, completion: RestoreOutcomeCompletion?) {
         switch result {
         case .purchased:
             completion!(.success)
             markUserAsPremium()
         case .expired:
-            completion!(.expired)
-            deactivatePremiumInFirestore()
+            if let completion = completion {
+                completion(.expired)
+                deactivatePremiumInFirestore()
+            }
         case .notPurchased:
             completion!(.nothingToRestore)
             deactivatePremiumInFirestore()

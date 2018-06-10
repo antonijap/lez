@@ -177,7 +177,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
         likesCounterWidgetView.isHidden = true
     }
     
-    private func runLikesWidget(uid: String) {
+    func runLikesWidget(uid: String) {
         Firestore.firestore().collection("users").document(uid).addSnapshotListener { documentSnapshot, error in
             guard let document = documentSnapshot else {
                 print("Error fetching document: \(error!)")
@@ -198,8 +198,8 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                     self.presentRegisterViewController()
                 }
                 if !user.isManuallyPromoted {
-                    PurchaseManager.verifyPurchase(ProductID("premium"))
                     if user.isPremium {
+                        print("user is PREMIUM")
                         self.canLike = true
                         self.likesLeft = user.likesLeft
                         self.likesCounterWidgetLabel.text = "Unlimited"
@@ -364,7 +364,6 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
         // Adjust cooldown time
         let timeUntilNewLikesUnlock = cooldownTime.add(components: 10.minutes)
         let differenceBetweenNowAndTimeUntilNewLikesUnlock = timeUntilNewLikesUnlock.timeIntervalSinceNow
-        print("BUREK Difference is \(differenceBetweenNowAndTimeUntilNewLikesUnlock)")
         seconds = Int(differenceBetweenNowAndTimeUntilNewLikesUnlock)
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
     }
