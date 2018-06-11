@@ -74,50 +74,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         self.pushNotifications.start(instanceId: "***REMOVED***")
         self.pushNotifications.registerForRemoteNotifications()
-        
-        
-        completeIAPTransactions()
-        
-//        SwiftyStoreKit.completeTransactions(atomically: true) { purchases in
-//            for purchase in purchases {
-//                switch purchase.transaction.transactionState {
-//                case .purchased, .restored:
-//                    if purchase.needsFinishTransaction {
-//                        // Deliver content from server, then:
-//                        SwiftyStoreKit.finishTransaction(purchase.transaction)
-//                    }
-//                // Unlock content
-//                case .failed, .purchasing, .deferred:
-//                    break // do nothing
-//                }
-//            }
-//        }
-        
-//        let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: "your-shared-secret")
-//        SwiftyStoreKit.verifyReceipt(using: appleValidator) { result in
-//            switch result {
-//            case .success(let receipt):
-//                let productId = "premium"
-//                // Verify the purchase of a Subscription
-//                let purchaseResult = SwiftyStoreKit.verifySubscription(
-//                    ofType: .autoRenewable, // or .nonRenewing (see below)
-//                    productId: productId,
-//                    inReceipt: receipt)
-//                switch purchaseResult {
-//                case .purchased(let expiryDate, let items):
-//                    print("\(productId) is valid until \(expiryDate)\n\(items)\n")
-//                case .expired(let expiryDate, let items):
-//                    print("\(productId) is expired since \(expiryDate)\n\(items)\n")
-//                case .notPurchased:
-//                    print("The user has never purchased \(productId)")
-//                }
-//
-//            case .error(let error):
-//                print("Receipt verification failed: \(error)")
-//            }
-//        }
 
- 
+        completeIAPTransactions()
         return true
     }
     
@@ -136,6 +94,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        FBSDKApplicationDelegate.sharedInstance().application(app, open: url as URL?, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as! String, annotation: options[UIApplicationOpenURLOptionsKey.annotation]
+        )
         return TWTRTwitter.sharedInstance().application(app, open: url, options: options)
     }
 
