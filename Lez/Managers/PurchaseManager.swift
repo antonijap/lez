@@ -200,7 +200,9 @@ extension PurchaseManager {
         ]
         
         // FIXME: - Check if user was updated in firebase
-        FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).fulfill(true) // FIXME: - Never worked with promise
+        FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).then { (success) in
+            NotificationCenter.default.post(name: Notification.Name("UpdateProfile"), object: nil)
+        }
     }
     
     fileprivate static func deactivatePremiumInFirestore() {
@@ -209,7 +211,7 @@ extension PurchaseManager {
         let data: [String: Any] = [
             "isPremium": false,
             "cooldownTime": "",
-            ]
+        ]
         
         // FIXME: - Check if user was updated in firebase
         FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).fulfill(true)

@@ -51,6 +51,7 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        NotificationCenter.default.addObserver(self, selector: #selector(self.refreshProfile), name: Notification.Name("UpdateProfile"), object: nil)
         startSpinner(title: "Loading Profile")
         guard let currentUser = Auth.auth().currentUser else { return }
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
@@ -61,7 +62,7 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
         }
     }
     
-    func refreshProfile() {
+    @objc func refreshProfile() {
         startSpinner(title: "Loading Profile")
         guard let currentUser = Auth.auth().currentUser else { return }
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
@@ -75,7 +76,6 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     func setupTableView() {
         tableView.delegate = self
         tableView.dataSource = self
-        
         view.addSubview(tableView)
         tableView.snp.makeConstraints { (make) in
             make.top.right.left.equalToSuperview()
@@ -184,7 +184,8 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let user = user else { return UITableViewCell() }
                 let simpleMenuCell = tableView.dequeueReusableCell(withIdentifier: SimpleMenuCell.reuseID) as! SimpleMenuCell
                 if indexPath.section == 6 {
-                    if user.isPremium {
+                    print("User isPremium: \(user.isPremium)")
+                    if user.isPremium || user.isManuallyPromoted {
                         simpleMenuCell.titleLabel.text = "You are Premium"
                     } else {
                         simpleMenuCell.titleLabel.text = "Unlock unlimited likes"
@@ -202,7 +203,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     simpleMenuCell.isUserInteractionEnabled = true
                 }
                 if indexPath.section == 9 {
-                    if user.isPremium {
+                    if user.isPremium || user.isManuallyPromoted {
                         simpleMenuCell.titleLabel.text = "Restore Subscription"
                         simpleMenuCell.titleLabel.textColor = .gray
                         simpleMenuCell.isUserInteractionEnabled = false
@@ -238,11 +239,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                        
                         case .success :
                             self.view.makeToast("Purchase successful", duration: 2.0, position: .bottom)
-                           
-                            FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
-                                self.user = user
-                                self.tableView.reloadData()
-                            })
                         }
                     }
                 }
@@ -269,7 +265,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath == [9, 0] {
-
             PurchaseManager.restorePurchase { (outcome) in
                 switch outcome {
                     case .failed:
