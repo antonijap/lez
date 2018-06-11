@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 Google
+ * Copyright 2018 Google
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,13 +14,19 @@
  * limitations under the License.
  */
 
-#import <Foundation/Foundation.h>
+#ifndef FIRESTORE_CORE_INCLUDE_FIREBASE_FIRESTORE_SETTINGS_H_
+#define FIRESTORE_CORE_INCLUDE_FIREBASE_FIRESTORE_SETTINGS_H_
 
-NS_ASSUME_NONNULL_BEGIN
+namespace firebase {
+namespace firestore {
 
-/** Logs to NSLog if [FIRFirestore isLoggingEnabled] is YES. */
-void FSTLog(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
+class SettingsInternal;
 
-void FSTWarn(NSString *format, ...) NS_FORMAT_FUNCTION(1, 2);
+/** Settings used to configure a Firestore instance. */
+// TODO(zxu123): add more methods to complete the class and make it useful.
+class Settings {};
 
-NS_ASSUME_NONNULL_END
+}  // namespace firestore
+}  // namespace firebase
+
+#endif  // FIRESTORE_CORE_INCLUDE_FIREBASE_FIRESTORE_SETTINGS_H_
