@@ -53,6 +53,7 @@ class MessagesViewController: UIViewController {
         setupTextField()
         setupTableView()
         
+        // KRIVO, rade notifikaciju iskoristi
         // Slusaj izmjene u chatu (sluzi da vidim ako postane disabled)
         let ref = Firestore.firestore().collection("chats").document(chatUid)
         ref.addSnapshotListener { (document, error) in
@@ -207,70 +208,6 @@ class MessagesViewController: UIViewController {
             })
         }
     }
-    
-    func setupTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview()
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
-            make.bottom.equalTo(textField.snp.top)
-        }
-        tableView.backgroundColor = .white
-        tableView.separatorColor = .clear
-        tableView.isUserInteractionEnabled = true
-        
-        let insets = UIEdgeInsets(top: 16, left: 0, bottom: 48, right: 0)
-        tableView.contentInset = insets
-        tableView.register(MyMessageCell.self, forCellReuseIdentifier: "MyMessageCell")
-        tableView.register(HerMessageCell.self, forCellReuseIdentifier: "HerMessageCell")
-    }
-
-    func setupTextField() {
-        view.addSubview(textFieldContainer)
-        textFieldContainer.snp.makeConstraints { (make) in
-            make.height.equalTo(50)
-            make.width.equalToSuperview()
-            make.bottom.equalToSuperview()
-        }
-        
-        textFieldContainer.addSubview(sendButton)
-        sendButton.snp.makeConstraints { (make) in
-            make.right.equalToSuperview().inset(16)
-            make.top.bottom.equalToSuperview()
-            make.width.equalTo(60)
-        }
-        sendButton.setTitle("Send", for: .normal)
-        sendButton.addTarget(self, action: #selector(self.sendMessage), for: .touchUpInside)
-        sendButton.setTitleColor(UIColor(red:0.95, green:0.67, blue:0.24, alpha:1.00), for: .normal)
-        
-        textField.placeholder = "Say something nice..."
-        textField.font = UIFont.systemFont(ofSize: 16)
-        textField.autocorrectionType = UITextAutocorrectionType.no
-        textField.keyboardType = UIKeyboardType.default
-        textField.returnKeyType = UIReturnKeyType.done
-        textField.clearButtonMode = UITextFieldViewMode.whileEditing
-        textField.contentVerticalAlignment = UIControlContentVerticalAlignment.center
-        textField.delegate = self
-        textFieldContainer.addSubview(textField)
-        textField.snp.makeConstraints { (make) in
-            make.top.bottom.equalToSuperview()
-            make.left.equalToSuperview().offset(16)
-            make.right.equalTo(sendButton.snp.left).inset(8)
-        }
-        
-        textFieldContainer.addSubview(topBorderView)
-        topBorderView.snp.makeConstraints { (make) in
-            make.height.equalTo(1)
-            make.width.equalToSuperview()
-            make.top.equalToSuperview()
-            make.centerX.equalToSuperview()
-        }
-        topBorderView.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:0.5)
-        
-    }
 }
 extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -314,7 +251,7 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
         if textField.text != "" {
             if let text = textField.text {
                 print(text)
-                let data: [String: Any] = [
+                let data:   [String: Any] = [
                     "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
                     "from": myUid,
                     "message": text
@@ -380,4 +317,70 @@ extension MessagesViewController: UITextFieldDelegate {
         return false
     }
     
+}
+
+extension MessagesViewController {
+    func setupTextField() {
+        view.addSubview(textFieldContainer)
+        textFieldContainer.snp.makeConstraints { (make) in
+            make.height.equalTo(50)
+            make.width.equalToSuperview()
+            make.bottom.equalToSuperview()
+        }
+        
+        textFieldContainer.addSubview(sendButton)
+        sendButton.snp.makeConstraints { (make) in
+            make.right.equalToSuperview().inset(24)
+            make.top.bottom.equalToSuperview()
+            make.width.equalTo(60)
+        }
+        sendButton.setTitle("Send", for: .normal)
+        sendButton.addTarget(self, action: #selector(self.sendMessage), for: .touchUpInside)
+        sendButton.setTitleColor(UIColor(red:0.95, green:0.67, blue:0.24, alpha:1.00), for: .normal)
+        
+        textField.placeholder = "Say something nice..."
+        textField.font = UIFont.systemFont(ofSize: 16)
+        textField.autocorrectionType = UITextAutocorrectionType.no
+        textField.keyboardType = UIKeyboardType.default
+        textField.returnKeyType = UIReturnKeyType.done
+        textField.clearButtonMode = UITextFieldViewMode.whileEditing
+        textField.contentVerticalAlignment = UIControlContentVerticalAlignment.center
+        textField.delegate = self
+        textFieldContainer.addSubview(textField)
+        textField.snp.makeConstraints { (make) in
+            make.top.bottom.equalToSuperview()
+            make.left.equalToSuperview().offset(16)
+            make.right.equalTo(sendButton.snp.left).inset(8)
+        }
+        
+        textFieldContainer.addSubview(topBorderView)
+        topBorderView.snp.makeConstraints { (make) in
+            make.height.equalTo(1)
+            make.width.equalToSuperview()
+            make.top.equalToSuperview()
+            make.centerX.equalToSuperview()
+        }
+        topBorderView.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:0.5)
+        
+    }
+    
+    func setupTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { (make) in
+            make.left.right.equalToSuperview()
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
+            make.bottom.equalTo(textField.snp.top)
+        }
+        tableView.backgroundColor = .white
+        tableView.separatorColor = .clear
+        tableView.isUserInteractionEnabled = true
+        
+        let insets = UIEdgeInsets(top: 16, left: 0, bottom: 48, right: 0)
+        tableView.contentInset = insets
+        tableView.register(MyMessageCell.self, forCellReuseIdentifier: "MyMessageCell")
+        tableView.register(HerMessageCell.self, forCellReuseIdentifier: "HerMessageCell")
+    }
 }

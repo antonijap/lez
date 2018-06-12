@@ -60,7 +60,7 @@ final class FirestoreManager {
             let potentialMatchesRef = self.db.collection("users")
                 .whereField("isBanned", isEqualTo: false)
                 .whereField("isHidden", isEqualTo: false)
-                .whereField("location.country", isEqualTo: user.location.country)
+                .whereField("location.city", isEqualTo: user.location.city)
             
             potentialMatchesRef.getDocuments { (querySnapshot, err) in
                 guard let currentUser = Auth.auth().currentUser else { return }

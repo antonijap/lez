@@ -257,6 +257,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
         matchYourImageView.backgroundColor = UIColor(red:0.77, green:0.77, blue:0.77, alpha:1.00)
         matchYourImageView.layer.cornerRadius = 48 / 2
         matchYourImageView.clipsToBounds = true
+        matchYourImageView.contentMode = .scaleAspectFill
         
         matchView.addSubview(matchHerImageView)
         matchHerImageView.snp.makeConstraints { (make) in
@@ -267,6 +268,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
         matchHerImageView.backgroundColor = UIColor(red:0.69, green:0.69, blue:0.69, alpha:1.00)
         matchHerImageView.layer.cornerRadius = 48 / 2
         matchHerImageView.clipsToBounds = true
+        matchHerImageView.contentMode = .scaleAspectFill
         
         matchView.addSubview(matchLabel)
         matchLabel.snp.makeConstraints { (make) in

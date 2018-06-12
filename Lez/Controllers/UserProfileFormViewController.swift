@@ -12,6 +12,7 @@ import GooglePlacesRow
 import GooglePlaces
 import Alertift
 import Firebase
+import CoreLocation
 
 class UserProfileFormViewController: FormViewController {
     
@@ -204,7 +205,7 @@ class UserProfileFormViewController: FormViewController {
     
     @objc func submit() {
         dismissKeyboard()
-        if let currentUser = Auth.auth().currentUser {
+        if let _ = Auth.auth().currentUser {
             if let user = user {
                 // Editing profile
                 if form.validate().count > 0 {
@@ -229,19 +230,16 @@ class UserProfileFormViewController: FormViewController {
                 } else {
                     if onboardingContinues {
                         if let data = parseFormIntoData() {
-                            FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).then { (success) in
-                                let imagesViewController = ImagesViewController()
-                                self.navigationItem.hidesBackButton = true
-                                self.navigationController?.pushViewController(imagesViewController, animated: true)
-                            }
-                        }
+                            let imagesViewController = ImagesViewController()
+                            imagesViewController.data = data
+                            self.navigationItem.hidesBackButton = true
+                            self.navigationController?.pushViewController(imagesViewController, animated: true)                        }
                     } else {
                         if let data = parseFormIntoData() {
-                            FirestoreManager.shared.addUser(uid: currentUser.uid, data: data).then { (success) in
-                                let imagesViewController = ImagesViewController()
-                                self.navigationItem.hidesBackButton = true
-                                self.navigationController?.pushViewController(imagesViewController, animated: true)
-                            }
+                            let imagesViewController = ImagesViewController()
+                            imagesViewController.data = data
+                            self.navigationItem.hidesBackButton = true
+                            self.navigationController?.pushViewController(imagesViewController, animated: true)
                         }
                     }
                 }
