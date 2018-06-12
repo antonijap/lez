@@ -63,7 +63,6 @@ class MessagesViewController: UIViewController {
                         print("Problem with parsing isDisabled.")
                         return
                     }
-                    
                     if isDisabled {
                         self.textFieldContainer.isHidden = true
                     } else {
@@ -174,7 +173,7 @@ class MessagesViewController: UIViewController {
     func populateMessages() {
         var messages = [Message]()
         let group = DispatchGroup()
-        let docRef = Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created")
+        let docRef = Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created", descending: true)
         docRef.getDocuments { (snapshot, error) in
             guard let document = snapshot else {
                 print("Error fetching document: \(error!)")
