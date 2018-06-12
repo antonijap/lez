@@ -56,7 +56,7 @@ class MessagesViewController: UIViewController {
         // KRIVO, rade notifikaciju iskoristi
         // Slusaj izmjene u chatu (sluzi da vidim ako postane disabled)
         let ref = Firestore.firestore().collection("chats").document(chatUid)
-        ref.addSnapshotListener { (document, error) in
+        ref.getDocument { (document, error) in
             if let document = document {
                 FirestoreManager.shared.parseFirebaseChat(document: document).then({ (chat) in
                     guard let data = document.data() else { return }
@@ -68,8 +68,12 @@ class MessagesViewController: UIViewController {
                         self.textFieldContainer.isHidden = true
                     } else {
                         self.textFieldContainer.isHidden = false
-                        Firestore.firestore().collection("chats").document(self.chatUid).collection("messages").order(by: "created").addSnapshotListener { (snapshot, error) in
-                            self.populateMessages()
+                        Firestore.firestore().collection("chats").document(self.chatUid).collection("messages").order(by: "created").addSnapshotListener { (document, error) in
+                            guard let document = document else {
+                                print("Error fetching document: \(error!)")
+                                return
+                            }
+                            self.populateMessages(document: document)
                         }
                     }
                 })
@@ -171,42 +175,35 @@ class MessagesViewController: UIViewController {
             .show(on: self, completion: nil)
     }
     
-    func populateMessages() {
+    func populateMessages(document: QuerySnapshot) {
         var messages = [Message]()
         let group = DispatchGroup()
-        let docRef = Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created", descending: true)
-        docRef.getDocuments { (snapshot, error) in
-            guard let document = snapshot else {
-                print("Error fetching document: \(error!)")
-                return
-            }
-            for message in document.documents {
-                group.enter()
-                FirestoreManager.shared.parseMessage(document: message).then({ (message) in
-                    messages.append(message)
-                    group.leave()
-                })
-            }
-            group.notify(queue: .main, execute: {
-                if messages.isEmpty {
-                    print("Nema poruka")
-                } else {
-                    if messages.count > 20 {
-                        self.messages.removeAll()
-                        self.messages = messages
-                        self.tableView.reloadData()
-                        self.tableView.setNeedsLayout()
-                        let indexPath = IndexPath(row: messages.count - 1, section: 0)
-                        self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-                    } else {
-                        self.messages.removeAll()
-                        self.messages = messages
-                        self.tableView.reloadData()
-                        self.tableView.setNeedsLayout()
-                    }
-                }
+        for message in document.documents {
+            group.enter()
+            FirestoreManager.shared.parseMessage(document: message).then({ (message) in
+                messages.append(message)
+                group.leave()
             })
         }
+        group.notify(queue: .main, execute: {
+            if messages.isEmpty {
+                print("Nema poruka")
+            } else {
+                if messages.count > 20 {
+                    self.messages.removeAll()
+                    self.messages = messages
+                    self.tableView.reloadData()
+                    self.tableView.setNeedsLayout()
+                    let indexPath = IndexPath(row: messages.count - 1, section: 0)
+                    self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
+                } else {
+                    self.messages.removeAll()
+                    self.messages = messages
+                    self.tableView.reloadData()
+                    self.tableView.setNeedsLayout()
+                }
+            }
+        })
     }
 }
 extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
@@ -260,8 +257,6 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
                     self.textField.text = ""
                     let parameters: Parameters = ["channel": self.herUid!, "event": Events.newMessage.rawValue, "message": "\(self.name!) sent message"]
                     Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters, encoding: URLEncoding.default)
-//                    self.textField.resignFirstResponder()
-                    self.populateMessages()
                 }
             }
         }
