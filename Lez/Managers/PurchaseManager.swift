@@ -210,12 +210,16 @@ extension PurchaseManager {
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
             // Determine if there should be a cooldown widget before deleting shit in Firestore.
             if user.cooldownTime != nil {
-                let data: [String: Any] = [
-                    "isPremium": false,
-                    "cooldownTime": "",
-                ]
-                // FIXME: - Check if user was updated in firebase
-                FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).fulfill(true)
+                let timeUntilNewLikesUnlock = user.cooldownTime!.add(components: 30.minutes)
+                if timeUntilNewLikesUnlock.isInFuture {
+                    // Clock should run don't delete anything
+                } else {
+                    let data: [String: Any] = [
+                        "isPremium": false,
+                        "cooldownTime": "",
+                        ]
+                    FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).fulfill(true)
+                }
             }
         }
     }
