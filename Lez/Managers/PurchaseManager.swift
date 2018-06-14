@@ -207,14 +207,17 @@ extension PurchaseManager {
     
     fileprivate static func deactivatePremiumInFirestore() {
         guard let currentUser = Auth.auth().currentUser else { return }
-        
-        let data: [String: Any] = [
-            "isPremium": false,
-            "cooldownTime": "",
-        ]
-        
-        // FIXME: - Check if user was updated in firebase
-        FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).fulfill(true)
+        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+            // Determine if there should be a cooldown widget before deleting shit in Firestore.
+            if user.cooldownTime != nil {
+                let data: [String: Any] = [
+                    "isPremium": false,
+                    "cooldownTime": "",
+                ]
+                // FIXME: - Check if user was updated in firebase
+                FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).fulfill(true)
+            }
+        }
     }
 }
 

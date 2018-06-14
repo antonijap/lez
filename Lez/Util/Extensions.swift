@@ -145,34 +145,6 @@ extension UIViewController: UIActionSheetDelegate {
     }
 }
 
-extension UIViewController {
-    func hideKeyboardWhenTappedAround() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc func dismissKeyboard() {
-        view.endEditing(true)
-    }
-}
-
-extension Dictionary {
-    var json: String {
-        let invalidJson = "Not a valid JSON"
-        do {
-            let jsonData = try JSONSerialization.data(withJSONObject: self, options: .prettyPrinted)
-            return String(bytes: jsonData, encoding: String.Encoding.utf8) ?? invalidJson
-        } catch {
-            return invalidJson
-        }
-    }
-    
-    func dict2json() -> String {
-        return json
-    }
-}
-
 extension UIImage {
     // MARK: - UIImage+Resize
     func compressTo(size expectedSizeInMb: Int) -> UIImage? {
@@ -247,49 +219,11 @@ extension Date {
 
 //MARK: - Observers
 extension UIViewController {
-    
     func addObserverForNotification(_ notificationName: Notification.Name, actionBlock: @escaping (Notification) -> Void) {
         NotificationCenter.default.addObserver(forName: notificationName, object: nil, queue: OperationQueue.main, using: actionBlock)
     }
-    
     func removeObserver(_ observer: AnyObject, notificationName: Notification.Name) {
         NotificationCenter.default.removeObserver(observer, name: notificationName, object: nil)
-    }
-}
-
-//MARK: - Keyboard handling
-extension UIViewController {
-    
-    typealias KeyboardHeightClosure = (CGFloat) -> ()
-    
-    func addKeyboardChangeFrameObserver(willShow willShowClosure: KeyboardHeightClosure?,
-                                        willHide willHideClosure: KeyboardHeightClosure?) {
-        NotificationCenter.default.addObserver(forName: NSNotification.Name.UIKeyboardWillChangeFrame,
-                                               object: nil, queue: OperationQueue.main, using: { [weak self](notification) in
-                                                if let userInfo = notification.userInfo,
-                                                    let frame = (userInfo[UIKeyboardFrameEndUserInfoKey] as? NSValue)?.cgRectValue,
-                                                    let duration = userInfo[UIKeyboardAnimationDurationUserInfoKey] as? Double,
-                                                    let c = userInfo[UIKeyboardAnimationCurveUserInfoKey] as? UInt,
-                                                    let kFrame = self?.view.convert(frame, from: nil),
-                                                    let kBounds = self?.view.bounds {
-                                                    
-                                                    let animationType = UIViewAnimationOptions(rawValue: c)
-                                                    let kHeight = kFrame.size.height
-                                                    UIView.animate(withDuration: duration, delay: 0, options: animationType, animations: {
-                                                        if kBounds.intersects(kFrame) { // keyboard will be shown
-                                                            willShowClosure?(kHeight)
-                                                        } else { // keyboard will be hidden
-                                                            willHideClosure?(kHeight)
-                                                        }
-                                                    }, completion: nil)
-                                                } else {
-                                                    print("Invalid conditions for UIKeyboardWillChangeFrameNotification")
-                                                }
-        })
-    }
-    
-    func removeKeyboardObserver() {
-        removeObserver(self, notificationName: NSNotification.Name.UIKeyboardWillChangeFrame)
     }
 }
 

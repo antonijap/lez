@@ -321,6 +321,7 @@ class NewChatCell: UITableViewCell {
         ctaButton.setTitle("Start Chat", for: .normal)
         ctaButton.setTitleColor(.purple, for: .normal)
         ctaButton.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
+        ctaButton.isUserInteractionEnabled = false
     }
     
     func setupNewTag() {

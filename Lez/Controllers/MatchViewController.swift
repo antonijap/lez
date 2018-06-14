@@ -61,6 +61,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         print("viewWillAppear")
+        
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
@@ -120,6 +121,19 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     }
     
     // MARK: - Methods
+    func removeUserFromLocalArray(uid: String) {
+//        if let index = users.index(where: { _ in uid == uid }) {
+//            print("Grabbed index : \(index)")
+//            users.remove(at: index)
+//            tableView.reloadData()
+//        }
+        if let index = users.index(where: { $0.uid.contains(uid) }) {
+            print("Will remove \(index)")
+            users.remove(at: index)
+            tableView.reloadData()
+        }
+    }
+    
     func failedToSubscribeToChannel(name: String, response: URLResponse?, data: String?, error: NSError?) {
         print("FAILED to subscribe \(name), \(error.debugDescription)")
     }
@@ -368,10 +382,10 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     }
     
     @objc private func runTimer(cooldownTime: Date) {
-        timer.invalidate()
-        // Adjust cooldown time
-        let timeUntilNewLikesUnlock = cooldownTime.add(components: 5.minutes)
+        stopTimer()
+        let timeUntilNewLikesUnlock = cooldownTime.add(components: 30.minutes)
         let differenceBetweenNowAndTimeUntilNewLikesUnlock = timeUntilNewLikesUnlock.timeIntervalSinceNow
+        print("Difference \(differenceBetweenNowAndTimeUntilNewLikesUnlock)")
         seconds = Int(differenceBetweenNowAndTimeUntilNewLikesUnlock)
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
     }
@@ -382,7 +396,8 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     
     // Ovo ne diraj
     @objc func updateTimer() {
-        if (seconds - 1) <= 0 {
+        if seconds <= 0 {
+            print("Sekunde su manje od nule. Resetirat cu sve.")
             timer.invalidate()
             guard let user = user else { return }
             let data: [String: Any] = [
@@ -510,6 +525,8 @@ extension MatchViewController: UITableViewDelegate, UITableViewDataSource, Match
         let nextViewController = CardFullscreenViewController()
         nextViewController.user = self.users[indexPath.row]
         nextViewController.me = user
+        nextViewController.indexPath = indexPath
+        nextViewController.delegate = self
         let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
         self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
         self.jellyAnimator?.prepare(viewController: nextViewController)

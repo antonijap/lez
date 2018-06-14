@@ -107,14 +107,14 @@ final class FirestoreManager {
                     var finalArray: [User] = Array(Set(filteredMe))
                     
                     // Remove blocked users
-                    for match in finalArray {
-                        for blocked in user.blockedUsers! {
-                            if let index = finalArray.index(where: { _ in blocked == match.uid }) {
-                                finalArray.remove(at: index)
-                                print("User blocked, removing...")
-                            }
-                        }
-                    }
+//                    for match in finalArray {
+//                        for blocked in user.blockedUsers! {
+//                            if let index = finalArray.index(where: { _ in blocked == match.uid }) {
+//                                finalArray.remove(at: index)
+//                                print("User blocked, removing...")
+//                            }
+//                        }
+//                    }
                     
                     if let i = finalArray.index(where: { user.blockedUsers!.contains($0.uid) }) {
                         print("User blocked, removing...")

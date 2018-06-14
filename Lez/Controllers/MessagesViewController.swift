@@ -32,9 +32,9 @@ class MessagesViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        view.backgroundColor = .black
+        self.hideKeyboard()
         myUid = Auth.auth().currentUser?.uid
-        
         for participant in participants {
             if participant.uid != myUid {
                 herUid = participant.uid
@@ -91,37 +91,69 @@ class MessagesViewController: UIViewController {
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        hideKeyboardWhenTappedAround()
         addKeyboardObservers()
     }
 
     func addKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
     }
     
     func removeKeyboardObservers() {
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillShow, object: self.textFieldContainer)
-        NotificationCenter.default.removeObserver(self, name: NSNotification.Name.UIKeyboardWillHide, object: self.textFieldContainer)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.removeObserver(self, name: .UIKeyboardWillHide, object: nil)
     }
     
-    @objc func keyboardWillShow(notification: NSNotification) {
+    @objc func sendMessage() {
+        if textField.text != "" {
+            if let text = textField.text {
+                let data:   [String: Any] = [
+                    "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+                    "from": myUid,
+                    "message": text
+                ]
+                FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
+                    self.textField.text = ""
+                    let parameters: Parameters = ["channel": self.herUid!, "event": Events.newMessage.rawValue, "message": "\(self.name!) sent message"]
+                    Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters, encoding: URLEncoding.default)
+                }
+            }
+        }
+    }
+    
+    func getKeyboardHeight(_ notification: Notification) -> CGFloat {
+        let userInfo = notification.userInfo
+        let keyboardSize = userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
+        return keyboardSize.cgRectValue.height
+    }
+    
+    @objc func keyboardWillShow(_ notification: Notification) {
         let keyboardHeight = (notification.userInfo?[UIKeyboardFrameBeginUserInfoKey] as? NSValue)?.cgRectValue.height
-        UIView.animate(withDuration: 1.1, animations: { () -> Void in
-            self.textFieldContainer.snp.updateConstraints({ (make) in
-                make.bottom.equalTo(-1 * keyboardHeight!)
-            })
-            self.textFieldContainer.superview?.layoutIfNeeded()
-        })
+        guard let height = keyboardHeight else { return }
+//        UIView.animate(withDuration: 1.1, animations: { () -> Void in
+//
+//        })
+        if self.textField.isFirstResponder {
+            print("Frame is : \(view.frame.origin.y)")
+            view.frame.origin.y = -height + 64// + textFieldContainer.frame.height + 14
+            print("Frame is : \(view.frame.origin.y), \(getKeyboardHeight(notification))")
+        }
+//        self.textFieldContainer.snp.updateConstraints({ (make) in
+//            make.bottom.equalTo(-1 * height)
+//        })
+//        self.textFieldContainer.superview?.layoutIfNeeded()
     }
     
-    @objc func keyboardWillHide(notification: NSNotification) {
-        UIView.animate(withDuration: 0.1, animations: { () -> Void in
-            self.textFieldContainer.snp.updateConstraints({ (make) in
-                make.bottom.equalToSuperview()
-            })
-            self.textFieldContainer.superview?.layoutIfNeeded()
-        })
+    @objc func keyboardWillHide(_ notification: NSNotification) {
+//        UIView.animate(withDuration: 0.1, animations: { () -> Void in
+//            self.textFieldContainer.snp.updateConstraints({ (make) in
+//                make.bottom.equalToSuperview()
+//            })
+//            self.textFieldContainer.superview?.layoutIfNeeded()
+//        })
+        self.view.frame.origin.y = 64
+        print("Frame is : \(view.frame.origin.y)")
+        self.view.layoutIfNeeded()
     }
     
     @objc private func menuTapped() {
@@ -144,18 +176,9 @@ class MessagesViewController: UIViewController {
                                 FirestoreManager.shared.fetchUser(uid: self.myUid).then({ (user) in
                                     var blockedUsersArray: [String] = user.blockedUsers!
                                     blockedUsersArray.append(self.herUid)
-                                    var chats: [String] = []
-                                    
-                                    // Remove blocked users
-                                    for chat in user.chats! {
-                                        if user.chats?.contains(self.chatUid) != true {
-                                            chats.append(chat)
-                                        }
-                                    }
-                                    
+     
                                     let data: [String: Any] = [
                                         "blockedUsers": blockedUsersArray,
-                                        "chats": chats
                                     ]
                                     
                                     FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
@@ -186,24 +209,28 @@ class MessagesViewController: UIViewController {
             })
         }
         group.notify(queue: .main, execute: {
-            if messages.isEmpty {
-                print("Nema poruka")
-            } else {
-                if messages.count > 20 {
-                    self.messages.removeAll()
-                    self.messages = messages
-                    self.tableView.reloadData()
-                    self.tableView.setNeedsLayout()
-                    let indexPath = IndexPath(row: messages.count - 1, section: 0)
-                    self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: true)
-                } else {
-                    self.messages.removeAll()
-                    self.messages = messages
-                    self.tableView.reloadData()
-                    self.tableView.setNeedsLayout()
-                }
-            }
+            self.scrollLastMessage(messages: messages)
         })
+    }
+    
+    func scrollLastMessage(messages: [Message]) {
+        if messages.isEmpty {
+            print("No messages.")
+        } else {
+            if messages.count > 7 {
+                self.messages.removeAll()
+                self.messages = messages
+                self.tableView.reloadData()
+                self.tableView.setNeedsLayout()
+                let indexPath = IndexPath(row: messages.count - 1, section: 0)
+                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+            } else {
+                self.messages.removeAll()
+                self.messages = messages
+                self.tableView.reloadData()
+                self.tableView.setNeedsLayout()
+            }
+        }
     }
 }
 extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
@@ -242,24 +269,6 @@ extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
             cell = herCell
         }
         return cell
-    }
-    
-    @objc func sendMessage() {
-        if textField.text != "" {
-            if let text = textField.text {
-                print(text)
-                let data:   [String: Any] = [
-                    "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
-                    "from": myUid,
-                    "message": text
-                ]
-                FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
-                    self.textField.text = ""
-                    let parameters: Parameters = ["channel": self.herUid!, "event": Events.newMessage.rawValue, "message": "\(self.name!) sent message"]
-                    Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters, encoding: URLEncoding.default)
-                }
-            }
-        }
     }
 }
 
@@ -321,11 +330,12 @@ extension MessagesViewController {
             make.height.equalTo(50)
             make.width.equalToSuperview()
             make.bottom.equalToSuperview()
+            make.centerX.equalToSuperview()
         }
         
         textFieldContainer.addSubview(sendButton)
         sendButton.snp.makeConstraints { (make) in
-            make.right.equalToSuperview().inset(24)
+            make.right.equalToSuperview()
             make.top.bottom.equalToSuperview()
             make.width.equalTo(60)
         }
@@ -345,7 +355,7 @@ extension MessagesViewController {
         textField.snp.makeConstraints { (make) in
             make.top.bottom.equalToSuperview()
             make.left.equalToSuperview().offset(16)
-            make.right.equalTo(sendButton.snp.left).inset(8)
+            make.right.equalTo(sendButton.snp.left).offset(-16)
         }
         
         textFieldContainer.addSubview(topBorderView)
@@ -372,10 +382,23 @@ extension MessagesViewController {
         tableView.backgroundColor = .white
         tableView.separatorColor = .clear
         tableView.isUserInteractionEnabled = true
-        
         let insets = UIEdgeInsets(top: 16, left: 0, bottom: 48, right: 0)
         tableView.contentInset = insets
+        
         tableView.register(MyMessageCell.self, forCellReuseIdentifier: "MyMessageCell")
         tableView.register(HerMessageCell.self, forCellReuseIdentifier: "HerMessageCell")
+    }
+}
+
+extension UIViewController {
+    func hideKeyboard() {
+        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
+            target: self,
+            action: #selector(UIViewController.dismissKeyboard))
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

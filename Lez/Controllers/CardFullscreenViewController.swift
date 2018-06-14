@@ -19,6 +19,7 @@ class CardFullscreenViewController: UIViewController {
     private let tabBar = UITabBar()
     var delegate: MatchViewControllerDelegate?
     var me: User?
+    var indexPath: IndexPath!
     
     // MARK: - Lifecycle
     
@@ -176,7 +177,7 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.showBlockActionSheet(currentUser: user, blockedUser: fullscreenUser.uid, completion: {
                     AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userBlockedSomebody, user: self.me!)
-                    print("User added to blocked list.")
+                    self.delegate?.removeUserFromLocalArray(uid: fullscreenUser.uid)
                 })
             }
         }

@@ -12,6 +12,7 @@ protocol MatchViewControllerDelegate {
     func refreshTableView()
     func fetchUsers(for uid: String)
     func runLikesWidget(uid: String)
+    func removeUserFromLocalArray(uid: String)
 }
 
 protocol ProfileViewControllerDelegate {

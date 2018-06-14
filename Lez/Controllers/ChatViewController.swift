@@ -305,7 +305,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             if existingChats[indexPath.row].isDisabled {
                 chatCell.isUserInteractionEnabled = false
                 chatCell.layer.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:0.3).cgColor
-                chatCell.messageLabel.text = "Disabled"
+                chatCell.messageLabel.text = "Deleted"
             } else {
                 self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ (messages) in
                     chatCell.messageLabel.text = messages.last!.message
@@ -342,7 +342,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 if existingChats[indexPath.row].isDisabled {
                     chatCell.isUserInteractionEnabled = false
                     chatCell.layer.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:0.3).cgColor
-                    chatCell.messageLabel.text = "Disabled"
+                    chatCell.messageLabel.text = "Deleted"
                 } else {
                     self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ (messages) in
                         chatCell.messageLabel.text = messages.last!.message
@@ -376,5 +376,9 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         let backButton = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
         navigationItem.backBarButtonItem = backButton
         navigationController?.pushViewController(messagesViewController, animated: true)
+    }
+    
+    @objc func goToChat(row: Int) {
+
     }
 }

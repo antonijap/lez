@@ -142,6 +142,7 @@ extension AppDelegate {
     
     /// Checks if the subscription still active
     fileprivate func checkSubscription() {
+        print("Checking subscription...")
         if Auth.auth().currentUser != nil {
             PurchaseManager.verifyPurchase("premium")
         }
