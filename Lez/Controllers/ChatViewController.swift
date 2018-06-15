@@ -299,6 +299,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 }
             }
             
+            chatCell.isUserInteractionEnabled = true
             chatCell.titleLabel.text = notMe?.name
             chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
             chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
@@ -335,7 +336,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                     }
                 }
 
-                
+                chatCell.isUserInteractionEnabled = true
                 chatCell.titleLabel.text = notMe?.name
                 chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
                 chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))

@@ -5,10 +5,8 @@ struct NetworkService: PushNotificationsNetworkable {
     let url: URL
     let session: URLSession
 
-    typealias NetworkCompletionHandler = (_ response: NetworkResponse) -> Void
-
     // MARK: PushNotificationsNetworkable
-    func register(deviceToken: Data, instanceId: String, completion: @escaping CompletionHandler) {
+    func register(deviceToken: Data, instanceId: String, completion: @escaping CompletionHandler<Device>) {
         let deviceTokenString = deviceToken.hexadecimalRepresentation()
         let bundleIdentifier = Bundle.main.bundleIdentifier ?? ""
 
@@ -21,7 +19,7 @@ struct NetworkService: PushNotificationsNetworkable {
             switch response {
             case .Success(let data):
                 guard let device = try? JSONDecoder().decode(Device.self, from: data) else { return }
-                completion(device.id, true)
+                completion(device, true)
             case .Failure(let data):
                 guard let reason = try? JSONDecoder().decode(Reason.self, from: data) else { return }
 
@@ -31,7 +29,7 @@ struct NetworkService: PushNotificationsNetworkable {
         }
     }
 
-    func subscribe(completion: @escaping CompletionHandler) {
+    func subscribe(completion: @escaping CompletionHandler<String>) {
         let request = self.setRequest(url: self.url, httpMethod: .POST)
 
         self.networkRequest(request, session: self.session) { (response) in
@@ -44,7 +42,7 @@ struct NetworkService: PushNotificationsNetworkable {
         }
     }
 
-    func setSubscriptions(interests: Array<String>, completion: @escaping CompletionHandler) {
+    func setSubscriptions(interests: Array<String>, completion: @escaping CompletionHandler<String>) {
         guard let body = try? Interests(interests: interests).encode() else { return }
         let request = self.setRequest(url: self.url, httpMethod: .PUT, body: body)
 
@@ -58,7 +56,7 @@ struct NetworkService: PushNotificationsNetworkable {
         }
     }
 
-    func unsubscribe(completion: @escaping CompletionHandler) {
+    func unsubscribe(completion: @escaping CompletionHandler<String>) {
         let request = self.setRequest(url: self.url, httpMethod: .DELETE)
 
         self.networkRequest(request, session: self.session) { (response) in
@@ -71,11 +69,11 @@ struct NetworkService: PushNotificationsNetworkable {
         }
     }
 
-    func unsubscribeAll(completion: @escaping CompletionHandler) {
+    func unsubscribeAll(completion: @escaping CompletionHandler<String>) {
         self.setSubscriptions(interests: [], completion: completion)
     }
 
-    func track(eventType: ReportEventType, completion: @escaping CompletionHandler) {
+    func track(eventType: ReportEventType, completion: @escaping CompletionHandler<String>) {
         guard let body = try? eventType.encode() else { return }
 
         let request = self.setRequest(url: self.url, httpMethod: .POST, body: body)
@@ -89,7 +87,7 @@ struct NetworkService: PushNotificationsNetworkable {
         }
     }
 
-    func syncMetadata(completion: @escaping CompletionHandler) {
+    func syncMetadata(completion: @escaping CompletionHandler<String>) {
         guard let metadataDictionary = Metadata.load() else { return }
         let metadata = Metadata(propertyListRepresentation: metadataDictionary)
         if metadata.hasChanged() {
@@ -108,7 +106,7 @@ struct NetworkService: PushNotificationsNetworkable {
     }
 
     // MARK: Networking Layer
-    private func networkRequest(_ request: URLRequest, session: URLSession, completion: @escaping NetworkCompletionHandler) {
+    private func networkRequest(_ request: URLRequest, session: URLSession, completion: @escaping (_ response: NetworkResponse) -> Void) {
         session.dataTask(with: request, completionHandler: { (data, response, error) in
             guard
                 let data = data,

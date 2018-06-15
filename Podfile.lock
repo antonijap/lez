@@ -9,12 +9,12 @@ PODS:
   - Bolts/AppLinks (1.9.0):
     - Bolts/Tasks
   - Bolts/Tasks (1.9.0)
-  - BoringSSL (10.0.3):
-    - BoringSSL/Implementation (= 10.0.3)
-    - BoringSSL/Interface (= 10.0.3)
-  - BoringSSL/Implementation (10.0.3):
-    - BoringSSL/Interface (= 10.0.3)
-  - BoringSSL/Interface (10.0.3)
+  - BoringSSL (10.0.5):
+    - BoringSSL/Implementation (= 10.0.5)
+    - BoringSSL/Interface (= 10.0.5)
+  - BoringSSL/Implementation (10.0.5):
+    - BoringSSL/Interface (= 10.0.5)
+  - BoringSSL/Interface (10.0.5)
   - Crashlytics (3.10.2):
     - Fabric (~> 1.7.7)
   - CryptoSwift (0.9.0)
@@ -107,9 +107,9 @@ PODS:
     - gRPC-Core (= 1.12.0)
     - gRPC-RxLibrary (= 1.12.0)
   - GTMSessionFetcher/Core (1.1.15)
-  - ImageSlideshow (1.6.0):
-    - ImageSlideshow/Core (= 1.6.0)
-  - ImageSlideshow/Core (1.6.0)
+  - ImageSlideshow (1.6.1):
+    - ImageSlideshow/Core (= 1.6.1)
+  - ImageSlideshow/Core (1.6.1)
   - Jelly (1.2.4)
   - JGProgressHUD (2.0.3)
   - leveldb-library (1.20)
@@ -127,7 +127,7 @@ PODS:
     - ReachabilitySwift (~> 4.1.0)
     - Starscream (~> 3.0.5)
     - TaskQueue (~> 1.1.1)
-  - PushNotifications (0.10.7)
+  - PushNotifications (0.10.8)
   - RangeSeekSlider (1.8.0)
   - ReachabilitySwift (4.1.0)
   - SDWebImage (4.4.1):
@@ -250,7 +250,7 @@ SPEC CHECKSUMS:
   AlamofireImage: 3b35b586853abaf94ca1250f4e94cff3c21a4c0d
   Alertift: df0df24a557e47360180092f5f3fceb675c96b51
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
-  BoringSSL: c46efb47593135382bc0934196f16d2f726f5f36
+  BoringSSL: cf3f1793eb6e3c445c4d150456341f149c268a35
   Crashlytics: 0360624eea1c978a743feddb2fb1ef8b37fb7a0d
   CryptoSwift: bca8c5b653dcc2d9734409242a070ff53bafac86
   Eureka: b88fb930e42c79f8c03c373d0fcdc28c1d6c50ed
@@ -276,7 +276,7 @@ SPEC CHECKSUMS:
   gRPC-ProtoRPC: a1bd56fb1991a8dae4581250d7259eddabb66779
   gRPC-RxLibrary: 1ed5314e8b38cd6e55c9bfa048387136ae925ce9
   GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
-  ImageSlideshow: 9a1038da5669d2d337ae5ecda2ee8282ff14e9c5
+  ImageSlideshow: f0f33e1a20668e83d77f5fb7729e4ae4437c0759
   Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
   JGProgressHUD: 12b20a8f4ffe05258f8635c1ab92816e451f904d
   leveldb-library: 08cba283675b7ed2d99629a4bc5fd052cd2bb6a5
@@ -285,7 +285,7 @@ SPEC CHECKSUMS:
   PromisesSwift: a87c9b5fba61711bce16ac11d8d8bf96fc93fde0
   Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
   PusherSwift: 6f2535d616cf0d6867a58bee501999995ad37999
-  PushNotifications: 2e3df1e301e19ae2a100267f8387da5fc471ecc7
+  PushNotifications: 03a37e94385d6b28e03a440196aa24ae2f086eab
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
   SDWebImage: 47e9b5b925cbce75946c23f0c42dd19464189af4

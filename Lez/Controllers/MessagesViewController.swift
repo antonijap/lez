@@ -29,6 +29,7 @@ class MessagesViewController: UIViewController {
     private var topBorderView = UIView()
     private var herUid: String!
     private var name: String!
+    private var viewFrame = CGRect()
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -53,8 +54,6 @@ class MessagesViewController: UIViewController {
         setupTextField()
         setupTableView()
         
-        // KRIVO, rade notifikaciju iskoristi
-        // Slusaj izmjene u chatu (sluzi da vidim ako postane disabled)
         let ref = Firestore.firestore().collection("chats").document(chatUid)
         ref.getDocument { (document, error) in
             if let document = document {
@@ -134,9 +133,14 @@ class MessagesViewController: UIViewController {
 //
 //        })
         if self.textField.isFirstResponder {
-            print("Frame is : \(view.frame.origin.y)")
-            view.frame.origin.y = -height + 64// + textFieldContainer.frame.height + 14
-            print("Frame is : \(view.frame.origin.y), \(getKeyboardHeight(notification))")
+//            view.snp.updateConstraints { (make) in
+//                make.height.equalTo(view.frame.height - height)
+//                make.width.equalToSuperview()
+//            }
+//            view.frame.origin.y = -height + 64// + textFieldContainer.frame.height + 14
+            viewFrame = view.frame
+            view.frame = CGRect(x: 0, y: 64, width: viewFrame.width, height: viewFrame.height - height)
+            view.layoutIfNeeded()
         }
 //        self.textFieldContainer.snp.updateConstraints({ (make) in
 //            make.bottom.equalTo(-1 * height)
@@ -145,15 +149,9 @@ class MessagesViewController: UIViewController {
     }
     
     @objc func keyboardWillHide(_ notification: NSNotification) {
-//        UIView.animate(withDuration: 0.1, animations: { () -> Void in
-//            self.textFieldContainer.snp.updateConstraints({ (make) in
-//                make.bottom.equalToSuperview()
-//            })
-//            self.textFieldContainer.superview?.layoutIfNeeded()
-//        })
-        self.view.frame.origin.y = 64
-        print("Frame is : \(view.frame.origin.y)")
-        self.view.layoutIfNeeded()
+        UIView.animate(withDuration: 0.1, animations: { () -> Void in
+            self.view.frame = CGRect(x: 0, y: 64, width: self.viewFrame.width, height: self.viewFrame.height)
+        })
     }
     
     @objc private func menuTapped() {
