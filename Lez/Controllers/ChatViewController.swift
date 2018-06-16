@@ -298,7 +298,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                     notMe = participant
                 }
             }
-            
+            chatCell.layer.backgroundColor = UIColor.white.cgColor
             chatCell.isUserInteractionEnabled = true
             chatCell.titleLabel.text = notMe?.name
             chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
@@ -335,7 +335,8 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                         notMe = participant
                     }
                 }
-
+                
+                chatCell.layer.backgroundColor = UIColor.white.cgColor
                 chatCell.isUserInteractionEnabled = true
                 chatCell.titleLabel.text = notMe?.name
                 chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()

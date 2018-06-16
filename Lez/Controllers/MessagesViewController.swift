@@ -141,6 +141,7 @@ class MessagesViewController: UIViewController {
             viewFrame = view.frame
             view.frame = CGRect(x: 0, y: 64, width: viewFrame.width, height: viewFrame.height - height)
             view.layoutIfNeeded()
+            scrollToLast()
         }
 //        self.textFieldContainer.snp.updateConstraints({ (make) in
 //            make.bottom.equalTo(-1 * height)
@@ -207,11 +208,11 @@ class MessagesViewController: UIViewController {
             })
         }
         group.notify(queue: .main, execute: {
-            self.scrollLastMessage(messages: messages)
+            self.scroll(messages: messages)
         })
     }
     
-    func scrollLastMessage(messages: [Message]) {
+    func scroll(messages: [Message]) {
         if messages.isEmpty {
             print("No messages.")
         } else {
@@ -220,8 +221,7 @@ class MessagesViewController: UIViewController {
                 self.messages = messages
                 self.tableView.reloadData()
                 self.tableView.setNeedsLayout()
-                let indexPath = IndexPath(row: messages.count - 1, section: 0)
-                self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
+                scrollToLast()
             } else {
                 self.messages.removeAll()
                 self.messages = messages
@@ -229,6 +229,11 @@ class MessagesViewController: UIViewController {
                 self.tableView.setNeedsLayout()
             }
         }
+    }
+    
+    func scrollToLast() {
+        let indexPath = IndexPath(row: messages.count - 1, section: 0)
+        self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
     }
 }
 extension MessagesViewController: UITableViewDelegate, UITableViewDataSource {
