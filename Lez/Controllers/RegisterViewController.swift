@@ -16,6 +16,8 @@ import Crashlytics
 
 class RegisterViewController: UIViewController {
     
+    // MARK: - Properties
+    
     private let facebookLoginButton = UIButton()
     private let twitterLoginButton = UIButton()
     private let hud = JGProgressHUD(style: .dark)
@@ -28,22 +30,14 @@ class RegisterViewController: UIViewController {
     private let termsOfServiceButton = UIButton()
     private let subscriptionText = UILabel()
     
+    // MARK: - View Lifecycle
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
         stopSpinner()
-        
-        let button = UIButton(type: .roundedRect)
-        button.frame = CGRect(x: 20, y: 50, width: 100, height: 30)
-        button.setTitle("Crash", for: [])
-        button.addTarget(self, action: #selector(self.crashButtonTapped(_:)), for: .touchUpInside)
-//        view.addSubview(button)
     }
     
-    @objc func crashButtonTapped(_ sender: AnyObject) {
-        Crashlytics.sharedInstance().crash()
-    }
-
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: animated)
@@ -64,6 +58,8 @@ class RegisterViewController: UIViewController {
         }
     }
     
+    // MARK: - Methods
+
     private func setupBureaucracyCrapButtons() {
         contentView.addSubview(bureaucracyCrapButtonsView)
         if Device.IS_4_7_INCHES_OR_LARGER() {

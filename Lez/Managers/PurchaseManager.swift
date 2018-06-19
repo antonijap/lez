@@ -112,7 +112,7 @@ struct PurchaseManager {
     
     fileprivate static func verifyReceipt(completion: @escaping (VerifyReceiptResult) -> Void) {
         let sharedSecret = "fdedb790950649388f3863bf6602ca66"
-        let appleValidator = AppleReceiptValidator(service: .sandbox, sharedSecret: sharedSecret)
+        let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: sharedSecret)
         SwiftyStoreKit.verifyReceipt(using: appleValidator) { (result) in
             completion(result)
         }

@@ -72,8 +72,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         TWTRTwitter.sharedInstance().start(withConsumerKey:"***REMOVED***", consumerSecret:"***REMOVED***")
         
-        self.pushNotifications.start(instanceId: "***REMOVED***")
-        self.pushNotifications.registerForRemoteNotifications()
+        pushNotifications.start(instanceId: "***REMOVED***")
+        pushNotifications.registerForRemoteNotifications()
 
         completeIAPTransactions()
         return true
@@ -94,9 +94,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
-        FBSDKApplicationDelegate.sharedInstance().application(app, open: url as URL?, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as! String, annotation: options[UIApplicationOpenURLOptionsKey.annotation]
-        )
-        return TWTRTwitter.sharedInstance().application(app, open: url, options: options)
+        let facebookAuthentication = FBSDKApplicationDelegate.sharedInstance().application(app, open: url, sourceApplication: options[UIApplicationOpenURLOptionsKey.sourceApplication] as! String, annotation: options[UIApplicationOpenURLOptionsKey.annotation])
+        let twitterAuthentication = TWTRTwitter.sharedInstance().application(app, open: url, options: options)
+        return facebookAuthentication || twitterAuthentication
     }
 
     func applicationWillResignActive(_ application: UIApplication) {

@@ -56,12 +56,12 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     private var canLike: Bool!
     private var likesLeft: Int!
     private var timer = Timer()
+    private var refreshButton = CustomButton()
     
     // MARK: - Life Cycle
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        print("viewWillAppear")
-        
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
                 self.user = user
@@ -99,21 +99,22 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        print("ViewDidLoad")
         setupTableView()
         setupNavigationBar()
         setupMatchView()
         setupNoUsersState()
         setupLikesWidget()
+        setupRefreshButton()
         
         DefaultsManager.shared.save(number: 0)
+        
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateAfterAppComesToForeground), name:
             NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
         
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             if let user = user {
-                self.fetchUsers(for: user.uid)
+               self.checkConnectivity(uid: user.uid)
             } else {
                 self.presentRegisterViewController()
             }
@@ -121,12 +122,46 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     }
     
     // MARK: - Methods
+    
+    private func hideRefreshButton() {
+        refreshButton.isHidden = true
+    }
+    
+    private func showRefreshButton() {
+        refreshButton.isHidden = false
+    }
+    
+    @objc func refreshButtonTapped(_ sender: UIButton) {
+        guard let currentUser = Auth.auth().currentUser else { return }
+        checkConnectivity(uid: currentUser.uid)
+    }
+    
+    private func hideTableView() {
+        tableView.isHidden = true
+        hideLikesWidget()
+    }
+    
+    private func showTableView() {
+        tableView.isHidden = false
+        showLikesWidget()
+    }
+    
+    private func checkConnectivity(uid: String) {
+        if Connectivity.isConnectedToInternet {
+            hideRefreshButton()
+            showTableView()
+            fetchUsers(for: uid)
+        } else {
+            Alertift.alert(title: "No Internet", message: "It seems you are not connected to network. Please try again.")
+                .action(Alertift.Action.default("Okay"))
+                .show(on: self, completion: {
+                    self.hideTableView()
+                    self.showRefreshButton()
+                })
+        }
+    }
+    
     func removeUserFromLocalArray(uid: String) {
-//        if let index = users.index(where: { _ in uid == uid }) {
-//            print("Grabbed index : \(index)")
-//            users.remove(at: index)
-//            tableView.reloadData()
-//        }
         if let index = users.index(where: { $0.uid.contains(uid) }) {
             print("Will remove \(index)")
             users.remove(at: index)
@@ -383,7 +418,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     
     @objc private func runTimer(cooldownTime: Date) {
         stopTimer()
-        let timeUntilNewLikesUnlock = cooldownTime.add(components: 30.minutes)
+        let timeUntilNewLikesUnlock = cooldownTime.add(components: 24.hours)
         let differenceBetweenNowAndTimeUntilNewLikesUnlock = timeUntilNewLikesUnlock.timeIntervalSinceNow
         print("Difference \(differenceBetweenNowAndTimeUntilNewLikesUnlock)")
         seconds = Int(differenceBetweenNowAndTimeUntilNewLikesUnlock)
@@ -656,6 +691,7 @@ extension MatchViewController {
         tableView.register(MatchCell.self, forCellReuseIdentifier: "MatchCell")
         tableView.refreshControl = refreshControl
         refreshControl.addTarget(self, action: #selector(self.refreshTableView), for: .valueChanged)
+        hideTableView()
     }
     
     private func setupNavigationBar() {
@@ -704,5 +740,17 @@ extension MatchViewController {
         }
         
         likesCounterWidgetView.layoutIfNeeded()
+    }
+    
+    private func setupRefreshButton() {
+        view.addSubview(refreshButton)
+        refreshButton.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+            make.height.equalTo(44)
+            make.width.equalTo(150)
+        }
+        refreshButton.setTitle("Try Again", for: .normal)
+        refreshButton.addTarget(self, action: #selector(self.refreshButtonTapped(_:)), for: .touchUpInside)
+        hideRefreshButton()
     }
 }

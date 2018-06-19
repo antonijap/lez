@@ -20,13 +20,17 @@ import Toast_Swift
 class ProfileViewController: UIViewController, ProfileViewControllerDelegate {    
 
     // MARK: - Variables
-    let tableView = UITableView()
-    let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
-    var user: User?
-    let tabBar = UITabBar()
-    let hud = JGProgressHUD(style: .dark)
-    var shouldRefresh = false
-    var jellyAnimator: JellyAnimator?
+    
+    private let tableView = UITableView()
+    private let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
+    private var user: User?
+    private let tabBar = UITabBar()
+    private let hud = JGProgressHUD(style: .dark)
+    private var jellyAnimator: JellyAnimator?
+    private var refreshButton = CustomButton()
+    
+    
+    // MARK: - View Lifecycle
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
@@ -36,29 +40,42 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
-        if shouldRefresh {
-            startSpinner(title: "Loading Profile")
-            guard let currentUser = Auth.auth().currentUser else { return }
-            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
-                self.user = user
-                }.then { _ in
-                    self.tableView.reloadData()
-                    self.stopSpinner()
-            }
-            shouldRefresh = false
-        }
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshProfile), name: Notification.Name("UpdateProfile"), object: nil)
-        startSpinner(title: "Loading Profile")
-        guard let currentUser = Auth.auth().currentUser else { return }
-        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
-            self.user = user
-            }.then { _ in
-                self.setupTableView()
-                self.stopSpinner()
+        setupTableView()
+        setupRefreshButton()
+        checkConnectivity()
+    }
+    
+    // MARK: - Methods
+
+    private func hideRefreshButton() {
+        refreshButton.isHidden = true
+    }
+    
+    private func showRefreshButton() {
+        refreshButton.isHidden = false
+    }
+    
+    @objc func refreshButtonTapped(_ sender: UIButton) {
+        checkConnectivity()
+    }
+    
+    private func checkConnectivity() {
+        if Connectivity.isConnectedToInternet {
+            hideRefreshButton()
+            showTableView()
+            refreshProfile()
+        } else {
+            Alertift.alert(title: "No Internet", message: "It seems you are not connected to network. Please try again.")
+                .action(Alertift.Action.default("Okay"))
+                .show(on: self, completion: {
+                    self.hideTableView()
+                    self.showRefreshButton()
+                })
         }
     }
     
@@ -73,26 +90,12 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
         }
     }
     
-    func setupTableView() {
-        tableView.delegate = self
-        tableView.dataSource = self
-        view.addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
-            make.top.right.left.equalToSuperview()
-            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
-        }
-        tableView.backgroundColor = .white
-        tableView.separatorColor = .clear
-        tableView.isUserInteractionEnabled = true
-        let insets = UIEdgeInsets(top: -20, left: 0, bottom: 48, right: 0)
-        tableView.contentInset = insets
-        tableView.allowsMultipleSelection = false
-        tableView.register(ProfileImagesCell.self, forCellReuseIdentifier: "ProfileImagesCell")
-        tableView.register(TitleWithDescriptionCell.self, forCellReuseIdentifier: "TitleWithDescriptionCell")
-        tableView.register(SimpleMenuCell.self, forCellReuseIdentifier: "SimpleMenuCell")
-        tableView.register(IconMenuCell.self, forCellReuseIdentifier: "IconMenuCell")
-        tableView.register(PremiumMenuCell.self, forCellReuseIdentifier: "PremiumMenuCell")
-        tableView.register(HeaderCell.self, forCellReuseIdentifier: "HeaderCell")
+    private func hideTableView() {
+        tableView.isHidden = true
+    }
+    
+    private func showTableView() {
+        tableView.isHidden = false
     }
     
     private func startSpinner(title: String) {
@@ -104,7 +107,6 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     }
     
     private func stopSpinner() {
-        // Start Animating
         hud.dismiss(animated: true)
     }
 }
@@ -295,6 +297,41 @@ extension ProfileViewController {
             currentCell.backgroundColor = .white
         }
     }
+    
+    private func setupTableView() {
+        tableView.delegate = self
+        tableView.dataSource = self
+        view.addSubview(tableView)
+        tableView.snp.makeConstraints { (make) in
+            make.top.right.left.equalToSuperview()
+            make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
+        }
+        tableView.backgroundColor = .white
+        tableView.separatorColor = .clear
+        tableView.isUserInteractionEnabled = true
+        let insets = UIEdgeInsets(top: -20, left: 0, bottom: 48, right: 0)
+        tableView.contentInset = insets
+        tableView.allowsMultipleSelection = false
+        tableView.register(ProfileImagesCell.self, forCellReuseIdentifier: "ProfileImagesCell")
+        tableView.register(TitleWithDescriptionCell.self, forCellReuseIdentifier: "TitleWithDescriptionCell")
+        tableView.register(SimpleMenuCell.self, forCellReuseIdentifier: "SimpleMenuCell")
+        tableView.register(IconMenuCell.self, forCellReuseIdentifier: "IconMenuCell")
+        tableView.register(PremiumMenuCell.self, forCellReuseIdentifier: "PremiumMenuCell")
+        tableView.register(HeaderCell.self, forCellReuseIdentifier: "HeaderCell")
+        hideTableView()
+    }
+    
+    private func setupRefreshButton() {
+        view.addSubview(refreshButton)
+        refreshButton.snp.makeConstraints { (make) in
+            make.center.equalToSuperview()
+            make.height.equalTo(44)
+            make.width.equalTo(150)
+        }
+        refreshButton.setTitle("Try Again", for: .normal)
+        refreshButton.addTarget(self, action: #selector(self.refreshButtonTapped(_:)), for: .touchUpInside)
+        hideRefreshButton()
+    }
 }
 
 
@@ -341,5 +378,3 @@ public class SDWebImageSource: NSObject, InputSource {
         imageView.sd_cancelCurrentImageLoad()
     }
 }
-
-

@@ -15,13 +15,20 @@ import Firebase
 
 class GetPremiumViewController: UIViewController {
     
-    let closeButton = UIButton()
-    let titleLabel = UILabel()
-    let descriptionLabel = UILabel()
-    let backgroundImageView = UIImageView()
-    let buyButton = CustomButton()
+    // MARK: - Properities
+    
+    private let closeButton = UIButton()
+    private let titleLabel = UILabel()
+    private let descriptionLabel = UILabel()
+    private let backgroundImageView = UIImageView()
+    private let buyButton = CustomButton()
+    private var priceString = "2.99€"
+    private let bureaucracyCrapButtonsView = UIView()
+    private let privacyPolicyButton = UIButton()
+    private let termsOfServiceButton = UIButton()
+    private let subscriptionText = UILabel()
+    
     var matchViewControllerDelegate: MatchViewControllerDelegate?
-    var priceString = "2.99€"
     
     var products = Set<SKProduct>() {
         didSet {
@@ -32,7 +39,6 @@ class GetPremiumViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
         fetchProducts()
     }
     
@@ -43,12 +49,69 @@ class GetPremiumViewController: UIViewController {
         
         PurchaseManager.fetchProducts { (products) in
             self.products = products
-            
             // End Activity indicator
         }
     }
     
-    fileprivate func setupInterface(with products: Set<SKProduct>) {
+    private func setupBureaucracyCrapButtons() {
+        view.addSubview(bureaucracyCrapButtonsView)
+        if Device.IS_4_7_INCHES_OR_LARGER() {
+            bureaucracyCrapButtonsView.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.width.equalToSuperview().dividedBy(2)
+                make.top.equalTo(buyButton.snp.bottom).offset(40)
+            }
+        } else {
+            bureaucracyCrapButtonsView.snp.makeConstraints { (make) in
+                make.centerX.equalToSuperview()
+                make.width.equalToSuperview().dividedBy(1.7)
+                make.top.equalTo(buyButton.snp.bottom).offset(40)
+            }
+        }
+        
+        bureaucracyCrapButtonsView.addSubview(privacyPolicyButton)
+        privacyPolicyButton.snp.makeConstraints { (make) in
+            make.left.top.bottom.equalToSuperview()
+        }
+        privacyPolicyButton.setTitle("Privacy Policy", for: .normal)
+        privacyPolicyButton.setTitleColor(.gray, for: .normal)
+        privacyPolicyButton.addTarget(self, action: #selector(self.privacyPolicyButtontapped), for: .touchUpInside)
+        privacyPolicyButton.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        
+        bureaucracyCrapButtonsView.addSubview(termsOfServiceButton)
+        termsOfServiceButton.snp.makeConstraints { (make) in
+            make.right.top.bottom.equalToSuperview()
+        }
+        termsOfServiceButton.setTitle("Terms of Service", for: .normal)
+        termsOfServiceButton.setTitleColor(.gray, for: .normal)
+        termsOfServiceButton.addTarget(self, action: #selector(self.termsOfServiceButtontapped), for: .touchUpInside)
+        termsOfServiceButton.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        
+        view.addSubview(subscriptionText)
+        subscriptionText.snp.makeConstraints { (make) in
+            make.top.equalTo(bureaucracyCrapButtonsView.snp.bottom).offset(40)
+            make.left.equalToSuperview().inset(32)
+            make.right.equalToSuperview().inset(32)
+        }
+        subscriptionText.text = "Premium is monthly auto-renewable subscription of Lez and it offers subscription with price €2.99 per month. Payment will be charged to iTunes Account at confirmation of purchase. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period. Account will be charged for renewal within 24-hours prior to the end of the current period. Subscriptions may be managed by the user and auto-renewal may be turned off by going to the iPhone’s settings."
+        subscriptionText.numberOfLines = 20
+        subscriptionText.font = UIFont.systemFont(ofSize: 9, weight: .regular)
+        subscriptionText.textColor = .gray
+    }
+    
+    @objc private func privacyPolicyButtontapped() {
+        if let url = URL(string: "https://www.iubenda.com/privacy-policy/89963959") {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+    
+    @objc private func termsOfServiceButtontapped() {
+        if let url = URL(string: "https://www.iubenda.com/privacy-policy/89963959") {
+            UIApplication.shared.open(url, options: [:])
+        }
+    }
+    
+    private func setupInterface(with products: Set<SKProduct>) {
         let product = products.first
         
         view.addSubview(backgroundImageView)
@@ -91,9 +154,10 @@ class GetPremiumViewController: UIViewController {
         buyButton.addGestureRecognizer(buttonTap)
         
         setupCloseButton()
+        setupBureaucracyCrapButtons()
     }
 
-    fileprivate func setupCloseButton() {
+    private func setupCloseButton() {
         view.addSubview(closeButton)
         closeButton.snp.makeConstraints { (make) in
             make.width.equalTo(32)
