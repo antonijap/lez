@@ -98,7 +98,7 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
             case.headerCell:
                 let headerCell = tableView.dequeueReusableCell(withIdentifier: HeaderCell.reuseID) as! HeaderCell
                 headerCell.titleLabel.text = user.name + ", " + "\(user.age)"
-                headerCell.bodyLabel.text = "\(user.location.city)"
+                headerCell.bodyLabel.text = "\(user.location.city), \(user.location.country)"
                 cell = headerCell
             
             case .titleWithDescription:

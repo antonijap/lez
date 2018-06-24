@@ -585,7 +585,7 @@ extension MatchViewController: UITableViewDelegate, UITableViewDataSource, Match
         cell.delegate = self
         cell.userImageView.sd_setImage(with: URL(string: (users[indexPath.row].images.first)!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
         cell.nameAndAgeLabel.text = "\(users[indexPath.row].name), \(users[indexPath.row].age)"
-        cell.locationLabel.text = users[indexPath.row].location.city
+        cell.locationLabel.text = "\(users[indexPath.row].location.city), \(users[indexPath.row].location.country)"
         guard let user = user else { return UITableViewCell() }
         guard let likes = user.likes else { return UITableViewCell() }
         if likes.contains(users[indexPath.row].uid) {

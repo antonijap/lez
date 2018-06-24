@@ -194,17 +194,14 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     }
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
-                }
-                if indexPath.section == 7 {
+                } else if indexPath.section == 7 {
                     simpleMenuCell.titleLabel.text = "Edit Profile"
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.isUserInteractionEnabled = true
-                }
-                if indexPath.section == 8 {
+                } else if indexPath.section == 8 {
                     simpleMenuCell.titleLabel.text = "Edit Images"
                     simpleMenuCell.isUserInteractionEnabled = true
-                }
-                if indexPath.section == 9 {
+                } else if indexPath.section == 9 {
                     if user.isPremium || user.isManuallyPromoted {
                         simpleMenuCell.titleLabel.text = "Restore Subscription"
                         simpleMenuCell.titleLabel.textColor = .gray
@@ -215,8 +212,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                         simpleMenuCell.isUserInteractionEnabled = true
                     }
                     
-                }
-                if indexPath.section == 10 {
+                } else if indexPath.section == 10 {
                     simpleMenuCell.titleLabel.text = "Sign out"
                     simpleMenuCell.titleLabel.textColor = .red
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)

@@ -209,7 +209,7 @@ class UserProfileFormViewController: FormViewController {
             if let user = user {
                 // Editing profile
                 if form.validate().count > 0 {
-                    Alertift.alert(title: "Ooopsie", message: "Check what fields are missiong or inacurrate.")
+                    Alertift.alert(title: "Ooopsie", message: "Check what fields are missing or inacurrate.")
                         .action(.default("Okay"))
                         .show(on: self, completion: nil)
                 } else {
