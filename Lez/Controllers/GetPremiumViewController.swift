@@ -27,6 +27,7 @@ class GetPremiumViewController: UIViewController {
     private let privacyPolicyButton = UIButton()
     private let termsOfServiceButton = UIButton()
     private let subscriptionText = UILabel()
+    var user: User!
     
     var matchViewControllerDelegate: MatchViewControllerDelegate?
     
@@ -175,7 +176,6 @@ class GetPremiumViewController: UIViewController {
     }
     
     @objc func buyTapped(_ sender: UIButton) {
-      
         PurchaseManager.purchase("premium") { (outcome) in
             switch outcome {
             case .failed:
@@ -184,8 +184,7 @@ class GetPremiumViewController: UIViewController {
                     .show(on: self, completion: nil)
             case .success :
                 self.dismiss(animated: true, completion: {
-//                    guard let currentUser = Auth.auth().currentUser else { return }
-//                    self.matchViewControllerDelegate?.runLikesWidget(uid: currentUser.uid)
+                    AnalyticsManager.shared.logEvent(name: .userPurchasedPremium, user: self.user)
                 })
             }
         }

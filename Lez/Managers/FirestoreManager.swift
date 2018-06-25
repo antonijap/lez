@@ -57,10 +57,23 @@ final class FirestoreManager {
             let group = DispatchGroup()
             var allUsers: [User] = []
             
-            let potentialMatchesRef = self.db.collection("users")
-                .whereField("isBanned", isEqualTo: false)
-                .whereField("isHidden", isEqualTo: false)
-                .whereField("location.city", isEqualTo: user.location.city)
+            let potentialMatchesRef: Query!
+            
+            if DefaultsManager.shared.fetchToggleAllLesbians() {
+                potentialMatchesRef = self.db.collection("users")
+                    .whereField("isBanned", isEqualTo: false)
+                    .whereField("isHidden", isEqualTo: false)
+            } else {
+                potentialMatchesRef = self.db.collection("users")
+                    .whereField("isBanned", isEqualTo: false)
+                    .whereField("isHidden", isEqualTo: false)
+                    .whereField("location.city", isEqualTo: user.location.city)
+            }
+
+//            let potentialMatchesRef = self.db.collection("users")
+//                .whereField("isBanned", isEqualTo: false)
+//                .whereField("isHidden", isEqualTo: false)
+//                .whereField("location.city", isEqualTo: user.location.city)
             
             potentialMatchesRef.getDocuments { (querySnapshot, err) in
                 guard let currentUser = Auth.auth().currentUser else { return }

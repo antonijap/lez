@@ -99,6 +99,9 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        if !DefaultsManager.shared.ifToggleAllLesbiansExists() {
+            DefaultsManager.shared.saveToggleAllLesbians(value: false)
+        }
         setupTableView()
         setupNavigationBar()
         setupMatchView()
@@ -529,6 +532,8 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
             } else {
                 self.stopSpinner()
                 let nextViewController = GetPremiumViewController()
+                guard let user = self.user else { return }
+                nextViewController.user = user
                 let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
                 self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
                 self.jellyAnimator?.prepare(viewController: nextViewController)

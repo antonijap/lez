@@ -60,7 +60,7 @@ class FilterViewController: FormViewController {
     @objc func submit() {
         guard let lookingForRow: MultipleSelectorRow<String> = form.rowBy(tag: "lookingFor") else { return }
         guard let lookingFor = lookingForRow.value else { return }
-        print(lookingFor)
+
         var lookingForArray: [String] = []
         for l in lookingFor {
             if l == LookingFor.friendship.rawValue {
@@ -82,6 +82,10 @@ class FilterViewController: FormViewController {
                 "lookingFor": lookingForArray
             ]
         ]
+        
+        guard let showAllLesbians: SwitchRow = form.rowBy(tag: "toggleAll")  else { return }
+        DefaultsManager.shared.saveToggleAllLesbians(value: showAllLesbians.value!)
+        
         FirestoreManager.shared.updateUser(uid: user!.uid, data: data).then { (success) in
             if success {
                 self.navigationController?.popViewController(animated: true)
@@ -116,6 +120,12 @@ class FilterViewController: FormViewController {
                 to.navigationItem.rightBarButtonItem = rightButton
             }
             
+            <<< SwitchRow() { row in
+                row.tag = "toggleAll"
+                row.title = "Show all lesbians"
+                row.value = DefaultsManager.shared.fetchToggleAllLesbians()
+            }
+            
             +++ Section("Prefered Age Range")
 
             <<< RangeSliderRow() { row in
@@ -124,7 +134,6 @@ class FilterViewController: FormViewController {
                     cell.slider.selectedMaxValue = CGFloat(self.user!.preferences.ageRange.to)
                     cell.slider.selectedMinValue = CGFloat(self.user!.preferences.ageRange.from)
                 })
-        
     }
 }
 

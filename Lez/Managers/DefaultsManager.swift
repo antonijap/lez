@@ -23,4 +23,17 @@ final class DefaultsManager {
         return number
     }
     
+    func saveToggleAllLesbians(value: Bool) {
+        defaults.set(value, forKey: "toggleAll")
+    }
+    
+    func fetchToggleAllLesbians() -> Bool {
+        let toggle = defaults.object(forKey: "toggleAll") as! Bool
+        return toggle
+    }
+    
+    func ifToggleAllLesbiansExists() -> Bool {
+        return defaults.object(forKey: "toggleAll") != nil
+    }
+    
 }

@@ -74,6 +74,8 @@ struct PurchaseManager {
         verifyReceipt { (result) in
             switch result {
             case .success(let receipt):
+                // This triggers password prompt
+                print("Receipt is \(receipt)")
                 verifySubscription(productID, with: receipt, isRestore: false, completion: nil)
             case .error(let error):
                 print("There was an error \(error)")

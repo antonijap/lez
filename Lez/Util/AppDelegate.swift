@@ -134,7 +134,6 @@ extension AppDelegate {
                     if purchase.needsFinishTransaction {
                         SwiftyStoreKit.finishTransaction(purchase.transaction)
                     }
-                    print("purchased: \(purchase.productId)")
                 }
             }
         }
@@ -142,7 +141,6 @@ extension AppDelegate {
     
     /// Checks if the subscription still active
     fileprivate func checkSubscription() {
-        print("Checking subscription...")
         if Auth.auth().currentUser != nil {
             PurchaseManager.verifyPurchase("premium")
         }
