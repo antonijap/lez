@@ -1,0 +1,44 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+# Opt out from automatic metric reporting
+opt_out_usage
+
+default_platform(:ios)
+
+platform :ios do
+
+  desc "Install dependencies"
+  lane :deps do
+      cocoapods
+  end
+
+  desc "Push a new release build to the App Store"
+  lane :release do
+    deps
+    increment_build_number
+    get_push_certificate
+    build_app(workspace: "Lez.xcworkspace", scheme: "Lez")
+    upload_to_app_store(skip_screenshots: true)
+  end
+
+  desc "Refresh dSYM files from iTunes Connect"
+  desc "Also uploads them to Crashlytics"
+  lane :refresh_dsyms do
+    download_dsyms(version="latest")  # Download dSYM files from iTC
+    upload_symbols_to_crashlytics     # Upload them to Crashlytics
+    clean_build_artifacts             # Delete the local dSYM files
+  end
+end

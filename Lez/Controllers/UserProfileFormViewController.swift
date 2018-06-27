@@ -244,6 +244,10 @@ class UserProfileFormViewController: FormViewController {
                     }
                 }
             }
+        } else {
+            Alertift.alert(title: "Error happened", message: "Random error happened, please try to login again.")
+                .action(.default("Okay"))
+                .show(on: self, completion: nil)
         }
     }
     

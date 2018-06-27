@@ -522,9 +522,9 @@ class ProfileImagesCell: UITableViewCell {
         setupImageSlideshow()
         
         slideshow.backgroundColor = UIColor.white
-        slideshow.pageControlPosition = PageControlPosition.insideScrollView
-        slideshow.pageControl.currentPageIndicatorTintColor = .white
-        slideshow.pageControl.pageIndicatorTintColor = UIColor.black.withAlphaComponent(0.5)
+        slideshow.pageIndicatorPosition = .init(horizontal: .center, vertical: .bottom)
+        slideshow.pageIndicator?.view.tintColor = .white
+        slideshow.pageIndicator?.view.tintColor = UIColor.black.withAlphaComponent(0.5)
         slideshow.contentScaleMode = UIViewContentMode.scaleAspectFill
         
         layoutIfNeeded()

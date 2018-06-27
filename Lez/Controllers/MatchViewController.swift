@@ -260,6 +260,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                     } else {
                         if user.likesLeft <= 0 {
                             // Show countdown
+                            AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userRunOutOfLikes, user: user)
                             self.canLike = false
                             self.likesLeft = user.likesLeft
                             guard let cooldownTime = user.cooldownTime else { return }
@@ -436,8 +437,9 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     @objc func updateTimer() {
         if seconds <= 0 {
             print("Sekunde su manje od nule. Resetirat cu sve.")
+            guard let user = user else { print("No user detected."); return }
+            AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userCounterReset, user: user)
             timer.invalidate()
-            guard let user = user else { return }
             let data: [String: Any] = [
                 "likesLeft": 5,
                 "cooldownTime": ""

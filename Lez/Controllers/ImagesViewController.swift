@@ -33,6 +33,7 @@ class ImagesViewController: UIViewController {
     var profileViewControllerDelegate: ProfileViewControllerDelegate?
     var matchViewControllerDelegate: MatchViewControllerDelegate?
     var data: [String : Any]?
+    private var selectedImages: [UIImage] = []
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -51,7 +52,10 @@ class ImagesViewController: UIViewController {
             for image in images {
                 for imageView in imageViews {
                     if imageView.image == UIImage(named: "Empty_Image") {
-                        imageView.sd_setImage(with: URL(string: image.url), completed: nil)
+                        imageView.sd_setImage(with: URL(string: image.url)) { downloadedImage, error, cacheYype, url in
+                            guard let downloadedImage = downloadedImage else { return }
+                            self.selectedImages.append(downloadedImage)
+                        }
                         imageView.contentMode = .scaleAspectFill
                         break
                     }
@@ -71,71 +75,57 @@ class ImagesViewController: UIViewController {
     }
     
     private func uploadImages() {
-        startSpinner()
-        let group = DispatchGroup()
-        if getAllImages().isEmpty {
+        guard !selectedImages.isEmpty else {
             Alertift.alert(title: "No images", message: "Every profile has at least one image. It's mandatory.")
                 .action(.default("Okay"))
-                .show(on: self, completion: {
-                    self.stopSpinner()
-                })
-        } else {
-            if let user = self.user {
-                deleteImages(url: user.images).then { success in
-                    if success {
-                        for imageView in self.getAllImages() {
-                            group.enter()
-                            if imageView.image != UIImage(named: "Empty_Image") {
-                                self.uploadImage(image: imageView.image!).then { (name) in
-                                    self.imageNames.append(name)
-                                    group.leave()
-                                }
-                            }
-                        }
-                        group.notify(queue: .main) {
-                            FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageNames]).then({ (success) in
-                                self.stopSpinner()
-                                self.profileViewControllerDelegate?.refreshProfile()
-                                self.navigationController?.popToRootViewController(animated: true)
+                .show(on: self) { self.stopSpinner(); return }
+            return
+        }
+        guard let user = self.user else {
+            // If there is no user, add new, that means we are in onboarding
+            guard let user = Auth.auth().currentUser else { return }
+            guard let data = self.data else {
+                return
+            }
+            FirestoreManager.shared.addUser(uid: user.uid, data: data).then({ [weak self] success in
+                guard let strongSelf = self else { return }
+                guard success else { return }
+                FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": strongSelf.imageNames, "isOnboarded": true]).then({ _ in
+                    strongSelf.stopSpinner()
+                    strongSelf.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+                        strongSelf.matchViewControllerDelegate?.fetchUsers(for: user.uid)
+                        strongSelf.dismiss(animated: true, completion: {
+                            NotificationCenter.default.post(name: Notification.Name("RefreshTableView"), object: nil)
+                            FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
+                                AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userRegistered, user: user)
                             })
-                        }
-                    }
-                }
-                group.notify(queue: .main) {
-                    FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageNames]).then({ (success) in
-                        self.stopSpinner()
-                        self.profileViewControllerDelegate?.refreshProfile()
-                        self.navigationController?.popToRootViewController(animated: true)
+                        })
                     })
-                }
-            } else {
-                for imageView in self.getAllImages() {
+                })
+            })
+            return
+        }
+        
+        startSpinner()
+        let group = DispatchGroup()
+        
+        // Delete images and then upload new
+        deleteImages(url: user.images).then { [weak self] success in
+            guard let strongSelf = self else { return }
+            if success {
+                for image in strongSelf.selectedImages {
                     group.enter()
-                    self.uploadImage(image: imageView.image!).then { (url) in
-                        self.imageNames.append(url)
+                    strongSelf.uploadImage(image: image).then { name in
+                        strongSelf.imageNames.append(name)
                         group.leave()
                     }
                 }
                 group.notify(queue: .main) {
-                    guard let user = Auth.auth().currentUser else { return }
-                    if let data = self.data {
-                        FirestoreManager.shared.addUser(uid: user.uid, data: data).then({ (success) in
-                            if success {
-                                FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": self.imageNames, "isOnboarded": true]).then({ (success) in
-                                    self.stopSpinner()
-                                    self.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                                        self.matchViewControllerDelegate?.fetchUsers(for: user.uid)
-                                        self.dismiss(animated: true, completion: {
-                                            NotificationCenter.default.post(name: Notification.Name("RefreshTableView"), object: nil)
-                                            FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
-                                                AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userRegistered, user: user)
-                                            })
-                                        })
-                                    })
-                                })
-                            }
-                        })
-                    }
+                    FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": strongSelf.imageNames]).then({ success in
+                        strongSelf.stopSpinner()
+                        strongSelf.profileViewControllerDelegate?.refreshProfile()
+                        strongSelf.navigationController?.popToRootViewController(animated: true)
+                    })
                 }
             }
         }
@@ -271,15 +261,23 @@ class ImagesViewController: UIViewController {
                         if view.tag == 0 {
                             self.imageViewOne.image = UIImage(named: "Empty_Image")
                             self.imageViewOne.contentMode = .center
+                            self.selectedImages.remove(at: 0)
+
                         } else if view.tag == 1 {
                             self.imageViewTwo.image = UIImage(named: "Empty_Image")
                             self.imageViewTwo.contentMode = .center
+                            self.selectedImages.remove(at: 1)
+
                         } else if view.tag == 2 {
                             self.imageViewThree.image = UIImage(named: "Empty_Image")
                             self.imageViewThree.contentMode = .center
+                            self.selectedImages.remove(at: 2)
+
                         } else if view.tag == 3 {
                             self.imageViewFour.image = UIImage(named: "Empty_Image")
                             self.imageViewFour.contentMode = .center
+                            self.selectedImages.remove(at: 3)
+
                         }
                     }
                 }
@@ -298,35 +296,32 @@ extension ImagesViewController: UIImagePickerControllerDelegate, UINavigationCon
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
-        if let image = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            if activeImage == "imageViewOne" {
-                imageViewOne.image = image
-                imageViewOne.contentMode = .scaleAspectFill
-            }
-            
-            if activeImage == "imageViewTwo" {
-                imageViewTwo.image = image
-                imageViewTwo.contentMode = .scaleAspectFill
-            }
-            
-            if activeImage == "imageViewThree" {
-                imageViewThree.image = image
-                imageViewThree.contentMode = .scaleAspectFill
-            }
-            
-            if activeImage == "imageViewFour" {
-                imageViewFour.image = image
-                imageViewFour.contentMode = .scaleAspectFill
-            }
-//            for imageView in imageViews {
-//                if imageView.image == nil {
-//                    imageView.image = image
-//                    break
-//                }
-//            }
-        } else {
-            print("Something went wrong")
+        guard let image = info[UIImagePickerControllerOriginalImage] as? UIImage else {
+            print("Something went wrong.")
+            self.dismiss(animated: true, completion: nil)
+            return
         }
+        if activeImage == "imageViewOne" {
+            imageViewOne.image = image
+            imageViewOne.contentMode = .scaleAspectFill
+        }
+        
+        if activeImage == "imageViewTwo" {
+            imageViewTwo.image = image
+            imageViewTwo.contentMode = .scaleAspectFill
+        }
+        
+        if activeImage == "imageViewThree" {
+            imageViewThree.image = image
+            imageViewThree.contentMode = .scaleAspectFill
+        }
+        
+        if activeImage == "imageViewFour" {
+            imageViewFour.image = image
+            imageViewFour.contentMode = .scaleAspectFill
+        }
+        
+        selectedImages.append(image)
         self.dismiss(animated: true, completion: nil)
     }
 }

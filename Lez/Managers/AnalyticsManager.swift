@@ -21,6 +21,8 @@ enum AnalyticsEvents: String {
     case matchHappened = "match_happened"
     case userAdjustedFilters = "user_adjusted_filters"
     case userSharedURL = "user_shared_URL"
+    case userRunOutOfLikes = "user_run_out_of_likes"
+    case userCounterReset = "user_counter_reset"
 }
 
 final class AnalyticsManager {
@@ -29,11 +31,24 @@ final class AnalyticsManager {
     static let shared = AnalyticsManager()
     
     func logEvent(name: AnalyticsEvents, user: User) {
-        Analytics.logEvent(name.rawValue, parameters: [
-            "name": user.name,
-            "email": user.email,
-            "age": user.age
-        ])
+        // Check if user has opt-out from tracking
+        // if DefaultsManager.shared.userWantsTracking { ... }
+        if user.email != "hello@antonijapek.com" {
+            if name == .userPurchasedPremium {
+                Analytics.logEvent(name.rawValue, parameters: [
+                    "name": user.name,
+                    "email": user.email,
+                    "age": user.age,
+                    AnalyticsParameterValue: 2.99
+                    ])
+            } else {
+                Analytics.logEvent(name.rawValue, parameters: [
+                    "name": user.name,
+                    "email": user.email,
+                    "age": user.age
+                    ])
+            }
+        }
     }
     
     func logDeleteEvent(name: AnalyticsEvents) {
