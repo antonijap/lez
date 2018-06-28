@@ -13,7 +13,7 @@ enum AnalyticsEvents: String {
     case userRegistered = "user_registered"
     case userViewedProfile = "user_viewed_profile"
     case userBlockedSomebody = "user_blocked_somebody"
-    case userReportedSomebody = "user_blocked_somoebody"
+    case userReportedSomebody = "user_blocked_somebody"
     case userPurchasedPremium = "user_purchased_premium"
     case userChurnded = "user_churned"
     case userEditedProfile = "user_edited_profile"

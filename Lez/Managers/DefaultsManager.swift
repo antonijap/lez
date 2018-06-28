@@ -14,6 +14,8 @@ final class DefaultsManager {
     static let shared = DefaultsManager()
     private let defaults = UserDefaults.standard
     
+    // Unread messages
+    
     func save(number: Int) {
         defaults.set(number, forKey: "number")
     }
@@ -22,6 +24,8 @@ final class DefaultsManager {
         let number = defaults.object(forKey: "number") as! Int
         return number
     }
+    
+    // Toggle all lesbians
     
     func saveToggleAllLesbians(value: Bool) {
         defaults.set(value, forKey: "toggleAll")
@@ -36,4 +40,14 @@ final class DefaultsManager {
         return defaults.object(forKey: "toggleAll") != nil
     }
     
+    // Tracking
+    
+    func saveTrackingPreference(value: Bool) {
+        defaults.set(value, forKey: "trackingPreference")
+    }
+    
+    func userWantsTracking() -> Bool {
+        let preference = defaults.object(forKey: "trackingPreference") as! Bool
+        return preference
+    }
 }
