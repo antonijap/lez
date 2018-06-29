@@ -22,7 +22,7 @@ class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
     // MARK: - Variables
     
     private let tableView = UITableView()
-    private let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
+    private let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription, .titleWithDescription, .titleWithDescription, .titleWithDescription, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
     private var user: User?
     private let tabBar = UITabBar()
     private let hud = JGProgressHUD(style: .dark)
@@ -190,10 +190,10 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     if user.isPremium || user.isManuallyPromoted {
                         simpleMenuCell.titleLabel.text = "You are Premium"
                     } else {
-                        simpleMenuCell.titleLabel.text = "Unlock unlimited likes"
+                        simpleMenuCell.titleLabel.text = "Get Premium"
                     }
                     simpleMenuCell.titleLabel.textColor = .black
-                    simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
+//                    simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
                 } else if indexPath.section == 7 {
                     simpleMenuCell.titleLabel.text = "Edit Profile"
                     simpleMenuCell.titleLabel.textColor = .black
@@ -202,6 +202,9 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                     simpleMenuCell.titleLabel.text = "Edit Images"
                     simpleMenuCell.isUserInteractionEnabled = true
                 } else if indexPath.section == 9 {
+                    simpleMenuCell.titleLabel.text = "Tracking for Analytics"
+                    simpleMenuCell.isUserInteractionEnabled = true
+                } else if indexPath.section == 10 {
                     if user.isPremium || user.isManuallyPromoted {
                         simpleMenuCell.titleLabel.text = "Restore Subscription"
                         simpleMenuCell.titleLabel.textColor = .gray
@@ -211,8 +214,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                         simpleMenuCell.titleLabel.textColor = .black
                         simpleMenuCell.isUserInteractionEnabled = true
                     }
-                    
-                } else if indexPath.section == 10 {
+                } else if indexPath.section == 11 {
                     simpleMenuCell.titleLabel.text = "Sign out"
                     simpleMenuCell.titleLabel.textColor = .red
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
@@ -263,6 +265,26 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
         }
         
         if indexPath == [9, 0] {
+            if DefaultsManager.shared.userWantsTracking() {
+                Alertift.actionSheet(title: nil, message: "New GDPR law allows you to opt-out from analtytics tracking. You previously opted-out, you can change your mind if you want.")
+                    .action(.destructive("Opt-in")) { action, int in
+                        DefaultsManager.shared.saveTrackingPreference(value: false)
+                    }
+                    .action(.default("Cancel"))
+                    .show(on: self, completion: nil)
+            } else {
+                Alertift.actionSheet(title: nil, message: "New GDPR law allows you to opt-out from analtytics tracking. We are not tracking anything shady, just regular stuff to make sure app works and that lesbians are enjoying using it.")
+                    .action(.destructive("Opt-out")) { action, int in
+                        DefaultsManager.shared.saveTrackingPreference(value: true)
+                    }
+                    .action(.default("Cancel"))
+                    .show(on: self, completion: nil)
+            }
+            
+            highlightCell(indexPath: indexPath)
+        }
+        
+        if indexPath == [10, 0] {
             PurchaseManager.restorePurchase { (outcome) in
                 switch outcome {
                     case .failed:
@@ -278,7 +300,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             highlightCell(indexPath: indexPath)
         }
         
-        if indexPath == [10, 0] {
+        if indexPath == [11, 0] {
             self.showSignoutAlert(CTA: "Sign out")
             highlightCell(indexPath: indexPath)
         }

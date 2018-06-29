@@ -32,21 +32,22 @@ final class AnalyticsManager {
     
     func logEvent(name: AnalyticsEvents, user: User) {
         // Check if user has opt-out from tracking
-        // if DefaultsManager.shared.userWantsTracking { ... }
-        if user.email != "hello@antonijapek.com" {
-            if name == .userPurchasedPremium {
-                Analytics.logEvent(name.rawValue, parameters: [
-                    "name": user.name,
-                    "email": user.email,
-                    "age": user.age,
-                    AnalyticsParameterValue: 2.99
-                    ])
-            } else {
-                Analytics.logEvent(name.rawValue, parameters: [
-                    "name": user.name,
-                    "email": user.email,
-                    "age": user.age
-                    ])
+        if DefaultsManager.shared.userWantsTracking() {
+            if user.email != "hello@antonijapek.com" {
+                if name == .userPurchasedPremium {
+                    Analytics.logEvent(name.rawValue, parameters: [
+                        "name": user.name,
+                        "email": user.email,
+                        "age": user.age,
+                        AnalyticsParameterValue: 2.99
+                        ])
+                } else {
+                    Analytics.logEvent(name.rawValue, parameters: [
+                        "name": user.name,
+                        "email": user.email,
+                        "age": user.age
+                        ])
+                }
             }
         }
     }

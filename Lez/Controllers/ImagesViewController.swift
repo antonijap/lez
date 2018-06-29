@@ -84,24 +84,36 @@ class ImagesViewController: UIViewController {
         guard let user = self.user else {
             // If there is no user, add new, that means we are in onboarding
             guard let user = Auth.auth().currentUser else { return }
-            guard let data = self.data else {
-                return
-            }
+            guard let data = self.data else { return }
             FirestoreManager.shared.addUser(uid: user.uid, data: data).then({ [weak self] success in
-                guard let strongSelf = self else { return }
                 guard success else { return }
-                FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": strongSelf.imageNames, "isOnboarded": true]).then({ _ in
-                    strongSelf.stopSpinner()
-                    strongSelf.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                        strongSelf.matchViewControllerDelegate?.fetchUsers(for: user.uid)
-                        strongSelf.dismiss(animated: true, completion: {
-                            NotificationCenter.default.post(name: Notification.Name("RefreshTableView"), object: nil)
-                            FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
-                                AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userRegistered, user: user)
+                guard let strongSelf = self else { return }
+                
+                strongSelf.startSpinner()
+                let group = DispatchGroup()
+                
+                for image in strongSelf.selectedImages {
+                    group.enter()
+                    strongSelf.uploadImage(image: image).then { name in
+                        strongSelf.imageNames.append(name)
+                        group.leave()
+                    }
+                }
+                
+                group.notify(queue: .main) {
+                    FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": strongSelf.imageNames, "isOnboarded": true]).then({ _ in
+                        strongSelf.stopSpinner()
+                        strongSelf.showOkayModal(messageTitle: "Profile Setup Completed", messageAlert: "Enjoy Lez and remember to report users who don't belong here.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+                            strongSelf.matchViewControllerDelegate?.fetchUsers(for: user.uid)
+                            strongSelf.dismiss(animated: true, completion: {
+                                NotificationCenter.default.post(name: Notification.Name("RefreshTableView"), object: nil)
+                                FirestoreManager.shared.fetchUser(uid: user.uid).then({ (user) in
+                                    AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userRegistered, user: user)
+                                })
                             })
                         })
                     })
-                })
+                }
             })
             return
         }

@@ -102,6 +102,9 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
         if !DefaultsManager.shared.ifToggleAllLesbiansExists() {
             DefaultsManager.shared.saveToggleAllLesbians(value: false)
         }
+        if !DefaultsManager.shared.ifTrackingPreferenceExists() {
+            DefaultsManager.shared.saveTrackingPreference(value: true)
+        }
         setupTableView()
         setupNavigationBar()
         setupMatchView()
@@ -283,90 +286,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
             })
         }
     }
-    
-    private func setupMatchView() {
-        UIApplication.shared.keyWindow?.addSubview(matchOverlayView)
-        matchOverlayView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
-        matchOverlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        
-        UIApplication.shared.keyWindow?.addSubview(matchView)
-        matchView.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().offset(32)
-            make.right.equalToSuperview().inset(32)
-            make.center.equalToSuperview()
-        }
-        matchView.backgroundColor = .white
-        matchView.layer.cornerRadius = 8
-        matchView.dropShadow()
-        
-        matchView.addSubview(matchYourImageView)
-        matchYourImageView.snp.makeConstraints { (make) in
-            make.height.width.equalTo(48)
-            make.centerX.equalToSuperview().inset(10)
-            make.top.equalToSuperview().offset(40)
-        }
-        matchYourImageView.backgroundColor = UIColor(red:0.77, green:0.77, blue:0.77, alpha:1.00)
-        matchYourImageView.layer.cornerRadius = 48 / 2
-        matchYourImageView.clipsToBounds = true
-        matchYourImageView.contentMode = .scaleAspectFill
-        
-        matchView.addSubview(matchHerImageView)
-        matchHerImageView.snp.makeConstraints { (make) in
-            make.height.width.equalTo(48)
-            make.centerX.equalToSuperview().inset(-10)
-            make.top.equalTo(matchYourImageView.snp.top)
-        }
-        matchHerImageView.backgroundColor = UIColor(red:0.69, green:0.69, blue:0.69, alpha:1.00)
-        matchHerImageView.layer.cornerRadius = 48 / 2
-        matchHerImageView.clipsToBounds = true
-        matchHerImageView.contentMode = .scaleAspectFill
-        
-        matchView.addSubview(matchLabel)
-        matchLabel.snp.makeConstraints { (make) in
-            make.top.equalTo(matchHerImageView.snp.bottom).offset(32)
-            make.centerX.equalToSuperview()
-        }
-        matchLabel.text = "Match"
-        matchLabel.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
-        
-        matchView.addSubview(matchSubtitle)
-        matchSubtitle.snp.makeConstraints { (make) in
-            make.top.equalTo(matchLabel.snp.bottom).offset(24)
-            make.centerX.equalToSuperview()
-            make.left.equalToSuperview().inset(24)
-            make.right.equalToSuperview().offset(-24)
-        }
-        matchSubtitle.font = UIFont.systemFont(ofSize: 21, weight: .regular)
-        matchSubtitle.numberOfLines = 2
-        matchSubtitle.textAlignment = .center
-        
-        matchView.addSubview(matchCTA)
-        matchCTA.snp.makeConstraints { (make) in
-            make.top.equalTo(matchSubtitle.snp.bottom).offset(32)
-            make.left.equalToSuperview().offset(32)
-            make.right.equalToSuperview().inset(32)
-            make.height.equalTo(44)
-            make.bottom.equalToSuperview().inset(40)
-        }
-        matchCTA.setTitle("Go to Chat", for: .normal)
-        matchCTA.addTarget(self, action: #selector(self.goToChat), for: .touchUpInside)
-        
-        matchView.addSubview(matchCloseButton)
-        matchCloseButton.snp.makeConstraints { (make) in
-            make.width.equalTo(32)
-            make.height.equalTo(32)
-            make.right.equalToSuperview().inset(16)
-            make.top.equalToSuperview().inset(16)
-        }
-        matchCloseButton.setImage(UIImage(named: "Close"), for: .normal)
-        matchCloseButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for:.touchUpInside)
-        
-        matchView.alpha = 0
-        matchOverlayView.alpha = 0
-    }
-    
+
     @objc func closeButtonTapped(_ sender: UIButton) {
         hideMatch()
     }
@@ -759,5 +679,88 @@ extension MatchViewController {
         refreshButton.setTitle("Try Again", for: .normal)
         refreshButton.addTarget(self, action: #selector(self.refreshButtonTapped(_:)), for: .touchUpInside)
         hideRefreshButton()
+    }
+    
+    private func setupMatchView() {
+        UIApplication.shared.keyWindow?.addSubview(matchOverlayView)
+        matchOverlayView.snp.makeConstraints { (make) in
+            make.edges.equalToSuperview()
+        }
+        matchOverlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        
+        UIApplication.shared.keyWindow?.addSubview(matchView)
+        matchView.snp.makeConstraints { (make) in
+            make.left.equalToSuperview().offset(32)
+            make.right.equalToSuperview().inset(32)
+            make.center.equalToSuperview()
+        }
+        matchView.backgroundColor = .white
+        matchView.layer.cornerRadius = 8
+        matchView.dropShadow()
+        
+        matchView.addSubview(matchYourImageView)
+        matchYourImageView.snp.makeConstraints { (make) in
+            make.height.width.equalTo(48)
+            make.centerX.equalToSuperview().inset(10)
+            make.top.equalToSuperview().offset(40)
+        }
+        matchYourImageView.backgroundColor = UIColor(red:0.77, green:0.77, blue:0.77, alpha:1.00)
+        matchYourImageView.layer.cornerRadius = 48 / 2
+        matchYourImageView.clipsToBounds = true
+        matchYourImageView.contentMode = .scaleAspectFill
+        
+        matchView.addSubview(matchHerImageView)
+        matchHerImageView.snp.makeConstraints { (make) in
+            make.height.width.equalTo(48)
+            make.centerX.equalToSuperview().inset(-10)
+            make.top.equalTo(matchYourImageView.snp.top)
+        }
+        matchHerImageView.backgroundColor = UIColor(red:0.69, green:0.69, blue:0.69, alpha:1.00)
+        matchHerImageView.layer.cornerRadius = 48 / 2
+        matchHerImageView.clipsToBounds = true
+        matchHerImageView.contentMode = .scaleAspectFill
+        
+        matchView.addSubview(matchLabel)
+        matchLabel.snp.makeConstraints { (make) in
+            make.top.equalTo(matchHerImageView.snp.bottom).offset(32)
+            make.centerX.equalToSuperview()
+        }
+        matchLabel.text = "Match"
+        matchLabel.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
+        
+        matchView.addSubview(matchSubtitle)
+        matchSubtitle.snp.makeConstraints { (make) in
+            make.top.equalTo(matchLabel.snp.bottom).offset(24)
+            make.centerX.equalToSuperview()
+            make.left.equalToSuperview().inset(24)
+            make.right.equalToSuperview().offset(-24)
+        }
+        matchSubtitle.font = UIFont.systemFont(ofSize: 21, weight: .regular)
+        matchSubtitle.numberOfLines = 2
+        matchSubtitle.textAlignment = .center
+        
+        matchView.addSubview(matchCTA)
+        matchCTA.snp.makeConstraints { (make) in
+            make.top.equalTo(matchSubtitle.snp.bottom).offset(32)
+            make.left.equalToSuperview().offset(32)
+            make.right.equalToSuperview().inset(32)
+            make.height.equalTo(44)
+            make.bottom.equalToSuperview().inset(40)
+        }
+        matchCTA.setTitle("Go to Chat", for: .normal)
+        matchCTA.addTarget(self, action: #selector(self.goToChat), for: .touchUpInside)
+        
+        matchView.addSubview(matchCloseButton)
+        matchCloseButton.snp.makeConstraints { (make) in
+            make.width.equalTo(32)
+            make.height.equalTo(32)
+            make.right.equalToSuperview().inset(16)
+            make.top.equalToSuperview().inset(16)
+        }
+        matchCloseButton.setImage(UIImage(named: "Close"), for: .normal)
+        matchCloseButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for:.touchUpInside)
+        
+        matchView.alpha = 0
+        matchOverlayView.alpha = 0
     }
 }

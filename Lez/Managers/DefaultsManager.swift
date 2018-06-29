@@ -50,4 +50,8 @@ final class DefaultsManager {
         let preference = defaults.object(forKey: "trackingPreference") as! Bool
         return preference
     }
+    
+    func ifTrackingPreferenceExists() -> Bool {
+        return defaults.object(forKey: "trackingPreference") != nil
+    }
 }
