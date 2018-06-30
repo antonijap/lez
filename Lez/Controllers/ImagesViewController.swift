@@ -34,6 +34,7 @@ class ImagesViewController: UIViewController {
     var matchViewControllerDelegate: MatchViewControllerDelegate?
     var data: [String : Any]?
     private var selectedImages: [UIImage] = []
+    private var selectedImagesDict: Dictionary<Int, UIImage> = [:]
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -75,7 +76,7 @@ class ImagesViewController: UIViewController {
     }
     
     private func uploadImages() {
-        guard !selectedImages.isEmpty else {
+        guard !selectedImagesDict.isEmpty else {
             Alertift.alert(title: "No images", message: "Every profile has at least one image. It's mandatory.")
                 .action(.default("Okay"))
                 .show(on: self) { self.stopSpinner(); return }
@@ -92,7 +93,7 @@ class ImagesViewController: UIViewController {
                 strongSelf.startSpinner()
                 let group = DispatchGroup()
                 
-                for image in strongSelf.selectedImages {
+                for (_, image) in strongSelf.selectedImagesDict {
                     group.enter()
                     strongSelf.uploadImage(image: image).then { name in
                         strongSelf.imageNames.append(name)
@@ -121,11 +122,12 @@ class ImagesViewController: UIViewController {
         startSpinner()
         let group = DispatchGroup()
         
+        // Existing users, while editing
         // Delete images and then upload new
         deleteImages(url: user.images).then { [weak self] success in
             guard let strongSelf = self else { return }
             if success {
-                for image in strongSelf.selectedImages {
+                for (_, image) in strongSelf.selectedImagesDict {
                     group.enter()
                     strongSelf.uploadImage(image: image).then { name in
                         strongSelf.imageNames.append(name)
@@ -273,23 +275,23 @@ class ImagesViewController: UIViewController {
                         if view.tag == 0 {
                             self.imageViewOne.image = UIImage(named: "Empty_Image")
                             self.imageViewOne.contentMode = .center
-                            self.selectedImages.remove(at: 0)
-
+//                            self.selectedImages.remove(at: 0)
+                            self.selectedImagesDict.removeValue(forKey: 1)
                         } else if view.tag == 1 {
                             self.imageViewTwo.image = UIImage(named: "Empty_Image")
                             self.imageViewTwo.contentMode = .center
-                            self.selectedImages.remove(at: 1)
-
+//                            self.selectedImages.remove(at: 1)
+                            self.selectedImagesDict.removeValue(forKey: 2)
                         } else if view.tag == 2 {
                             self.imageViewThree.image = UIImage(named: "Empty_Image")
                             self.imageViewThree.contentMode = .center
-                            self.selectedImages.remove(at: 2)
-
+//                            self.selectedImages.remove(at: 2)
+                            self.selectedImagesDict.removeValue(forKey: 3)
                         } else if view.tag == 3 {
                             self.imageViewFour.image = UIImage(named: "Empty_Image")
                             self.imageViewFour.contentMode = .center
-                            self.selectedImages.remove(at: 3)
-
+//                            self.selectedImages.remove(at: 3)
+                            self.selectedImagesDict.removeValue(forKey: 4)
                         }
                     }
                 }
@@ -316,21 +318,25 @@ extension ImagesViewController: UIImagePickerControllerDelegate, UINavigationCon
         if activeImage == "imageViewOne" {
             imageViewOne.image = image
             imageViewOne.contentMode = .scaleAspectFill
+            selectedImagesDict[1] = image
         }
         
         if activeImage == "imageViewTwo" {
             imageViewTwo.image = image
             imageViewTwo.contentMode = .scaleAspectFill
+            selectedImagesDict[2] = image
         }
         
         if activeImage == "imageViewThree" {
             imageViewThree.image = image
             imageViewThree.contentMode = .scaleAspectFill
+            selectedImagesDict[3] = image
         }
         
         if activeImage == "imageViewFour" {
             imageViewFour.image = image
             imageViewFour.contentMode = .scaleAspectFill
+            selectedImagesDict[4] = image
         }
         
         selectedImages.append(image)
@@ -408,7 +414,7 @@ extension ImagesViewController {
         }
         
         imagePickerOne.delegate = self
-        imagePickerOne.sourceType = .savedPhotosAlbum;
+        imagePickerOne.sourceType = .savedPhotosAlbum
         imagePickerOne.allowsEditing = false
         
         imagePickerTwo.delegate = self

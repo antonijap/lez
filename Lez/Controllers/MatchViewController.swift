@@ -510,7 +510,8 @@ extension MatchViewController: UITableViewDelegate, UITableViewDataSource, Match
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: MatchCell.reuseID) as! MatchCell
         cell.delegate = self
-        cell.userImageView.sd_setImage(with: URL(string: (users[indexPath.row].images.first)!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
+        guard let firstImage = users[indexPath.row].images.first else { return UITableViewCell() }
+        cell.userImageView.sd_setImage(with: URL(string: firstImage.url), placeholderImage: UIImage(named: "Placeholder_Image"))
         cell.nameAndAgeLabel.text = "\(users[indexPath.row].name), \(users[indexPath.row].age)"
         cell.locationLabel.text = "\(users[indexPath.row].location.city), \(users[indexPath.row].location.country)"
         guard let user = user else { return UITableViewCell() }
