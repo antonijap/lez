@@ -56,4 +56,6 @@ final class CustomButton: UIButton {
         layer.backgroundColor = UIColor(red:0.45, green:0.96, blue:0.84, alpha:1.00).cgColor
         self.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
     }
+
+    override class var requiresConstraintBasedLayout: Bool { return true }
 }

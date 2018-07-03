@@ -12,76 +12,122 @@ import Firebase
 import Promises
 import JGProgressHUD
 import Alamofire
+import Photos
+import SnapKit
 
 final class ImagesViewController: UIViewController {
+    private var didSetupConstraints = false
 
-    let imageViewOne = UIImageView()
-    let imageViewTwo = UIImageView()
-    let imageViewThree = UIImageView()
-    let imageViewFour = UIImageView()
-    let imagePickerOne = UIImagePickerController()
-    let imagePickerTwo = UIImagePickerController()
-    let imagePickerThree = UIImagePickerController()
-    let imagePickerFour = UIImagePickerController()
+    let imageViews = [UIImageView(frame: .zero), UIImageView(frame: .zero), UIImageView(frame: .zero), UIImageView(frame: .zero)] // Make me sad
+    var images = [UIImage?](repeating: nil, count: 4)
+    var imageNames = [String?](repeating: nil, count: 4)
+
+    let doneButton = CustomButton(frame: .zero)
+
     let storage = Storage.storage()
     let hud = JGProgressHUD(style: .dark)
-    var imageViews: [UIImageView] = []
-    var imageNames: [String] = []
-    var activeImage = ""
     var dataForNewUser: [String: Any]?
     var user: User?
     var profileViewControllerDelegate: ProfileViewControllerDelegate?
     var matchViewControllerDelegate: MatchViewControllerDelegate?
     var data: [String : Any]?
-    private var selectedImages: [UIImage] = []
-    private var selectedImagesDict: Dictionary<Int, UIImage> = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        setupInterface()
         view.backgroundColor = .white
         navigationItem.title = "Image Gallery"
         navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: UIBarMetrics.default)
+        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
 
-        if let user = user {
-            // Now in editing mode
-            // Load all images
-            self.user = user
-            let images = user.images
-            for image in images {
-                for imageView in imageViews {
-                    if imageView.image == #imageLiteral(resourceName: "Empty_Image") {
-                        imageView.sd_setImage(with: URL(string: image.url)) { downloadedImage, error, cacheYype, url in
-                            guard let downloadedImage = downloadedImage else { return }
-                            self.selectedImages.append(downloadedImage)
-                        }
-                        imageView.contentMode = .scaleAspectFill
-                        break
-                    }
-                }
+        for (index, imageView) in imageViews.enumerated() { // Doing this is not pretty. I would advise using a collectionView here
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            view.addSubview(imageView)
+            imageView.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
+            imageView.clipsToBounds = true
+            imageView.contentMode = .center
+            imageView.image = #imageLiteral(resourceName: "Empty_Image")
+            imageView.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(openImageGallery(_:))))
+            imageView.isUserInteractionEnabled = true
+            imageView.tag = index
+        }
+
+        doneButton.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(doneButton)
+        doneButton.setTitle("Done", for: .normal)
+        doneButton.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
+        doneButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(finishTapped)))
+
+        guard let user = user else { return }
+
+        // Now in editing mode
+        // Load all images
+        self.user = user
+        let userImages = user.images
+
+        for (index, imageView) in imageViews.enumerated() { // This is incredibly unsafe. Using a collectionView here will help a lot
+            guard userImages.count > index else { break }
+            imageView.sd_setImage(with: URL(string: userImages[index].url), placeholderImage: #imageLiteral(resourceName: "Empty_Image"), options: [.highPriority]) { [weak self, imageView] (image, _, _, _) in
+                self?.images[index] = image
+                imageView.contentMode = .scaleAspectFill // Don't do this. Keep the same content mode for all images, re-do placeholder images instead
             }
         }
     }
 
-    private func getAllImages() -> [UIImageView] {
-        var filledImageViews: [UIImageView] = []
-        for imageView in imageViews {
-            if imageView.image != #imageLiteral(resourceName: "Empty_Image") { filledImageViews.append(imageView) }
+    override func updateViewConstraints() {
+        defer { didSetupConstraints = true; super.updateViewConstraints() }
+        guard didSetupConstraints == false else { return }
+
+        let width = 2.4
+        imageViews[0].snp.makeConstraints { make in
+            make.width.equalToSuperview().dividedBy(width)
+            make.height.equalToSuperview().dividedBy(2.8)
+            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).inset(24)
+            make.leading.equalToSuperview().inset(24)
         }
-        return filledImageViews
+        imageViews[1].snp.makeConstraints { make in
+            make.width.equalToSuperview().dividedBy(width)
+            make.height.equalToSuperview().dividedBy(2.8)
+            make.top.equalTo(imageViews[0].snp.top)
+            make.trailing.equalToSuperview().offset(-24)
+        }
+        imageViews[2].snp.makeConstraints { make in
+            make.width.equalToSuperview().dividedBy(width)
+            make.height.equalToSuperview().dividedBy(2.8)
+            make.top.equalTo(imageViews[0].snp.bottom).offset(16)
+            make.leading.equalTo(imageViews[0].snp.leading)
+        }
+        imageViews[3].snp.makeConstraints { make in
+            make.width.equalToSuperview().dividedBy(width)
+            make.height.equalToSuperview().dividedBy(2.8)
+            make.top.equalTo(imageViews[2].snp.top)
+            make.trailing.equalTo(imageViews[1].snp.trailing)
+        }
+        doneButton.snp.makeConstraints { make in
+            make.width.equalToSuperview().inset(32)
+            make.height.equalTo(44)
+            make.bottom.equalToSuperview().inset(24)
+            make.centerX.equalToSuperview()
+        }
+    }
+
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        for imageView in imageViews { imageView.layer.cornerRadius = 8 }
     }
 
     private func uploadImages() {
-        guard !selectedImagesDict.isEmpty else {
-            Alertift.alert(title: "No images", message: "Every profile has at least one image. It's mandatory.")
-                .action(.default("Okay"))
-                .show(on: self) { self.stopSpinner(); return }
+        guard !images.isEmpty else {
+            let alertController = UIAlertController(title: "No images", message: "Every profile has at least one image. It's mandatory.", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
+            present(alertController, animated: true)
+            stopSpinner()
             return
         }
-        guard let user = self.user else {
-            // If there is no user, add new, that means we are in onboarding
+
+        let group = DispatchGroup()
+
+        guard let user = self.user else { // If there is no user, add new, that means we are in onboarding
             guard let user = Auth.auth().currentUser else { return }
             guard let data = self.data else { return }
             FirestoreManager.shared.addUser(uid: user.uid, data: data).then({ [weak self] success in
@@ -89,12 +135,12 @@ final class ImagesViewController: UIViewController {
                 guard let strongSelf = self else { return }
 
                 strongSelf.startSpinner()
-                let group = DispatchGroup()
 
-                for (_, image) in strongSelf.selectedImagesDict {
+                for (index, image) in strongSelf.images.enumerated() {
+                    guard let image = image else { continue }
                     group.enter()
                     strongSelf.uploadImage(image: image).then { name in
-                        strongSelf.imageNames.append(name)
+                        strongSelf.imageNames[index] = name
                         group.leave()
                     }
                 }
@@ -118,17 +164,17 @@ final class ImagesViewController: UIViewController {
         }
 
         startSpinner()
-        let group = DispatchGroup()
 
         // Existing users, while editing
         // Delete images and then upload new
         deleteImages(url: user.images).then { [weak self] success in
             guard let strongSelf = self else { return }
             if success {
-                for (_, image) in strongSelf.selectedImagesDict {
+                for (index, image) in strongSelf.images.enumerated() {
+                    guard let image = image else { return }
                     group.enter()
                     strongSelf.uploadImage(image: image).then { name in
-                        strongSelf.imageNames.append(name)
+                        strongSelf.imageNames[index] = name
                         group.leave()
                     }
                 }
@@ -143,8 +189,7 @@ final class ImagesViewController: UIViewController {
         }
     }
 
-    func compressImage(image: UIImage) -> Data? {
-        // Reducing file size to a 10th
+    func compressImage(image: UIImage) -> Data? { // Reducing file size to a 10th
         var actualHeight: CGFloat = image.size.height
         var actualWidth: CGFloat = image.size.width
         let maxHeight: CGFloat = 1136.0
@@ -217,52 +262,40 @@ final class ImagesViewController: UIViewController {
         }
     }
 
-    @objc private func openImageGallery(_ sender: UITapGestureRecognizer) {
-        if UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) {
-            Alertift.actionSheet(message: nil)
-                .actions(["Choose Image", "Remove"])
-                .action(.cancel("Cancel"))
-                .finally { action, index in
-                    if action.style == .cancel { return }
-                    if index == 0 {
-                        guard let view = sender.view else { return }
-                        if view.tag == 0 {
-                            self.present(self.imagePickerOne, animated: true) { self.activeImage = "imageViewOne" }
-                        } else if view.tag == 1 {
-                            self.present(self.imagePickerTwo, animated: true) { self.activeImage = "imageViewTwo" }
-                        } else if view.tag == 2 {
-                            self.present(self.imagePickerThree, animated: true) { self.activeImage = "imageViewThree" }
-                        } else if view.tag == 3 {
-                            self.present(self.imagePickerFour, animated: true) { self.activeImage = "imageViewFour" }
-                        }
-                    }
-                    if index == 1 {
-                        guard let view = sender.view else { return }
-                        if view.tag == 0 {
-                            self.imageViewOne.image = #imageLiteral(resourceName: "Empty_Image")
-                            self.imageViewOne.contentMode = .center
-//                            self.selectedImages.remove(at: 0)
-                            self.selectedImagesDict.removeValue(forKey: 1)
-                        } else if view.tag == 1 {
-                            self.imageViewTwo.image = #imageLiteral(resourceName: "Empty_Image")
-                            self.imageViewTwo.contentMode = .center
-//                            self.selectedImages.remove(at: 1)
-                            self.selectedImagesDict.removeValue(forKey: 2)
-                        } else if view.tag == 2 {
-                            self.imageViewThree.image = #imageLiteral(resourceName: "Empty_Image")
-                            self.imageViewThree.contentMode = .center
-//                            self.selectedImages.remove(at: 2)
-                            self.selectedImagesDict.removeValue(forKey: 3)
-                        } else if view.tag == 3 {
-                            self.imageViewFour.image = #imageLiteral(resourceName: "Empty_Image")
-                            self.imageViewFour.contentMode = .center
-//                            self.selectedImages.remove(at: 3)
-                            self.selectedImagesDict.removeValue(forKey: 4)
-                        }
-                    }
-                }
-                .show(on: self)
+    private func presentImagePicker(for index: Int) {
+        guard UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) else { return }
+
+        let galleryAuthorizationStatus = PHPhotoLibrary.authorizationStatus()
+        guard galleryAuthorizationStatus != .notDetermined else {
+            PHPhotoLibrary.requestAuthorization { status in DispatchQueue.main.async { self.presentImagePicker(for: index) } }
+            return
         }
+        guard let viewController = galleryPickerViewController(forAuthorizationStatus: galleryAuthorizationStatus) else {
+            return
+        }
+
+        if let viewController = viewController as? UIImagePickerController { viewController.delegate = self }
+        viewController.view.tag = index // This is a hacky way of doing things.
+        present(viewController, animated: true)
+    }
+
+    @objc private func openImageGallery(_ sender: UITapGestureRecognizer) {
+        guard UIImagePickerController.isSourceTypeAvailable(.savedPhotosAlbum) else { return }
+        guard let tag = sender.view?.tag else { return }
+
+        let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
+        defer { present(alertController, animated: true) }
+        alertController.addAction(UIAlertAction(title: "Choose Image", style: .default) { [weak self] _ in
+            self?.presentImagePicker(for: tag)
+        })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+
+        guard images[tag] != nil else { return }
+
+        alertController.addAction(UIAlertAction(title: "Remove", style: .destructive) { [weak self] _ in
+            self?.images[tag] = nil
+            self?.imageViews[tag].contentMode = .center
+        })
     }
 
     @objc private func finishTapped() {
@@ -277,132 +310,16 @@ extension ImagesViewController: UIImagePickerControllerDelegate, UINavigationCon
 
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         guard let image = info[UIImagePickerControllerOriginalImage] as? UIImage else {
-            print("Something went wrong."); self.dismiss(animated: true) ;return
+            print("Something went wrong."); picker.dismiss(animated: true); return
         }
-        if activeImage == "imageViewOne" {
-            imageViewOne.image = image
-            imageViewOne.contentMode = .scaleAspectFill
-            selectedImagesDict[1] = image
-        }
-        if activeImage == "imageViewTwo" {
-            imageViewTwo.image = image
-            imageViewTwo.contentMode = .scaleAspectFill
-            selectedImagesDict[2] = image
-        }
-        if activeImage == "imageViewThree" {
-            imageViewThree.image = image
-            imageViewThree.contentMode = .scaleAspectFill
-            selectedImagesDict[3] = image
-        }
-        if activeImage == "imageViewFour" {
-            imageViewFour.image = image
-            imageViewFour.contentMode = .scaleAspectFill
-            selectedImagesDict[4] = image
-        }
-        selectedImages.append(image)
-        self.dismiss(animated: true)
+        images[picker.view.tag] = image
+        imageViews[picker.view.tag].image = image
+        imageViews[picker.view.tag].contentMode = .scaleAspectFill
+        picker.dismiss(animated: true)
     }
 }
 
 extension ImagesViewController {
-    private func setupInterface() {
-        let width = 2.4
-        view.addSubview(imageViewOne)
-        imageViewOne.snp.makeConstraints { make in
-            make.width.equalToSuperview().dividedBy(width)
-            make.height.equalToSuperview().dividedBy(2.8)
-            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).inset(24)
-            make.leading.equalToSuperview().inset(24)
-        }
-        imageViewOne.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
-        imageViewOne.clipsToBounds = true
-        imageViewOne.layer.cornerRadius = 8
-        imageViewOne.contentMode = .center
-        imageViewOne.image = #imageLiteral(resourceName: "Empty_Image")
-        
-        view.addSubview(imageViewTwo)
-        imageViewTwo.snp.makeConstraints { make in
-            make.width.equalToSuperview().dividedBy(width)
-            make.height.equalToSuperview().dividedBy(2.8)
-            make.top.equalTo(imageViewOne.snp.top)
-            make.trailing.equalToSuperview().offset(-24)
-        }
-        imageViewTwo.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
-        imageViewTwo.clipsToBounds = true
-        imageViewTwo.layer.cornerRadius = 8
-        imageViewTwo.contentMode = .center
-        imageViewTwo.image = #imageLiteral(resourceName: "Empty_Image")
-
-        view.addSubview(imageViewThree)
-        imageViewThree.snp.makeConstraints { make in
-            make.width.equalToSuperview().dividedBy(width)
-            make.height.equalToSuperview().dividedBy(2.8)
-            make.top.equalTo(imageViewOne.snp.bottom).offset(16)
-            make.leading.equalTo(imageViewOne.snp.leading)
-        }
-        imageViewThree.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
-        imageViewThree.clipsToBounds = true
-        imageViewThree.layer.cornerRadius = 8
-        imageViewThree.contentMode = .center
-        imageViewThree.image = #imageLiteral(resourceName: "Empty_Image")
-
-        view.addSubview(imageViewFour)
-        imageViewFour.snp.makeConstraints { make in
-            make.width.equalToSuperview().dividedBy(width)
-            make.height.equalToSuperview().dividedBy(2.8)
-            make.top.equalTo(imageViewThree.snp.top)
-            make.trailing.equalTo(imageViewTwo.snp.trailing)
-        }
-        imageViewFour.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
-        imageViewFour.clipsToBounds = true
-        imageViewFour.layer.cornerRadius = 8
-        imageViewFour.contentMode = .center
-        imageViewFour.image = #imageLiteral(resourceName: "Empty_Image")
-
-        imageViews.append(imageViewOne)
-        imageViews.append(imageViewTwo)
-        imageViews.append(imageViewThree)
-        imageViews.append(imageViewFour)
-
-        var index = 0
-        for imageView in imageViews {
-            let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(self.openImageGallery(_:)))
-            imageView.addGestureRecognizer(tapGestureRecognizer)
-            imageView.isUserInteractionEnabled = true
-            imageView.tag = index
-            index = index + 1
-        }
-
-        imagePickerOne.delegate = self
-        imagePickerOne.sourceType = .savedPhotosAlbum
-        imagePickerOne.allowsEditing = false
-
-        imagePickerTwo.delegate = self
-        imagePickerTwo.sourceType = .savedPhotosAlbum
-        imagePickerTwo.allowsEditing = false
-
-        imagePickerThree.delegate = self
-        imagePickerThree.sourceType = .savedPhotosAlbum
-        imagePickerThree.allowsEditing = false
-
-        imagePickerFour.delegate = self
-        imagePickerFour.sourceType = .savedPhotosAlbum
-        imagePickerFour.allowsEditing = false
-
-        let button = CustomButton()
-        let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.finishTapped))
-        view.addSubview(button)
-        button.snp.makeConstraints { make in
-            make.width.equalToSuperview().inset(32)
-            make.height.equalTo(44)
-            make.bottom.equalToSuperview().inset(24)
-            make.centerX.equalToSuperview()
-        }
-        button.setTitle("Done", for: .normal)
-        button.setTitleColor(UIColor.white.withAlphaComponent(0.5), for: .highlighted)
-        button.addGestureRecognizer(buttonTap)
-    }
-
     private func startSpinner() {
         hud.textLabel.text = "Uploading. Please wait."
         hud.vibrancyEnabled = true

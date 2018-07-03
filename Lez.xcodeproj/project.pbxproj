@@ -10,6 +10,7 @@
 		45DBE120DB2CF8134A7D2A64 /* Pods_LezTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5479534E8388BF74902A4ED8 /* Pods_LezTests.framework */; };
 		4A69DF7863C96848F113BED7 /* Pods_LezUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C3787C470D6FE1A11C36B5D /* Pods_LezUITests.framework */; };
 		76A37FD28C40794876C735BB /* Pods_Lez.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DE15551B494E8923BB00C37 /* Pods_Lez.framework */; };
+		A562B95F20EB834F0006AA22 /* UIViewController+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A562B95E20EB834F0006AA22 /* UIViewController+Utility.swift */; };
 		CF04FAE3204161A7001CB034 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF04FAE2204161A7001CB034 /* User.swift */; };
 		CF0C3F052066F57D0033ECCA /* MatchAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = CF0C3F042066F57D0033ECCA /* MatchAnimation.json */; };
 		CF11E905209EF545007E3D1D /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF11E904209EF545007E3D1D /* Protocols.swift */; };
@@ -73,6 +74,7 @@
 		5479534E8388BF74902A4ED8 /* Pods_LezTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LezTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		6289310B6DFC1BDE0DC30898 /* Pods-LezUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests.debug.xcconfig"; sourceTree = "<group>"; };
 		8DF45BE7B5A2CA91BE149655 /* Pods-Lez.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lez.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Lez/Pods-Lez.debug.xcconfig"; sourceTree = "<group>"; };
+		A562B95E20EB834F0006AA22 /* UIViewController+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Utility.swift"; sourceTree = "<group>"; };
 		BC9ED1411460FBB7A8608D91 /* Pods-LezUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests.release.xcconfig"; sourceTree = "<group>"; };
 		BE9A5EDDC73AC30B43C2E7F1 /* Pods-Lez.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lez.release.xcconfig"; path = "Pods/Target Support Files/Pods-Lez/Pods-Lez.release.xcconfig"; sourceTree = "<group>"; };
 		CF04FAE2204161A7001CB034 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
@@ -255,6 +257,7 @@
 				CFA7842B20A9F2B4000DA074 /* SliderCell.swift */,
 				CFDAE34E20B8647A0084A845 /* DeleteCell.swift */,
 				CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */,
+				A562B95E20EB834F0006AA22 /* UIViewController+Utility.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -656,6 +659,7 @@
 				CF1C6C53206F631A0018DCD9 /* ImageGalleryViewController.swift in Sources */,
 				CF6CE927209CE12D00EED316 /* GetPremiumViewController.swift in Sources */,
 				CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */,
+				A562B95F20EB834F0006AA22 /* UIViewController+Utility.swift in Sources */,
 				CF11E905209EF545007E3D1D /* Protocols.swift in Sources */,
 				CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */,
 				CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */,

@@ -51,8 +51,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     private var seconds = 86400
     private var handle: AuthStateDidChangeListenerHandle?
     private let hud = JGProgressHUD(style: .dark)
-    private var pusher: Pusher!
-    private var options: PusherClientOptions!
+    private var pusher = Pusher(key: "b5bd116d3da803ac6d12", options: PusherClientOptions(host: .cluster("eu")))
     private var canLike: Bool!
     private var likesLeft: Int!
     private var timer = Timer()
@@ -65,8 +64,6 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
                 self.user = user
-                self.options = PusherClientOptions(host: .cluster("eu"))
-                self.pusher = Pusher(key: "b5bd116d3da803ac6d12", options: self.options)
                 self.pusher.connection.delegate = self
                 self.pusher.connect()
 
