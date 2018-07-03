@@ -13,7 +13,7 @@ import GBDeviceInfo
 // MARK: - Device Structure
 
 struct Device {
-    
+
     // MARK: - Singletons
     static var TheCurrentDevice: UIDevice {
         struct Singleton {
@@ -21,7 +21,7 @@ struct Device {
         }
         return Singleton.device
     }
-    
+
     static var TheCurrentDeviceVersion: Float {
         struct Singleton {
             static let version = Float(ProcessInfo().operatingSystemVersion.majorVersion) + Float(ProcessInfo().operatingSystemVersion.minorVersion)/10
@@ -37,7 +37,7 @@ struct Device {
     }
     
     // MARK: - Device Idiom Checks
-    
+
     static var PHONE_OR_PAD: String {
         if isPhone() {
             return "iPhone"
@@ -291,7 +291,7 @@ struct Device {
     static func IS_4_7_INCHES() -> Bool {
         return isPhone() && isSize(height: .Inches_4_7)
     }
-    
+
     static func IS_4_7_INCHES_OR_LARGER() -> Bool {
         return isPhone() && isSizeOrLarger(height: .Inches_4_7)
     }
@@ -315,7 +315,7 @@ struct Device {
     }
     
     // MARK: - International Checks
-    
+
     static var CURRENT_REGION: String {
         return (Locale.current as NSLocale).object(forKey: .countryCode) as! String
     }

@@ -14,8 +14,8 @@ import SwiftDate
 import Alamofire
 import Spring
 
-class MessagesViewController: UIViewController {
-    
+final class MessagesViewController: UIViewController {
+
     // Mark: - Properties
     var chatUid: String!
     var participants: [User] = [User]()
@@ -30,61 +30,48 @@ class MessagesViewController: UIViewController {
     private var herUid: String!
     private var name: String!
     private var viewFrame = CGRect()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .black
         self.hideKeyboard()
         myUid = Auth.auth().currentUser?.uid
         for participant in participants {
-            if participant.uid != myUid {
-                herUid = participant.uid
-                navigationItem.title = participant.name
-                let filterButton = UIButton(type: .custom)
-                filterButton.setImage(UIImage(named: "Dots"), for: .normal)
-                filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-                filterButton.addTarget(self, action: #selector(self.menuTapped), for: .touchUpInside)
-                let rightItem = UIBarButtonItem(customView: filterButton)
-                navigationItem.setRightBarButtonItems([rightItem], animated: true)
-            } else {
-                name = participant.name
-            }
+            guard participant.uid == myUid else { name = participant.name; continue }
+            herUid = participant.uid
+            navigationItem.title = participant.name
+            let filterButton = UIButton(type: .custom)
+            filterButton.setImage(#imageLiteral(resourceName: "Dots"), for: .normal)
+            filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
+            filterButton.addTarget(self, action: #selector(self.menuTapped), for: .primaryActionTriggered)
+            let rightItem = UIBarButtonItem(customView: filterButton)
+            navigationItem.setRightBarButtonItems([rightItem], animated: true)
         }
-        
+
         setupTextField()
         setupTableView()
-        
+
         let ref = Firestore.firestore().collection("chats").document(chatUid)
-        ref.getDocument { (document, error) in
-            if let document = document {
-                FirestoreManager.shared.parseFirebaseChat(document: document).then({ (chat) in
-                    guard let data = document.data() else { return }
-                    guard let isDisabled = data["isDisabled"] as? Bool else {
-                        print("Problem with parsing isDisabled.")
-                        return
-                    }
-                    if isDisabled {
-                        self.textFieldContainer.isHidden = true
-                    } else {
-                        self.textFieldContainer.isHidden = false
-                        Firestore.firestore().collection("chats").document(self.chatUid).collection("messages").order(by: "created").addSnapshotListener { (document, error) in
-                            guard let document = document else {
-                                print("Error fetching document: \(error!)")
-                                return
-                            }
-                            self.populateMessages(document: document)
-                        }
-                    }
-                })
-            } else {
-                print("Document does not exist")
-            }
+        ref.getDocument { document, error in
+            guard let document = document else { print("Document does not exist"); return }
+            FirestoreManager.shared.parseFirebaseChat(document: document).then({ chat in
+                guard let data = document.data() else { return }
+                guard let isDisabled = data["isDisabled"] as? Bool else {
+                    print("Problem with parsing isDisabled."); return
+                }
+                guard !isDisabled else { self.textFieldContainer.isHidden = true; return }
+                self.textFieldContainer.isHidden = false
+                Firestore.firestore().collection("chats").document(self.chatUid).collection("messages").order(by: "created").addSnapshotListener { document, error in
+                    guard let document = document else { print("Error fetching document: \(error!)"); return }
+                    self.populateMessages(document: document)
+                }
+            })
         }
         
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
+        super.viewWillDisappear(animated)
         removeKeyboardObservers()
     }
     
@@ -94,8 +81,8 @@ class MessagesViewController: UIViewController {
     }
 
     func addKeyboardObservers() {
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: NSNotification.Name.UIKeyboardWillShow, object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: NSNotification.Name.UIKeyboardWillHide, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillShow(_:)), name: .UIKeyboardWillShow, object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: .UIKeyboardWillHide, object: nil)
     }
     
     func removeKeyboardObservers() {
@@ -106,11 +93,9 @@ class MessagesViewController: UIViewController {
     @objc func sendMessage() {
         if textField.text != "" {
             if let text = textField.text {
-                let data:   [String: Any] = [
-                    "created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
-                    "from": myUid,
-                    "message": text
-                ]
+                let data: [String: Any] = ["created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
+                                           "from": myUid,
+                                           "message": text]
                 FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
                     self.textField.text = ""
                     let parameters: Parameters = ["channel": self.herUid!, "event": Events.newMessage.rawValue, "message": "\(self.name!) sent message"]
@@ -133,7 +118,7 @@ class MessagesViewController: UIViewController {
 //
 //        })
         if self.textField.isFirstResponder {
-//            view.snp.updateConstraints { (make) in
+//            view.snp.updateConstraints { make in
 //                make.height.equalTo(view.frame.height - height)
 //                make.width.equalToSuperview()
 //            }
@@ -143,16 +128,14 @@ class MessagesViewController: UIViewController {
             view.layoutIfNeeded()
             scrollToLast()
         }
-//        self.textFieldContainer.snp.updateConstraints({ (make) in
-//            make.bottom.equalTo(-1 * height)
-//        })
+//        self.textFieldContainer.snp.updateConstraints { make in make.bottom.equalTo(-1 * height) }
 //        self.textFieldContainer.superview?.layoutIfNeeded()
     }
     
     @objc func keyboardWillHide(_ notification: NSNotification) {
-        UIView.animate(withDuration: 0.1, animations: { () -> Void in
+        UIView.animate(withDuration: 0.1) {
             self.view.frame = CGRect(x: 0, y: 64, width: self.viewFrame.width, height: self.viewFrame.height)
-        })
+        }
     }
     
     @objc private func menuTapped() {
@@ -160,41 +143,36 @@ class MessagesViewController: UIViewController {
             .actions(["Block and Delete"])
             .action(.cancel("Cancel"))
             .finally { action, index in
-                if action.style == .cancel {
-                    return
-                }
+                if action.style == .cancel { return }
                 if index == 0 {
                     Alertift.alert(message: "Blocked")
                         .action(.default("Okay"), handler: { (_, _, _) in
                             // Flag chat as isDisabled
-                            Firestore.firestore().collection("chats").document(self.chatUid).updateData(["isDisabled": true], completion: { (error) in
-                                if let error = error {
-                                    print(error.localizedDescription)
-                                }
+                            Firestore.firestore().collection("chats").document(self.chatUid).updateData(["isDisabled": true]) { error in
+                                if let error = error { print(error.localizedDescription) }
                                 // Now update user values
-                                FirestoreManager.shared.fetchUser(uid: self.myUid).then({ (user) in
+                                FirestoreManager.shared.fetchUser(uid: self.myUid).then({ user in
                                     var blockedUsersArray: [String] = user.blockedUsers!
                                     blockedUsersArray.append(self.herUid)
      
-                                    let data: [String: Any] = [
-                                        "blockedUsers": blockedUsersArray,
-                                    ]
+                                    let data: [String: Any] = ["blockedUsers": blockedUsersArray,]
                                     
-                                    FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ (success) in
+                                    FirestoreManager.shared.updateUser(uid: user.uid, data: data).then({ success in
                                         if success {
                                             self.navigationController?.popToRootViewController(animated: true)
                                         } else {
-                                            self.showOkayModal(messageTitle: "Error happened", messageAlert: "Blocking failed. Please, try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+                                            self.showOkayModal(messageTitle: "Error happened", messageAlert: "Blocking failed. Please, try again.",
+                                                               messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
                                         }
                                     })
                                 })
-                            })
+                            }
                             
                         })
                         .show()
                 }
             }
-            .show(on: self, completion: nil)
+            .show(on: self)
     }
     
     func populateMessages(document: QuerySnapshot) {
@@ -202,32 +180,27 @@ class MessagesViewController: UIViewController {
         let group = DispatchGroup()
         for message in document.documents {
             group.enter()
-            FirestoreManager.shared.parseMessage(document: message).then({ (message) in
+            FirestoreManager.shared.parseMessage(document: message).then({ message in
                 messages.append(message)
                 group.leave()
             })
         }
-        group.notify(queue: .main, execute: {
-            self.scroll(messages: messages)
-        })
+        group.notify(queue: .main, execute: { self.scroll(messages: messages) })
     }
     
     func scroll(messages: [Message]) {
-        if messages.isEmpty {
-            print("No messages.")
+        guard !messages.isEmpty else { print("No messages."); return }
+        if messages.count > 7 {
+            self.messages.removeAll()
+            self.messages = messages
+            self.tableView.reloadData()
+            self.tableView.setNeedsLayout()
+            scrollToLast()
         } else {
-            if messages.count > 7 {
-                self.messages.removeAll()
-                self.messages = messages
-                self.tableView.reloadData()
-                self.tableView.setNeedsLayout()
-                scrollToLast()
-            } else {
-                self.messages.removeAll()
-                self.messages = messages
-                self.tableView.reloadData()
-                self.tableView.setNeedsLayout()
-            }
+            self.messages.removeAll()
+            self.messages = messages
+            self.tableView.reloadData()
+            self.tableView.setNeedsLayout()
         }
     }
     
@@ -329,7 +302,7 @@ extension MessagesViewController: UITextFieldDelegate {
 extension MessagesViewController {
     func setupTextField() {
         view.addSubview(textFieldContainer)
-        textFieldContainer.snp.makeConstraints { (make) in
+        textFieldContainer.snp.makeConstraints { make in
             make.height.equalTo(50)
             make.width.equalToSuperview()
             make.bottom.equalToSuperview()
@@ -337,32 +310,32 @@ extension MessagesViewController {
         }
         
         textFieldContainer.addSubview(sendButton)
-        sendButton.snp.makeConstraints { (make) in
-            make.right.equalToSuperview()
+        sendButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
             make.top.bottom.equalToSuperview()
             make.width.equalTo(60)
         }
         sendButton.setTitle("Send", for: .normal)
-        sendButton.addTarget(self, action: #selector(self.sendMessage), for: .touchUpInside)
+        sendButton.addTarget(self, action: #selector(self.sendMessage), for: .primaryActionTriggered)
         sendButton.setTitleColor(UIColor(red:0.95, green:0.67, blue:0.24, alpha:1.00), for: .normal)
         
         textField.placeholder = "Say something nice..."
-        textField.font = UIFont.systemFont(ofSize: 16)
-        textField.autocorrectionType = UITextAutocorrectionType.no
-        textField.keyboardType = UIKeyboardType.default
-        textField.returnKeyType = UIReturnKeyType.done
-        textField.clearButtonMode = UITextFieldViewMode.whileEditing
-        textField.contentVerticalAlignment = UIControlContentVerticalAlignment.center
+        textField.font = .systemFont(ofSize: 16)
+        textField.autocorrectionType = .no
+        textField.keyboardType = .default
+        textField.returnKeyType = .done
+        textField.clearButtonMode = .whileEditing
+        textField.contentVerticalAlignment = .center
         textField.delegate = self
         textFieldContainer.addSubview(textField)
-        textField.snp.makeConstraints { (make) in
+        textField.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
-            make.left.equalToSuperview().offset(16)
-            make.right.equalTo(sendButton.snp.left).offset(-16)
+            make.leading.equalToSuperview().offset(16)
+            make.trailing.equalTo(sendButton.snp.left).offset(-16)
         }
         
         textFieldContainer.addSubview(topBorderView)
-        topBorderView.snp.makeConstraints { (make) in
+        topBorderView.snp.makeConstraints { make in
             make.height.equalTo(1)
             make.width.equalToSuperview()
             make.top.equalToSuperview()
@@ -377,8 +350,8 @@ extension MessagesViewController {
         tableView.dataSource = self
         
         view.addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview()
+        tableView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
             make.bottom.equalTo(textField.snp.top)
         }
@@ -395,10 +368,8 @@ extension MessagesViewController {
 
 extension UIViewController {
     func hideKeyboard() {
-        let tap: UITapGestureRecognizer = UITapGestureRecognizer(
-            target: self,
-            action: #selector(UIViewController.dismissKeyboard))
-        view.addGestureRecognizer(tap)
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self,
+                                                         action: #selector(UIViewController.dismissKeyboard)))
     }
     
     @objc func dismissKeyboard() {

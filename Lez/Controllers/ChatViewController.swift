@@ -16,10 +16,10 @@ import SwiftyJSON
 import PusherSwift
 import Alertift
 
-class ChatViewController: UIViewController {
-    
+final class ChatViewController: UIViewController {
+
     // Mark: - Properties
-    
+
     private let tableView = UITableView()
     private var sections: [ChatSections] = []
     private var uid: String!
@@ -31,7 +31,7 @@ class ChatViewController: UIViewController {
     private let noChatsBackground = UIImageView()
     private let noChatsTitle = UILabel()
     private let noChatsDescription = UILabel()
-    
+
     // Mark: - Lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,89 +40,81 @@ class ChatViewController: UIViewController {
         setupTableView()
         setupNoChats()
     }
-    
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         DefaultsManager.shared.save(number: 0)
-        
+
         guard let currentUser = Auth.auth().currentUser else { return }
         self.uid = currentUser.uid
-        
+
         if let tabItems = self.tabBarController?.tabBar.items as NSArray? {
             let tabItem = tabItems[1] as! UITabBarItem
             tabItem.badgeValue = nil
         }
-        
+
         // Listener if you get a new chat
         Firestore.firestore().collection("users").document(uid)
             .addSnapshotListener { querySnapshot, error in
-                guard let _ = querySnapshot?.data() else {
-                    print("Error fetching documents: \(error!)")
-                    return
-                }
-                // Add a badge
-                self.fetchChats()
+                guard let _ = querySnapshot?.data() else { print("Error fetching documents: \(error!)"); return }
+                self.fetchChats() // Add a badge
         }
-        
+
         // Listener for your chats
         Firestore.firestore().collection("chats").whereField("participants.\(uid!)", isEqualTo: true)
             .addSnapshotListener { querySnapshot, error in
-                guard let _ = querySnapshot?.documents else {
-                    print("Error fetching documents: \(error!)")
-                    return
-                }
-                // Add a badge
-                self.fetchChats()
+                guard let _ = querySnapshot?.documents else { print("Error fetching documents: \(error!)"); return }
+                self.fetchChats() // Add a badge
         }
     }
-    
+
     // Mark: - Methods
-    
+
     private func setupNoChats() {
         view.addSubview(noChatsBackground)
-        noChatsBackground.snp.makeConstraints { (make) in
+        noChatsBackground.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
-            make.right.left.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
         }
-        noChatsBackground.image = UIImage(named: "No_Chats_Background")
+        noChatsBackground.image = #imageLiteral(resourceName: "No_Chats_Background")
         noChatsBackground.contentMode = .scaleAspectFill
         noChatsBackground.clipsToBounds = true
-        
+
         view.addSubview(noChatsTitle)
-        noChatsTitle.snp.makeConstraints { (make) in
+        noChatsTitle.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(view.frame.height / 3.0)
             make.centerX.equalToSuperview()
         }
         noChatsTitle.text = "No Chats"
-        noChatsTitle.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
-        
+        noChatsTitle.font = .systemFont(ofSize: 28, weight: .heavy)
+
         view.addSubview(noChatsDescription)
-        noChatsDescription.snp.makeConstraints { (make) in
+        noChatsDescription.snp.makeConstraints { make in
             make.top.equalTo(noChatsTitle.snp.bottom).offset(8)
-            make.left.equalToSuperview().offset(32)
-            make.right.equalToSuperview().inset(32)
+            make.leading.equalToSuperview().offset(32)
+            make.trailing.equalToSuperview().inset(32)
         }
         noChatsDescription.text = "Better get to liking. You can chat with matched lesbians here."
         noChatsDescription.numberOfLines = 2
-        noChatsDescription.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        noChatsDescription.font = .systemFont(ofSize: 21, weight: .medium)
         noChatsDescription.textAlignment = .center
-        
+
         hideEmptyState()
     }
-    
+
     private func hideEmptyState() {
         noChatsBackground.isHidden = true
         noChatsTitle.isHidden = true
         noChatsDescription.isHidden = true
     }
-    
+
     private func showEmptyState() {
         noChatsBackground.isHidden = false
         noChatsTitle.isHidden = false
         noChatsDescription.isHidden = false
     }
-    
+
     @objc fileprivate func refreshChats(_ sender: Any) {
         fetchChats()
     }
@@ -130,13 +122,12 @@ class ChatViewController: UIViewController {
     fileprivate func fetchChats() {
         guard let currentUser = Auth.auth().currentUser else { return }
         uid = currentUser.uid
-        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
             guard let chats = user.chats else { return }
             if chats.count > 0 {
-                FirestoreManager.shared.fetchChats(chats: chats).then({ (chats) in
+                FirestoreManager.shared.fetchChats(chats: chats).then({ chats in
                     self.emptyChats.removeAll()
                     self.existingChats.removeAll()
-                    
                     for chat in chats {
                         if chat.messages == nil {
                             self.emptyChats.append(chat)
@@ -144,12 +135,11 @@ class ChatViewController: UIViewController {
                             self.existingChats.append(chat)
                         }
                     }
-                    
-                    self.existingChats.sort(by: { (a, b) -> Bool in
+                    self.existingChats.sort(by: { a, b -> Bool in
                         a.lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))! > b.lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))!
                     })
                     
-                    self.emptyChats.sort(by: { (a, b) -> Bool in
+                    self.emptyChats.sort(by: { a, b -> Bool in
                         a.lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))! > b.lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))!
                     })
                     self.hideEmptyState()
@@ -178,7 +168,7 @@ class ChatViewController: UIViewController {
     private func setupNavigationBar() {
         navigationItem.title = "Chats & Matches"
         navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.setBackgroundImage(UIImage(named: "White"), for: UIBarMetrics.default)
+        navigationController?.navigationBar.setBackgroundImage(#imageLiteral(resourceName: "White"), for: .default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.layer.masksToBounds = false
         navigationController?.navigationBar.layer.shadowColor = UIColor(red:0.90, green:0.90, blue:0.90, alpha:1.00).cgColor
@@ -192,8 +182,8 @@ class ChatViewController: UIViewController {
         tableView.dataSource = self
         
         view.addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
-            make.bottom.left.right.equalToSuperview()
+        tableView.snp.makeConstraints { make in
+            make.bottom.leading.trailing.equalToSuperview()
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
         }
         tableView.backgroundColor = .white
@@ -212,27 +202,15 @@ class ChatViewController: UIViewController {
 
 extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     func numberOfSections(in tableView: UITableView) -> Int {
-        if emptyChats.isEmpty {
-            return 1
-        } else {
-            if existingChats.isEmpty {
-                return 1
-            } else {
-                return 2
-            }
-        }
+        guard !emptyChats.isEmpty else { return 1 }
+        guard existingChats.isEmpty else { return 2 }
+        return 1
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if emptyChats.isEmpty {
-            return existingChats.count
-        } else {
-            if section == 0 {
-                return emptyChats.count
-            } else {
-                return existingChats.count
-            }
-        }
+        guard !emptyChats.isEmpty else { return existingChats.count }
+        guard section == 0 else { return existingChats.count }
+        return emptyChats.count
     }
     
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
@@ -244,13 +222,8 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-        if emptyChats.isEmpty {
-            return "Chats"
-        } else {
-            if section < headerTitles.count {
-                return headerTitles[section]
-            }
-        }
+        guard !emptyChats.isEmpty else { return "Chats" }
+        if section < headerTitles.count { return headerTitles[section] }
         return nil
     }
     
@@ -267,22 +240,19 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             var messages = [Message]()
             let group = DispatchGroup()
             let docRef = Firestore.firestore().collection("chats").document(chatUid).collection("messages").order(by: "created")
-            docRef.getDocuments { (snapshot, error) in
+            docRef.getDocuments { snapshot, error in
                 guard let document = snapshot else {
                     print("Error fetching document: \(error!)")
-                    reject(error!)
-                    return
+                    reject(error!); return
                 }
                 for message in document.documents {
                     group.enter()
-                    FirestoreManager.shared.parseMessage(document: message).then({ (message) in
+                    FirestoreManager.shared.parseMessage(document: message).then({ message in
                         messages.append(message)
                         group.leave()
                     })
                 }
-                group.notify(queue: .main, execute: {
-                    fulfill(messages)
-                })
+                group.notify(queue: .main, execute: { fulfill(messages) })
             }
         }
     }
@@ -294,21 +264,19 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
             let chatCell = tableView.dequeueReusableCell(withIdentifier: ChatCell.reuseID) as! ChatCell
             var notMe: User?
             for participant in existingChats[indexPath.row].participants {
-                if participant.uid != uid {
-                    notMe = participant
-                }
+                if participant.uid != uid { notMe = participant }
             }
             chatCell.layer.backgroundColor = UIColor.white.cgColor
             chatCell.isUserInteractionEnabled = true
             chatCell.titleLabel.text = notMe?.name
             chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
-            chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
+            chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: #imageLiteral(resourceName: "Placeholder_Image"))
             if existingChats[indexPath.row].isDisabled {
                 chatCell.isUserInteractionEnabled = false
                 chatCell.layer.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:0.3).cgColor
                 chatCell.messageLabel.text = "Deleted"
             } else {
-                self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ (messages) in
+                self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ messages in
                     chatCell.messageLabel.text = messages.last!.message
                 })
             }
@@ -318,12 +286,10 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 let newChatCell = tableView.dequeueReusableCell(withIdentifier: NewChatCell.reuseID) as! NewChatCell
                 var notMe: User?
                 for participant in emptyChats[indexPath.row].participants {
-                    if participant.uid != uid {
-                        notMe = participant
-                    }
+                    if participant.uid != uid { notMe = participant }
                 }
                 newChatCell.titleLabel.text = notMe?.name
-                newChatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
+                newChatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: #imageLiteral(resourceName: "Placeholder_Image"))
                 newChatCell.isUserInteractionEnabled = true
                 newChatCell.alpha = 1
                 cell = newChatCell
@@ -331,35 +297,30 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 let chatCell = tableView.dequeueReusableCell(withIdentifier: ChatCell.reuseID) as! ChatCell
                 var notMe: User?
                 for participant in existingChats[indexPath.row].participants {
-                    if participant.uid != uid {
-                        notMe = participant
-                    }
+                    if participant.uid != uid { notMe = participant }
                 }
-                
                 chatCell.layer.backgroundColor = UIColor.white.cgColor
                 chatCell.isUserInteractionEnabled = true
                 chatCell.titleLabel.text = notMe?.name
                 chatCell.timeLabel.text = existingChats[indexPath.row].lastUpdated.date(format: .custom("yyyy-MM-dd HH:mm:ss"))?.colloquialSinceNow()
-                chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: UIImage(named: "Placeholder_Image"))
+                chatCell.userPictureView.sd_setImage(with: URL(string: notMe!.images.first!.url), placeholderImage: #imageLiteral(resourceName: "Placeholder_Image"))
                 if existingChats[indexPath.row].isDisabled {
                     chatCell.isUserInteractionEnabled = false
                     chatCell.layer.backgroundColor = UIColor(red:0.84, green:0.84, blue:0.84, alpha:0.3).cgColor
                     chatCell.messageLabel.text = "Deleted"
                 } else {
-                    self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ (messages) in
+                    self.showLastMessage(chatUid: self.existingChats[indexPath.row].uid).then({ messages in
                         chatCell.messageLabel.text = messages.last!.message
                     })
                 }
                 cell = chatCell
             }
         }
-        
         return cell
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let messagesViewController = MessagesViewController()
-        
         if emptyChats.isEmpty {
             messagesViewController.participants = existingChats[indexPath.row].participants
             messagesViewController.chatUid = existingChats[indexPath.row].uid
@@ -372,7 +333,7 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
                 messagesViewController.chatUid = existingChats[indexPath.row].uid
             }
         }
-        
+
         messagesViewController.hidesBottomBarWhenPushed = true
         messagesViewController.view.backgroundColor = .white
         let backButton = UIBarButtonItem(title: "Back", style: .plain, target: nil, action: nil)
@@ -380,7 +341,5 @@ extension ChatViewController: UITableViewDelegate, UITableViewDataSource {
         navigationController?.pushViewController(messagesViewController, animated: true)
     }
     
-    @objc func goToChat(row: Int) {
-
-    }
+    @objc func goToChat(row: Int) { }
 }

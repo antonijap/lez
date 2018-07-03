@@ -102,7 +102,7 @@ import JGProgressHUD
 //                self.delegate?.shouldRefresh = true
 //                self.navigationController?.popViewController(animated: true)
 //            } else {
-//                self.showOkayModal(messageTitle: "Error Happened", messageAlert: "Something went wrong with saving images. Try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+//                self.showOkayModal(messageTitle: "Error Happened", messageAlert: "Something went wrong with saving images. Try again.", messageBoxStyle: .alert, alertActionStyle: .default)
 //            }
 //        }
 //    }
@@ -145,9 +145,9 @@ import JGProgressHUD
 //        FirestoreManager.shared.addUser(uid: self.user.uid, data: data).then { (success) in
 //            if success {
 //                self.stopSpinner()
-//                self.dismiss(animated: true, completion: nil)
+//                self.dismiss(animated: true)
 //            } else {
-//                self.showOkayModal(messageTitle: "Profile Image", messageAlert: "All profiles must have at least a profile image.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
+//                self.showOkayModal(messageTitle: "Profile Image", messageAlert: "All profiles must have at least a profile image.", messageBoxStyle: .alert, alertActionStyle: .default)
 //            }
 //        }
 //    }
@@ -296,7 +296,7 @@ import JGProgressHUD
 //                }
 //                if index == 0 {
 //                    self.imageGalleryPickerController.delegate = self
-//                    self.present(self.imageGalleryPickerController, animated: true, completion: nil)
+//                    self.present(self.imageGalleryPickerController, animated: true)
 //                }
 //                if index == 1 {
 //                    self.profileImageView.image = UIImage(named: "Add Image")
@@ -315,7 +315,7 @@ import JGProgressHUD
 //                }
 //                if index == 0 {
 //                    self.profileImagePickerController.delegate = self
-//                    self.present(self.profileImagePickerController, animated: true, completion: nil)
+//                    self.present(self.profileImagePickerController, animated: true)
 //                }
 //                if index == 1 {
 //                    self.profileImageView.image = UIImage(named: "Add Image")
@@ -332,7 +332,7 @@ import JGProgressHUD
 //        }
 //        
 //        let lightbox = LightboxController(images: lightboxImages, startIndex: 0)
-//        imagePicker.present(lightbox, animated: true, completion: nil)
+//        imagePicker.present(lightbox, animated: true)
 //    }
 //    
 //    func doneButtonDidPress(_ imagePicker: ImagePickerController, images: [UIImage]) {
@@ -356,11 +356,11 @@ import JGProgressHUD
 //            }
 //        }
 //   
-//        imagePicker.dismiss(animated: true, completion: nil)
+//        imagePicker.dismiss(animated: true)
 //    }
 //    
 //    func cancelButtonDidPress(_ imagePicker: ImagePickerController) {
-//        imagePicker.dismiss(animated: true, completion: nil)
+//        imagePicker.dismiss(animated: true)
 //    }
 //    
 //    func setupView() {
@@ -376,7 +376,7 @@ import JGProgressHUD
 //
 ////        profileImageView = CustomImageView()
 ////        view.addSubview(profileImageView)
-////        profileImageView.snp.makeConstraints { (make) in
+////        profileImageView.snp.makeConstraints { make in
 ////            make.size.equalTo(148)
 ////            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(16)
 ////            make.centerX.equalToSuperview()
@@ -389,7 +389,7 @@ import JGProgressHUD
 //        let container = UIView()
 //        view.addSubview(container)
 //        let x = view.frame.width * 0.6
-//        container.snp.makeConstraints { (make) in
+//        container.snp.makeConstraints { make in
 //            make.width.equalToSuperview().inset(16)
 //            make.height.equalTo(x)
 //            make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).offset(16)
@@ -400,7 +400,7 @@ import JGProgressHUD
 //        
 //        imageView = CustomImageView()
 //        container.addSubview(imageView)
-//        imageView.snp.makeConstraints { (make) in
+//        imageView.snp.makeConstraints { make in
 //            make.width.equalToSuperview().dividedBy(2.1)
 //            make.height.equalToSuperview()
 //            make.centerY.equalToSuperview()
@@ -414,7 +414,7 @@ import JGProgressHUD
 //
 //        imageView2 = CustomImageView()
 //        container.addSubview(imageView2)
-//        imageView2.snp.makeConstraints { (make) in
+//        imageView2.snp.makeConstraints { make in
 //            make.width.equalToSuperview().dividedBy(2.1)
 //            make.height.equalToSuperview()
 //            make.centerY.equalToSuperview()
@@ -429,7 +429,7 @@ import JGProgressHUD
 //        let button = CustomButton()
 //        let buttonTap = UITapGestureRecognizer(target: self, action: #selector(self.buttonTapped(_:)))
 //        view.addSubview(button)
-//        button.snp.makeConstraints { (make) in
+//        button.snp.makeConstraints { make in
 //            make.width.equalToSuperview().inset(32)
 //            make.height.equalTo(44)
 //            make.bottom.equalToSuperview().inset(32)

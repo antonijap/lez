@@ -34,52 +34,23 @@ protocol ReuseIdentifiable {
     static var reuseID: String { get }
 }
 
-extension MatchCell: ReuseIdentifiable {
+extension ReuseIdentifiable { // Default implementation of ReuseIdentifiable
     static var reuseID: String { return String(describing: self) }
 }
 
+extension MatchCell: ReuseIdentifiable {}
+extension MyMessageCell: ReuseIdentifiable {}
+extension HerMessageCell: ReuseIdentifiable {}
+extension NewChatCell: ReuseIdentifiable {}
+extension ChatCell: ReuseIdentifiable {}
+extension ProfileImagesCell: ReuseIdentifiable {}
+extension TitleWithDescriptionCell: ReuseIdentifiable {}
+extension HeaderCell: ReuseIdentifiable {}
+extension SimpleMenuCell: ReuseIdentifiable {}
+extension IconMenuCell: ReuseIdentifiable {}
+extension PremiumMenuCell: ReuseIdentifiable {}
 
-extension MyMessageCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-extension HerMessageCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-extension NewChatCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-extension ChatCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-extension ProfileImagesCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-extension TitleWithDescriptionCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-extension HeaderCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-extension SimpleMenuCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-extension IconMenuCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-extension PremiumMenuCell: ReuseIdentifiable {
-    static var reuseID: String { return String(describing: self) }
-}
-
-class MatchCell: UITableViewCell {
+final class MatchCell: UITableViewCell {
     var userImageView = UIImageView()
     var nameAndAgeLabel = UILabel()
     var locationLabel = UILabel()
@@ -104,11 +75,11 @@ class MatchCell: UITableViewCell {
         selectionStyle = .none
         let x = frame.width * 1.6
         addSubview(userImageView)
-        userImageView.snp.makeConstraints { (make) in
+        userImageView.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.bottom.equalToSuperview().priority(999)
-            make.left.equalToSuperview().offset(8)
-            make.right.equalToSuperview().inset(8)
+            make.leading.equalToSuperview().offset(8)
+            make.trailing.equalToSuperview().inset(8)
             make.height.equalTo(x)
         }
         userImageView.contentMode = .scaleAspectFill
@@ -116,26 +87,26 @@ class MatchCell: UITableViewCell {
         userImageView.clipsToBounds = true
         
         addSubview(locationLabel)
-        locationLabel.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().inset(24)
+        locationLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(24)
             make.bottom.equalToSuperview().inset(24)
         }
         locationLabel.textColor = .white
         
         addSubview(nameAndAgeLabel)
-        nameAndAgeLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(locationLabel.snp.left)
+        nameAndAgeLabel.snp.makeConstraints { make in
+            make.leading.equalTo(locationLabel.snp.leading)
             make.bottom.equalTo(locationLabel.snp.top).offset(-3)
         }
         nameAndAgeLabel.textColor = .white
         
         addSubview(likeButton)
-        likeButton.snp.makeConstraints { (make) in
+        likeButton.snp.makeConstraints { make in
             make.width.height.equalTo(44)
-            make.right.equalToSuperview().inset(24)
+            make.trailing.equalToSuperview().inset(24)
             make.bottom.equalTo(locationLabel.snp.bottom)
         }
-        likeButton.setImage(UIImage(named: "Like_Disabled"), for: .normal)
+        likeButton.setImage(#imageLiteral(resourceName: "Like_Disabled"), for: .normal)
     }
     
     private func addShadow() {
@@ -152,7 +123,7 @@ class MatchCell: UITableViewCell {
     }
 }
 
-class MyMessageCell: UITableViewCell {
+final class MyMessageCell: UITableViewCell {
     var messageLabel = UILabel()
     var bubbleView = UIView()
     var timeLabel = UILabel()
@@ -170,8 +141,8 @@ class MyMessageCell: UITableViewCell {
     
     func setupTimeLabel() {
         addSubview(timeLabel)
-        timeLabel.snp.makeConstraints { (make) in
-            make.right.equalToSuperview().inset(8)
+        timeLabel.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(8)
             make.bottom.equalToSuperview().inset(8)
         }
         timeLabel.textColor = .gray
@@ -181,11 +152,11 @@ class MyMessageCell: UITableViewCell {
     
     func setupBubbleView() {
         addSubview(bubbleView)
-        bubbleView.snp.makeConstraints { (make) in
+        bubbleView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(4)
-            make.right.equalToSuperview().inset(8)
+            make.trailing.equalToSuperview().inset(8)
             make.bottom.equalTo(timeLabel.snp.top).inset(-4)
-            make.left.equalToSuperview().inset(70)
+            make.leading.equalToSuperview().inset(70)
         }
         bubbleView.backgroundColor = UIColor(red:0.33, green:0.33, blue:0.33, alpha:1.00)
         bubbleView.layer.cornerRadius = 10
@@ -195,16 +166,14 @@ class MyMessageCell: UITableViewCell {
     
     func setupMessage() {
         bubbleView.addSubview(messageLabel)
-        messageLabel.snp.makeConstraints { (make) in
-            make.top.bottom.left.right.equalToSuperview().inset(8)
-        }
+        messageLabel.snp.makeConstraints { make in make.top.bottom.leading.trailing.equalToSuperview().inset(8) }
         messageLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
         messageLabel.numberOfLines = 100
         messageLabel.textColor = .white
     }
 }
 
-class HerMessageCell: UITableViewCell {
+final class HerMessageCell: UITableViewCell {
     var messageLabel = UILabel()
     var bubbleView = UIView()
     var timeLabel = UILabel()
@@ -222,31 +191,26 @@ class HerMessageCell: UITableViewCell {
     
     func setupTimeLabel() {
         addSubview(timeLabel)
-        timeLabel.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().inset(8)
-            make.bottom.equalToSuperview().inset(8)
-        }
+        timeLabel.snp.makeConstraints { make in make.leading.bottom.equalToSuperview().inset(8) }
         timeLabel.textColor = .gray
-        timeLabel.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        timeLabel.font = .systemFont(ofSize: 12, weight: .regular)
         timeLabel.text = "Time"
     }
     
     func setupMessage() {
         bubbleView.addSubview(messageLabel)
-        messageLabel.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview().inset(8)
-        }
-        messageLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
+        messageLabel.snp.makeConstraints { make in make.edges.equalToSuperview().inset(8) }
+        messageLabel.font = .systemFont(ofSize: 16.0, weight: .regular)
         messageLabel.numberOfLines = 100
     }
     
     func setupBubbleView() {
         addSubview(bubbleView)
-        bubbleView.snp.makeConstraints { (make) in
+        bubbleView.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(4)
-            make.left.equalToSuperview().inset(8)
+            make.leading.equalToSuperview().inset(8)
             make.bottom.equalTo(timeLabel.snp.top).inset(-4)
-            make.right.equalToSuperview().inset(70)
+            make.trailing.equalToSuperview().inset(70)
         }
         bubbleView.backgroundColor = UIColor(red:0.97, green:0.97, blue:0.97, alpha:1.00)
         bubbleView.layer.cornerRadius = 10
@@ -256,7 +220,7 @@ class HerMessageCell: UITableViewCell {
     }
 }
 
-class NewChatCell: UITableViewCell {
+final class NewChatCell: UITableViewCell {
     var userPictureView = UIImageView()
     var titleLabel = UILabel()
     let separatorView = UIView()
@@ -279,10 +243,9 @@ class NewChatCell: UITableViewCell {
     
     func setupUserPictureView() {
         addSubview(userPictureView)
-        userPictureView.snp.makeConstraints { (make) in
+        userPictureView.snp.makeConstraints { make in
             make.size.equalTo(48)
-            make.left.equalToSuperview().inset(16)
-            make.top.equalToSuperview().inset(16)
+            make.top.leading.equalToSuperview().inset(16)
         }
         userPictureView.backgroundColor = .gray
         userPictureView.layer.cornerRadius = 48 / 2
@@ -292,19 +255,19 @@ class NewChatCell: UITableViewCell {
     
     func setupNameLabel() {
         addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(userPictureView.snp.right).offset(16)
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(userPictureView.snp.right).offset(16)
             make.top.equalTo(userPictureView.snp.top)
-            make.right.equalToSuperview().inset(80)
+            make.trailing.equalToSuperview().inset(80)
         }
-        titleLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: 16.0, weight: .bold)
     }
     
     func setupSeparatorView() {
         addSubview(separatorView)
-        separatorView.snp.makeConstraints { (make) in
-            make.right.equalToSuperview()
-            make.left.equalToSuperview().inset(24)
+        separatorView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.leading.equalToSuperview().inset(24)
             make.bottom.equalToSuperview()
             make.height.equalTo(1)
             make.top.equalTo(userPictureView.snp.bottom).offset(16)
@@ -314,25 +277,25 @@ class NewChatCell: UITableViewCell {
     
     func setupCtaButton() {
         addSubview(ctaButton)
-        ctaButton.snp.makeConstraints { (make) in
-            make.left.equalTo(titleLabel.snp.left)
+        ctaButton.snp.makeConstraints { make in
+            make.leading.equalTo(titleLabel.snp.leading)
             make.bottom.equalTo(userPictureView.snp.bottom)
         }
         ctaButton.setTitle("Start Chat", for: .normal)
         ctaButton.setTitleColor(.purple, for: .normal)
-        ctaButton.titleLabel?.font = UIFont.systemFont(ofSize: 16.0, weight: .regular)
+        ctaButton.titleLabel?.font = .systemFont(ofSize: 16.0, weight: .regular)
         ctaButton.isUserInteractionEnabled = false
     }
     
     func setupNewTag() {
         addSubview(newTag)
-        newTag.snp.makeConstraints { (make) in
+        newTag.snp.makeConstraints { make in
             make.centerY.equalTo(userPictureView.snp.centerY)
-            make.right.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
         }
         newTag.setTitle("NEW", for: .normal)
         newTag.setTitleColor(.white, for: .normal)
-        newTag.titleLabel?.font = UIFont.systemFont(ofSize: 12.0, weight: .bold)
+        newTag.titleLabel?.font = .systemFont(ofSize: 12.0, weight: .bold)
         newTag.backgroundColor = .purple
         newTag.isUserInteractionEnabled = false
         newTag.layer.cornerRadius = 10
@@ -340,7 +303,7 @@ class NewChatCell: UITableViewCell {
     }
 }
 
-class ChatCell: UITableViewCell {
+final class ChatCell: UITableViewCell {
     var userPictureView = UIImageView()
     var titleLabel = UILabel()
     let separatorView = UIView()
@@ -363,9 +326,9 @@ class ChatCell: UITableViewCell {
     
     func setupUserPictureView() {
         addSubview(userPictureView)
-        userPictureView.snp.makeConstraints { (make) in
+        userPictureView.snp.makeConstraints { make in
             make.size.equalTo(48)
-            make.left.equalToSuperview().inset(16)
+            make.leading.equalToSuperview().inset(16)
             make.top.equalToSuperview().inset(16)
         }
         userPictureView.backgroundColor = .gray
@@ -376,19 +339,19 @@ class ChatCell: UITableViewCell {
     
     func setupNameLabel() {
         addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(userPictureView.snp.right).offset(16)
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(userPictureView.snp.trailing).offset(16)
             make.top.equalTo(userPictureView.snp.top)
-            make.right.equalToSuperview().inset(80)
+            make.trailing.equalToSuperview().inset(80)
         }
-        titleLabel.font = UIFont.systemFont(ofSize: 16.0, weight: .bold)
+        titleLabel.font = .systemFont(ofSize: 16.0, weight: .bold)
     }
     
     func setupMessageLabel() {
         addSubview(messageLabel)
-        messageLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(titleLabel.snp.left)
-            make.right.equalToSuperview().inset(8)
+        messageLabel.snp.makeConstraints { make in
+            make.leading.equalTo(titleLabel.snp.leading)
+            make.trailing.equalToSuperview().inset(8)
             make.bottom.equalTo(userPictureView.snp.bottom)
         }
         messageLabel.textColor = .gray
@@ -396,9 +359,9 @@ class ChatCell: UITableViewCell {
     
     func setupSeparatorView() {
         addSubview(separatorView)
-        separatorView.snp.makeConstraints { (make) in
-            make.right.equalToSuperview()
-            make.left.equalToSuperview().inset(24)
+        separatorView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.leading.equalToSuperview().inset(24)
             make.bottom.equalToSuperview()
             make.height.equalTo(1)
             make.top.equalTo(userPictureView.snp.bottom).offset(16)
@@ -408,16 +371,16 @@ class ChatCell: UITableViewCell {
     
     func setupTimeLabel() {
         addSubview(timeLabel)
-        timeLabel.snp.makeConstraints { (make) in
-            make.right.equalToSuperview().inset(16)
+        timeLabel.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(16)
             make.top.equalTo(titleLabel.snp.top)
         }
         timeLabel.textColor = .gray
-        timeLabel.font = UIFont.systemFont(ofSize: 12.0, weight: .regular)
+        timeLabel.font = .systemFont(ofSize: 12.0, weight: .regular)
     }
 }
 
-class IconMenuCell: UITableViewCell {
+final class IconMenuCell: UITableViewCell {
     
     let iconImageView = UIImageView()
     let titleLabel = UILabel()
@@ -433,9 +396,9 @@ class IconMenuCell: UITableViewCell {
     
     func setupSeparatorView() {
         addSubview(separatorView)
-        separatorView.snp.makeConstraints { (make) in
-            make.right.equalToSuperview()
-            make.left.equalToSuperview().inset(24)
+        separatorView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.leading.equalToSuperview().inset(24)
             make.bottom.equalToSuperview()
             make.height.equalTo(1)
             make.top.equalTo(iconImageView.snp.bottom).offset(16)
@@ -445,17 +408,17 @@ class IconMenuCell: UITableViewCell {
     
     func setupIconImageView() {
         addSubview(iconImageView)
-        iconImageView.snp.makeConstraints { (make) in
+        iconImageView.snp.makeConstraints { make in
             make.size.equalTo(24)
-            make.left.equalToSuperview().inset(24)
+            make.leading.equalToSuperview().inset(24)
             make.top.equalToSuperview().offset(24)
         }
     }
     
     func setupTitleLabel() {
         addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(iconImageView.snp.right).offset(8)
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(iconImageView.snp.trailing).offset(8)
             make.centerY.equalTo(iconImageView)
         }
         titleLabel.text = "Label"
@@ -467,7 +430,7 @@ class IconMenuCell: UITableViewCell {
     }
 }
 
-class SimpleMenuCell: UITableViewCell {
+final class SimpleMenuCell: UITableViewCell {
     
     let titleLabel = UILabel()
     let separatorView = UIView()
@@ -481,8 +444,8 @@ class SimpleMenuCell: UITableViewCell {
     
     func setupTitleLabelNoIcon() {
         addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().inset(32)
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(32)
             make.top.equalToSuperview().offset(16)
         }
         titleLabel.text = "Label"
@@ -491,9 +454,9 @@ class SimpleMenuCell: UITableViewCell {
     
     func setupSeparatorView() {
         addSubview(separatorView)
-        separatorView.snp.makeConstraints { (make) in
-            make.right.equalToSuperview()
-            make.left.equalToSuperview().inset(24)
+        separatorView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.leading.equalToSuperview().inset(24)
             make.bottom.equalToSuperview()
             make.height.equalTo(1)
             make.top.equalTo(titleLabel.snp.bottom).offset(16)
@@ -514,7 +477,7 @@ class SimpleMenuCell: UITableViewCell {
     }
 }
 
-class ProfileImagesCell: UITableViewCell {
+final class ProfileImagesCell: UITableViewCell {
     var slideshow = ImageSlideshow()
     
     override init(style: UITableViewCellStyle, reuseIdentifier: String?) {
@@ -525,7 +488,7 @@ class ProfileImagesCell: UITableViewCell {
         slideshow.pageIndicatorPosition = .init(horizontal: .center, vertical: .bottom)
         slideshow.pageIndicator?.view.tintColor = .white
         slideshow.pageIndicator?.view.tintColor = UIColor.black.withAlphaComponent(0.5)
-        slideshow.contentScaleMode = UIViewContentMode.scaleAspectFill
+        slideshow.contentScaleMode = .scaleAspectFill
         
         layoutIfNeeded()
     }
@@ -533,7 +496,7 @@ class ProfileImagesCell: UITableViewCell {
     private func setupImageSlideshow() {
         addSubview(slideshow)
         let x = frame.width * 1.6
-        slideshow.snp.makeConstraints { (make) in
+        slideshow.snp.makeConstraints { make in
             make.top.left.right.equalToSuperview()
             make.height.equalTo(x)
             make.bottom.equalToSuperview().inset(16).priority(999)
@@ -546,7 +509,7 @@ class ProfileImagesCell: UITableViewCell {
     }
 }
 
-class TitleWithDescriptionCell: UITableViewCell {
+final class TitleWithDescriptionCell: UITableViewCell {
     var titleLabel = UILabel()
     var bodyLabel = UILabel()
     
@@ -555,15 +518,15 @@ class TitleWithDescriptionCell: UITableViewCell {
         self.selectionStyle = .none
         
         self.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { (make) in
-            make.top.left.right.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 32, bottom: 0, right: 32))
+        titleLabel.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 32, bottom: 0, right: 32))
         }
         titleLabel.textColor = .black
         titleLabel.textColor = UIColor(red:0.59, green:0.59, blue:0.59, alpha:1.00)
         
         addSubview(bodyLabel)
-        bodyLabel.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview().inset(32)
+        bodyLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(32)
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.bottom.equalToSuperview().offset(-16)
         }
@@ -575,7 +538,7 @@ class TitleWithDescriptionCell: UITableViewCell {
     }
 }
 
-class HeaderCell: UITableViewCell {
+final class HeaderCell: UITableViewCell {
     var titleLabel = UILabel()
     var bodyLabel = UILabel()
     
@@ -584,16 +547,16 @@ class HeaderCell: UITableViewCell {
         self.selectionStyle = .none
         
         self.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { (make) in
-            make.top.left.right.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 32, bottom: 0, right: 32))
+        titleLabel.snp.makeConstraints { make in
+            make.top.leading.trailing.equalToSuperview().inset(UIEdgeInsets(top: 8, left: 32, bottom: 0, right: 32))
         }
         titleLabel.textColor = .black
-        titleLabel.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        titleLabel.font = .systemFont(ofSize: 21, weight: .medium)
         titleLabel.numberOfLines = 4
         
         addSubview(bodyLabel)
-        bodyLabel.snp.makeConstraints { (make) in
-            make.left.right.equalToSuperview().inset(32)
+        bodyLabel.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview().inset(32)
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
             make.bottom.equalToSuperview().inset(16)
         }
@@ -605,7 +568,7 @@ class HeaderCell: UITableViewCell {
     }
 }
 
-class PremiumMenuCell: UITableViewCell {
+final class PremiumMenuCell: UITableViewCell {
     
     let titleLabel = UILabel()
     let subtitleLabel = UILabel()
@@ -621,24 +584,24 @@ class PremiumMenuCell: UITableViewCell {
     
     func setupLabels() {
         addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().inset(32)
+        titleLabel.snp.makeConstraints { make in
+            make.leading.equalToSuperview().inset(32)
             make.top.equalToSuperview().offset(16)
         }
         titleLabel.text = "Get Premium"
         titleLabel.textColor = UIColor(red:0.05, green:0.79, blue:0.40, alpha:1.00)
-        titleLabel.font = UIFont.boldSystemFont(ofSize: 21.0)
+        titleLabel.font = .boldSystemFont(ofSize: 21.0)
         
         addSubview(subtitleLabel)
-        subtitleLabel.snp.makeConstraints { (make) in
-            make.left.equalTo(titleLabel.snp.left)
+        subtitleLabel.snp.makeConstraints { make in
+            make.leading.equalTo(titleLabel.snp.leading)
             make.top.equalTo(titleLabel.snp.bottom).offset(4)
         }
         subtitleLabel.text = "Unlimited Matches"
         
         addSubview(premiumButton)
-        premiumButton.snp.makeConstraints { (make) in
-            make.right.equalToSuperview().inset(16)
+        premiumButton.snp.makeConstraints { make in
+            make.trailing.equalToSuperview().inset(16)
             make.centerY.equalToSuperview()
             make.height.equalTo(32)
         }
@@ -651,9 +614,9 @@ class PremiumMenuCell: UITableViewCell {
     
     func setupSeparatorView() {
         addSubview(separatorView)
-        separatorView.snp.makeConstraints { (make) in
-            make.right.equalToSuperview()
-            make.left.equalToSuperview().inset(24)
+        separatorView.snp.makeConstraints { make in
+            make.trailing.equalToSuperview()
+            make.leading.equalToSuperview().inset(24)
             make.bottom.equalToSuperview()
             make.height.equalTo(1)
             make.top.equalTo(subtitleLabel.snp.bottom).offset(16)

@@ -15,14 +15,14 @@ struct Message {
     var message: String
 }
 
-class Chat {
+final class Chat {
     var uid: String
     var created: String
     var lastUpdated: String
     var participants: [User]
     var messages: [Message]?
     var isDisabled: Bool
-    
+
     init(uid: String, created: String, lastUpdated: String, participants: [User], messages: [Message]?, isDisabled: Bool) {
         self.uid = uid
         self.created = created

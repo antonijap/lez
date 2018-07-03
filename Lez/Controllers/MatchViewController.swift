@@ -23,7 +23,7 @@ import PusherSwift
 import Toast_Swift
 import SwiftyStoreKit
 
-class MatchViewController: UIViewController, MatchViewControllerDelegate, PusherDelegate {
+final class MatchViewController: UIViewController, MatchViewControllerDelegate, PusherDelegate {
     
     // MARK: - Properties
     private let tableView = UITableView()
@@ -63,7 +63,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         if let currentUser = Auth.auth().currentUser {
-            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
                 self.user = user
                 self.options = PusherClientOptions(host: .cluster("eu"))
                 self.pusher = Pusher(key: "b5bd116d3da803ac6d12", options: self.options)
@@ -90,11 +90,10 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     }
     
     override func viewWillDisappear(_ animated: Bool) {
-        if let _ = Auth.auth().currentUser {
-            if let _ = user {
-                pusher.disconnect()
-            }
-        }
+        guard Auth.auth().currentUser != nil else { return }
+        guard user != nil else { return }
+        pusher.disconnect()
+        super.viewWillDisappear(animated)
     }
     
     override func viewDidLoad() {
@@ -115,15 +114,12 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
         DefaultsManager.shared.save(number: 0)
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
-        NotificationCenter.default.addObserver(self, selector: #selector(self.updateAfterAppComesToForeground), name:
-            NSNotification.Name.UIApplicationWillEnterForeground, object: nil)
-        
+        NotificationCenter.default.addObserver(self, selector: #selector(self.updateAfterAppComesToForeground),
+                                               name: .UIApplicationWillEnterForeground, object: nil)
+
         handle = Auth.auth().addStateDidChangeListener { auth, user in
-            if let user = user {
-               self.checkConnectivity(uid: user.uid)
-            } else {
-                self.presentRegisterViewController()
-            }
+            guard let user = user else { self.presentRegisterViewController(); return }
+            self.checkConnectivity(uid: user.uid)
         }
     }
     
@@ -160,10 +156,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
         } else {
             Alertift.alert(title: "No Internet", message: "It seems you are not connected to network. Please try again.")
                 .action(Alertift.Action.default("Okay"))
-                .show(on: self, completion: {
-                    self.hideTableView()
-                    self.showRefreshButton()
-                })
+                .show(on: self) { self.hideTableView(); self.showRefreshButton() }
         }
     }
     
@@ -182,7 +175,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     @objc func updateAfterAppComesToForeground() {
         print("I have come to foreground.")
         guard let currentUser = Auth.auth().currentUser else { return }
-        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
             guard let cooldownTime = user.cooldownTime else { return }
             self.runTimer(cooldownTime: cooldownTime)
         }
@@ -202,13 +195,13 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     private func presentRegisterViewController() {
         let registerViewController = RegisterViewController()
         let navigationController = UINavigationController(rootViewController: registerViewController)
-        self.present(navigationController, animated: false, completion: nil)
+        self.present(navigationController, animated: false)
     }
     
     @objc func refreshTableView() {
         guard let user = user else {
             if let currentUser = Auth.auth().currentUser {
-                FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+                FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
                     self.user = user
                     self.fetchUsers(for: user.uid)
                 }
@@ -234,24 +227,12 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     
     func runLikesWidget(uid: String) {
         Firestore.firestore().collection("users").document(uid).addSnapshotListener { documentSnapshot, error in
-            guard let document = documentSnapshot else {
-                print("Error fetching document: \(error!)")
-                return
-            }
-            guard let _ = document.data() else {
-                self.presentRegisterViewController()
-                return
-            }
-
-            FirestoreManager.shared.parseFirebaseUser(document: document).then({ (user) in
-                guard let user = user else {
-                    print("Failed to parse user in runLikesWidget.")
-                    return
-                }
+            guard let document = documentSnapshot else { print("Error fetching document: \(error!)"); return }
+            guard let _ = document.data() else { self.presentRegisterViewController(); return }
+            FirestoreManager.shared.parseFirebaseUser(document: document).then({ user in
+                guard let user = user else { print("Failed to parse user in runLikesWidget."); return }
                 self.user = user
-                if !user.isOnboarded {
-                    self.presentRegisterViewController()
-                }
+                if !user.isOnboarded { self.presentRegisterViewController() }
                 if !user.isManuallyPromoted {
                     if user.isPremium {
                         print("user is PREMIUM")
@@ -259,7 +240,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                         self.canLike = true
                         self.likesLeft = user.likesLeft
                         self.likesCounterWidgetLabel.text = "Unlimited"
-                        self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+                        self.likesCounterWidgetImageView.image = #imageLiteral(resourceName: "Like")
                     } else {
                         if user.likesLeft <= 0 {
                             // Show countdown
@@ -268,20 +249,20 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                             self.likesLeft = user.likesLeft
                             guard let cooldownTime = user.cooldownTime else { return }
                             self.runTimer(cooldownTime: cooldownTime)
-                            self.likesCounterWidgetImageView.image = UIImage(named: "Like_Disabled")
+                            self.likesCounterWidgetImageView.image = #imageLiteral(resourceName: "Like_Disabled")
                         } else {
                             // Show likesLeft
                             self.canLike = true
                             self.likesLeft = user.likesLeft
                             self.likesCounterWidgetLabel.text = "\(self.likesLeft!)"
-                            self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+                            self.likesCounterWidgetImageView.image = #imageLiteral(resourceName: "Like")
                         }
                     }
                 } else {
                     self.stopTimer()
                     self.canLike = true
                     self.likesCounterWidgetLabel.text = "Unlimited"
-                    self.likesCounterWidgetImageView.image = UIImage(named: "Like")
+                    self.likesCounterWidgetImageView.image = #imageLiteral(resourceName: "Like")
                 }
             })
         }
@@ -314,17 +295,17 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
     }
     
     private func addImagesToMatch(myUrl: String, herUrl: String) {
-        matchYourImageView.sd_setImage(with: URL(string: myUrl), placeholderImage: UIImage(named: "Placeholder_Image"))
-        matchHerImageView.sd_setImage(with: URL(string: herUrl), placeholderImage: UIImage(named: "Placeholder_Image"))
+        matchYourImageView.sd_setImage(with: URL(string: myUrl), placeholderImage: #imageLiteral(resourceName: "Placeholder_Image"))
+        matchHerImageView.sd_setImage(with: URL(string: herUrl), placeholderImage: #imageLiteral(resourceName: "Placeholder_Image"))
     }
     
     @objc func fetchUsers(for uid: String) {
         startSpinner()
         runLikesWidget(uid: uid)
         refreshControl.endRefreshing()
-        FirestoreManager.shared.fetchUser(uid: uid).then { (user) in
+        FirestoreManager.shared.fetchUser(uid: uid).then { user in
             self.user = user
-            FirestoreManager.shared.fetchPotentialMatches(for: user).then({ (users) in
+            FirestoreManager.shared.fetchPotentialMatches(for: user).then({ users in
                 self.users = users
                 if users.count > 0 {
                     self.stopSpinner()
@@ -360,11 +341,9 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
             guard let user = user else { print("No user detected."); return }
             AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userCounterReset, user: user)
             timer.invalidate()
-            let data: [String: Any] = [
-                "likesLeft": 5,
-                "cooldownTime": ""
-            ]
-            FirestoreManager.shared.updateUser(uid: user.uid, data: data).then { (user) in
+            let data: [String: Any] = ["likesLeft": 5,
+                                       "cooldownTime": ""]
+            FirestoreManager.shared.updateUser(uid: user.uid, data: data).then { user in
                 print("Counter reached 0, user refreshed")
             }
         } else {
@@ -378,10 +357,8 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
         let cell = tableView.cellForRow(at: IndexPath(row: sender.tag, section: 0)) as! MatchCell
         cell.likeButton.transform = CGAffineTransform(scaleX: -1, y: 1)
         UIView.animate(withDuration: 0.3, animations: { () -> Void in
-            cell.likeButton.transform = CGAffineTransform(scaleX: 1,y: 1)
-            guard let user = self.user else {
-                return
-            }
+            cell.likeButton.transform = CGAffineTransform(scaleX: 1, y: 1)
+            guard let user = self.user else { return }
             // Faster Liking Start
             if self.canLike {
                 // Then like
@@ -404,9 +381,9 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                     }
                 }
                 
-                Firestore.firestore().collection("users").document(user.uid).updateData(data) { err in
-                    if let err = err {
-                        print("Error updating document: \(err)")
+                Firestore.firestore().collection("users").document(user.uid).updateData(data) { error in
+                    if let error = error {
+                        print("Error updating document: \(error)")
                     } else {
                         print("Document successfully updated")
                     }
@@ -420,15 +397,9 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                 }
                 self.stopSpinner()
                 Firestore.firestore().collection("users").document(her.uid).getDocument { documentSnapshot, error in
-                    guard let document = documentSnapshot else {
-                        print("Error fetching document: \(error!)")
-                        return
-                    }
+                    guard let document = documentSnapshot else { print("Error fetching document: \(error!)"); return }
                     guard let data = document.data() else { return }
-                    guard let likes = data["likes"] as? [String] else {
-                        print("Problem with parsing likes.")
-                        return
-                    }
+                    guard let likes = data["likes"] as? [String] else { print("Problem with parsing likes."); return }
                     if likes.contains(user.uid) {
                         self.addImagesToMatch(myUrl: user.images.first!.url, herUrl: her.images.first!.url)
                         self.matchSubtitle.text = "You and \(her.name) liked each other."
@@ -445,9 +416,11 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                             self.showMatch()
                             AnalyticsManager.shared.logEvent(name: AnalyticsEvents.matchHappened, user: user)
                             let parameters: Parameters = ["uid": "\(self.users[sender.tag].uid)"]
-                            Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/sendPushNotification", method: .post, parameters: parameters, encoding: URLEncoding.default)
+                            Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/sendPushNotification",
+                                              method: .post, parameters: parameters, encoding: URLEncoding.default)
                             let parameters2: Parameters = ["channel": self.users[sender.tag].uid, "event": Events.newMessage.rawValue, "message": "New Match"]
-                            Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters2, encoding: URLEncoding.default)
+                            Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel",
+                                              method: .post, parameters: parameters2, encoding: URLEncoding.default)
                         })
                     }
                 }
@@ -459,7 +432,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
                 let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
                 self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
                 self.jellyAnimator?.prepare(viewController: nextViewController)
-                self.present(nextViewController, animated: true, completion: nil)
+                self.present(nextViewController, animated: true)
             }
         })
     }
@@ -476,7 +449,7 @@ class MatchViewController: UIViewController, MatchViewControllerDelegate, Pusher
         filterViewController.delegate = self
         filterViewController.user = user
         let navigationController = UINavigationController(rootViewController: filterViewController)
-        self.present(navigationController, animated: false, completion: nil)
+        self.present(navigationController, animated: false)
     }
 }
 
@@ -492,7 +465,7 @@ extension MatchViewController: UITableViewDelegate, UITableViewDataSource, Match
         let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
         self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
         self.jellyAnimator?.prepare(viewController: nextViewController)
-        present(nextViewController, animated: true, completion: nil)
+        present(nextViewController, animated: true)
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -523,7 +496,7 @@ extension MatchViewController: UITableViewDelegate, UITableViewDataSource, Match
             cell.likeButton.setImage(UIImage(named: "Like_Disabled"), for: .normal)
             cell.likeButton.isUserInteractionEnabled = true
         }
-        cell.likeButton.addTarget(self, action: #selector(self.likeTouchUpInside(_:)), for: .touchUpInside)
+        cell.likeButton.addTarget(self, action: #selector(self.likeTouchUpInside(_:)), for: .primaryActionTriggered)
         cell.likeButton.tag = indexPath.row
         return cell
     }
@@ -536,17 +509,17 @@ protocol MatchCellDelegate: class {
 extension MatchViewController {
     private func setupNoUsersState() {
         view.addSubview(noUsersBackground)
-        noUsersBackground.snp.makeConstraints { (make) in
+        noUsersBackground.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
-            make.right.left.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
         }
         noUsersBackground.image = UIImage(named: "No_Users_Background")
         noUsersBackground.contentMode = .scaleAspectFill
         noUsersBackground.clipsToBounds = true
         
         view.addSubview(noUsersTitle)
-        noUsersTitle.snp.makeConstraints { (make) in
+        noUsersTitle.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(view.frame.height / 3.0)
             make.centerX.equalToSuperview()
         }
@@ -554,18 +527,18 @@ extension MatchViewController {
         noUsersTitle.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
         
         view.addSubview(noUsersDescription)
-        noUsersDescription.snp.makeConstraints { (make) in
+        noUsersDescription.snp.makeConstraints { make in
             make.top.equalTo(noUsersTitle.snp.bottom).offset(8)
-            make.left.equalToSuperview().offset(32)
-            make.right.equalToSuperview().inset(32)
+            make.leading.equalToSuperview().offset(32)
+            make.trailing.equalToSuperview().inset(32)
         }
         noUsersDescription.text = "No lesbians with your criteria. Try changing preferences."
         noUsersDescription.numberOfLines = 2
-        noUsersDescription.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        noUsersDescription.font = .systemFont(ofSize: 21, weight: .medium)
         noUsersDescription.textAlignment = .center
         
         view.addSubview(noUsersCTA)
-        noUsersCTA.snp.makeConstraints { (make) in
+        noUsersCTA.snp.makeConstraints { make in
             make.top.equalTo(noUsersDescription.snp.bottom).offset(32)
             make.left.equalToSuperview().offset(48)
             make.right.equalToSuperview().inset(48)
@@ -577,12 +550,12 @@ extension MatchViewController {
         noUsersCTA.addGestureRecognizer(buttonTap)
         
         view.addSubview(noUsersRefreshButton)
-        noUsersRefreshButton.snp.makeConstraints { (make) in
+        noUsersRefreshButton.snp.makeConstraints { make in
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin).inset(32)
             make.centerX.equalToSuperview()
         }
         noUsersRefreshButton.setTitle("Try refresh?", for: .normal)
-        noUsersRefreshButton.addTarget(self, action: #selector(self.refreshTableView), for: .touchUpInside)
+        noUsersRefreshButton.addTarget(self, action: #selector(self.refreshTableView), for: .primaryActionTriggered)
         noUsersRefreshButton.setTitleColor(.gray, for: .normal)
         noUsersRefreshButton.setTitleColor(UIColor.gray.withAlphaComponent(0.5), for: .highlighted)
         
@@ -611,8 +584,8 @@ extension MatchViewController {
         tableView.delegate = self
         tableView.dataSource = self
         view.addSubview(tableView)
-        tableView.snp.makeConstraints { (make) in
-            make.right.left.equalToSuperview()
+        tableView.snp.makeConstraints { make in
+            make.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin)
         }
@@ -625,7 +598,7 @@ extension MatchViewController {
     private func setupNavigationBar() {
         navigationItem.title = "Match Room"
         navigationController?.navigationBar.backgroundColor = .white
-        navigationController?.navigationBar.setBackgroundImage(UIImage(named: "White"), for: UIBarMetrics.default)
+        navigationController?.navigationBar.setBackgroundImage(#imageLiteral(resourceName: "White"), for: UIBarMetrics.default)
         navigationController?.navigationBar.shadowImage = UIImage()
         navigationController?.navigationBar.layer.masksToBounds = false
         navigationController?.navigationBar.layer.shadowColor = UIColor(red:0.90, green:0.90, blue:0.90, alpha:1.00).cgColor
@@ -633,18 +606,18 @@ extension MatchViewController {
         navigationController?.navigationBar.layer.shadowOffset = CGSize(width: 0, height: 2.0)
         navigationController?.navigationBar.layer.shadowRadius = 4
         let filterButton = UIButton(type: .custom)
-        filterButton.setImage(UIImage(named: "Filter"), for: .normal)
+        filterButton.setImage(#imageLiteral(resourceName: "Filter"), for: .normal)
         filterButton.frame = CGRect(x: 0, y: 0, width: 24, height: 24)
-        filterButton.addTarget(self, action: #selector(self.showFilters), for: .touchUpInside)
+        filterButton.addTarget(self, action: #selector(self.showFilters), for: .primaryActionTriggered)
         let rightItem = UIBarButtonItem(customView: filterButton)
         navigationItem.setRightBarButtonItems([rightItem], animated: true)
     }
     
     private func setupLikesWidget() {
         view.addSubview(likesCounterWidgetView)
-        likesCounterWidgetView.snp.makeConstraints { (make) in
+        likesCounterWidgetView.snp.makeConstraints { make in
             make.height.equalTo(32)
-            make.left.equalToSuperview().offset(16)
+            make.leading.equalToSuperview().offset(16)
             make.top.equalTo(view.safeAreaLayoutGuide.snp.topMargin).inset(16)
         }
         likesCounterWidgetView.layer.cornerRadius = 16
@@ -653,18 +626,18 @@ extension MatchViewController {
         likesCounterWidgetView.dropShadow()
         
         likesCounterWidgetView.addSubview(likesCounterWidgetImageView)
-        likesCounterWidgetImageView.snp.makeConstraints { (make) in
+        likesCounterWidgetImageView.snp.makeConstraints { make in
             make.height.width.equalTo(20)
             make.centerY.equalToSuperview()
-            make.left.equalToSuperview().offset(8)
+            make.leading.equalToSuperview().offset(8)
         }
-        likesCounterWidgetImageView.image = UIImage(named: "Like")
+        likesCounterWidgetImageView.image = #imageLiteral(resourceName: "Like")
         
         likesCounterWidgetView.addSubview(likesCounterWidgetLabel)
-        likesCounterWidgetLabel.snp.makeConstraints { (make) in
+        likesCounterWidgetLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.left.equalTo(likesCounterWidgetImageView.snp.right).offset(4)
-            make.right.equalToSuperview().inset(12)
+            make.leading.equalTo(likesCounterWidgetImageView.snp.right).offset(4)
+            make.trailing.equalToSuperview().inset(12)
         }
         
         likesCounterWidgetView.layoutIfNeeded()
@@ -672,27 +645,25 @@ extension MatchViewController {
     
     private func setupRefreshButton() {
         view.addSubview(refreshButton)
-        refreshButton.snp.makeConstraints { (make) in
+        refreshButton.snp.makeConstraints { make in
             make.center.equalToSuperview()
             make.height.equalTo(44)
             make.width.equalTo(150)
         }
         refreshButton.setTitle("Try Again", for: .normal)
-        refreshButton.addTarget(self, action: #selector(self.refreshButtonTapped(_:)), for: .touchUpInside)
+        refreshButton.addTarget(self, action: #selector(self.refreshButtonTapped(_:)), for: .primaryActionTriggered)
         hideRefreshButton()
     }
     
     private func setupMatchView() {
         UIApplication.shared.keyWindow?.addSubview(matchOverlayView)
-        matchOverlayView.snp.makeConstraints { (make) in
-            make.edges.equalToSuperview()
-        }
+        matchOverlayView.snp.makeConstraints { make in make.edges.equalToSuperview() }
         matchOverlayView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         
         UIApplication.shared.keyWindow?.addSubview(matchView)
-        matchView.snp.makeConstraints { (make) in
-            make.left.equalToSuperview().offset(32)
-            make.right.equalToSuperview().inset(32)
+        matchView.snp.makeConstraints { make in
+            make.leading.equalToSuperview().offset(32)
+            make.trailing.equalToSuperview().inset(32)
             make.center.equalToSuperview()
         }
         matchView.backgroundColor = .white
@@ -700,7 +671,7 @@ extension MatchViewController {
         matchView.dropShadow()
         
         matchView.addSubview(matchYourImageView)
-        matchYourImageView.snp.makeConstraints { (make) in
+        matchYourImageView.snp.makeConstraints { make in
             make.height.width.equalTo(48)
             make.centerX.equalToSuperview().inset(10)
             make.top.equalToSuperview().offset(40)
@@ -711,7 +682,7 @@ extension MatchViewController {
         matchYourImageView.contentMode = .scaleAspectFill
         
         matchView.addSubview(matchHerImageView)
-        matchHerImageView.snp.makeConstraints { (make) in
+        matchHerImageView.snp.makeConstraints { make in
             make.height.width.equalTo(48)
             make.centerX.equalToSuperview().inset(-10)
             make.top.equalTo(matchYourImageView.snp.top)
@@ -722,44 +693,43 @@ extension MatchViewController {
         matchHerImageView.contentMode = .scaleAspectFill
         
         matchView.addSubview(matchLabel)
-        matchLabel.snp.makeConstraints { (make) in
+        matchLabel.snp.makeConstraints { make in
             make.top.equalTo(matchHerImageView.snp.bottom).offset(32)
             make.centerX.equalToSuperview()
         }
         matchLabel.text = "Match"
-        matchLabel.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
+        matchLabel.font = .systemFont(ofSize: 28, weight: .heavy)
         
         matchView.addSubview(matchSubtitle)
-        matchSubtitle.snp.makeConstraints { (make) in
+        matchSubtitle.snp.makeConstraints { make in
             make.top.equalTo(matchLabel.snp.bottom).offset(24)
             make.centerX.equalToSuperview()
-            make.left.equalToSuperview().inset(24)
-            make.right.equalToSuperview().offset(-24)
+            make.leading.equalToSuperview().inset(24)
+            make.trailing.equalToSuperview().offset(-24)
         }
-        matchSubtitle.font = UIFont.systemFont(ofSize: 21, weight: .regular)
+        matchSubtitle.font = .systemFont(ofSize: 21, weight: .regular)
         matchSubtitle.numberOfLines = 2
         matchSubtitle.textAlignment = .center
         
         matchView.addSubview(matchCTA)
-        matchCTA.snp.makeConstraints { (make) in
+        matchCTA.snp.makeConstraints { make in
             make.top.equalTo(matchSubtitle.snp.bottom).offset(32)
-            make.left.equalToSuperview().offset(32)
-            make.right.equalToSuperview().inset(32)
+            make.leading.equalToSuperview().offset(32)
+            make.trailing.equalToSuperview().inset(32)
             make.height.equalTo(44)
             make.bottom.equalToSuperview().inset(40)
         }
         matchCTA.setTitle("Go to Chat", for: .normal)
-        matchCTA.addTarget(self, action: #selector(self.goToChat), for: .touchUpInside)
+        matchCTA.addTarget(self, action: #selector(self.goToChat), for: .primaryActionTriggered)
         
         matchView.addSubview(matchCloseButton)
-        matchCloseButton.snp.makeConstraints { (make) in
-            make.width.equalTo(32)
-            make.height.equalTo(32)
-            make.right.equalToSuperview().inset(16)
+        matchCloseButton.snp.makeConstraints { make in
+            make.size.equalTo(32)
+            make.trailing.equalToSuperview().inset(16)
             make.top.equalToSuperview().inset(16)
         }
         matchCloseButton.setImage(UIImage(named: "Close"), for: .normal)
-        matchCloseButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for:.touchUpInside)
+        matchCloseButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for:.primaryActionTriggered)
         
         matchView.alpha = 0
         matchOverlayView.alpha = 0

@@ -14,8 +14,8 @@ import Alertift
 import Firebase
 import CoreLocation
 
-class UserProfileFormViewController: FormViewController {
-    
+final class UserProfileFormViewController: FormViewController {
+
     var loc: Location?
     var name: String?
     var email: String?
@@ -24,70 +24,55 @@ class UserProfileFormViewController: FormViewController {
     var profileViewControllerDelegate: ProfileViewControllerDelegate?
     var handle: AuthStateDidChangeListenerHandle?
     var onboardingContinues = false
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         setupNavigationBar()
-        if let user = user {
-            setupEditForm(uid: user.uid)
-            Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
-                guard let document = documentSnapshot else {
-                    print("Error fetching document: \(error!)")
-                    return
+
+        guard let user = user else { setupBasicForm(); return }
+        setupEditForm(uid: user.uid)
+        Firestore.firestore().collection("users").document(user.uid).getDocument { documentSnapshot, error in
+            guard let document = documentSnapshot else { print("Error fetching document: \(error!)"); return }
+            guard let data = document.data() else { return }
+            guard let isOnboarded = data["isOnboarded"] as? Bool else { print("Problem with parsing isOnboarded."); return }
+            if isOnboarded {
+                FirestoreManager.shared.fetchUser(uid: user.uid).then { user in
+                    self.user = user
+                    self.loc = Location(city: user.location.city, country: user.location.country)
+                    self.uid = user.uid
                 }
-                guard let data = document.data() else { return }
-                
-                guard let isOnboarded = data["isOnboarded"] as? Bool else {
-                    print("Problem with parsing isOnboarded.")
-                    return
-                }
-                
-                if isOnboarded {
-                    FirestoreManager.shared.fetchUser(uid: user.uid).then { (user) in
-                        self.user = user
-                        self.loc = Location(city: user.location.city, country: user.location.country)
-                        self.uid = user.uid
-                    }
-                }
-                self.onboardingContinues = true
             }
-        } else {
-            setupBasicForm()
+            self.onboardingContinues = true
         }
     }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-    }
-    
+
     func setupNavigationBar() {
         navigationController?.view.backgroundColor = .white
         navigationItem.rightBarButtonItem = UIBarButtonItem(title: "Save", style: .plain, target: self, action: #selector(self.submit))
-        if let _ = user {
-           // There is user show back button
+        if let _ = user { // There is user show back button
             navigationItem.title = "Your Profile"
         } else {
             navigationItem.title = "Setup Profile"
 //            navigationItem.setHidesBackButton(true, animated: true)
         }
     }
-    
+
     func parseFormIntoData() -> [String: Any]? {
         guard let nameRow: NameRow = form.rowBy(tag: "name") else { return nil }
         guard let name = nameRow.value else { return nil }
-        
+
         guard let emailRow: EmailRow = form.rowBy(tag: "email") else { return nil }
         guard let email = emailRow.value else { return nil }
-        
+
         guard let ageRow: IntRow = form.rowBy(tag: "age") else { return nil }
         guard let age = ageRow.value else { return nil }
-        
+
         guard let aboutRow: TextRow = form.rowBy(tag: "about") else { return nil }
         guard let about = aboutRow.value else { return nil }
-        
+
         guard let dietRow: PushRow<String> = form.rowBy(tag: "diet") else { return nil }
         guard let diet = dietRow.value else { return nil }
-        
+
         guard let lookingForRow: MultipleSelectorRow<String> = form.rowBy(tag: "lookingFor") else { return nil }
         guard let lookingFor = lookingForRow.value else { return nil }
         var lookingForArray: [String] = []
@@ -100,13 +85,13 @@ class UserProfileFormViewController: FormViewController {
                 lookingForArray.append(LookingFor.sex.rawValue)
             }
         }
-        
+
         guard let dealbreakersRow: TextRow = form.rowBy(tag: "dealbreakers") else { return nil }
         guard let dealbreakers = dealbreakersRow.value else { return nil }
         guard let location = loc else { return nil }
         guard let currentUser = Auth.auth().currentUser else { return nil }
         guard let agePreferenceObj: RangeSliderRow = form.rowBy(tag: "agePreference") else { return nil }
-        
+
         let data: [String: Any] = [
             "uid": currentUser.uid,
             "name": name,
@@ -143,23 +128,23 @@ class UserProfileFormViewController: FormViewController {
         ]
         return data
     }
-    
+
     func parseFormIntoDataForUpdatingUser() -> [String: Any]? {
         guard let nameRow: NameRow = form.rowBy(tag: "name") else { return nil }
         guard let name = nameRow.value else { return nil }
-        
+
         guard let emailRow: EmailRow = form.rowBy(tag: "email") else { return nil }
         guard let email = emailRow.value else { return nil }
-        
+
         guard let ageRow: IntRow = form.rowBy(tag: "age") else { return nil }
         guard let age = ageRow.value else { return nil }
-        
+
         guard let aboutRow: TextRow = form.rowBy(tag: "about") else { return nil }
         guard let about = aboutRow.value else { return nil }
-        
+
         guard let dietRow: PushRow<String> = form.rowBy(tag: "diet") else { return nil }
         guard let diet = dietRow.value else { return nil }
-        
+
         guard let lookingForRow: MultipleSelectorRow<String> = form.rowBy(tag: "lookingFor") else { return nil }
         guard let lookingFor = lookingForRow.value else { return nil }
         var lookingForArray: [String] = []
@@ -172,7 +157,7 @@ class UserProfileFormViewController: FormViewController {
                 lookingForArray.append(LookingFor.sex.rawValue)
             }
         }
-        
+
         guard let dealbreakersRow: TextRow = form.rowBy(tag: "dealbreakers") else { return nil }
         guard let dealbreakers = dealbreakersRow.value else { return nil }
         guard let location = loc else { return nil }
@@ -202,7 +187,7 @@ class UserProfileFormViewController: FormViewController {
         ]
         return data
     }
-    
+
     @objc func submit() {
         dismissKeyboard()
         if let _ = Auth.auth().currentUser {
@@ -211,10 +196,10 @@ class UserProfileFormViewController: FormViewController {
                 if form.validate().count > 0 {
                     Alertift.alert(title: "Ooopsie", message: "Check what fields are missing or inacurrate.")
                         .action(.default("Okay"))
-                        .show(on: self, completion: nil)
+                        .show(on: self)
                 } else {
                     if let data = parseFormIntoDataForUpdatingUser() {
-                        FirestoreManager.shared.updateUser(uid: user.uid, data: data).then { (success) in
+                        FirestoreManager.shared.updateUser(uid: user.uid, data: data).then { success in
                             AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userEditedProfile, user: user)
                             self.profileViewControllerDelegate?.refreshProfile()
                             self.navigationController?.popViewController(animated: true)
@@ -226,7 +211,7 @@ class UserProfileFormViewController: FormViewController {
                 if form.validate().count > 0 {
                     Alertift.alert(title: "Ooopsie", message: "Check what fields are missiong or inacurrate.")
                         .action(.default("Okay"))
-                        .show(on: self, completion: nil)
+                        .show(on: self)
                 } else {
                     if onboardingContinues {
                         if let data = parseFormIntoData() {
@@ -247,18 +232,15 @@ class UserProfileFormViewController: FormViewController {
         } else {
             Alertift.alert(title: "Error happened", message: "Random error happened, please try to login again.")
                 .action(.default("Okay"))
-                .show(on: self, completion: nil)
+                .show(on: self)
         }
     }
-    
+
     func setupBasicForm() {
         var rules = RuleSet<String>()
         rules.add(rule: RuleRequired())
-
         form
-            
             +++ Section("About Me")
-                
             <<< NameRow() { row in
                 row.title = "Name"
                 row.tag = "name"
@@ -271,12 +253,7 @@ class UserProfileFormViewController: FormViewController {
                 row.add(ruleSet: rules)
                 row.validationOptions = .validatesOnChangeAfterBlurred
             }
-            .cellUpdate { cell, row in
-                if !row.isValid {
-                    cell.titleLabel?.textColor = .red
-                }
-            }
-            
+            .cellUpdate { cell, row in if !row.isValid { cell.titleLabel?.textColor = .red } }
             <<< EmailRow() { row in
                 row.title = "Email"
                 row.tag = "email"
@@ -290,83 +267,58 @@ class UserProfileFormViewController: FormViewController {
                 row.add(rule: RuleEmail())
                 row.validationOptions = .validatesOnChangeAfterBlurred
             }
-            .cellUpdate { cell, row in
-                if !row.isValid {
-                    cell.titleLabel?.textColor = .red
-                }
-            }
-            
+            .cellUpdate { cell, row in if !row.isValid { cell.titleLabel?.textColor = .red } }
             <<< IntRow() { row in
                 row.title = "Age"
                 row.tag = "age"
                 row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.age
-                }
+                if let cu = user { row.value = cu.age }
             }
-            
-            
             <<< TextRow() { row in
                 row.title = "About"
                 row.tag = "about"
                 row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.details.about
-                }
+                if let cu = user { row.value = cu.details.about }
             }
-            
             <<< GooglePlacesTableRow() { row in
                 row.title = "Location"
                 row.tag = "location"
-                if let cu = user {
-                    row.value = GooglePlace(string: "\(cu.location.city), \(cu.location.country)")
-                }
+                if let cu = user { row.value = GooglePlace(string: "\(cu.location.city), \(cu.location.country)") }
                 row.add(ruleSet: RuleSet<GooglePlace>())
                 row.validationOptions = .validatesOnChangeAfterBlurred
-                }.onChange({ (row) in
-                    row.value.map({ (place) in
+                }.onChange({ row in
+                    row.value.map({ place in
                         switch place {
                         case .userInput(let value):
                             print(value)
                         case .prediction(let prediction):
-                            self.loc = Location(city:  prediction.attributedPrimaryText.string, country: (prediction.attributedSecondaryText?.string)!)
+                            self.loc = Location(city: prediction.attributedPrimaryText.string,
+                                                country: (prediction.attributedSecondaryText?.string)!)
                         }
                     })
                 })
-            
             <<< PushRow<String>() { row in
                 row.title = "Diet"
                 row.options = [Diet.vegan.rawValue, Diet.vegetarian.rawValue, Diet.omnivore.rawValue, Diet.other.rawValue]
                 row.tag = "diet"
                 row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.details.diet.rawValue
-                }
+                if let cu = user { row.value = cu.details.diet.rawValue }
             }
-        
             +++ Section("Matching Preferences")
-        
             <<< MultipleSelectorRow<String>() { row in
                 row.title = "Looking for"
                 row.add(rule: RuleRequired())
                 row.options = [LookingFor.relationship.rawValue, LookingFor.friendship.rawValue, LookingFor.sex.rawValue]
                 row.tag = "lookingFor"
-                if let cu = user {
-                    row.value = Set(cu.preferences.lookingFor)
-                }
+                if let cu = user { row.value = Set(cu.preferences.lookingFor) }
             }
-            
             <<< TextRow() { row in
                 row.title = "Dealbreakers"
                 row.tag = "dealbreakers"
                 row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.details.dealBreakers
-                }
+                if let cu = user { row.value = cu.details.dealBreakers }
             }
-        
             +++ Section("Prefered Age Range")
-        
             <<< RangeSliderRow() { row in
                 row.tag = "agePreference"
                 }.cellSetup({ (cell, row) in
@@ -380,11 +332,8 @@ class UserProfileFormViewController: FormViewController {
     func setupEditForm(uid: String) {
         var rules = RuleSet<String>()
         rules.add(rule: RuleRequired())
-        
         form
-            
             +++ Section("About Me")
-            
             <<< NameRow() { row in
                 row.title = "Name"
                 row.tag = "name"
@@ -397,12 +346,7 @@ class UserProfileFormViewController: FormViewController {
                 row.add(ruleSet: rules)
                 row.validationOptions = .validatesOnChangeAfterBlurred
                 }
-                .cellUpdate { cell, row in
-                    if !row.isValid {
-                        cell.titleLabel?.textColor = .red
-                    }
-            }
-            
+                .cellUpdate { cell, row in if !row.isValid { cell.titleLabel?.textColor = .red } }
             <<< EmailRow() { row in
                 row.title = "Email"
                 row.tag = "email"
@@ -416,37 +360,23 @@ class UserProfileFormViewController: FormViewController {
                 row.add(rule: RuleEmail())
                 row.validationOptions = .validatesOnChangeAfterBlurred
                 }
-                .cellUpdate { cell, row in
-                    if !row.isValid {
-                        cell.titleLabel?.textColor = .red
-                    }
-            }
-            
+                .cellUpdate { cell, row in if !row.isValid { cell.titleLabel?.textColor = .red } }
             <<< IntRow() { row in
                 row.title = "Age"
                 row.tag = "age"
                 row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.age
-                }
+                if let cu = user { row.value = cu.age }
             }
-            
-            
             <<< TextRow() { row in
                 row.title = "About"
                 row.tag = "about"
                 row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.details.about
-                }
+                if let cu = user { row.value = cu.details.about }
             }
-            
             <<< GooglePlacesTableRow() { row in
                 row.title = "Location"
                 row.tag = "location"
-                if let cu = user {
-                    row.value = GooglePlace(string: "\(cu.location.city), \(cu.location.country)")
-                }
+                if let cu = user { row.value = GooglePlace(string: "\(cu.location.city), \(cu.location.country)") }
                 row.add(ruleSet: RuleSet<GooglePlace>())
                 row.validationOptions = .validatesOnChangeAfterBlurred
                 }.onChange({ (row) in
@@ -455,44 +385,33 @@ class UserProfileFormViewController: FormViewController {
                         case .userInput(let value):
                             print(value)
                         case .prediction(let prediction):
-                            self.loc = Location(city:  prediction.attributedPrimaryText.string, country: (prediction.attributedSecondaryText?.string)!)
+                            self.loc = Location(city:  prediction.attributedPrimaryText.string,
+                                                country: (prediction.attributedSecondaryText?.string)!)
                         }
                     })
                 })
-            
             <<< PushRow<String>() { row in
                 row.title = "Diet"
                 row.options = [Diet.vegan.rawValue, Diet.vegetarian.rawValue, Diet.omnivore.rawValue, Diet.other.rawValue]
                 row.tag = "diet"
                 row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.details.diet.rawValue
-                }
+                if let cu = user { row.value = cu.details.diet.rawValue }
             }
-            
             +++ Section("Matching Preferences")
-            
             <<< MultipleSelectorRow<String>() { row in
                 row.title = "Looking for"
                 row.add(rule: RuleRequired())
                 row.options = [LookingFor.relationship.rawValue, LookingFor.friendship.rawValue, LookingFor.sex.rawValue]
                 row.tag = "lookingFor"
-                if let cu = user {
-                    row.value = Set(cu.preferences.lookingFor)
-                }
+                if let cu = user { row.value = Set(cu.preferences.lookingFor) }
             }
-            
             <<< TextRow() { row in
                 row.title = "Dealbreakers"
                 row.tag = "dealbreakers"
                 row.add(rule: RuleRequired())
-                if let cu = user {
-                    row.value = cu.details.dealBreakers
-                }
+                if let cu = user { row.value = cu.details.dealBreakers }
             }
-            
             +++ Section("Prefered Age Range")
-            
             <<< RangeSliderRow() { row in
                 row.tag = "agePreference"
                 }.cellSetup({ (cell, row) in
@@ -501,9 +420,7 @@ class UserProfileFormViewController: FormViewController {
                         cell.slider.selectedMinValue = CGFloat(user.preferences.ageRange.from)
                     }
             })
-        
             +++ Section("Danger Area")
-        
             <<< ButtonRow() { row in
                 row.tag = "delete"
                 row.title = "Delete Account"
@@ -516,16 +433,14 @@ class UserProfileFormViewController: FormViewController {
                                         AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userDeletedAccount, user: self.user!)
                                         try Auth.auth().signOut()
                                         self.tabBarController?.selectedIndex = 0
-                                    } catch let signOutError as NSError {
-                                        print ("Error signing out: %@", signOutError)
-                                    }
+                                    } catch let signOutError { print ("Error signing out: %@", signOutError) }
                                 }
                             })
                             
                             
                         })
                         .action(Alertift.Action.cancel("Cancel"))
-                        .show(on: self, completion: nil)
+                        .show(on: self)
                 })
     }
 }

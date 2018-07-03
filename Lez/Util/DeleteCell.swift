@@ -18,14 +18,14 @@ final class DeleteCell: Cell<UIButton>, CellType {
     
     public override func setup() {
         addSubview(button)
-        button.snp.makeConstraints { (make) in
+        button.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(8)
             make.bottom.equalToSuperview().inset(8)
-            make.left.equalToSuperview().offset(8)
-            make.right.equalToSuperview().inset(8)
+            make.leading.equalToSuperview().offset(8)
+            make.trailing.equalToSuperview().inset(8)
         }
         button.setTitle("Delete Account", for: .normal)
-        button.addTarget(self, action: #selector(self.buttonTapped(uid:completion:)), for: .touchUpInside)
+        button.addTarget(self, action: #selector(self.buttonTapped(uid:completion:)), for: .primaryActionTriggered)
         button.setTitleColor(.red, for: .normal)
     }
     

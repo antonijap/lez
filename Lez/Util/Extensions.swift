@@ -18,59 +18,47 @@ enum ReportType: String {
 extension UIViewController: UIActionSheetDelegate {
     func showReportActionSheet(report user: User, reportOwner: String) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        let action1 = UIAlertAction(title: "Fake Profile", style: .default) { (action) in
+        alertController.addAction(UIAlertAction(title: "Fake Profile", style: .default) { action in
             print("1 is pressed.....")
-            self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+            self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible.", messageBoxStyle: .alert, alertActionStyle: .default) {
                 self.report(type: .fake, reportedUser: user.uid, reportOwner: reportOwner)
-            })
-        }
-        let action2 = UIAlertAction(title: "Not Female", style: .default) { (action) in
-            self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
+            }
+        })
+        alertController.addAction(UIAlertAction(title: "Not Female", style: .default) { action in
+            self.showOkayModal(messageTitle: "Profile Reported", messageAlert: "We will check this profile as soon as possible.", messageBoxStyle: .alert, alertActionStyle: .default) {
                 self.report(type: .notFemale, reportedUser: user.uid, reportOwner: reportOwner)
-            })
-        }
-        let action3 = UIAlertAction(title: "Cancel", style: .cancel) { (action) in
-            print("Cancel is pressed......")
-        }
-        
-        alertController.addAction(action1)
-        alertController.addAction(action2)
-        alertController.addAction(action3)
-        
-        self.present(alertController, animated: true, completion: nil)
+            }
+        })
+        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel) { action in print("Cancel is pressed......") })
+
+        self.present(alertController, animated: true)
     }
-    
+
     func report(type: ReportType, reportedUser: String, reportOwner: String) {
-        let data: [String: Any] = [
-            "reported": reportedUser,
-            "reportOwner": reportOwner,
-            "type": type.rawValue,
-            "created": FieldValue.serverTimestamp()
-        ]
-        FirestoreManager.shared.addReport(data: data).then { (success) in
+        let data: [String: Any] = ["reported": reportedUser,
+                                   "reportOwner": reportOwner,
+                                   "type": type.rawValue,
+                                   "created": FieldValue.serverTimestamp()]
+        FirestoreManager.shared.addReport(data: data).then { success in
             if success {
-                self.dismiss(animated: true, completion: nil)
+                self.dismiss(animated: true)
             } else {
                 self.showOkayModal(messageTitle: "Error happened", messageAlert: "Reporting failed. Please, try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
             }
         }
     }
-    
+
     func showBlockActionSheet(currentUser: User, blockedUser: String,  completion: @escaping () -> Void) {
         let alertController = UIAlertController(title: nil, message: nil, preferredStyle: .actionSheet)
-        
-        let action1 = UIAlertAction(title: "Block User", style: .default) { (action) in
+
+        let action1 = UIAlertAction(title: "Block User", style: .default) { action in
             self.showOkayModal(messageTitle: "Profile Blocked", messageAlert: "You won't see or hear from this user anymore.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {
-                
                 var blockedUsersArray: [String] = currentUser.blockedUsers!
                 blockedUsersArray.append(blockedUser)
-                let data: [String: Any] = [
-                    "blockedUsers": blockedUsersArray
-                ]
+                let data: [String: Any] = ["blockedUsers": blockedUsersArray]
                 FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).then({ (success) in
                     if success {
-                        self.dismiss(animated: true, completion: nil)
+                        self.dismiss(animated: true)
                         completion()
                     } else {
                         self.showOkayModal(messageTitle: "Error happened", messageAlert: "Blocking failed. Please, try again.", messageBoxStyle: .alert, alertActionStyle: .default, completionHandler: {})
@@ -87,28 +75,26 @@ extension UIViewController: UIActionSheetDelegate {
         alertController.addAction(action1)
         alertController.addAction(action2)
         
-        self.present(alertController, animated: true, completion: nil)
+        self.present(alertController, animated: true)
     }
     
     func showPremiumPurchased(completion: @escaping () -> Void) {
         let alert = UIAlertController(title: "Congrats", message: "You are now a Premium user, enjoy unlimited likes.", preferredStyle: .alert)
-        let okAction = UIAlertAction(title: "Okay", style: .default) { _ in
-            completion()
-        }
+        let okAction = UIAlertAction(title: "Okay", style: .default) { _ in completion() }
         alert.addAction(okAction)
-        present(alert, animated: true, completion: nil)
+        present(alert, animated: true)
     }
     
     func showSignoutAlert(CTA: String) {
         let alertController = UIAlertController(title: "Are you sure?", message: nil, preferredStyle: .alert)
-        let action1 = UIAlertAction(title: "Cancel", style: .default, handler: nil)
+        let action1 = UIAlertAction(title: "Cancel", style: .default)
         let action2 = UIAlertAction(title: CTA, style: .destructive) { (action) in
             do {
                 try Auth.auth().signOut()
                 self.tabBarController?.selectedIndex = 0
                 let registerViewController = RegisterViewController()
                 let navigationController = UINavigationController(rootViewController: registerViewController)
-                self.present(navigationController, animated: false, completion: nil)
+                self.present(navigationController, animated: false)
             } catch let signOutError as NSError {
                 print ("Error signing out: %@", signOutError)
             }
@@ -141,7 +127,7 @@ extension UIViewController: UIActionSheetDelegate {
         }
         
         alert.addAction(okAction)
-        present(alert, animated: true, completion: nil)
+        present(alert, animated: true)
     }
 }
 
@@ -282,6 +268,6 @@ extension UIApplication {
 extension Equatable {
     func share() {
         let activity = UIActivityViewController(activityItems: [self], applicationActivities: nil)
-        UIApplication.topViewController?.present(activity, animated: true, completion: nil)
+        UIApplication.topViewController?.present(activity, animated: true)
     }
 }

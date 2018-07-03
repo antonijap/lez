@@ -23,11 +23,11 @@ final class RangeSliderCell: Cell<AgeRange>, CellType {
         slider.delegate = self
         
         addSubview(slider)
-        slider.snp.makeConstraints { (make) in
+        slider.snp.makeConstraints { make in
             make.top.equalToSuperview().offset(16)
             make.bottom.equalToSuperview().inset(16)
-            make.left.equalToSuperview().offset(8)
-            make.right.equalToSuperview().inset(8)
+            make.leading.equalToSuperview().offset(8)
+            make.trailing.equalToSuperview().inset(8)
         }
         slider.minValue = 18
         slider.maxValue = 60

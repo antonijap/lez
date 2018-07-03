@@ -13,7 +13,7 @@ import SnapKit
 import Alertift
 import Firebase
 
-class GetPremiumViewController: UIViewController {
+final class GetPremiumViewController: UIViewController {
     
     // MARK: - Properities
     
@@ -32,9 +32,7 @@ class GetPremiumViewController: UIViewController {
     var matchViewControllerDelegate: MatchViewControllerDelegate?
     
     var products = Set<SKProduct>() {
-        didSet {
-            setupInterface(with: products)
-        }
+        didSet { setupInterface(with: products) }
     }
     
     override func viewDidLoad() {
@@ -46,24 +44,19 @@ class GetPremiumViewController: UIViewController {
     // MARK: - Methods
     
     fileprivate func fetchProducts() {
-        // Start Activity indicator
-        
-        PurchaseManager.fetchProducts { (products) in
-            self.products = products
-            // End Activity indicator
-        }
+        PurchaseManager.fetchProducts { products in self.products = products }
     }
     
     private func setupBureaucracyCrapButtons() {
         view.addSubview(bureaucracyCrapButtonsView)
         if Device.IS_4_7_INCHES_OR_LARGER() {
-            bureaucracyCrapButtonsView.snp.makeConstraints { (make) in
+            bureaucracyCrapButtonsView.snp.makeConstraints { make in
                 make.centerX.equalToSuperview()
                 make.width.equalToSuperview().dividedBy(2)
                 make.top.equalTo(buyButton.snp.bottom).offset(40)
             }
         } else {
-            bureaucracyCrapButtonsView.snp.makeConstraints { (make) in
+            bureaucracyCrapButtonsView.snp.makeConstraints { make in
                 make.centerX.equalToSuperview()
                 make.width.equalToSuperview().dividedBy(1.7)
                 make.top.equalTo(buyButton.snp.bottom).offset(40)
@@ -71,32 +64,32 @@ class GetPremiumViewController: UIViewController {
         }
         
         bureaucracyCrapButtonsView.addSubview(privacyPolicyButton)
-        privacyPolicyButton.snp.makeConstraints { (make) in
+        privacyPolicyButton.snp.makeConstraints { make in
             make.left.top.bottom.equalToSuperview()
         }
         privacyPolicyButton.setTitle("Privacy Policy", for: .normal)
         privacyPolicyButton.setTitleColor(.gray, for: .normal)
-        privacyPolicyButton.addTarget(self, action: #selector(self.privacyPolicyButtontapped), for: .touchUpInside)
-        privacyPolicyButton.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        privacyPolicyButton.addTarget(self, action: #selector(self.privacyPolicyButtontapped), for: .primaryActionTriggered)
+        privacyPolicyButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
         
         bureaucracyCrapButtonsView.addSubview(termsOfServiceButton)
-        termsOfServiceButton.snp.makeConstraints { (make) in
+        termsOfServiceButton.snp.makeConstraints { make in
             make.right.top.bottom.equalToSuperview()
         }
         termsOfServiceButton.setTitle("Terms of Service", for: .normal)
         termsOfServiceButton.setTitleColor(.gray, for: .normal)
-        termsOfServiceButton.addTarget(self, action: #selector(self.termsOfServiceButtontapped), for: .touchUpInside)
-        termsOfServiceButton.titleLabel?.font = UIFont.systemFont(ofSize: 12, weight: .regular)
+        termsOfServiceButton.addTarget(self, action: #selector(self.termsOfServiceButtontapped), for: .primaryActionTriggered)
+        termsOfServiceButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
         
         view.addSubview(subscriptionText)
-        subscriptionText.snp.makeConstraints { (make) in
+        subscriptionText.snp.makeConstraints { make in
             make.top.equalTo(bureaucracyCrapButtonsView.snp.bottom).offset(40)
-            make.left.equalToSuperview().inset(32)
-            make.right.equalToSuperview().inset(32)
+            make.leading.equalToSuperview().inset(32)
+            make.trailing.equalToSuperview().inset(32)
         }
         subscriptionText.text = "Premium is monthly auto-renewable subscription of Lez and it offers subscription with price €2.99 per month. Payment will be charged to iTunes Account at confirmation of purchase. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period. Account will be charged for renewal within 24-hours prior to the end of the current period. Subscriptions may be managed by the user and auto-renewal may be turned off by going to the iPhone’s settings."
         subscriptionText.numberOfLines = 20
-        subscriptionText.font = UIFont.systemFont(ofSize: 9, weight: .regular)
+        subscriptionText.font = .systemFont(ofSize: 9, weight: .regular)
         subscriptionText.textColor = .gray
     }
     
@@ -116,37 +109,37 @@ class GetPremiumViewController: UIViewController {
         let product = products.first
         
         view.addSubview(backgroundImageView)
-        backgroundImageView.snp.makeConstraints { (make) in
+        backgroundImageView.snp.makeConstraints { make in
             make.edges.equalToSuperview()
         }
-        backgroundImageView.image = UIImage(named: "Premium Background")
+        backgroundImageView.image = #imageLiteral(resourceName: "Premium Background")
         backgroundImageView.contentMode = .scaleAspectFill
         
         view.addSubview(titleLabel)
-        titleLabel.snp.makeConstraints { (make) in
+        titleLabel.snp.makeConstraints { make in
             make.top.equalToSuperview().inset(view.frame.height / 2.6)
-            make.left.right.equalToSuperview()
+            make.leading.trailing.equalToSuperview()
         }
         titleLabel.text = "Get Premium"
         titleLabel.textAlignment = .center
-        titleLabel.font = UIFont.systemFont(ofSize: 28, weight: .heavy)
+        titleLabel.font = .systemFont(ofSize: 28, weight: .heavy)
         
         view.addSubview(descriptionLabel)
-        descriptionLabel.snp.makeConstraints { (make) in
+        descriptionLabel.snp.makeConstraints { make in
             make.top.equalTo(titleLabel.snp.bottom).offset(16)
-            make.left.equalToSuperview().offset(40)
-            make.right.equalToSuperview().inset(40)
+            make.leading.equalToSuperview().offset(40)
+            make.trailing.equalToSuperview().inset(40)
         }
         descriptionLabel.text = "Unlimited matches for only \(product!.localizedPrice ?? priceString) per month."
-        descriptionLabel.font = UIFont.systemFont(ofSize: 21, weight: .medium)
+        descriptionLabel.font = .systemFont(ofSize: 21, weight: .medium)
         descriptionLabel.numberOfLines = 2
         descriptionLabel.textAlignment = .center
         
         view.addSubview(buyButton)
-        buyButton.snp.makeConstraints { (make) in
+        buyButton.snp.makeConstraints { make in
             make.top.equalTo(descriptionLabel.snp.bottom).offset(32)
-            make.left.equalToSuperview().offset(40)
-            make.right.equalToSuperview().inset(40)
+            make.leading.equalToSuperview().offset(40)
+            make.trailing.equalToSuperview().inset(40)
             make.height.equalTo(48)
         }
         buyButton.setTitle("Get Premium", for: .normal)
@@ -160,32 +153,30 @@ class GetPremiumViewController: UIViewController {
 
     private func setupCloseButton() {
         view.addSubview(closeButton)
-        closeButton.snp.makeConstraints { (make) in
+        closeButton.snp.makeConstraints { make in
             make.width.equalTo(32)
             make.height.equalTo(32)
-            make.right.equalToSuperview().inset(16)
+            make.trailing.equalToSuperview().inset(16)
             make.top.equalToSuperview().inset(32)
         }
-        let image = UIImage(named: "Close")
+        let image = #imageLiteral(resourceName: "Close")
         closeButton.setImage(image, for: .normal)
-        closeButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for:.touchUpInside)
+        closeButton.addTarget(self, action: #selector(self.closeButtonTapped(_:)), for: .primaryActionTriggered)
     }
     
     @objc func closeButtonTapped(_ sender: UIButton) {
-        dismiss(animated: true, completion: nil)
+        dismiss(animated: true)
     }
     
     @objc func buyTapped(_ sender: UIButton) {
-        PurchaseManager.purchase("premium") { (outcome) in
+        PurchaseManager.purchase("premium") { outcome in
             switch outcome {
             case .failed:
                 Alertift.actionSheet(title: "Error ", message: "Something went wrong, purchase failed.")
                     .action(Alertift.Action.cancel("Okay"))
-                    .show(on: self, completion: nil)
-            case .success :
-                self.dismiss(animated: true, completion: {
-                    AnalyticsManager.shared.logEvent(name: .userPurchasedPremium, user: self.user)
-                })
+                    .show(on: self)
+            case .success:
+                self.dismiss(animated: true) { AnalyticsManager.shared.logEvent(name: .userPurchasedPremium, user: self.user) }
             }
         }
     }

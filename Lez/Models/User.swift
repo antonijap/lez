@@ -11,7 +11,9 @@ import UIKit
 import Firebase
 
 enum LookingFor: String {
-    case relationship = "Relationship", friendship = "Friendship", sex = "Sex"
+    case relationship = "Relationship"
+    case friendship = "Friendship"
+    case sex = "Sex"
 }
 
 enum Diet: String, Encodable {
@@ -47,7 +49,7 @@ struct LezImage: Encodable {
     var url: String
 }
 
-class User: Hashable {
+final class User: Hashable {
     var hashValue: Int { get { return uid.hashValue } }
     var uid: String
     var name: String
@@ -68,7 +70,10 @@ class User: Hashable {
     var cooldownTime: Date?
     var isManuallyPromoted: Bool
 
-    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences, details: Details, images: [LezImage], isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool, likes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?, isManuallyPromoted: Bool) {
+    init(uid: String, name: String, email: String, age: Int, location: Location, preferences: Preferences,
+         details: Details, images: [LezImage], isOnboarded: Bool, isPremium: Bool, isBanned: Bool, isHidden: Bool,
+         likes: [String], blockedUsers: [String], chats: [String], likesLeft: Int, cooldownTime: Date?,
+         isManuallyPromoted: Bool) {
         self.uid = uid
         self.name = name
         self.email = email

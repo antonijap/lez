@@ -37,61 +37,58 @@ enum RestoreOutcomes {
 }
 
 struct PurchaseManager {
-    
+
     // MARK: - Properties
-    
+
     /// The ID's for your products
     static private let productsIDs: ProductsIDs = ["premium"]
-    
+
     // MARK: - Methods
-    
+
     /// Fetches the products from the app store
     /// - Parameter completion: Fetched Products
     static func fetchProducts(completion: @escaping Completion) {
-        SwiftyStoreKit.retrieveProductsInfo(productsIDs) { (productsInfo) in
-            handleProducts(from: productsInfo, { (products) in
-                completion(products)
-            })
+        SwiftyStoreKit.retrieveProductsInfo(productsIDs) { productsInfo in
+            handleProducts(from: productsInfo, { products in completion(products) })
         }
     }
-    
+
     /// We use this method to purchase Premium Subscription from
     /// the products that were fetched from the app store.
     /// - Parameters:
     ///   - productID: The product ID we want to purchase
     ///   - completion: The result if the product was succesfully purchased or if it failed
     static func purchase(_ productID: String, _ completion: @escaping (PurchaseOutcomes) -> Void) {
-        SwiftyStoreKit.purchaseProduct(productID, atomically: true) { (result) in
+        SwiftyStoreKit.purchaseProduct(productID, atomically: true) { result in
             switch result {
-            case .success          : completion(.success) ; self.markUserAsPremium()
-            case let .error(error) : completion(.failed) ; self.deactivatePremiumInFirestore()
-            handleError(error)
+            case .success:
+                completion(.success); self.markUserAsPremium()
+            case let .error(error):
+                completion(.failed); self.deactivatePremiumInFirestore()
+                handleError(error)
             }
         }
     }
-    
+
     static func verifyPurchase(_ productID: ProductID) {
         verifyReceipt { (result) in
             switch result {
-            case .success(let receipt):
-                // This triggers password prompt
+            case .success(let receipt): // This triggers password prompt
                 print("Receipt is \(receipt)")
-                verifySubscription(productID, with: receipt, isRestore: false, completion: nil)
+                verifySubscription(productID, with: receipt, isRestore: false)
             case .error(let error):
                 print("There was an error \(error)")
             }
         }
     }
-    
+
     static func restorePurchase(_ completion: @escaping RestoreOutcomeCompletion) {
-        SwiftyStoreKit.restorePurchases(atomically: true) { (result) in
+        SwiftyStoreKit.restorePurchases(atomically: true) { result in
             if result.restoreFailedPurchases.count > 0 {
                 completion(.failed)
             } else if result.restoredPurchases.count > 0 {
                 if let product = result.restoredPurchases.last {
-                    verifyPurchaseRestoreWith(product.productId, completion: { (outcome) in
-                        completion(outcome)
-                    })
+                    verifyPurchaseRestoreWith(product.productId) { outcome in completion(outcome) }
                 }
             } else {
                 completion(.nothingToRestore)
@@ -100,36 +97,34 @@ struct PurchaseManager {
     }
     
     // MARK: - Helper Methods
-    
+
     fileprivate static func verifyPurchaseRestoreWith(_ productID: String, completion: @escaping RestoreOutcomeCompletion) {
-        verifyReceipt { (result) in
+        verifyReceipt { result in
             switch result {
-            case let .success(receipt): verifySubscription(productID, with: receipt, isRestore: true, completion: completion)
+            case let .success(receipt):
+                verifySubscription(productID, with: receipt, isRestore: true, completion: completion)
             case let .error(error):
                 completion(.failed)
                 print("There was an Error: \(error.localizedDescription) in PurchaseManager")
             }
         }
     }
-    
+
     fileprivate static func verifyReceipt(completion: @escaping (VerifyReceiptResult) -> Void) {
         let sharedSecret = "fdedb790950649388f3863bf6602ca66"
         let appleValidator = AppleReceiptValidator(service: .production, sharedSecret: sharedSecret)
-        SwiftyStoreKit.verifyReceipt(using: appleValidator) { (result) in
-            completion(result)
-        }
+        SwiftyStoreKit.verifyReceipt(using: appleValidator) { completion($0) }
     }
-    
-    fileprivate static func verifySubscription(_ productID: ProductID, with receipt: ReceiptInfo, isRestore: Bool, completion: RestoreOutcomeCompletion?) {
-        let result = SwiftyStoreKit.verifySubscription(
-            ofType: .autoRenewable,
-            productId: productID,
-            inReceipt: receipt,
-            validUntil: Date())
-        
+
+    fileprivate static func verifySubscription(_ productID: ProductID, with receipt: ReceiptInfo, isRestore: Bool,
+                                               completion: RestoreOutcomeCompletion? = nil) {
+        let result = SwiftyStoreKit.verifySubscription(ofType: .autoRenewable,
+                                                       productId: productID,
+                                                       inReceipt: receipt,
+                                                       validUntil: Date())
         handleSubscription(result, isRestore: isRestore, completion: completion)
     }
-    
+
     /// Checks if the result has products and if their ID's are valid
     /// - Parameters:
     ///   - result: The products information result
@@ -145,36 +140,22 @@ struct PurchaseManager {
             print("Error : \(error)")
         }
     }
-    
-    fileprivate static func handleSubscription(_ result: VerifySubscriptionResult, isRestore: Bool, completion: RestoreOutcomeCompletion?) {
+
+    fileprivate static func handleSubscription(_ result: VerifySubscriptionResult, isRestore: Bool,
+                                               completion: RestoreOutcomeCompletion?) {
         switch result {
-            
         case .purchased:
-            
-            if isRestore {
-                completion!(.success)
-            }
-            
+            if isRestore { completion!(.success) }
             markUserAsPremium()
-            
         case .expired:
-            
-            if isRestore {
-                completion!(.expired)
-            }
-            
+            if isRestore { completion!(.expired) }
             deactivatePremiumInFirestore()
-            
         case .notPurchased:
-            
-            if isRestore {
-                completion!(.nothingToRestore)
-            }
-            
+            if isRestore { completion!(.nothingToRestore) }
             deactivatePremiumInFirestore()
         }
     }
-    
+
     fileprivate static func handleError(_ error: SKError){
         switch error.code {
         case .unknown: print("Unknown error. Please contact support")
@@ -191,38 +172,27 @@ struct PurchaseManager {
 }
 
 extension PurchaseManager {
-    
     fileprivate static func markUserAsPremium() {
         guard let currentUser = Auth.auth().currentUser else { return }
-        
-        let data: [String: Any] = [
-            "isPremium": true,
-            "cooldownTime": "",
-            "likesLeft": 5
-        ]
-        
+        let data: [String: Any] = ["isPremium": true,
+                                   "cooldownTime": "",
+                                   "likesLeft": 5]
         // FIXME: - Check if user was updated in firebase
-        FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).then { (success) in
+        FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).then { _ in
             NotificationCenter.default.post(name: Notification.Name("UpdateProfile"), object: nil)
         }
     }
-    
+
     fileprivate static func deactivatePremiumInFirestore() {
         guard let currentUser = Auth.auth().currentUser else { return }
-        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { (user) in
+        FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
             // Determine if there should be a cooldown widget before deleting shit in Firestore.
-            if user.cooldownTime != nil {
-                let timeUntilNewLikesUnlock = user.cooldownTime!.add(components: 30.minutes)
-                if timeUntilNewLikesUnlock.isInFuture {
-                    // Clock should run don't delete anything
-                } else {
-                    let data: [String: Any] = [
-                        "isPremium": false,
-                        "cooldownTime": "",
-                        ]
-                    FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).fulfill(true)
-                }
-            }
+            guard user.cooldownTime == nil else { return }
+            let timeUntilNewLikesUnlock = user.cooldownTime!.add(components: 30.minutes)
+            guard !timeUntilNewLikesUnlock.isInFuture else { return } // Clock should run don't delete anything
+            let data: [String: Any] = ["isPremium": false,
+                                       "cooldownTime": ""]
+            FirestoreManager.shared.updateUser(uid: currentUser.uid, data: data).fulfill(true)
         }
     }
 }
