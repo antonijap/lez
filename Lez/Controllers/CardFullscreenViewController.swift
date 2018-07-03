@@ -101,7 +101,7 @@ extension CardFullscreenViewController: UITableViewDelegate, UITableViewDataSour
                     titleWithDescriptionCell.titleLabel.text = user.name + ", " + "\(user.age)"
                     titleWithDescriptionCell.bodyLabel.text = "\(user.location.city)"
                     titleWithDescriptionCell.bodyLabel.snp.remakeConstraints { make in
-                        make.left.right.equalToSuperview().inset(32)
+                        make.leading.trailing.equalToSuperview().inset(32)
                         make.top.equalTo(titleWithDescriptionCell.titleLabel.snp.bottom)
                         make.bottom.equalToSuperview().offset(-16)
                     }

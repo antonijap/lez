@@ -338,7 +338,7 @@ extension ImagesViewController {
             make.width.equalToSuperview().dividedBy(width)
             make.height.equalToSuperview().dividedBy(2.8)
             make.top.equalTo(imageViewOne.snp.bottom).offset(16)
-            make.leading.equalTo(imageViewOne.snp.left)
+            make.leading.equalTo(imageViewOne.snp.leading)
         }
         imageViewThree.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
         imageViewThree.clipsToBounds = true
@@ -351,7 +351,7 @@ extension ImagesViewController {
             make.width.equalToSuperview().dividedBy(width)
             make.height.equalToSuperview().dividedBy(2.8)
             make.top.equalTo(imageViewThree.snp.top)
-            make.trailing.equalTo(imageViewTwo.snp.right)
+            make.trailing.equalTo(imageViewTwo.snp.trailing)
         }
         imageViewFour.backgroundColor = UIColor(red:0.95, green:0.95, blue:0.95, alpha:1.00)
         imageViewFour.clipsToBounds = true

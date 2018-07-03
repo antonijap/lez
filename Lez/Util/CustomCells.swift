@@ -256,7 +256,7 @@ final class NewChatCell: UITableViewCell {
     func setupNameLabel() {
         addSubview(titleLabel)
         titleLabel.snp.makeConstraints { make in
-            make.leading.equalTo(userPictureView.snp.right).offset(16)
+            make.leading.equalTo(userPictureView.snp.trailing).offset(16)
             make.top.equalTo(userPictureView.snp.top)
             make.trailing.equalToSuperview().inset(80)
         }
@@ -497,7 +497,7 @@ final class ProfileImagesCell: UITableViewCell {
         addSubview(slideshow)
         let x = frame.width * 1.6
         slideshow.snp.makeConstraints { make in
-            make.top.left.right.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
             make.height.equalTo(x)
             make.bottom.equalToSuperview().inset(16).priority(999)
         }

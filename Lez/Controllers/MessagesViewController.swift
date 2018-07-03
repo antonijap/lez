@@ -331,7 +331,7 @@ extension MessagesViewController {
         textField.snp.makeConstraints { make in
             make.top.bottom.equalToSuperview()
             make.leading.equalToSuperview().offset(16)
-            make.trailing.equalTo(sendButton.snp.left).offset(-16)
+            make.trailing.equalTo(sendButton.snp.leading).offset(-16)
         }
         
         textFieldContainer.addSubview(topBorderView)

@@ -540,8 +540,8 @@ extension MatchViewController {
         view.addSubview(noUsersCTA)
         noUsersCTA.snp.makeConstraints { make in
             make.top.equalTo(noUsersDescription.snp.bottom).offset(32)
-            make.left.equalToSuperview().offset(48)
-            make.right.equalToSuperview().inset(48)
+            make.leading.equalToSuperview().offset(48)
+            make.trailing.equalToSuperview().inset(48)
             make.height.equalTo(48)
         }
         noUsersCTA.setTitle("Spread Word", for: .normal)
@@ -636,7 +636,7 @@ extension MatchViewController {
         likesCounterWidgetView.addSubview(likesCounterWidgetLabel)
         likesCounterWidgetLabel.snp.makeConstraints { make in
             make.centerY.equalToSuperview()
-            make.leading.equalTo(likesCounterWidgetImageView.snp.right).offset(4)
+            make.leading.equalTo(likesCounterWidgetImageView.snp.trailing).offset(4)
             make.trailing.equalToSuperview().inset(12)
         }
         

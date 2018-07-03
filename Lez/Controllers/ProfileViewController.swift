@@ -303,7 +303,7 @@ extension ProfileViewController {
         tableView.dataSource = self
         view.addSubview(tableView)
         tableView.snp.makeConstraints { make in
-            make.top.right.left.equalToSuperview()
+            make.top.leading.trailing.equalToSuperview()
             make.bottom.equalTo(view.safeAreaLayoutGuide.snp.bottomMargin)
         }
         tableView.backgroundColor = .white

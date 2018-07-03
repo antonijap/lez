@@ -64,18 +64,14 @@ final class GetPremiumViewController: UIViewController {
         }
         
         bureaucracyCrapButtonsView.addSubview(privacyPolicyButton)
-        privacyPolicyButton.snp.makeConstraints { make in
-            make.left.top.bottom.equalToSuperview()
-        }
+        privacyPolicyButton.snp.makeConstraints { make in make.leading.top.bottom.equalToSuperview() }
         privacyPolicyButton.setTitle("Privacy Policy", for: .normal)
         privacyPolicyButton.setTitleColor(.gray, for: .normal)
         privacyPolicyButton.addTarget(self, action: #selector(self.privacyPolicyButtontapped), for: .primaryActionTriggered)
         privacyPolicyButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
         
         bureaucracyCrapButtonsView.addSubview(termsOfServiceButton)
-        termsOfServiceButton.snp.makeConstraints { make in
-            make.right.top.bottom.equalToSuperview()
-        }
+        termsOfServiceButton.snp.makeConstraints { make in make.trailing.top.bottom.equalToSuperview() }
         termsOfServiceButton.setTitle("Terms of Service", for: .normal)
         termsOfServiceButton.setTitleColor(.gray, for: .normal)
         termsOfServiceButton.addTarget(self, action: #selector(self.termsOfServiceButtontapped), for: .primaryActionTriggered)

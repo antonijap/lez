@@ -404,7 +404,7 @@ import JGProgressHUD
 //            make.width.equalToSuperview().dividedBy(2.1)
 //            make.height.equalToSuperview()
 //            make.centerY.equalToSuperview()
-//            make.left.equalToSuperview()
+//            make.leading.equalToSuperview()
 //        }
 //
 //        imageView.contentMode = .scaleAspectFit
@@ -418,7 +418,7 @@ import JGProgressHUD
 //            make.width.equalToSuperview().dividedBy(2.1)
 //            make.height.equalToSuperview()
 //            make.centerY.equalToSuperview()
-//            make.right.equalToSuperview()
+//            make.trailing.equalToSuperview()
 //        }
 //
 //        imageView2.contentMode = .scaleAspectFit
