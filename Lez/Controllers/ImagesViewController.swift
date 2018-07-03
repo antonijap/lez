@@ -20,7 +20,7 @@ final class ImagesViewController: UIViewController {
 
     let imageViews = [UIImageView(frame: .zero), UIImageView(frame: .zero), UIImageView(frame: .zero), UIImageView(frame: .zero)] // Make me sad
     var images = [UIImage?](repeating: nil, count: 4)
-    var imageNames = [String?](repeating: nil, count: 4)
+    var imageNames: [String] = []
 
     let doneButton = CustomButton(frame: .zero)
 
@@ -117,7 +117,15 @@ final class ImagesViewController: UIViewController {
     }
 
     private func uploadImages() {
-        guard !images.isEmpty else {
+        print(images)
+        var finalImages: [UIImage] = []
+        
+        for image in images {
+            guard let image = image else { print("Image is nil"); continue }
+            finalImages.append(image)
+        }
+        
+        guard !finalImages.isEmpty else {
             let alertController = UIAlertController(title: "No images", message: "Every profile has at least one image. It's mandatory.", preferredStyle: .alert)
             alertController.addAction(UIAlertAction(title: "Okay", style: .cancel))
             present(alertController, animated: true)
@@ -133,16 +141,19 @@ final class ImagesViewController: UIViewController {
             FirestoreManager.shared.addUser(uid: user.uid, data: data).then({ [weak self] success in
                 guard success else { return }
                 guard let strongSelf = self else { return }
-
+                print("Creating new user.")
                 strongSelf.startSpinner()
 
-                for (index, image) in strongSelf.images.enumerated() {
+                for (_, image) in strongSelf.images.enumerated() {
                     guard let image = image else { continue }
                     group.enter()
                     strongSelf.uploadImage(image: image).then { name in
-                        strongSelf.imageNames[index] = name
+                        print("Name \(name)")
+                        strongSelf.imageNames.append(name)
+                        print("Image uploaded.")
                         group.leave()
                     }
+                    
                 }
 
                 group.notify(queue: .main) {
@@ -167,16 +178,20 @@ final class ImagesViewController: UIViewController {
 
         // Existing users, while editing
         // Delete images and then upload new
-        deleteImages(url: user.images).then { [weak self] success in
+        deleteImages().then { [weak self] success in
+            print("Deletion done.")
             guard let strongSelf = self else { return }
             if success {
-                for (index, image) in strongSelf.images.enumerated() {
-                    guard let image = image else { return }
+                for (_, image) in strongSelf.images.enumerated() {
+                    guard let image = image else { continue }
                     group.enter()
                     strongSelf.uploadImage(image: image).then { name in
-                        strongSelf.imageNames[index] = name
+                        print("Name \(name)")
+                        strongSelf.imageNames.append(name)
+                        print("Image uploaded.")
                         group.leave()
                     }
+                    
                 }
                 group.notify(queue: .main) {
                     FirestoreManager.shared.updateUser(uid: user.uid, data: ["images": strongSelf.imageNames]).then({ success in
@@ -237,14 +252,17 @@ final class ImagesViewController: UIViewController {
         }
     }
 
-    private func deleteImages(url: [LezImage]) -> Promise<Bool> {
+    private func deleteImages() -> Promise<Bool> {
         return Promise { fulfill, reject in
             if let user = self.user {
                 let group = DispatchGroup()
+                if user.images.count == 0 {
+                    print("No images.")
+                    fulfill(true)
+                }
                 for image in user.images {
                     group.enter()
                     let ref = self.storage.reference().child("images").child(user.uid).child(image.name)
-                    print(ref.fullPath)
                     ref.delete { error in
                         if let error = error {
                             print(error.localizedDescription)
