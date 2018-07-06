@@ -122,6 +122,13 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     
     // MARK: - Methods
     
+    private func showAlertIfUserBanned(user: User) {
+        if user.isBanned {
+            Alertift.alert(title: "You are banned", message: "You've broken our rules and your account is banned.")
+                .show()
+        }
+    }
+    
     private func hideRefreshButton() {
         refreshButton.isHidden = true
     }
@@ -302,6 +309,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         refreshControl.endRefreshing()
         FirestoreManager.shared.fetchUser(uid: uid).then { user in
             self.user = user
+            self.showAlertIfUserBanned(user: user) // Show alert for banned users
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ users in
                 self.users = users
                 if users.count > 0 {
