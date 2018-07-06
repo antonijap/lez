@@ -1,0 +1,12 @@
+Rules:
+
+Every user gets 5 free likes. After they spend it, they need to wait for 24h or buy a subscription for unlimited likes. This demo account has only one like. If you tap on somebody, a counter will appear. Then tap on another person to see purchasing modal. Please don't make an account that is breaking TOS, this is a production database.
+
+How to test monetisation:
+
+1. Use provided credentials to login with Facebook (first reviewer already went through onboarding)
+2. Tap on a person to spend remaining like
+3. When a counters appears, tap on another person to see Get Premium modal
+
+Regards,
+Antonija
