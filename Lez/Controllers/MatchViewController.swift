@@ -207,6 +207,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
             if let currentUser = Auth.auth().currentUser {
                 FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
                     self.user = user
+                    self.showAlertIfUserBanned(user: user) // Show alert for banned users
                     self.fetchUsers(for: user.uid)
                 }
             }
