@@ -31,7 +31,10 @@ platform :ios do
     increment_build_number
     get_push_certificate
     build_app(workspace: "Lez.xcworkspace", scheme: "Lez")
-    upload_to_app_store(skip_screenshots: true)
+    upload_to_app_store(
+      force: true,
+      skip_screenshots: true
+    )
   end
 
   desc "Refresh dSYM files from iTunes Connect"
