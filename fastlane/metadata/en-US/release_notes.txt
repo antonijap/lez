@@ -1,1 +1,4 @@
-Under the hood improvements.
+- Fixed crash that happened during scrolling of your potential matches
+- Image upload now works as expected
+
+And a lot of smaller, under the hood, improvements for better scalabiliy.

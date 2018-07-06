@@ -117,7 +117,6 @@ final class ImagesViewController: UIViewController {
     }
 
     private func uploadImages() {
-        print(images)
         var finalImages: [UIImage] = []
         
         for image in images {
@@ -312,6 +311,7 @@ final class ImagesViewController: UIViewController {
 
         alertController.addAction(UIAlertAction(title: "Remove", style: .destructive) { [weak self] _ in
             self?.images[tag] = nil
+            self?.imageViews[tag].image = #imageLiteral(resourceName: "Empty_Image")
             self?.imageViews[tag].contentMode = .center
         })
     }
