@@ -93,11 +93,11 @@ final class MessagesViewController: UIViewController {
     @objc func sendMessage() {
         if textField.text != "" {
             if let text = textField.text {
+                self.textField.text = ""
                 let data: [String: Any] = ["created": Date().toString(dateFormat: "yyyy-MM-dd HH:mm:ss"),
                                            "from": myUid,
                                            "message": text]
                 FirestoreManager.shared.addNewMessage(to: chatUid, data: data).then { (success) in
-                    self.textField.text = ""
                     let parameters: Parameters = ["channel": self.herUid!, "event": Events.newMessage.rawValue, "message": "\(self.name!) sent message"]
                     Alamofire.request("https://us-central1-lesbian-dating-app.cloudfunctions.net/triggerPusherChannel", method: .post, parameters: parameters, encoding: URLEncoding.default)
                 }
@@ -205,6 +205,7 @@ final class MessagesViewController: UIViewController {
     }
     
     func scrollToLast() {
+        guard !messages.isEmpty else { print("No messages."); return }
         let indexPath = IndexPath(row: messages.count - 1, section: 0)
         self.tableView.scrollToRow(at: indexPath, at: .bottom, animated: false)
     }

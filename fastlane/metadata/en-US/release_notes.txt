@@ -1,4 +1,2 @@
-- Fixed crash that happened during scrolling of your potential matches
-- Image upload now works as expected
-
-And a lot of smaller, under the hood, improvements for better scalabiliy.
+- Fixed crash in sending messages
+- banned users will get a proper modal upon opening the app
