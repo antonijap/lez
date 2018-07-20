@@ -44,6 +44,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerDelega
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         navigationController?.setNavigationBarHidden(true, animated: animated)
+        checkConnectivity()
     }
 
     override func viewDidLoad() {
@@ -52,7 +53,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerDelega
                                                name: Notification.Name("UpdateProfile"), object: nil)
         setupTableView()
         setupRefreshButton()
-        checkConnectivity()
+//        checkConnectivity()
     }
 
     // MARK: - Methods
