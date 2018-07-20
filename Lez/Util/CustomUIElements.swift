@@ -65,6 +65,64 @@ final class PrimaryButton: UIButton {
     }
 }
 
+final class FacebookButton: UIButton {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    func setup() {
+        layer.cornerRadius = 8
+        for state: UIControlState in [.normal, .highlighted, .disabled, .selected, .focused, .application, .reserved] {
+            setTitleColor(.black, for: state)
+        }
+        layer.backgroundColor = UIColor(red:0.45, green:0.96, blue:0.84, alpha:1.00).cgColor
+        self.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+    }
+    
+    override class var requiresConstraintBasedLayout: Bool { return true }
+    
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted ? UIColor(red:0.30, green:0.40, blue:0.68, alpha:1.00) : UIColor(red:0.23, green:0.35, blue:0.59, alpha:1.00)
+        }
+    }
+}
+
+final class TwitterButton: UIButton {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        setup()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        setup()
+    }
+    
+    func setup() {
+        layer.cornerRadius = 8
+        for state: UIControlState in [.normal, .highlighted, .disabled, .selected, .focused, .application, .reserved] {
+            setTitleColor(.black, for: state)
+        }
+        layer.backgroundColor = UIColor(red:0.45, green:0.96, blue:0.84, alpha:1.00).cgColor
+        self.titleLabel?.font = .systemFont(ofSize: 16, weight: .medium)
+    }
+    
+    override class var requiresConstraintBasedLayout: Bool { return true }
+    
+    override var isHighlighted: Bool {
+        didSet {
+            backgroundColor = isHighlighted ? UIColor(red:0.45, green:0.74, blue:1.00, alpha:1.00) : UIColor(red:0.33, green:0.67, blue:0.94, alpha:1.00)
+        }
+    }
+}
+
 final class SecondaryButton: UIButton {
     override init(frame: CGRect) {
         super.init(frame: frame)

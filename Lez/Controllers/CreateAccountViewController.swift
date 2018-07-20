@@ -20,6 +20,7 @@ class CreateAccountViewController: UIViewController {
     private let backgroundImageView = UIImageView()
     
     var isInOptOut = false
+    var oldProviderID: String?
     
     // Mark: - View Lifecycle
     override func viewDidLoad() {
@@ -49,44 +50,51 @@ class CreateAccountViewController: UIViewController {
                 .action(.default("Okay"))
                 .show(on: self, completion: nil)
         default:
-            Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
-                guard let user = user else {
-                    if let error = error as NSError? {
+            if self.isInOptOut {
+                guard let currentUser = Auth.auth().currentUser else { print("No user"); return }
+
+                // Link with email provider
+                
+                let credential = EmailAuthProvider.credential(withEmail: email, password: password)
+                currentUser.linkAndRetrieveData(with: credential, completion: { (authResult, error) in
+                    if let error = error {
                         Alertift.alert(title: "", message: error.localizedDescription)
                             .action(.default("Okay"))
                             .show(on: self, completion: nil)
                     }
-                    return
-                }
-                
-                if self.isInOptOut {
-                    // Opt-Out flow
-                    let credential = EmailAuthProvider.credential(withEmail: email, password: password)
-                    Auth.auth().currentUser?.linkAndRetrieveData(with: credential, completion: { (result, error) in
+                    
+                    // Unlink from Social provider
+                    if currentUser.providerData.count > 0 {
+                        for provider in currentUser.providerData {
+                            print(provider.providerID)
+                            if provider.providerID == "twitter.com" || provider.providerID == "facebook.com" {
+                                currentUser.unlink(fromProvider: provider.providerID) { (user, error) in
+                                    Alertift.alert(title: "", message: "Success. From now on, use only email login.")
+                                        .action(.default("I understand"), handler: { _, _, _ in
+                                            self.navigationController?.popViewController(animated: true)
+                                        })
+                                        .show(on: self, completion: nil)
+                                }
+                            }
+                        }
+                    }
+                })
+            } else {
+                Auth.auth().createUser(withEmail: email, password: password) { (user, error) in
+                    guard let user = user else {
                         if let error = error {
                             Alertift.alert(title: "", message: error.localizedDescription)
                                 .action(.default("Okay"))
                                 .show(on: self, completion: nil)
                         }
-                        
-                        guard let result = result else {
-                            return
-                        }
-                        
-                        print(result)
-                        
-                        // Unlink Facebook or Twitter
-//                        Auth.auth().currentUser?.unlink(fromProvider: providerID!) { (user, error) in
-//                            
-//                        }
-                    })
+                        return
+                    }
+                    // Regular flow, go through form
+                    let userProfileFormViewController = UserProfileFormViewController()
+                    userProfileFormViewController.email = user.user.email
+                    userProfileFormViewController.isEmailDisabled = true
+                    self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
                 }
-                
-                // Regular flow, go through form
-                let userProfileFormViewController = UserProfileFormViewController()
-                userProfileFormViewController.email = user.user.email
-                userProfileFormViewController.isEmailDisabled = true
-                self.navigationController?.pushViewController(userProfileFormViewController, animated: true)
             }
         }
     }

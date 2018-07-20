@@ -16,6 +16,8 @@ import ImageSlideshow
 import SDWebImage
 import SwiftyStoreKit
 import Toast_Swift
+import StoreKit
+import FBSDKLoginKit
 
 final class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
 
@@ -25,7 +27,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerDelega
     private let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription,
                                             .titleWithDescription, .titleWithDescription,
                                             .titleWithDescription, .simpleMenu, .simpleMenu,
-                                            .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
+                                            .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
     private var user: User?
     private let tabBar = UITabBar()
     private let hud = JGProgressHUD(style: .dark)
@@ -175,28 +177,29 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let user = user else { return UITableViewCell() }
                 let simpleMenuCell = tableView.dequeueReusableCell(withIdentifier: SimpleMenuCell.reuseID) as! SimpleMenuCell
                 if indexPath.section == 6 {
-                    print("User isPremium: \(user.isPremium)")
                     if user.isPremium || user.isManuallyPromoted {
                         simpleMenuCell.titleLabel.text = "You are Premium"
                     } else {
                         simpleMenuCell.titleLabel.text = "Get Premium"
                     }
+                    simpleMenuCell.isUserInteractionEnabled = true
                     simpleMenuCell.titleLabel.textColor = .black
-//                    simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .bold)
                 } else if indexPath.section == 7 {
                     simpleMenuCell.titleLabel.text = "Edit Profile"
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.isUserInteractionEnabled = true
                 } else if indexPath.section == 8 {
                     simpleMenuCell.titleLabel.text = "Edit Images"
+                    simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.isUserInteractionEnabled = true
                 } else if indexPath.section == 9 {
                     simpleMenuCell.titleLabel.text = "Tracking for Analytics"
+                    simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.isUserInteractionEnabled = true
                 } else if indexPath.section == 10 {
                     if user.isPremium || user.isManuallyPromoted {
                         simpleMenuCell.titleLabel.text = "Restore Subscription"
-                        simpleMenuCell.titleLabel.textColor = .gray
+                        simpleMenuCell.titleLabel.textColor = .lightGray
                         simpleMenuCell.isUserInteractionEnabled = false
                     } else {
                         simpleMenuCell.titleLabel.text = "Restore Subscription"
@@ -204,6 +207,24 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                         simpleMenuCell.isUserInteractionEnabled = true
                     }
                 } else if indexPath.section == 11 {
+                    guard let currentUser = Auth.auth().currentUser else { return UITableViewCell() }
+                    for provider in currentUser.providerData {
+                        if provider.providerID == "password" {
+                            simpleMenuCell.titleLabel.text = "Opt-out from Social Login"
+                            simpleMenuCell.isUserInteractionEnabled = false
+                            simpleMenuCell.titleLabel.textColor = .lightGray
+                            break
+                        }
+                    }
+                } else if indexPath.section == 12 {
+                    simpleMenuCell.titleLabel.text = "Report Issue"
+                    simpleMenuCell.titleLabel.textColor = .black
+                    simpleMenuCell.isUserInteractionEnabled = true
+                } else if indexPath.section == 13 {
+                    simpleMenuCell.titleLabel.text = "Rate Lez"
+                    simpleMenuCell.titleLabel.textColor = .black
+                    simpleMenuCell.isUserInteractionEnabled = true
+                } else if indexPath.section == 14 {
                     simpleMenuCell.titleLabel.text = "Sign out"
                     simpleMenuCell.titleLabel.textColor = .red
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
@@ -285,6 +306,36 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             highlightCell(indexPath: indexPath)
         }
         if indexPath == [11, 0] {
+            Alertift.alert(title: "Opt-out from Social Login", message: "If you want to login only with email, and remove previously used Facebook or Twitter login please proceed.")
+                .action(.default("Proceed")) { _, _, _ in
+                    guard let currentUser = Auth.auth().currentUser else { return }
+                    let createAccountViewController = CreateAccountViewController()
+                    createAccountViewController.isInOptOut = true
+                    createAccountViewController.oldProviderID = currentUser.providerID
+                    self.navigationItem.setHidesBackButton(true, animated: true)
+                    self.navigationController?.pushViewController(createAccountViewController, animated: true)
+                }
+            .action(.destructive("Cancel"))
+            .show(on: self, completion: nil)
+            highlightCell(indexPath: indexPath)
+        }
+        if indexPath == [12, 0] {
+            Alertift.alert(title: "Report Issue", message: "If you encounter a bug or any inconsistency, please don't hesitate to get in touch with us.")
+                .action(.default("Report")) { (action, int, text) in
+                    UIApplication.shared.open(
+                        URL(string: "mailto:info@getlez.com")!,
+                        options: [:],
+                        completionHandler: nil)
+                }
+                .action(.destructive("Cancel"))
+                .show(on: self, completion: nil)
+            highlightCell(indexPath: indexPath)
+        }
+        if indexPath == [13, 0] {
+            SKStoreReviewController.requestReview()
+            highlightCell(indexPath: indexPath)
+        }
+        if indexPath == [14, 0] {
             self.showSignoutAlert(CTA: "Sign out")
             highlightCell(indexPath: indexPath)
         }

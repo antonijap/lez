@@ -18,8 +18,8 @@ final class RegisterViewController: UIViewController {
 
     // MARK: - Properties
 
-    private let facebookLoginButton = PrimaryButton()
-    private let twitterLoginButton = PrimaryButton()
+    private let facebookLoginButton = FacebookButton()
+    private let twitterLoginButton = TwitterButton()
     private let emailLoginButton = SecondaryButton()
     private let hud = JGProgressHUD(style: .dark)
     private let backgroundImageView = UIImageView()
