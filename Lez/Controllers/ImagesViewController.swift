@@ -22,7 +22,7 @@ final class ImagesViewController: UIViewController {
     var images = [UIImage?](repeating: nil, count: 4)
     var imageNames: [String] = []
 
-    let doneButton = CustomButton(frame: .zero)
+    let doneButton = PrimaryButton(frame: .zero)
 
     let storage = Storage.storage()
     let hud = JGProgressHUD(style: .dark)

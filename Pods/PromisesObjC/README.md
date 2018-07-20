@@ -1,6 +1,6 @@
 [![Apache
 License](https://img.shields.io/github/license/google/promises.svg)](LICENSE)
-[![Travis](https://img.shields.io/travis/google/promises.svg)](https://travis-ci.org/google/promises)
+[![Travis](https://api.travis-ci.org/google/promises.svg?branch=master)](https://travis-ci.org/google/promises)
 
 ![Platforms](https://img.shields.io/badge/platforms-macOS%20%7C%20iOS%20%7C%20tvOS%20%7C%20watchOS-blue.svg?longCache=true&style=flat)
 ![Languages](https://img.shields.io/badge/languages-Swift%20%7C%20ObjC-orange.svg?longCache=true&style=flat)
@@ -42,6 +42,7 @@ Objective-C and Swift to facilitate writing asynchronous code.
     *   [Race](g3doc/index.md#race)
     *   [Recover](g3doc/index.md#recover)
     *   [Reduce](g3doc/index.md#reduce)
+    *   [Retry](g3doc/index.md#retry)
     *   [Timeout](g3doc/index.md#timeout)
     *   [Validate](g3doc/index.md#validate)
     *   [Wrap](g3doc/index.md#wrap)

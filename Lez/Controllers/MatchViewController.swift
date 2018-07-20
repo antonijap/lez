@@ -33,7 +33,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     private let matchYourImageView = SpringImageView()
     private let matchHerImageView = SpringImageView()
     private let matchLabel = UILabel()
-    private let matchCTA = CustomButton()
+    private let matchCTA = PrimaryButton()
     private let matchCloseButton = UIButton()
     private let matchView = SpringView()
     private let matchOverlayView = SpringView()
@@ -42,7 +42,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     private let noUsersBackground = UIImageView()
     private let noUsersTitle = UILabel()
     private let noUsersDescription = UILabel()
-    private let noUsersCTA = CustomButton()
+    private let noUsersCTA = PrimaryButton()
     private let noUsersRefreshButton = SpringButton()
     private let refreshControl = UIRefreshControl()
     private var users: [User] = []
@@ -55,7 +55,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     private var canLike: Bool!
     private var likesLeft: Int!
     private var timer = Timer()
-    private var refreshButton = CustomButton()
+    private var refreshButton = PrimaryButton()
     
     // MARK: - Life Cycle
     

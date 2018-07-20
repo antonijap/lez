@@ -12,11 +12,20 @@ struct PersistenceService: InterestPersistable {
         return true
     }
 
-    func persist(interests: Array<String>) {
-        self.removeAll()
-        for interest in interests {
-            _ = self.persist(interest: interest)
+    func persist(interests: [String]) -> Bool {
+        guard
+            let persistedInterests = self.getSubscriptions(),
+            persistedInterests.sorted().elementsEqual(interests.sorted())
+        else {
+            self.removeAll()
+            for interest in interests {
+                _ = self.persist(interest: interest)
+            }
+
+            return true
         }
+
+        return false
     }
 
     func remove(interest: String) -> Bool {
@@ -34,14 +43,12 @@ struct PersistenceService: InterestPersistable {
         }
     }
 
-    func getSubscriptions() -> Array<String>? {
+    func getSubscriptions() -> [String]? {
         return service.dictionaryRepresentation().filter { $0.key.hasPrefix(prefix) }.map { String(describing: ($0.value)) }
     }
 
     private func interestExists(interest: String) -> Bool {
-        guard let _ = service.object(forKey: self.prefixInterest(interest)) else { return false }
-
-        return true
+        return service.object(forKey: self.prefixInterest(interest)) != nil
     }
 
     private func prefixInterest(_ interest: String) -> String {

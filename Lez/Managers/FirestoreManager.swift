@@ -16,9 +16,9 @@ final class FirestoreManager {
     static let shared = FirestoreManager()
 
     private init() {
-//        let settings = db.settings
-//        settings.areTimestampsInSnapshotsEnabled = true
-//        db.settings = settings
+        let settings = db.settings
+        settings.areTimestampsInSnapshotsEnabled = true
+        db.settings = settings
     }
 
     func addReport(data: [String: Any]) -> Promise<Bool> {

@@ -17,6 +17,7 @@
 #import "Firestore/Source/Local/FSTLevelDB.h"
 
 #include <memory>
+#include <utility>
 
 #import "FIRFirestoreErrors.h"
 #import "Firestore/Source/Local/FSTLevelDBMigrations.h"
@@ -60,6 +61,7 @@ using leveldb::WriteOptions;
 
 @implementation FSTLevelDB {
   std::unique_ptr<LevelDbTransaction> _transaction;
+  std::unique_ptr<leveldb::DB> _ptr;
   FSTTransactionRunner _transactionRunner;
 }
 
@@ -80,6 +82,10 @@ using leveldb::WriteOptions;
     _transactionRunner.SetBackingPersistence(self);
   }
   return self;
+}
+
+- (leveldb::DB *)ptr {
+  return _ptr.get();
 }
 
 - (const FSTTransactionRunner &)run {
@@ -114,10 +120,10 @@ using leveldb::WriteOptions;
   // projectIDs are DNS-compatible names and cannot contain dots so there's
   // no danger of collisions.
   NSString *directory = documentsDirectory;
-  directory = [directory
-      stringByAppendingPathComponent:util::WrapNSStringNoCopy(databaseInfo.persistence_key())];
+  directory =
+      [directory stringByAppendingPathComponent:util::WrapNSString(databaseInfo.persistence_key())];
 
-  NSString *segment = util::WrapNSStringNoCopy(databaseInfo.database_id().project_id());
+  NSString *segment = util::WrapNSString(databaseInfo.database_id().project_id());
   if (!databaseInfo.database_id().IsDefaultDatabase()) {
     segment = [NSString
         stringWithFormat:@"%@.%s", segment, databaseInfo.database_id().database_id().c_str()];

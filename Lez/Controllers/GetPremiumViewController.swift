@@ -21,7 +21,7 @@ final class GetPremiumViewController: UIViewController {
     private let titleLabel = UILabel()
     private let descriptionLabel = UILabel()
     private let backgroundImageView = UIImageView()
-    private let buyButton = CustomButton()
+    private let buyButton = PrimaryButton()
     private var priceString = "2.99€"
     private let bureaucracyCrapButtonsView = UIView()
     private let privacyPolicyButton = UIButton()

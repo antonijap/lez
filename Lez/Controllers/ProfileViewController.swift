@@ -30,7 +30,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerDelega
     private let tabBar = UITabBar()
     private let hud = JGProgressHUD(style: .dark)
     private var jellyAnimator: JellyAnimator?
-    private var refreshButton = CustomButton()
+    private var refreshButton = PrimaryButton()
 
     // MARK: - View Lifecycle
 

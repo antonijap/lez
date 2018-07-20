@@ -1,2 +1,16 @@
-- Fixed crash in sending messages
-- banned users will get a proper modal upon opening the app
+EMAIL LOGIN
+
+Now you can login via your email
+You can opt-out from social login and use only email login
+
+PROFILE
+
+“Opt-out from Social Login” This means if you previously used Facebook or Twitter login you can stop using them and start using email login instead.
+
+“Report Issue” Some users were helpful and reported bugs, hopefully with this visible button there will be more reports and feedback.
+
+“Rate” Rating not only helps in the App Store but means a lot to me. I am coding this by myself and putting a lot of effort and time into this project. Consider leaving a good rating.
+
+
+
+

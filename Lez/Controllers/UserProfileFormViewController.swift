@@ -24,6 +24,7 @@ final class UserProfileFormViewController: FormViewController {
     var profileViewControllerDelegate: ProfileViewControllerDelegate?
     var handle: AuthStateDidChangeListenerHandle?
     var onboardingContinues = false
+    var isEmailDisabled = false
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -263,9 +264,13 @@ final class UserProfileFormViewController: FormViewController {
                     guard let email = email else { return }
                     row.value = email
                 }
-                row.add(ruleSet: rules)
-                row.add(rule: RuleEmail())
-                row.validationOptions = .validatesOnChangeAfterBlurred
+                if isEmailDisabled {
+                    row.disabled = true
+                } else {
+                    row.add(ruleSet: rules)
+                    row.add(rule: RuleEmail())
+                    row.validationOptions = .validatesOnChangeAfterBlurred
+                }
             }
             .cellUpdate { cell, row in if !row.isValid { cell.titleLabel?.textColor = .red } }
             <<< IntRow() { row in

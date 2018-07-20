@@ -18,8 +18,9 @@ final class RegisterViewController: UIViewController {
 
     // MARK: - Properties
 
-    private let facebookLoginButton = UIButton()
-    private let twitterLoginButton = UIButton()
+    private let facebookLoginButton = PrimaryButton()
+    private let twitterLoginButton = PrimaryButton()
+    private let emailLoginButton = SecondaryButton()
     private let hud = JGProgressHUD(style: .dark)
     private let backgroundImageView = UIImageView()
     private let scrollView = UIScrollView()
@@ -45,9 +46,17 @@ final class RegisterViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Set EN for a default language
+        
+        UserDefaults.standard.set(["en"], forKey: "AppleLanguages")
+        UserDefaults.standard.synchronize()
+        
+        
         setupBackground()
         setupButtons()
         setupBureaucracyCrapButtons()
+        
         if let currentUser = Auth.auth().currentUser {
             let setupProfileViewController = UserProfileFormViewController()
             guard let name = currentUser.displayName else { return }
@@ -186,63 +195,28 @@ final class RegisterViewController: UIViewController {
         }
         self.stopSpinner()
     }
+    
+    @objc func emailLoginButtonTapped() {
+        let emailLoginViewController = EmailLoginViewController()
+        self.navigationController?.pushViewController(emailLoginViewController, animated: true)
+    }
 }
 
 extension RegisterViewController {
-    private func setupBureaucracyCrapButtons() {
-        contentView.addSubview(bureaucracyCrapButtonsView)
-        if Device.IS_4_7_INCHES_OR_LARGER() {
-            bureaucracyCrapButtonsView.snp.makeConstraints { make in
-                make.centerX.equalToSuperview()
-                make.width.equalToSuperview().dividedBy(2)
-                make.top.equalTo(twitterLoginButton.snp.bottom).offset(40)
-            }
-        } else {
-            bureaucracyCrapButtonsView.snp.makeConstraints { make in
-                make.centerX.equalToSuperview()
-                make.width.equalToSuperview().dividedBy(1.7)
-                make.top.equalTo(twitterLoginButton.snp.bottom).offset(40)
-            }
-        }
-        
-        bureaucracyCrapButtonsView.addSubview(privacyPolicyButton)
-        privacyPolicyButton.snp.makeConstraints { make in make.leading.top.bottom.equalToSuperview() }
-        privacyPolicyButton.setTitle("Privacy Policy", for: .normal)
-        privacyPolicyButton.setTitleColor(.gray, for: .normal)
-        privacyPolicyButton.addTarget(self, action: #selector(self.privacyPolicyButtontapped), for: .primaryActionTriggered)
-        privacyPolicyButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
-
-        bureaucracyCrapButtonsView.addSubview(termsOfServiceButton)
-        termsOfServiceButton.snp.makeConstraints { make in make.trailing.top.bottom.equalToSuperview() }
-        termsOfServiceButton.setTitle("Terms of Service", for: .normal)
-        termsOfServiceButton.setTitleColor(.gray, for: .normal)
-        termsOfServiceButton.addTarget(self, action: #selector(self.termsOfServiceButtontapped), for: .primaryActionTriggered)
-        termsOfServiceButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
-
-        contentView.addSubview(subscriptionText)
-        subscriptionText.snp.makeConstraints { make in
-            make.top.equalTo(bureaucracyCrapButtonsView.snp.bottom).offset(40)
-            make.bottom.leading.trailing.equalToSuperview().inset(32)
-        }
-        subscriptionText.text = "Premium is monthly auto-renewable subscription of Lez and it offers subscription with price 2.99€ per month. Payment will be charged to iTunes Account at confirmation of purchase. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period. Account will be charged for renewal within 24-hours prior to the end of the current period. Subscriptions may be managed by the user and auto-renewal may be turned off by going to the iPhone’s settings."
-        subscriptionText.numberOfLines = 20
-        subscriptionText.font = .systemFont(ofSize: 9, weight: .regular)
-        subscriptionText.textColor = .gray
-    }
-
+    
     private func setupButtons() {
         facebookLoginButton.setTitle("Login with Facebook", for: .normal)
         facebookLoginButton.addTarget(self, action: #selector(self.facebookButtonTapped), for:.primaryActionTriggered)
         scrollView.addSubview(facebookLoginButton)
         facebookLoginButton.snp.makeConstraints { make in
-            make.top.equalToSuperview().offset(view.frame.height / 1.5)
+            make.top.equalToSuperview().offset(view.frame.height / 1.6)
             make.height.equalTo(48)
             make.width.equalToSuperview().dividedBy(1.2)
             make.centerX.equalToSuperview()
         }
         facebookLoginButton.backgroundColor = UIColor(red:0.28, green:0.37, blue:0.60, alpha:1.00)
-        facebookLoginButton.layer.cornerRadius = 48 / 2
-
+        facebookLoginButton.setTitleColor(.white, for: .normal)
+        
         scrollView.addSubview(twitterLoginButton)
         twitterLoginButton.setTitle("Login with Twitter", for: .normal)
         twitterLoginButton.addTarget(self, action: #selector(self.twitterButtonTapped), for:.primaryActionTriggered)
@@ -253,6 +227,58 @@ extension RegisterViewController {
             make.width.equalToSuperview().dividedBy(1.2)
         }
         twitterLoginButton.backgroundColor = UIColor(red:0.30, green:0.62, blue:0.93, alpha:1.00)
-        twitterLoginButton.layer.cornerRadius = 48 / 2
+        twitterLoginButton.setTitleColor(.white, for: .normal)
+        
+        scrollView.addSubview(emailLoginButton)
+        emailLoginButton.setTitle("Login with Email", for: .normal)
+        emailLoginButton.addTarget(self, action: #selector(self.emailLoginButtonTapped), for:.primaryActionTriggered)
+        emailLoginButton.snp.makeConstraints { make in
+            make.top.equalTo(twitterLoginButton.snp.bottom).offset(8)
+            make.centerX.equalToSuperview()
+            make.height.equalTo(48)
+            make.width.equalToSuperview().dividedBy(1.2)
+        }
     }
+    
+    private func setupBureaucracyCrapButtons() {
+        contentView.addSubview(bureaucracyCrapButtonsView)
+        if Device.IS_4_7_INCHES_OR_LARGER() {
+            bureaucracyCrapButtonsView.snp.makeConstraints { make in
+                make.centerX.equalToSuperview()
+                make.width.equalToSuperview().dividedBy(2)
+                make.top.equalTo(emailLoginButton.snp.bottom).offset(40)
+            }
+        } else {
+            bureaucracyCrapButtonsView.snp.makeConstraints { make in
+                make.centerX.equalToSuperview()
+                make.width.equalToSuperview().dividedBy(1.7)
+                make.top.equalTo(emailLoginButton.snp.bottom).offset(40)
+            }
+        }
+        
+        bureaucracyCrapButtonsView.addSubview(privacyPolicyButton)
+        privacyPolicyButton.snp.makeConstraints { make in make.leading.top.bottom.equalToSuperview() }
+        privacyPolicyButton.setTitle("Privacy Policy", for: .normal)
+        privacyPolicyButton.setTitleColor(.gray, for: .normal)
+        privacyPolicyButton.addTarget(self, action: #selector(self.privacyPolicyButtontapped), for: .primaryActionTriggered)
+        privacyPolicyButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
+        
+        bureaucracyCrapButtonsView.addSubview(termsOfServiceButton)
+        termsOfServiceButton.snp.makeConstraints { make in make.trailing.top.bottom.equalToSuperview() }
+        termsOfServiceButton.setTitle("Terms of Service", for: .normal)
+        termsOfServiceButton.setTitleColor(.gray, for: .normal)
+        termsOfServiceButton.addTarget(self, action: #selector(self.termsOfServiceButtontapped), for: .primaryActionTriggered)
+        termsOfServiceButton.titleLabel?.font = .systemFont(ofSize: 12, weight: .regular)
+        
+        contentView.addSubview(subscriptionText)
+        subscriptionText.snp.makeConstraints { make in
+            make.top.equalTo(bureaucracyCrapButtonsView.snp.bottom).offset(40)
+            make.bottom.leading.trailing.equalToSuperview().inset(32)
+        }
+        subscriptionText.text = "Premium is monthly auto-renewable subscription of Lez and it offers subscription with price 2.99€ per month. Payment will be charged to iTunes Account at confirmation of purchase. Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period. Account will be charged for renewal within 24-hours prior to the end of the current period. Subscriptions may be managed by the user and auto-renewal may be turned off by going to the iPhone’s settings."
+        subscriptionText.numberOfLines = 20
+        subscriptionText.font = .systemFont(ofSize: 9, weight: .regular)
+        subscriptionText.textColor = .gray
+    }
+    
 }
