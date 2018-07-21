@@ -16,9 +16,9 @@ or alternatively using `brew cask install fastlane`
 
 # Available Actions
 ## iOS
-### ios deps
+### ios install_cocoapods
 ```
-fastlane ios deps
+fastlane ios install_cocoapods
 ```
 Install dependencies
 ### ios release
@@ -33,6 +33,11 @@ fastlane ios refresh_dsyms
 Refresh dSYM files from iTunes Connect
 
 Also uploads them to Crashlytics
+### ios make_ipa
+```
+fastlane ios make_ipa
+```
+
 
 ----
 

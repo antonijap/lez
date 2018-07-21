@@ -21,16 +21,18 @@ default_platform(:ios)
 platform :ios do
 
   desc "Install dependencies"
-  lane :deps do
+  lane :install_cocoapods do
       cocoapods
   end
 
   desc "Push a new release build to the App Store"
   lane :release do
-    deps
+    install_cocoapods
     increment_build_number
     get_push_certificate
+    # make_ipa
     build_app(workspace: "Lez.xcworkspace", scheme: "Lez")
+    # refresh_dsyms
     upload_to_app_store(
       force: true,
       skip_screenshots: true
@@ -40,8 +42,18 @@ platform :ios do
   desc "Refresh dSYM files from iTunes Connect"
   desc "Also uploads them to Crashlytics"
   lane :refresh_dsyms do
-    download_dsyms(version="latest")  # Download dSYM files from iTC
+    download_dsyms(version: "latest") # Download dSYM files from iTC
     upload_symbols_to_crashlytics     # Upload them to Crashlytics
     clean_build_artifacts             # Delete the local dSYM files
   end
+
+  lane :make_ipa do
+    # Make .ipa file
+    gym(
+      workspace: "Lez.xcworkspace",
+      configuration: "Release",
+      scheme: "Lez",
+    )
+  end
 end
+
