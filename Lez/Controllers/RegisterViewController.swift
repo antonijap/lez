@@ -168,13 +168,14 @@ final class RegisterViewController: UIViewController {
                     if let error = error { self.stopSpinner(); print(error); return }
                     self.stopSpinner()
                     guard let currentUser = user else { return }
+                    print("Logged in user: \(currentUser.user)")
                     FirestoreManager.shared.checkIfUserExists(uid: currentUser.user.uid).then({ exists in
                         guard exists else {
+                            // If there is no user, go to form
                             let userProfileFormViewController = UserProfileFormViewController()
                             guard let displayName = currentUser.user.displayName else { return }
                             userProfileFormViewController.name = displayName
-                            guard let email = currentUser.user.email else { return }
-                            userProfileFormViewController.email = email
+                            if let email = currentUser.user.email { userProfileFormViewController.email = email }
                             userProfileFormViewController.uid = currentUser.user.uid
                             self.navigationItem.setHidesBackButton(true, animated: true)
                             self.navigationController?.pushViewController(userProfileFormViewController, animated: true)

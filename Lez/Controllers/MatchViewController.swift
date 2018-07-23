@@ -460,7 +460,9 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
 }
 
 extension MatchViewController: UITableViewDelegate, UITableViewDataSource, MatchCellDelegate {
+
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        
         guard let user = user else { return }
         AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userViewedProfile, user: user)
         let nextViewController = CardFullscreenViewController()
@@ -472,8 +474,24 @@ extension MatchViewController: UITableViewDelegate, UITableViewDataSource, Match
         self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
         self.jellyAnimator?.prepare(viewController: nextViewController)
         present(nextViewController, animated: true)
+        
+//        if Device.isPad() {
+//
+//        } else {
+//            guard let user = user else { return }
+//            AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userViewedProfile, user: user)
+//            let nextViewController = CardFullscreenViewController()
+//            nextViewController.user = self.users[indexPath.row]
+//            nextViewController.me = user
+//            nextViewController.indexPath = indexPath
+//            nextViewController.delegate = self
+//            let customBlurFadeInPresentation = JellyFadeInPresentation(dismissCurve: .easeInEaseOut, presentationCurve: .easeInEaseOut, backgroundStyle: .blur(effectStyle: .light))
+//            self.jellyAnimator = JellyAnimator(presentation: customBlurFadeInPresentation)
+//            self.jellyAnimator?.prepare(viewController: nextViewController)
+//            present(nextViewController, animated: true)
+//        }
     }
-    
+
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return users.count
     }

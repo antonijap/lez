@@ -64,6 +64,7 @@ class CreateAccountViewController: UIViewController {
                     }
                     
                     // Unlink from Social provider
+                    
                     if currentUser.providerData.count > 0 {
                         for provider in currentUser.providerData {
                             print(provider.providerID)
