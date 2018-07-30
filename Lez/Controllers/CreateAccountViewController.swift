@@ -74,7 +74,11 @@ class CreateAccountViewController: UIViewController {
                                         .action(.default("I understand"), handler: { _, _, _ in
                                             self.navigationController?.popViewController(animated: true)
                                         })
-                                        .show(on: self, completion: nil)
+                                        .show(on: self, completion: {
+                                            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then({ user in
+                                                AnalyticsManager.shared.logEvent(name: .userOptedOutFromSocialLogin, user: user)
+                                            })
+                                        })
                                 }
                             }
                         }
@@ -91,6 +95,11 @@ class CreateAccountViewController: UIViewController {
                         return
                     }
                     // Regular flow, go through form
+                    guard let currentUser = Auth.auth().currentUser else { print("No user"); return }
+                    FirestoreManager.shared.fetchUser(uid: currentUser.uid).then({ user in
+                        AnalyticsManager.shared.logEvent(name: .userUsedEmailLogin, user: user)
+                    })
+                    
                     let userProfileFormViewController = UserProfileFormViewController()
                     userProfileFormViewController.email = user.user.email
                     userProfileFormViewController.isEmailDisabled = true

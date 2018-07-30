@@ -23,6 +23,10 @@ enum AnalyticsEvents: String {
     case userSharedURL = "user_shared_URL"
     case userRunOutOfLikes = "user_run_out_of_likes"
     case userCounterReset = "user_counter_reset"
+    case userUsedEmailLogin = "user_used_email_login"
+    case userSubscriptionEnded = "user_subscription_ended"
+    case userOptedOutFromSocialLogin = "user_opted_out_from_social_login"
+    case userChangedLocationPreference = "user_changed_location_preference"
 }
 
 final class AnalyticsManager {

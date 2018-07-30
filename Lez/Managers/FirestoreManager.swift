@@ -58,20 +58,24 @@ final class FirestoreManager {
             let potentialMatchesRef: Query!
 
             if DefaultsManager.shared.fetchToggleAllLesbians() {
+                print("Toggle all lesbians is TRUE.")
+                potentialMatchesRef = self.db.collection("users")
+                    .whereField("isBanned", isEqualTo: false)
+                    .whereField("isHidden", isEqualTo: false)
+            } else if DefaultsManager.shared.PreferedLocationExists() {
+                // Use prefered location
+                print("Prefered location! \(DefaultsManager.shared.fetchPreferedLocation())")
                 potentialMatchesRef = self.db.collection("users")
                     .whereField("isBanned", isEqualTo: false)
                     .whereField("isHidden", isEqualTo: false)
             } else {
+                // Use default location
+                print("No prefered location.")
                 potentialMatchesRef = self.db.collection("users")
                     .whereField("isBanned", isEqualTo: false)
                     .whereField("isHidden", isEqualTo: false)
                     .whereField("location.city", isEqualTo: user.location.city)
             }
-
-//            let potentialMatchesRef = self.db.collection("users")
-//                .whereField("isBanned", isEqualTo: false)
-//                .whereField("isHidden", isEqualTo: false)
-//                .whereField("location.city", isEqualTo: user.location.city)
 
             potentialMatchesRef.getDocuments { querySnapshot, error in
                 guard let currentUser = Auth.auth().currentUser else { return }
@@ -117,22 +121,23 @@ final class FirestoreManager {
 
                     var finalArray: [User] = Array(Set(filteredMe))
 
-                    // Remove blocked users
-//                    for match in finalArray {
-//                        for blocked in user.blockedUsers! {
-//                            if let index = finalArray.index(where: { _ in blocked == match.uid }) {
-//                                finalArray.remove(at: index)
-//                                print("User blocked, removing...")
-//                            }
-//                        }
-//                    }
-
                     if let i = finalArray.index(where: { user.blockedUsers!.contains($0.uid) }) {
                         print("User blocked, removing...")
                         finalArray.remove(at: i)
                     }
-
-                    fulfill(Array(Set(finalArray)))
+                    
+                    if DefaultsManager.shared.PreferedLocationExists() {
+                        var specialArray: [User] = []
+                        for user in finalArray {
+                            if user.location.country.contains(DefaultsManager.shared.fetchPreferedLocation()) || user.location.city.contains(DefaultsManager.shared.fetchPreferedLocation()) {
+                                specialArray.append(user)
+                            }
+                        }
+                        fulfill(Array(Set(specialArray)))
+                    } else {
+                        fulfill(Array(Set(finalArray)))
+                    }
+                    
                 })
             }
         }

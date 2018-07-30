@@ -118,6 +118,28 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
             guard let user = user else { self.presentRegisterViewController(); return }
             self.checkConnectivity(uid: user.uid)
         }
+        
+        Alertift.alert(title: "We need your consent", message: "We would like to send you a newsletter sometime, do you give us your consent to do so?")
+            .action(.default("I consent"), isPreferred: true) { _, _, _ in
+                // Write in mailchimp
+                guard let user = self.user else { return }
+                let parameters: [String: String] = [
+                    "email_address": user.email,
+                    "status": "subscribed"
+                ]
+                
+                var urlRequest = URLRequest(url: URL(string: "***REMOVED***/lists/***REMOVED***/members/")!)
+                urlRequest.httpMethod = HTTPMethod.get.rawValue
+                urlRequest = try! URLEncoding.default.encode(urlRequest, with: nil)
+                urlRequest.setValue("***REMOVED***-us17", forHTTPHeaderField: "Authorization")
+                
+                Alamofire.request(urlRequest, method: .post, parameters: parameters, encoding: JSONEncoding.default)
+                    .responseJSON { response in
+                        print(response)
+                }
+            }
+            .action(.destructive("No"))
+            .show(on: self, completion: nil)
     }
     
     // MARK: - Methods

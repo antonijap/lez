@@ -51,4 +51,32 @@ final class DefaultsManager {
     func ifTrackingPreferenceExists() -> Bool {
         return defaults.object(forKey: "trackingPreference") != nil
     }
+    
+    // Location preferences
+    
+    func savePreferedLocation(value: String) {
+        defaults.set(value, forKey: "preferedLocation")
+    }
+    
+    func PreferedLocationExists() -> Bool {
+        return defaults.object(forKey: "preferedLocation") != nil
+    }
+    
+    func fetchPreferedLocation() -> String {
+        return defaults.object(forKey: "preferedLocation") as! String
+    }
+    
+    // Email consent
+    
+    func saveEmailConsent(value: Bool) {
+        defaults.set(value, forKey: "emailConsent")
+    }
+    
+    func emailConsentExists() -> Bool {
+        return defaults.object(forKey: "emailConsent") != nil
+    }
+    
+    func fetchEmailConsent() -> Bool {
+        return defaults.object(forKey: "emailConsent") as! Bool
+    }
 }

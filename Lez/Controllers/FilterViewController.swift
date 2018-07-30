@@ -19,6 +19,7 @@ final class FilterViewController: FormViewController {
     var uid: String?
     var delegate: MatchViewControllerDelegate?
     var user: User?
+    private var countryArray: [Substring] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -27,7 +28,34 @@ final class FilterViewController: FormViewController {
         tableView.separatorStyle = .none
         view.backgroundColor = .white
         if let user = user {
+            
+            countryArray = [Substring(user.location.city)]
+            countryArray = countryArray + getCleanLocationArray(location: user.location.country)
+            
             form.setValues(["lookingFor": Set(user.preferences.lookingFor)])
+            let locations: [String] = countryArray.compactMap { String($0) }
+            guard let location = form.sectionBy(tag: "preferences") else { print("No section."); return }
+            
+            location <<< PushRow<String>() { row in
+                row.title = "Location"
+
+                // Check if prefered location exists
+                
+                guard DefaultsManager.shared.PreferedLocationExists() else {
+                    print("No prefered location.")
+                    row.value = user.location.city
+                    row.options = locations
+                    return
+                }
+                
+                row.value = DefaultsManager.shared.fetchPreferedLocation()
+                row.options = locations
+                }.onChange({ row in
+                    guard let value = row.value else { print("No location."); return }
+                    DefaultsManager.shared.savePreferedLocation(value: value)
+                    AnalyticsManager.shared.logEvent(name: .userChangedLocationPreference, user: user)
+                })
+            
             tableView.reloadData()
         }
     }
@@ -73,6 +101,7 @@ final class FilterViewController: FormViewController {
         }
 
         guard let agePreferenceObj: RangeSliderRow = form.rowBy(tag: "agePreference") else { return }
+
         let data: [String: Any] = [
             "preferences": [
                 "ageRange": [
@@ -85,6 +114,9 @@ final class FilterViewController: FormViewController {
 
         guard let showAllLesbians: SwitchRow = form.rowBy(tag: "toggleAll")  else { return }
         DefaultsManager.shared.saveToggleAllLesbians(value: showAllLesbians.value!)
+        
+        
+        // Save new data to a user model and refresh results
 
         FirestoreManager.shared.updateUser(uid: user!.uid, data: data).then { success in
             guard success else {
@@ -95,6 +127,7 @@ final class FilterViewController: FormViewController {
             }
             self.navigationController?.popViewController(animated: true)
         }
+        
         delegate?.refreshTableView()
         AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userAdjustedFilters, user: user!)
         dismissController()
@@ -107,23 +140,39 @@ final class FilterViewController: FormViewController {
     @objc func multipleSelectorDone(_ item:UIBarButtonItem) {
         navigationController?.popViewController(animated: true)
     }
+    
+    /// Returns cleaned substring of country identifier
+    /// - Parameter location: user's location.
+    func getCleanLocationArray(location: String) -> [Substring] {
+        let trimmedString = location.replacingOccurrences(of: " ", with: "")
+        return trimmedString.split(separator: ",")
+    }
 
     func setupForm() {
-        form +++ Section("Matching Preferences")
+        form
+            
+            +++ Section("Matching Preferences") { section in
+                section.tag = "preferences"
+            }
+            
             <<< MultipleSelectorRow<String>() { row in
                 row.title = "Looking for"
                 row.options = [LookingFor.relationship.rawValue, LookingFor.friendship.rawValue, LookingFor.sex.rawValue]
                 row.tag = "lookingFor"
-            }.onPresent { from, to in
-                let rightButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.multipleSelectorDone(_:)))
-                to.navigationItem.rightBarButtonItem = rightButton
+                }.onPresent { from, to in
+                    let rightButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(self.multipleSelectorDone(_:)))
+                    to.navigationItem.rightBarButtonItem = rightButton
             }
+            
             <<< SwitchRow() { row in
                 row.tag = "toggleAll"
                 row.title = "Show all lesbians"
                 row.value = DefaultsManager.shared.fetchToggleAllLesbians()
             }
+            
+            
             +++ Section("Prefered Age Range")
+            
             <<< RangeSliderRow() { row in
                 row.tag = "agePreference"
                 }.cellSetup({ cell, row in

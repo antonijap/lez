@@ -150,6 +150,10 @@ struct PurchaseManager {
         case .expired:
             if isRestore { completion!(.expired) }
             deactivatePremiumInFirestore()
+            guard let currentUser = Auth.auth().currentUser else { return }
+            FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
+                AnalyticsManager.shared.logEvent(name: .userSubscriptionEnded, user: user)
+            }
         case .notPurchased:
             if isRestore { completion!(.nothingToRestore) }
             deactivatePremiumInFirestore()
