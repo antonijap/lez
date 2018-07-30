@@ -33,24 +33,24 @@ PODS:
     - FacebookCore (~> 0.3.1)
     - FBSDKCoreKit (~> 4.33)
     - FBSDKShareKit (~> 4.33)
-  - FBSDKCoreKit (4.34.0):
+  - FBSDKCoreKit (4.35.0):
     - Bolts (~> 1.7)
-  - FBSDKLoginKit (4.34.0):
+  - FBSDKLoginKit (4.35.0):
     - FBSDKCoreKit
-  - FBSDKShareKit (4.34.0):
-    - FBSDKCoreKit (~> 4.34.0)
-  - Firebase/Auth (5.4.0):
+  - FBSDKShareKit (4.35.0):
+    - FBSDKCoreKit (~> 4.35.0)
+  - Firebase/Auth (5.4.1):
     - Firebase/CoreOnly
     - FirebaseAuth (= 5.0.2)
-  - Firebase/Core (5.4.0):
+  - Firebase/Core (5.4.1):
     - Firebase/CoreOnly
     - FirebaseAnalytics (= 5.0.1)
-  - Firebase/CoreOnly (5.4.0):
-    - FirebaseCore (= 5.0.5)
-  - Firebase/Firestore (5.4.0):
+  - Firebase/CoreOnly (5.4.1):
+    - FirebaseCore (= 5.0.6)
+  - Firebase/Firestore (5.4.1):
     - Firebase/CoreOnly
-    - FirebaseFirestore (= 0.12.5)
-  - Firebase/Storage (5.4.0):
+    - FirebaseFirestore (= 0.12.6)
+  - Firebase/Storage (5.4.1):
     - Firebase/CoreOnly
     - FirebaseStorage (= 3.0.0)
   - FirebaseAnalytics (5.0.1):
@@ -61,16 +61,16 @@ PODS:
   - FirebaseAuth (5.0.2):
     - FirebaseCore (~> 5.0)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (5.0.5):
+  - FirebaseCore (5.0.6):
     - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-  - FirebaseFirestore (0.12.5):
+  - FirebaseFirestore (0.12.6):
     - FirebaseCore (~> 5.0)
-    - FirebaseFirestore/abseil-cpp (= 0.12.5)
+    - FirebaseFirestore/abseil-cpp (= 0.12.6)
     - gRPC-ProtoRPC (~> 1.0)
     - leveldb-library (~> 1.18)
     - nanopb (~> 0.3.8)
     - Protobuf (~> 3.1)
-  - FirebaseFirestore/abseil-cpp (0.12.5):
+  - FirebaseFirestore/abseil-cpp (0.12.6):
     - FirebaseCore (~> 5.0)
     - gRPC-ProtoRPC (~> 1.0)
     - leveldb-library (~> 1.18)
@@ -110,7 +110,7 @@ PODS:
   - gRPC/Main (1.13.0):
     - gRPC-Core (= 1.13.0)
     - gRPC-RxLibrary (= 1.13.0)
-  - GTMSessionFetcher/Core (1.1.15)
+  - GTMSessionFetcher/Core (1.2.0)
   - ImageSlideshow (1.6.1):
     - ImageSlideshow/Core (= 1.6.1)
   - ImageSlideshow/Core (1.6.1)
@@ -131,7 +131,7 @@ PODS:
     - ReachabilitySwift (~> 4.1.0)
     - Starscream (~> 3.0.5)
     - TaskQueue (~> 1.1.1)
-  - PushNotifications (0.10.11)
+  - PushNotifications (0.10.12)
   - RangeSeekSlider (1.8.0)
   - ReachabilitySwift (4.1.0)
   - SDWebImage (4.4.2):
@@ -262,14 +262,14 @@ SPEC CHECKSUMS:
   FacebookCore: 33078ef1d7d76b73f7e8c990dca7d3ea6db8d22f
   FacebookLogin: 6f15bf4fefd7a8865abbfa8fcd7f3dfd87aa275f
   FacebookShare: c9ee8e5399d961fda00ded9befccacfe04fccf93
-  FBSDKCoreKit: 0ff57f093b85c8c9d5aba697d3edf68a8960ce78
-  FBSDKLoginKit: 8c78f57a145afb756e4755e69195ebe08a42466e
-  FBSDKShareKit: 511d1dfc71204c0a8d69e6c5e3c964dcf0d4f3d9
-  Firebase: d66f4f29c23f22d96808d9abc174d81d8eee968f
+  FBSDKCoreKit: 1a5b2e3ceb5ca827a53c54aa5f4a3480efff80d2
+  FBSDKLoginKit: 00a3d65d1226852f9d76dcddff01981e5e6d9c38
+  FBSDKShareKit: 2ddbd7e6432023fff957af62e23a3671b84319f7
+  Firebase: 355bd535bfdacaa82a7fe8d9784115edefd6fc03
   FirebaseAnalytics: b3628aea54c50464c32c393fb2ea032566e7ecc2
   FirebaseAuth: 096e457cdd4274412a66c4a35874787e411f5a03
-  FirebaseCore: 42b3267233bd21a5abd54117ccc38ca3dd0f8e83
-  FirebaseFirestore: b041e4a94601e18e82a863e0dcfa9d3e55cc2031
+  FirebaseCore: 4c28e3b9708ba48a765e76515f913a71596eb5dd
+  FirebaseFirestore: d4a3a7787624e612298a320da95935b8dc036c1d
   FirebaseInstanceID: f3f0657372592ecdfdfe2cac604a5a75758376a6
   FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
   GBDeviceInfo: 2c65ceb9404f9079264d4c238f5b81916fdfc5e2
@@ -279,7 +279,7 @@ SPEC CHECKSUMS:
   gRPC-Core: a56b086a8ef5ced6f6ba5be5bc0a63fca185015a
   gRPC-ProtoRPC: 842797fbe05dfcf891afb4a5048e5ccf5f06ef86
   gRPC-RxLibrary: fa6852f98d6ec0b73c0ec2f6406c26943099d501
-  GTMSessionFetcher: 5fa5b80fd20e439ef5f545fb2cb3ca6c6714caa2
+  GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
   ImageSlideshow: f0f33e1a20668e83d77f5fb7729e4ae4437c0759
   Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
   JGProgressHUD: 12b20a8f4ffe05258f8635c1ab92816e451f904d
@@ -289,7 +289,7 @@ SPEC CHECKSUMS:
   PromisesSwift: f7f45c21986419e85f7c5b645ed8c6a2c10c04b4
   Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
   PusherSwift: 6f2535d616cf0d6867a58bee501999995ad37999
-  PushNotifications: 60c0b36f016a1cac0bf8ada321cd162c63e73491
+  PushNotifications: 1c75fbe833c53f0410de0379d7727a8239a1899a
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681

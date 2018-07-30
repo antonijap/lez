@@ -121,28 +121,42 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         
         Alertift.alert(title: "We need your consent", message: "We would like to send you a newsletter sometime, do you give us your consent to do so?")
             .action(.default("I consent"), isPreferred: true) { _, _, _ in
-                // Write in mailchimp
-                guard let user = self.user else { return }
-                let parameters: [String: String] = [
-                    "email_address": user.email,
-                    "status": "subscribed"
-                ]
-                
-                var urlRequest = URLRequest(url: URL(string: "***REMOVED***/lists/***REMOVED***/members/")!)
-                urlRequest.httpMethod = HTTPMethod.get.rawValue
-                urlRequest = try! URLEncoding.default.encode(urlRequest, with: nil)
-                urlRequest.setValue("***REMOVED***-us17", forHTTPHeaderField: "Authorization")
-                
-                Alamofire.request(urlRequest, method: .post, parameters: parameters, encoding: JSONEncoding.default)
-                    .responseJSON { response in
-                        print(response)
-                }
+                // Add user to Mailchimp
+
             }
             .action(.destructive("No"))
             .show(on: self, completion: nil)
     }
     
     // MARK: - Methods
+    
+    func addUserToMailchimp(){
+        
+        let credentialData = "***REMOVED***-us17".data(using: String.Encoding.utf8)!
+        let base64Credentials = credentialData.base64EncodedString(options: [])
+        let headers = ["Authorization": "Basic \(base64Credentials)"]
+        
+        var urlRequest = URLRequest(url: URL(string: "***REMOVED***/lists/***REMOVED***/members/")!)
+        urlRequest.httpMethod = HTTPMethod.get.rawValue
+        urlRequest = try! URLEncoding.default.encode(urlRequest, with: nil)
+        urlRequest.setValue("***REMOVED***-us17", forHTTPHeaderField: "Authorization")
+        
+        guard let user = self.user else { return }
+        
+        let parameters: [String: String] = [
+            "email_address": user.email,
+            "status": "subscribed"
+        ]
+        
+//        Alamofire.request(urlRequest, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { response in
+//            switch response.result {
+//            case .success:
+//                print("Validation Successful")
+//            case .failure(let error):
+//                print(error)
+//            }
+//        }
+    }
     
     private func showAlertIfUserBanned(user: User) {
         if user.isBanned {
