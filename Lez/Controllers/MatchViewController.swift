@@ -119,43 +119,56 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
             self.checkConnectivity(uid: user.uid)
         }
         
+        guard !DefaultsManager.shared.emailConsentExists() else { print("Consent given."); return }
+        
         Alertift.alert(title: "We need your consent", message: "We would like to send you a newsletter sometime, do you give us your consent to do so?")
             .action(.default("I consent"), isPreferred: true) { _, _, _ in
-                // Add user to Mailchimp
-
+                self.addUserToMailchimp()
             }
             .action(.destructive("No"))
             .show(on: self, completion: nil)
     }
     
     // MARK: - Methods
-    
-    func addUserToMailchimp(){
+
+    func addUserToMailchimp() {
         
-        let credentialData = "***REMOVED***-us17".data(using: String.Encoding.utf8)!
-        let base64Credentials = credentialData.base64EncodedString(options: [])
-        let headers = ["Authorization": "Basic \(base64Credentials)"]
+        let apiKey: String = "***REMOVED***-us17"
+        let baseUrl: String = "***REMOVED***"
+        let listId: String = "***REMOVED***"
         
-        var urlRequest = URLRequest(url: URL(string: "***REMOVED***/lists/***REMOVED***/members/")!)
-        urlRequest.httpMethod = HTTPMethod.get.rawValue
-        urlRequest = try! URLEncoding.default.encode(urlRequest, with: nil)
-        urlRequest.setValue("***REMOVED***-us17", forHTTPHeaderField: "Authorization")
+        let url = "\(baseUrl)/lists/\(listId)/members"
+        
+        guard let authorizationHeader = Request.authorizationHeader(user: "AnyString", password: apiKey) else {
+            print("!authorizationHeader")
+            return
+        }
+        
+        let headers: HTTPHeaders = [
+            authorizationHeader.key: authorizationHeader.value
+        ]
         
         guard let user = self.user else { return }
         
-        let parameters: [String: String] = [
+        let parameters: Parameters = [
             "email_address": user.email,
-            "status": "subscribed"
+            "status": "subscribed",
+            "merge_fields": [
+                "FNAME": user.name,
+                "LNAME": ""
+            ]
         ]
         
-//        Alamofire.request(urlRequest, parameters: parameters, encoding: JSONEncoding.default, headers: headers).validate().responseJSON { response in
-//            switch response.result {
-//            case .success:
-//                print("Validation Successful")
-//            case .failure(let error):
-//                print(error)
-//            }
-//        }
+        Alamofire.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            .validate()
+            .responseJSON { response in
+                switch response.result {
+                case .success(_):
+                    DefaultsManager.shared.saveEmailConsent(value: true)
+                case .failure(_):
+                    print("Error.")
+                }
+        }
     }
     
     private func showAlertIfUserBanned(user: User) {
