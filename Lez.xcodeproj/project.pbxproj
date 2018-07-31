@@ -28,7 +28,7 @@
 		CF360B3E2100896000785124 /* EmailLoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF360B3D2100896000785124 /* EmailLoginViewController.swift */; };
 		CF360B402101E31800785124 /* CreateAccountViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF360B3F2101E31800785124 /* CreateAccountViewController.swift */; };
 		CF425B4620679D8F00D6A1FE /* UserProfileFormViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF425B4520679D8F00D6A1FE /* UserProfileFormViewController.swift */; };
-		CF63F31A20CD00D800C341BD /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF63F31920CD00D800C341BD /* GoogleService-Info.plist */; };
+		CF63F31A20CD00D800C341BD /* GoogleService-Info DEVELOPMENT.plist in Resources */ = {isa = PBXBuildFile; fileRef = CF63F31920CD00D800C341BD /* GoogleService-Info DEVELOPMENT.plist */; };
 		CF660D2020B96F040027E3AE /* Device.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF660D1F20B96F040027E3AE /* Device.swift */; };
 		CF6CE927209CE12D00EED316 /* GetPremiumViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */; };
 		CF7877F120A71685004E8693 /* ImagesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF7877F020A71685004E8693 /* ImagesViewController.swift */; };
@@ -41,7 +41,7 @@
 		CFA7842E20A9FC3F000DA074 /* CustomUIElements.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */; };
 		CFB7C4C22066B15900114EC4 /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C12066B15900114EC4 /* Extensions.swift */; };
 		CFB7C4C42066C86B00114EC4 /* FilterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */; };
-		CFBA29D620CDCAAF004D9D5F /* GoogleService-Info PRODUCTION.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFBA29D520CDCAAF004D9D5F /* GoogleService-Info PRODUCTION.plist */; };
+		CFBA29D620CDCAAF004D9D5F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFBA29D520CDCAAF004D9D5F /* GoogleService-Info.plist */; };
 		CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */; };
 		CFC4E8FE207232BB00D8B8FA /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */; };
 		CFDAE34F20B8647A0084A845 /* DeleteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDAE34E20B8647A0084A845 /* DeleteCell.swift */; };
@@ -102,7 +102,7 @@
 		CF360B3D2100896000785124 /* EmailLoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailLoginViewController.swift; sourceTree = "<group>"; };
 		CF360B3F2101E31800785124 /* CreateAccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateAccountViewController.swift; sourceTree = "<group>"; };
 		CF425B4520679D8F00D6A1FE /* UserProfileFormViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserProfileFormViewController.swift; sourceTree = "<group>"; };
-		CF63F31920CD00D800C341BD /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		CF63F31920CD00D800C341BD /* GoogleService-Info DEVELOPMENT.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info DEVELOPMENT.plist"; sourceTree = "<group>"; };
 		CF660D1F20B96F040027E3AE /* Device.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Device.swift; sourceTree = "<group>"; };
 		CF6CE926209CE12D00EED316 /* GetPremiumViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GetPremiumViewController.swift; sourceTree = "<group>"; };
 		CF7877F020A71685004E8693 /* ImagesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImagesViewController.swift; sourceTree = "<group>"; };
@@ -115,7 +115,7 @@
 		CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomUIElements.swift; sourceTree = "<group>"; };
 		CFB7C4C12066B15900114EC4 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		CFB7C4C32066C86B00114EC4 /* FilterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterViewController.swift; sourceTree = "<group>"; };
-		CFBA29D520CDCAAF004D9D5F /* GoogleService-Info PRODUCTION.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info PRODUCTION.plist"; sourceTree = "<group>"; };
+		CFBA29D520CDCAAF004D9D5F /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		CFC4E8FC207232B200D8B8FA /* Lez.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Lez.entitlements; sourceTree = "<group>"; };
 		CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
@@ -253,8 +253,8 @@
 			isa = PBXGroup;
 			children = (
 				CF9C7B9620A4B83A0044043B /* Assets.xcassets */,
-				CF63F31920CD00D800C341BD /* GoogleService-Info.plist */,
-				CFBA29D520CDCAAF004D9D5F /* GoogleService-Info PRODUCTION.plist */,
+				CF63F31920CD00D800C341BD /* GoogleService-Info DEVELOPMENT.plist */,
+				CFBA29D520CDCAAF004D9D5F /* GoogleService-Info.plist */,
 				CF0C3F042066F57D0033ECCA /* MatchAnimation.json */,
 				CF2DF206203C13170054CC1A /* AppDelegate.swift */,
 				CFB7C4C12066B15900114EC4 /* Extensions.swift */,
@@ -432,9 +432,9 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				CFBA29D620CDCAAF004D9D5F /* GoogleService-Info PRODUCTION.plist in Resources */,
+				CFBA29D620CDCAAF004D9D5F /* GoogleService-Info.plist in Resources */,
 				CF0C3F052066F57D0033ECCA /* MatchAnimation.json in Resources */,
-				CF63F31A20CD00D800C341BD /* GoogleService-Info.plist in Resources */,
+				CF63F31A20CD00D800C341BD /* GoogleService-Info DEVELOPMENT.plist in Resources */,
 				CF9C7B9720A4B83A0044043B /* Assets.xcassets in Resources */,
 				CF2DF211203C13170054CC1A /* LaunchScreen.storyboard in Resources */,
 			);
@@ -850,7 +850,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Lez/Lez.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = WNU245KFYF;
 				INFOPLIST_FILE = Lez/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -870,7 +870,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Lez/Lez.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 34;
+				CURRENT_PROJECT_VERSION = 37;
 				DEVELOPMENT_TEAM = WNU245KFYF;
 				INFOPLIST_FILE = Lez/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;

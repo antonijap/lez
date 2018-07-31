@@ -95,12 +95,19 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+//            Crashlytics.sharedInstance().crash()
+        }
+        
+        
         if !DefaultsManager.shared.ifToggleAllLesbiansExists() {
             DefaultsManager.shared.saveToggleAllLesbians(value: false)
         }
         if !DefaultsManager.shared.ifTrackingPreferenceExists() {
             DefaultsManager.shared.saveTrackingPreference(value: true)
         }
+        
         setupTableView()
         setupNavigationBar()
         setupMatchView()
@@ -149,6 +156,8 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         ]
         
         guard let user = self.user else { return }
+        
+        AnalyticsManager.shared.facebookLogUserInMatchRoom(uid: user.uid, email: user.email)
         
         let parameters: Parameters = [
             "email_address": user.email,

@@ -126,7 +126,10 @@ final class FirestoreManager {
                         finalArray.remove(at: i)
                     }
                     
-                    if DefaultsManager.shared.PreferedLocationExists() {
+                    
+                    if DefaultsManager.shared.fetchToggleAllLesbians() {
+                        fulfill(Array(Set(finalArray)))
+                    } else if DefaultsManager.shared.PreferedLocationExists() {
                         var specialArray: [User] = []
                         for user in finalArray {
                             if user.location.country.contains(DefaultsManager.shared.fetchPreferedLocation()) || user.location.city.contains(DefaultsManager.shared.fetchPreferedLocation()) {
@@ -137,7 +140,6 @@ final class FirestoreManager {
                     } else {
                         fulfill(Array(Set(finalArray)))
                     }
-                    
                 })
             }
         }

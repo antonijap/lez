@@ -202,6 +202,7 @@ final class UserProfileFormViewController: FormViewController {
                     if let data = parseFormIntoDataForUpdatingUser() {
                         FirestoreManager.shared.updateUser(uid: user.uid, data: data).then { success in
                             AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userEditedProfile, user: user)
+                            DefaultsManager.shared.savePreferedLocation(value: user.location.city)
                             self.profileViewControllerDelegate?.refreshProfile()
                             self.navigationController?.popViewController(animated: true)
                         }

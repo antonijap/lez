@@ -8,6 +8,7 @@
 
 import Foundation
 import Firebase
+import FacebookCore
 
 enum AnalyticsEvents: String {
     case userRegistered = "user_registered"
@@ -53,4 +54,25 @@ final class AnalyticsManager {
     func logDeleteEvent(name: AnalyticsEvents) {
         Analytics.logEvent(name.rawValue, parameters: nil)
     }
+    
+    
+    func facebookLogPurchase(uid: String, email: String, price: Double, valueToSum: Double) {
+        let params : AppEvent.ParametersDictionary = [
+            "uid" : uid,
+            "email" : email,
+            "price": 2.99
+        ]
+        let event = AppEvent(name: AnalyticsEvents.userPurchasedPremium.rawValue, parameters: params, valueToSum: valueToSum)
+        AppEventsLogger.log(event)
+    }
+
+    func facebookLogUserInMatchRoom(uid : String, email : String) {
+        let params : AppEvent.ParametersDictionary = [
+            "uid" : uid,
+            "email" : email
+        ]
+        let event = AppEvent(name: "user_in_match_room", parameters: params)
+        AppEventsLogger.log(event)
+    }
 }
+

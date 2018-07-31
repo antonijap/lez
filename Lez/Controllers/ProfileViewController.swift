@@ -53,7 +53,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerDelega
                                                name: Notification.Name("UpdateProfile"), object: nil)
         setupTableView()
         setupRefreshButton()
-//        checkConnectivity()
+        checkConnectivity()
     }
 
     // MARK: - Methods

@@ -530,7 +530,7 @@ final class TitleWithDescriptionCell: UITableViewCell {
             make.top.equalTo(titleLabel.snp.bottom).offset(8)
             make.bottom.equalToSuperview().offset(-16)
         }
-        bodyLabel.numberOfLines = 10
+        bodyLabel.numberOfLines = 30
     }
     
     required init(coder aDecoder: NSCoder) {
