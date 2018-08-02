@@ -66,11 +66,14 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
                 
-                if user.uid != DefaultsManager.shared.fetchCurrentUser() {
-                    print("NEW user detected")
-                    DefaultsManager.shared.saveCurrentUser(value: user.uid)
-                    self.runSetup()
+                if DefaultsManager.shared.currentUserExists() {
+                    if user.uid != DefaultsManager.shared.fetchCurrentUser() {
+                        print("NEW user detected")
+                        DefaultsManager.shared.saveCurrentUser(value: user.uid)
+                        self.runSetup()
+                    }
                 }
+                
                 
                 self.user = user
                 self.pusher.connection.delegate = self
@@ -141,7 +144,9 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
             .action(.default("I consent"), isPreferred: true) { _, _, _ in
                 self.addUserToMailchimp()
             }
-            .action(.destructive("No"))
+            .action(.destructive("No")) { _, _, _ in
+                DefaultsManager.shared.saveEmailConsent(value: false)
+            }
             .show(on: self, completion: nil)
     }
 
@@ -376,6 +381,8 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         FirestoreManager.shared.fetchUser(uid: uid).then { user in
             self.user = user
             self.showAlertIfUserBanned(user: user) // Show alert for banned users
+            print("Antonija")
+            print(user)
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ users in
                 self.users = users
                 if users.count > 0 {
@@ -728,6 +735,7 @@ extension MatchViewController {
             make.leading.equalTo(likesCounterWidgetImageView.snp.trailing).offset(4)
             make.trailing.equalToSuperview().inset(12)
         }
+        likesCounterWidgetLabel.snp.setLabel("likesCounterWidgetLabel")
         
         likesCounterWidgetView.layoutIfNeeded()
     }
@@ -788,6 +796,7 @@ extension MatchViewController {
         }
         matchLabel.text = "Match"
         matchLabel.font = .systemFont(ofSize: 28, weight: .heavy)
+        matchLabel.snp.setLabel("matchLabel")
         
         matchView.addSubview(matchSubtitle)
         matchSubtitle.snp.makeConstraints { make in

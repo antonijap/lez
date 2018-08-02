@@ -49,6 +49,7 @@ final class FirestoreManager {
 
     func fetchPotentialMatches(for user: User) -> Promise<[User]> {
         return Promise { fulfill, reject in
+            print("Mark: \(Date().toString(dateFormat: "hh:mm:ss"))")
             let from = user.preferences.ageRange.from
             let to = user.preferences.ageRange.to
             let suitableAges = Array(from...to)
@@ -83,13 +84,19 @@ final class FirestoreManager {
                 if let error = error {
                     print("Error getting documents: \(error)")
                 } else {
-                    for document in querySnapshot!.documents {
+                    guard let snapshot = querySnapshot else { print("Error with snapshot"); return }
+                    print("Mark final document \(snapshot.documents)")
+                    print("Mark fetched ALL: \(Date().toString(dateFormat: "hh:mm:ss"))")
+                    
+                    for document in snapshot.documents {
                         group.enter()
                         FirestoreManager.shared.parseFirebaseUser(document: document).then({ user in
                             allUsers.append(user!)
+                            print("Mark finished parsing one user: \(Date().toString(dateFormat: "hh:mm:ss"))")
                             group.leave()
                         })
                     }
+                    
                 }
 
                 group.notify(queue: .main, execute: {
@@ -126,7 +133,7 @@ final class FirestoreManager {
                         finalArray.remove(at: i)
                     }
                     
-                    
+                    print("Mark: \(Date().toString(dateFormat: "hh:mm:ss"))")
                     if DefaultsManager.shared.fetchToggleAllLesbians() {
                         fulfill(Array(Set(finalArray)))
                     } else if DefaultsManager.shared.PreferedLocationExists() {
