@@ -117,6 +117,7 @@ final class RegisterViewController: UIViewController {
                 if let error = error { print(error.localizedDescription); return }
                 self.startSpinner() // User is signed in
                 guard let currentUser = user else { return }
+                DefaultsManager.shared.saveCurrentUser(value: currentUser.user.uid)
                 FirestoreManager.shared.checkIfUserExists(uid: currentUser.user.uid).then({ exists in
                     guard exists else {
                         self.stopSpinner()
@@ -168,6 +169,7 @@ final class RegisterViewController: UIViewController {
                     if let error = error { self.stopSpinner(); print(error); return }
                     self.stopSpinner()
                     guard let currentUser = user else { return }
+                    DefaultsManager.shared.saveCurrentUser(value: currentUser.user.uid)
                     print("Logged in user: \(currentUser.user)")
                     FirestoreManager.shared.checkIfUserExists(uid: currentUser.user.uid).then({ exists in
                         guard exists else {

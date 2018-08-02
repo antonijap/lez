@@ -79,4 +79,18 @@ final class DefaultsManager {
     func fetchEmailConsent() -> Bool {
         return defaults.object(forKey: "emailConsent") as! Bool
     }
+    
+    // User
+    
+    func saveCurrentUser(value: String) {
+        defaults.set(value, forKey: "currentUser")
+    }
+    
+    func currentUserExists() -> Bool {
+        return defaults.object(forKey: "currentUser") != nil
+    }
+    
+    func fetchCurrentUser() -> String {
+        return defaults.object(forKey: "currentUser") as! String
+    }
 }

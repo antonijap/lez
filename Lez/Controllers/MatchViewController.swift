@@ -57,12 +57,21 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     private var timer = Timer()
     private var refreshButton = PrimaryButton()
     
-    // MARK: - Life Cycle
+    // MARK: - Life Cycle 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
+                
+                if user.uid != DefaultsManager.shared.fetchCurrentUser() {
+                    print("NEW user detected")
+                    DefaultsManager.shared.saveCurrentUser(value: user.uid)
+                    self.runSetup()
+                }
+                
                 self.user = user
                 self.pusher.connection.delegate = self
                 self.pusher.connect()
@@ -87,15 +96,20 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         guard Auth.auth().currentUser != nil else { return }
         guard user != nil else { return }
         pusher.disconnect()
-        super.viewWillDisappear(animated)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+        runSetup()
+    }
+    
+    // MARK: - Methods
+    
+    func runSetup() {
         if !DefaultsManager.shared.ifToggleAllLesbiansExists() {
             DefaultsManager.shared.saveToggleAllLesbians(value: false)
         }
@@ -115,7 +129,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateAfterAppComesToForeground),
                                                name: .UIApplicationWillEnterForeground, object: nil)
-
+        
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             guard let user = user else { self.presentRegisterViewController(); return }
             self.checkConnectivity(uid: user.uid)
@@ -130,8 +144,6 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
             .action(.destructive("No"))
             .show(on: self, completion: nil)
     }
-    
-    // MARK: - Methods
 
     func addUserToMailchimp() {
         

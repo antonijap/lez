@@ -96,6 +96,7 @@ class CreateAccountViewController: UIViewController {
                     }
                     // Regular flow, go through form
                     guard let currentUser = Auth.auth().currentUser else { print("No user"); return }
+                    DefaultsManager.shared.saveCurrentUser(value: currentUser.uid)
                     FirestoreManager.shared.fetchUser(uid: currentUser.uid).then({ user in
                         AnalyticsManager.shared.logEvent(name: .userUsedEmailLogin, user: user)
                     })
