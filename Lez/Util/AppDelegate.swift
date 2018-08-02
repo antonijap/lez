@@ -61,6 +61,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         UITabBar.appearance().layer.borderColor = UIColor.clear.cgColor
         UITabBar.appearance().layer.borderWidth = 0.0
         UITabBar.appearance().backgroundColor = .white
+        UIBarButtonItem.appearance().tintColor = .black
 
         window = UIWindow(frame: UIScreen.main.bounds)
         if let window = window {
@@ -79,6 +80,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         pushNotifications.registerForRemoteNotifications()
 
         completeIAPTransactions()
+        
         return true
     }
     

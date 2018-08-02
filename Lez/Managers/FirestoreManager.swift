@@ -207,7 +207,7 @@ final class FirestoreManager {
     
     func parseFirebaseUser(document: DocumentSnapshot) -> Promise<User?> {
         return Promise { fulfill, reject in
-            guard let data = document.data() else { return }
+            guard let data = document.data() else { print("Problem with data"); return }
             guard let uid = data["uid"] as? String else { print("Problem with parsing uid."); return }
             guard let name = data["name"] as? String else { print("Problem with parsing name."); return }
             guard let email = data["email"] as? String else { print("Problem with parsing email."); return }
