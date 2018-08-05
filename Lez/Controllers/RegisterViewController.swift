@@ -200,6 +200,7 @@ final class RegisterViewController: UIViewController {
     }
     
     @objc func emailLoginButtonTapped() {
+        print("Email button tapped")
         let emailLoginViewController = EmailLoginViewController()
         self.navigationController?.pushViewController(emailLoginViewController, animated: true)
     }

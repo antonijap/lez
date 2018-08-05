@@ -14,12 +14,12 @@ final class FirestoreManager {
 
     let db = Firestore.firestore()
     static let shared = FirestoreManager()
-
-    private init() {
-        let settings = db.settings
-        settings.areTimestampsInSnapshotsEnabled = true
-        db.settings = settings
-    }
+//
+//    private init() {
+//        let settings = db.settings
+//        settings.areTimestampsInSnapshotsEnabled = true
+//        db.settings = settings
+//    }
 
     func addReport(data: [String: Any]) -> Promise<Bool> {
         return Promise { fulfill, reject in

@@ -18,6 +18,7 @@ import SwiftyStoreKit
 import Toast_Swift
 import StoreKit
 import FBSDKLoginKit
+import Alamofire
 
 final class ProfileViewController: UIViewController, ProfileViewControllerDelegate {
 
@@ -54,9 +55,62 @@ final class ProfileViewController: UIViewController, ProfileViewControllerDelega
         setupTableView()
         setupRefreshButton()
         checkConnectivity()
+        
+        guard !DefaultsManager.shared.emailConsentExists() else { print("Consent given."); return }
+        
+        Alertift.alert(title: "We need your consent", message: "We would like to send you a newsletter sometime, do you give us your consent to do so?")
+            .action(.default("I consent"), isPreferred: true) { _, _, _ in
+                self.addUserToMailchimp()
+            }
+            .action(.destructive("No")) { _, _, _ in
+                DefaultsManager.shared.saveEmailConsent(value: false)
+            }
+            .show(on: self, completion: nil)
     }
 
     // MARK: - Methods
+    
+    func addUserToMailchimp() {
+        
+        let apiKey: String = "***REMOVED***-us17"
+        let baseUrl: String = "***REMOVED***"
+        let listId: String = "***REMOVED***"
+        
+        let url = "\(baseUrl)/lists/\(listId)/members"
+        
+        guard let authorizationHeader = Request.authorizationHeader(user: "AnyString", password: apiKey) else {
+            print("!authorizationHeader")
+            return
+        }
+        
+        let headers: HTTPHeaders = [
+            authorizationHeader.key: authorizationHeader.value
+        ]
+        
+        guard let user = self.user else { return }
+        
+        AnalyticsManager.shared.facebookLogUserInMatchRoom(uid: user.uid, email: user.email)
+        
+        let parameters: Parameters = [
+            "email_address": user.email,
+            "status": "subscribed",
+            "merge_fields": [
+                "FNAME": user.name,
+                "LNAME": ""
+            ]
+        ]
+        
+        Alamofire.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
+            .validate()
+            .responseJSON { response in
+                switch response.result {
+                case .success(_):
+                    DefaultsManager.shared.saveEmailConsent(value: true)
+                case .failure(_):
+                    print("Error.")
+                }
+        }
+    }
 
     private func hideRefreshButton() {
         refreshButton.isHidden = true
