@@ -34,7 +34,7 @@ final class FirestoreManager {
     func addUser(uid: String, data: [String: Any]) -> Promise<Bool> {
         return Promise { fulfill, reject in
             self.db.collection("users").document(uid).setData(data) { error in
-                guard error == nil else { print("Error updating document: \(error.debugDescription)"); reject(error); return }
+                guard error == nil else { print("Error updating document: \(error.debugDescription)"); reject(error!); return }
                 print("Document successfully updated")
                 fulfill(true)
             }
@@ -46,28 +46,34 @@ final class FirestoreManager {
             print("Mark: \(Date().toString(dateFormat: "hh:mm:ss"))")
             let from = user.preferences.ageRange.from
             let to = user.preferences.ageRange.to
-            let suitableAges = Set(from...to)
+//            let suitableAges = Set(from...to)
             let group = DispatchGroup()
             var allUsers: Set<User> = []
 
             let potentialMatchesRef: Query!
-
+            print(user.uid)
             if DefaultsManager.shared.fetchToggleAllLesbians() {
                 print("Toggle all lesbians is TRUE.")
                 potentialMatchesRef = self.db.collection("users")
                     .whereField("isBanned", isEqualTo: false)
                     .whereField("isHidden", isEqualTo: false)
+                    .whereField("age", isGreaterThanOrEqualTo: from)
+                    .whereField("age", isLessThanOrEqualTo: to)
             } else if DefaultsManager.shared.PreferedLocationExists() { // Use preferred location
-                print("Prefered location! \(DefaultsManager.shared.fetchPreferedLocation())")
+                print("Prefered location: \(DefaultsManager.shared.fetchPreferedLocation())")
                 potentialMatchesRef = self.db.collection("users")
                     .whereField("isBanned", isEqualTo: false)
                     .whereField("isHidden", isEqualTo: false)
+                    .whereField("age", isGreaterThanOrEqualTo: from)
+                    .whereField("age", isLessThanOrEqualTo: to)
             } else { // Use default location
                 print("No prefered location.")
                 potentialMatchesRef = self.db.collection("users")
                     .whereField("isBanned", isEqualTo: false)
                     .whereField("isHidden", isEqualTo: false)
                     .whereField("location.city", isEqualTo: user.location.city)
+                    .whereField("age", isGreaterThanOrEqualTo: from)
+                    .whereField("age", isLessThanOrEqualTo: to)
             }
 
             potentialMatchesRef.getDocuments { querySnapshot, error in
@@ -76,23 +82,21 @@ final class FirestoreManager {
                 guard let snapshot = querySnapshot else { print("Error with snapshot"); return }
 
                 print("Mark final document \(snapshot.documents)")
-                print("Mark fetched ALL: \(Date().toString(dateFormat: "hh:mm:ss"))")
 
                 for document in snapshot.documents {
                     group.enter()
                     FirestoreManager.shared.parseFirebaseUser(document: document).then({ user in
                         allUsers.update(with: user!)
-                        print("Mark finished parsing one user: \(Date().toString(dateFormat: "hh:mm:ss"))")
                         group.leave()
                     })
                 }
+  
                 group.notify(queue: .main) {
                     let blockedUsers: [String] = user.blockedUsers ?? [] // Consider making user.blockedUsers not nullable
                     let filteredUsers = allUsers.filter{ $0.uid != currentUser.uid } // Remove yourself
                                                 .filter{ !blockedUsers.contains($0.uid) } // Remove blocked users
-                                                .filter{ suitableAges.contains($0.age) } // Remove users outside suitable ages
-                                                .filter{ $0.preferences.lookingFor.contains(where: user.preferences.lookingFor.contains) }
-                    print("Mark: \(Date().toString(dateFormat: "hh:mm:ss"))")
+//                                                .filter{ suitableAges.contains($0.age) } // Remove users outside suitable ages
+//                                                .filter{ $0.preferences.lookingFor.contains(where: user.preferences.lookingFor.contains) }
                     if DefaultsManager.shared.fetchToggleAllLesbians() {
                         fulfill(Array(filteredUsers))
                     } else if DefaultsManager.shared.PreferedLocationExists() {
