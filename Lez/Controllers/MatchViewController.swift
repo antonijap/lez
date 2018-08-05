@@ -65,13 +65,13 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
                 
-                if DefaultsManager.shared.currentUserExists() {
-                    if user.uid != DefaultsManager.shared.fetchCurrentUser() {
-                        print("NEW user detected")
-                        DefaultsManager.shared.saveCurrentUser(value: user.uid)
-                        self.runSetup()
-                    }
-                }
+//                if DefaultsManager.shared.currentUserExists() {
+//                    if user.uid != DefaultsManager.shared.fetchCurrentUser() {
+//                        print("NEW user detected")
+//                        DefaultsManager.shared.saveCurrentUser(value: user.uid)
+//                        self.runSetup()
+//                    }
+//                }
                 
                 
                 self.user = user
@@ -106,21 +106,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     
     override func viewDidLoad() {
         super.viewDidLoad()
-<<<<<<< HEAD
-        
-        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
-//            Crashlytics.sharedInstance().crash()
-        }
-        
-        
-=======
-        runSetup()
-    }
-    
-    // MARK: - Methods
-    
-    func runSetup() {
->>>>>>> fix/performance
+
         if !DefaultsManager.shared.ifToggleAllLesbiansExists() {
             DefaultsManager.shared.saveToggleAllLesbians(value: false)
         }
@@ -147,6 +133,8 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         }
         
     }
+    
+    // MARK: - Methods
 
     private func showAlertIfUserBanned(user: User) {
         if user.isBanned {
