@@ -96,6 +96,11 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
+//            Crashlytics.sharedInstance().crash()
+        }
+        
+        
         if !DefaultsManager.shared.ifToggleAllLesbiansExists() {
             DefaultsManager.shared.saveToggleAllLesbians(value: false)
         }
