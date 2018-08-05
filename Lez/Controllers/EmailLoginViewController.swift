@@ -79,6 +79,7 @@ class EmailLoginViewController: UIViewController, UITextFieldDelegate {
                         if snapshot.exists {
                             print("Check onboarding.")
                             FirestoreManager.shared.fetchUser(uid: currentUser.user.uid).then { user in
+                                
                                 guard user.isOnboarded else {
                                     let userProfileFormViewController = UserProfileFormViewController()
                                     guard let displayName = currentUser.user.displayName else { return }

@@ -14,20 +14,17 @@ final class FirestoreManager {
 
     let db = Firestore.firestore()
     static let shared = FirestoreManager()
-
-    private init() {
-        let settings = db.settings
-        settings.areTimestampsInSnapshotsEnabled = true
-        db.settings = settings
-    }
+//
+//    private init() {
+//        let settings = db.settings
+//        settings.areTimestampsInSnapshotsEnabled = true
+//        db.settings = settings
+//    }
 
     func addReport(data: [String: Any]) -> Promise<Bool> {
         return Promise { fulfill, reject in
             self.db.collection("reports").addDocument(data: data) { error in
-                if let error = error {
-                    print("Error creating report: \(error)")
-                    reject(error); return
-                }
+                guard error == nil else { print("Error creating report: \(error.debugDescription)"); reject(error!); return }
                 print("Reported!")
                 fulfill(true)
             }
@@ -37,10 +34,7 @@ final class FirestoreManager {
     func addUser(uid: String, data: [String: Any]) -> Promise<Bool> {
         return Promise { fulfill, reject in
             self.db.collection("users").document(uid).setData(data) { error in
-                if let error = error {
-                    print("Error updating document: \(error)")
-                    reject(error); return
-                }
+                guard error == nil else { print("Error updating document: \(error.debugDescription)"); reject(error!); return }
                 print("Document successfully updated")
                 fulfill(true)
             }
@@ -49,98 +43,71 @@ final class FirestoreManager {
 
     func fetchPotentialMatches(for user: User) -> Promise<[User]> {
         return Promise { fulfill, reject in
+            print("Mark: \(Date().toString(dateFormat: "hh:mm:ss"))")
             let from = user.preferences.ageRange.from
             let to = user.preferences.ageRange.to
-            let suitableAges = Array(from...to)
+//            let suitableAges = Set(from...to)
             let group = DispatchGroup()
-            var allUsers: [User] = []
+            var allUsers: Set<User> = []
 
             let potentialMatchesRef: Query!
-
+            print(user.uid)
             if DefaultsManager.shared.fetchToggleAllLesbians() {
                 print("Toggle all lesbians is TRUE.")
                 potentialMatchesRef = self.db.collection("users")
                     .whereField("isBanned", isEqualTo: false)
                     .whereField("isHidden", isEqualTo: false)
-            } else if DefaultsManager.shared.PreferedLocationExists() {
-                // Use prefered location
-                print("Prefered location! \(DefaultsManager.shared.fetchPreferedLocation())")
+                    .whereField("age", isGreaterThanOrEqualTo: from)
+                    .whereField("age", isLessThanOrEqualTo: to)
+            } else if DefaultsManager.shared.PreferedLocationExists() { // Use preferred location
+                print("Prefered location: \(DefaultsManager.shared.fetchPreferedLocation())")
                 potentialMatchesRef = self.db.collection("users")
                     .whereField("isBanned", isEqualTo: false)
                     .whereField("isHidden", isEqualTo: false)
-            } else {
-                // Use default location
+                    .whereField("age", isGreaterThanOrEqualTo: from)
+                    .whereField("age", isLessThanOrEqualTo: to)
+            } else { // Use default location
                 print("No prefered location.")
                 potentialMatchesRef = self.db.collection("users")
                     .whereField("isBanned", isEqualTo: false)
                     .whereField("isHidden", isEqualTo: false)
                     .whereField("location.city", isEqualTo: user.location.city)
+                    .whereField("age", isGreaterThanOrEqualTo: from)
+                    .whereField("age", isLessThanOrEqualTo: to)
             }
 
             potentialMatchesRef.getDocuments { querySnapshot, error in
                 guard let currentUser = Auth.auth().currentUser else { return }
+                guard error == nil else { print("Error getting documents: \(error.debugDescription)"); return }
+                guard let snapshot = querySnapshot else { print("Error with snapshot"); return }
 
-                if let error = error {
-                    print("Error getting documents: \(error)")
-                } else {
-                    for document in querySnapshot!.documents {
-                        group.enter()
-                        FirestoreManager.shared.parseFirebaseUser(document: document).then({ user in
-                            allUsers.append(user!)
-                            group.leave()
-                        })
+                print("Mark final document \(snapshot.documents)")
+
+                for document in snapshot.documents {
+                    group.enter()
+                    FirestoreManager.shared.parseFirebaseUser(document: document).then({ user in
+                        allUsers.update(with: user!)
+                        group.leave()
+                    })
+                }
+  
+                group.notify(queue: .main) {
+                    let blockedUsers: [String] = user.blockedUsers ?? [] // Consider making user.blockedUsers not nullable
+                    let filteredUsers = allUsers.filter{ $0.uid != currentUser.uid } // Remove yourself
+                                                .filter{ !blockedUsers.contains($0.uid) } // Remove blocked users
+//                                                .filter{ suitableAges.contains($0.age) } // Remove users outside suitable ages
+//                                                .filter{ $0.preferences.lookingFor.contains(where: user.preferences.lookingFor.contains) }
+                    if DefaultsManager.shared.fetchToggleAllLesbians() {
+                        fulfill(Array(filteredUsers))
+                    } else if DefaultsManager.shared.PreferedLocationExists() {
+                        let locationFilteredUsers =
+                            filteredUsers.filter{ $0.location.country.contains(DefaultsManager.shared.fetchPreferedLocation()) ||
+                                                  $0.location.city.contains(DefaultsManager.shared.fetchPreferedLocation()) }
+                        fulfill(Array(locationFilteredUsers))
+                    } else {
+                        fulfill(Array(filteredUsers))
                     }
                 }
-
-                group.notify(queue: .main, execute: {
-                    // Get rid of all users outside suitable ages
-                    var filteredAge: [User] = []
-                    for match in allUsers {
-                        if suitableAges.contains(match.age) {
-                            filteredAge.append(match)
-                        }
-                    }
-                    
-                    // Get the ones with the same preferences.lookingFor
-                    var filteredLookingFor: [User] = []
-                    for match in filteredAge {
-                        for lookingFor in user.preferences.lookingFor {
-                            if match.preferences.lookingFor.contains(lookingFor) {
-                                filteredLookingFor.append(match)
-                            }
-                        }
-                    }
-
-                    // Remove yourself
-                    var filteredMe: [User] = []
-                    for match in Array(Set(filteredLookingFor)) {
-                        if match.uid != currentUser.uid {
-                            filteredMe.append(match)
-                        }
-                    }
-
-                    var finalArray: [User] = Array(Set(filteredMe))
-
-                    if let i = finalArray.index(where: { user.blockedUsers!.contains($0.uid) }) {
-                        print("User blocked, removing...")
-                        finalArray.remove(at: i)
-                    }
-                    
-                    
-                    if DefaultsManager.shared.fetchToggleAllLesbians() {
-                        fulfill(Array(Set(finalArray)))
-                    } else if DefaultsManager.shared.PreferedLocationExists() {
-                        var specialArray: [User] = []
-                        for user in finalArray {
-                            if user.location.country.contains(DefaultsManager.shared.fetchPreferedLocation()) || user.location.city.contains(DefaultsManager.shared.fetchPreferedLocation()) {
-                                specialArray.append(user)
-                            }
-                        }
-                        fulfill(Array(Set(specialArray)))
-                    } else {
-                        fulfill(Array(Set(finalArray)))
-                    }
-                })
             }
         }
     }
@@ -150,9 +117,7 @@ final class FirestoreManager {
             let docRef = self.db.collection("users").document(uid)
             docRef.getDocument { document, error in
                 guard let document = document else { print("Document does not exist"); reject(error!); return }
-                self.parseFirebaseUser(document: document).then({ user in
-                    if let user = user { fulfill(user) }
-                })
+                self.parseFirebaseUser(document: document).then({ user in if let user = user { fulfill(user) } })
             }
         }
     }
@@ -174,10 +139,7 @@ final class FirestoreManager {
         return Promise { fulfill, reject in
             let docRef = self.db.collection("users").document(uid)
             docRef.updateData(data) { error in
-                if let error = error {
-                    print("Error updating document: \(error)")
-                    reject(error); return
-                }
+                guard error == nil else { print("Error updating document: \(error.debugDescription)"); reject(error!); return }
                 print("Document successfully updated")
                 fulfill(true)
             }
@@ -188,10 +150,7 @@ final class FirestoreManager {
         return Promise { fulfill, reject in
             let updateImagesRef = self.db.collection("users").document(uid)
             updateImagesRef.updateData(["images": urls]) { error in
-                if let error = error {
-                    print("Error updating document: \(error)")
-                    reject(error); return
-                }
+                guard error == nil else { print("Error updating document: \(error.debugDescription)"); reject(error!); return }
                 print("Document successfully updated")
                 fulfill(true)
             }
@@ -200,7 +159,7 @@ final class FirestoreManager {
     
     func parseFirebaseUser(document: DocumentSnapshot) -> Promise<User?> {
         return Promise { fulfill, reject in
-            guard let data = document.data() else { return }
+            guard let data = document.data() else { print("Problem with data"); return }
             guard let uid = data["uid"] as? String else { print("Problem with parsing uid."); return }
             guard let name = data["name"] as? String else { print("Problem with parsing name."); return }
             guard let email = data["email"] as? String else { print("Problem with parsing email."); return }

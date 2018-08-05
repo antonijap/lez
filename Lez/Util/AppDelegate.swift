@@ -55,12 +55,15 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         
+//        prepareWindow()
+        
         UITabBar.appearance().shadowImage = UIImage()
         UITabBar.appearance().backgroundImage = UIImage()
         UITabBar.appearance().tintColor = UIColor(red:0.95, green:0.67, blue:0.24, alpha:1.00)
         UITabBar.appearance().layer.borderColor = UIColor.clear.cgColor
         UITabBar.appearance().layer.borderWidth = 0.0
         UITabBar.appearance().backgroundColor = .white
+        UIBarButtonItem.appearance().tintColor = .black
 
         window = UIWindow(frame: UIScreen.main.bounds)
         if let window = window {
@@ -79,6 +82,7 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
         pushNotifications.registerForRemoteNotifications()
 
         completeIAPTransactions()
+        
         return true
     }
     
@@ -119,3 +123,39 @@ extension AppDelegate {
 }
 
 
+
+// MARK: - Window Management & Navigation
+extension AppDelegate {
+    private func prepareWindow() {
+        window = UIWindow(frame: UIScreen.main.bounds)
+//        window?.backgroundColor = .white
+        
+        guard let _ = Auth.auth().currentUser else {
+            
+            // What happens when there is no user
+            
+            displayIntro()
+            window?.makeKeyAndVisible()
+            
+            return
+        }
+        print("Display Match Room")
+        displayPrimaryNavigation()
+    }
+    
+    func displayIntro() {
+        window = UIWindow(frame: UIScreen.main.bounds)
+        guard let window = window else { return }
+        
+        let registerViewController = RegisterViewController()
+        let navigationController = UINavigationController(rootViewController: registerViewController)
+        navigationController.present(navigationController, animated: true, completion: nil)
+    }
+    
+    func displayPrimaryNavigation() {
+        guard let window = window else { return }
+        window.rootViewController = CustomTabBarController()
+        window.backgroundColor = UIColor.white
+        window.makeKeyAndVisible()
+    }
+}

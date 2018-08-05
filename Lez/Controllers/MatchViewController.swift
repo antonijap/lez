@@ -10,7 +10,6 @@ import UIKit
 import SnapKit
 import Jelly
 import Firebase
-import Jelly
 import Promises
 import Alamofire
 import SwiftDate
@@ -57,12 +56,24 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     private var timer = Timer()
     private var refreshButton = PrimaryButton()
     
-    // MARK: - Life Cycle
+    // MARK: - Life Cycle 
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        
         if let currentUser = Auth.auth().currentUser {
             FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
+                
+                if DefaultsManager.shared.currentUserExists() {
+                    if user.uid != DefaultsManager.shared.fetchCurrentUser() {
+                        print("NEW user detected")
+                        DefaultsManager.shared.saveCurrentUser(value: user.uid)
+                        self.runSetup()
+                    }
+                }
+                
+                
                 self.user = user
                 self.pusher.connection.delegate = self
                 self.pusher.connect()
@@ -87,20 +98,29 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     }
     
     override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
         guard Auth.auth().currentUser != nil else { return }
         guard user != nil else { return }
         pusher.disconnect()
-        super.viewWillDisappear(animated)
     }
     
     override func viewDidLoad() {
         super.viewDidLoad()
+<<<<<<< HEAD
         
         DispatchQueue.main.asyncAfter(deadline: .now() + 10) {
 //            Crashlytics.sharedInstance().crash()
         }
         
         
+=======
+        runSetup()
+    }
+    
+    // MARK: - Methods
+    
+    func runSetup() {
+>>>>>>> fix/performance
         if !DefaultsManager.shared.ifToggleAllLesbiansExists() {
             DefaultsManager.shared.saveToggleAllLesbians(value: false)
         }
@@ -120,66 +140,14 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         NotificationCenter.default.addObserver(self, selector: #selector(self.refreshTableView), name: Notification.Name("RefreshTableView"), object: nil)
         NotificationCenter.default.addObserver(self, selector: #selector(self.updateAfterAppComesToForeground),
                                                name: .UIApplicationWillEnterForeground, object: nil)
-
+        
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             guard let user = user else { self.presentRegisterViewController(); return }
             self.checkConnectivity(uid: user.uid)
         }
         
-        guard !DefaultsManager.shared.emailConsentExists() else { print("Consent given."); return }
-        
-        Alertift.alert(title: "We need your consent", message: "We would like to send you a newsletter sometime, do you give us your consent to do so?")
-            .action(.default("I consent"), isPreferred: true) { _, _, _ in
-                self.addUserToMailchimp()
-            }
-            .action(.destructive("No"))
-            .show(on: self, completion: nil)
     }
-    
-    // MARK: - Methods
 
-    func addUserToMailchimp() {
-        
-        let apiKey: String = "***REMOVED***-us17"
-        let baseUrl: String = "***REMOVED***"
-        let listId: String = "***REMOVED***"
-        
-        let url = "\(baseUrl)/lists/\(listId)/members"
-        
-        guard let authorizationHeader = Request.authorizationHeader(user: "AnyString", password: apiKey) else {
-            print("!authorizationHeader")
-            return
-        }
-        
-        let headers: HTTPHeaders = [
-            authorizationHeader.key: authorizationHeader.value
-        ]
-        
-        guard let user = self.user else { return }
-        
-        AnalyticsManager.shared.facebookLogUserInMatchRoom(uid: user.uid, email: user.email)
-        
-        let parameters: Parameters = [
-            "email_address": user.email,
-            "status": "subscribed",
-            "merge_fields": [
-                "FNAME": user.name,
-                "LNAME": ""
-            ]
-        ]
-        
-        Alamofire.request(url, method: .post, parameters: parameters, encoding: JSONEncoding.default, headers: headers)
-            .validate()
-            .responseJSON { response in
-                switch response.result {
-                case .success(_):
-                    DefaultsManager.shared.saveEmailConsent(value: true)
-                case .failure(_):
-                    print("Error.")
-                }
-        }
-    }
-    
     private func showAlertIfUserBanned(user: User) {
         if user.isBanned {
             Alertift.alert(title: "You are banned", message: "You've broken our rules and your account is banned.")
@@ -369,6 +337,8 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         FirestoreManager.shared.fetchUser(uid: uid).then { user in
             self.user = user
             self.showAlertIfUserBanned(user: user) // Show alert for banned users
+            print("Antonija")
+            print(user)
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ users in
                 self.users = users
                 if users.count > 0 {
@@ -721,6 +691,7 @@ extension MatchViewController {
             make.leading.equalTo(likesCounterWidgetImageView.snp.trailing).offset(4)
             make.trailing.equalToSuperview().inset(12)
         }
+        likesCounterWidgetLabel.snp.setLabel("likesCounterWidgetLabel")
         
         likesCounterWidgetView.layoutIfNeeded()
     }
@@ -781,6 +752,7 @@ extension MatchViewController {
         }
         matchLabel.text = "Match"
         matchLabel.font = .systemFont(ofSize: 28, weight: .heavy)
+        matchLabel.snp.setLabel("matchLabel")
         
         matchView.addSubview(matchSubtitle)
         matchSubtitle.snp.makeConstraints { make in
