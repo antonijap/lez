@@ -13,6 +13,8 @@ import FBSDKLoginKit
 import TwitterKit
 import PushNotifications
 import SwiftyStoreKit
+import Appsee
+import Flurry_iOS_SDK
 
 final class CustomTabBarController: UITabBarController {
     override func viewDidLoad() {
@@ -83,6 +85,13 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
 
         completeIAPTransactions()
         
+        Appsee.start()
+        
+        Flurry.startSession("***REMOVED***", with: FlurrySessionBuilder
+            .init()
+            .withCrashReporting(true)
+            .withLogLevel(FlurryLogLevelAll))
+        
         return true
     }
     
@@ -125,37 +134,37 @@ extension AppDelegate {
 
 
 // MARK: - Window Management & Navigation
-extension AppDelegate {
-    private func prepareWindow() {
-        window = UIWindow(frame: UIScreen.main.bounds)
-//        window?.backgroundColor = .white
-        
-        guard let _ = Auth.auth().currentUser else {
-            
-            // What happens when there is no user
-            
-            displayIntro()
-            window?.makeKeyAndVisible()
-            
-            return
-        }
-        print("Display Match Room")
-        displayPrimaryNavigation()
-    }
-    
-    func displayIntro() {
-        window = UIWindow(frame: UIScreen.main.bounds)
-        guard let window = window else { return }
-        
-        let registerViewController = RegisterViewController()
-        let navigationController = UINavigationController(rootViewController: registerViewController)
-        navigationController.present(navigationController, animated: true, completion: nil)
-    }
-    
-    func displayPrimaryNavigation() {
-        guard let window = window else { return }
-        window.rootViewController = CustomTabBarController()
-        window.backgroundColor = UIColor.white
-        window.makeKeyAndVisible()
-    }
-}
+//extension AppDelegate {
+//    private func prepareWindow() {
+//        window = UIWindow(frame: UIScreen.main.bounds)
+////        window?.backgroundColor = .white
+//        
+//        guard let _ = Auth.auth().currentUser else {
+//            
+//            // What happens when there is no user
+//            
+//            displayIntro()
+//            window?.makeKeyAndVisible()
+//            
+//            return
+//        }
+//        print("Display Match Room")
+//        displayPrimaryNavigation()
+//    }
+//    
+//    func displayIntro() {
+//        window = UIWindow(frame: UIScreen.main.bounds)
+//        guard let window = window else { return }
+//        
+//        let registerViewController = RegisterViewController()
+//        let navigationController = UINavigationController(rootViewController: registerViewController)
+//        navigationController.present(navigationController, animated: true, completion: nil)
+//    }
+//    
+//    func displayPrimaryNavigation() {
+//        guard let window = window else { return }
+//        window.rootViewController = CustomTabBarController()
+//        window.backgroundColor = UIColor.white
+//        window.makeKeyAndVisible()
+//    }
+//}

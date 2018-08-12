@@ -17,7 +17,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>1.2</string>
+	<string>1.3</string>
 	<key>CFBundleURLTypes</key>
 	<array>
 		<dict>
@@ -25,12 +25,12 @@
 			<array>
 				<string>***REMOVED***</string>
 				<string>twitterkit-***REMOVED***</string>
-                <string>***REMOVED***</string>
+				<string>***REMOVED***</string>
 			</array>
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>40</string>
+	<string>42</string>
 	<key>FacebookAppID</key>
 	<string>2081881348709872</string>
 	<key>FacebookDisplayName</key>
@@ -79,5 +79,7 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+	<key>com.appsee.ApiKey</key>
+	<string>a912f12f6d704b379fbbd010d310385f</string>
 </dict>
 </plist>

@@ -96,7 +96,7 @@ final class FirestoreManager {
                     let filteredUsers = allUsers.filter{ $0.uid != currentUser.uid } // Remove yourself
                                                 .filter{ !blockedUsers.contains($0.uid) } // Remove blocked users
 //                                                .filter{ suitableAges.contains($0.age) } // Remove users outside suitable ages
-//                                                .filter{ $0.preferences.lookingFor.contains(where: user.preferences.lookingFor.contains) }
+                                                .filter{ $0.preferences.lookingFor.contains(where: user.preferences.lookingFor.contains) }
                     if DefaultsManager.shared.fetchToggleAllLesbians() {
                         fulfill(Array(filteredUsers))
                     } else if DefaultsManager.shared.PreferedLocationExists() {

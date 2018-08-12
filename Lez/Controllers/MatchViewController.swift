@@ -113,6 +113,14 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         if !DefaultsManager.shared.ifTrackingPreferenceExists() {
             DefaultsManager.shared.saveTrackingPreference(value: true)
         }
+        if !DefaultsManager.shared.loggedInInformationExists() {
+            DefaultsManager.shared.saveLoggedInInformation(value: true)
+            do {
+                try Auth.auth().signOut()
+            } catch let signOutError as NSError {
+                print ("Error signing out: %@", signOutError)
+            }
+        }
         
         setupTableView()
         setupNavigationBar()

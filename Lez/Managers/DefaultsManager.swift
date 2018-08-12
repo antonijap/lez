@@ -93,4 +93,18 @@ final class DefaultsManager {
     func fetchCurrentUser() -> String {
         return defaults.object(forKey: "currentUser") as! String
     }
+    
+    // If logged in
+    
+    func saveLoggedInInformation(value: Bool) {
+        defaults.set(value, forKey: "loggedInInformation")
+    }
+    
+    func loggedInInformationExists() -> Bool {
+        return defaults.object(forKey: "loggedInInformation") != nil
+    }
+    
+    func fetchLoggedInInformation() -> Bool {
+        return defaults.object(forKey: "loggedInInformation") as! Bool
+    }
 }

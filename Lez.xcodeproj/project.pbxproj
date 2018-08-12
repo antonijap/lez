@@ -7,9 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		45DBE120DB2CF8134A7D2A64 /* Pods_LezTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5479534E8388BF74902A4ED8 /* Pods_LezTests.framework */; };
-		4A69DF7863C96848F113BED7 /* Pods_LezUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3C3787C470D6FE1A11C36B5D /* Pods_LezUITests.framework */; };
-		76A37FD28C40794876C735BB /* Pods_Lez.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1DE15551B494E8923BB00C37 /* Pods_Lez.framework */; };
+		2CF97BDA0B35E2AC2A8D5D2D /* Pods_Lez.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1E58B31568E10AADEA24CBA8 /* Pods_Lez.framework */; };
 		A562B95F20EB834F0006AA22 /* UIViewController+Utility.swift in Sources */ = {isa = PBXBuildFile; fileRef = A562B95E20EB834F0006AA22 /* UIViewController+Utility.swift */; };
 		CF04FAE3204161A7001CB034 /* User.swift in Sources */ = {isa = PBXBuildFile; fileRef = CF04FAE2204161A7001CB034 /* User.swift */; };
 		CF0C3F052066F57D0033ECCA /* MatchAnimation.json in Resources */ = {isa = PBXBuildFile; fileRef = CF0C3F042066F57D0033ECCA /* MatchAnimation.json */; };
@@ -50,6 +48,8 @@
 		CFF3676720AAF4E30092B948 /* PusherManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF3676620AAF4E30092B948 /* PusherManager.swift */; };
 		CFF450AF20D6380F00A359AE /* Connectivity.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF450AE20D6380E00A359AE /* Connectivity.swift */; };
 		CFF75A87206FF8E000D1F782 /* DefaultsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */; };
+		E9D7FFFDCEAEF01F4F185E7F /* Pods_LezUITests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8B7D2F85208A120AD5A7981C /* Pods_LezUITests.framework */; };
+		F5499322BA88768D95906C50 /* Pods_LezTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = C134B7012B644B9A2F191F92 /* Pods_LezTests.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -70,15 +70,15 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		0CEEFFD2B876F695EC5904DC /* Pods-LezTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.release.xcconfig"; sourceTree = "<group>"; };
-		1DE15551B494E8923BB00C37 /* Pods_Lez.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Lez.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		3C3787C470D6FE1A11C36B5D /* Pods_LezUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LezUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		5479534E8388BF74902A4ED8 /* Pods_LezTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LezTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
-		6289310B6DFC1BDE0DC30898 /* Pods-LezUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests.debug.xcconfig"; sourceTree = "<group>"; };
-		8DF45BE7B5A2CA91BE149655 /* Pods-Lez.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lez.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Lez/Pods-Lez.debug.xcconfig"; sourceTree = "<group>"; };
+		1E58B31568E10AADEA24CBA8 /* Pods_Lez.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Lez.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		6CAD6F3612BC20F2CE4285E3 /* Pods-LezUITests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezUITests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests.debug.xcconfig"; sourceTree = "<group>"; };
+		6F497C3FC76F2570DAF9A63C /* Pods-Lez.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lez.debug.xcconfig"; path = "Pods/Target Support Files/Pods-Lez/Pods-Lez.debug.xcconfig"; sourceTree = "<group>"; };
+		79A1C20A816427E1E920B6D5 /* Pods-LezTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.release.xcconfig"; sourceTree = "<group>"; };
+		8B7D2F85208A120AD5A7981C /* Pods_LezUITests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LezUITests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		995FD6F90C26925180360E10 /* Pods-LezTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.debug.xcconfig"; sourceTree = "<group>"; };
 		A562B95E20EB834F0006AA22 /* UIViewController+Utility.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIViewController+Utility.swift"; sourceTree = "<group>"; };
-		BC9ED1411460FBB7A8608D91 /* Pods-LezUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests.release.xcconfig"; sourceTree = "<group>"; };
-		BE9A5EDDC73AC30B43C2E7F1 /* Pods-Lez.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lez.release.xcconfig"; path = "Pods/Target Support Files/Pods-Lez/Pods-Lez.release.xcconfig"; sourceTree = "<group>"; };
+		B63A1FFF353B55FEA2A71D8E /* Pods-LezUITests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezUITests.release.xcconfig"; path = "Pods/Target Support Files/Pods-LezUITests/Pods-LezUITests.release.xcconfig"; sourceTree = "<group>"; };
+		C134B7012B644B9A2F191F92 /* Pods_LezTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_LezTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		CF04FAE2204161A7001CB034 /* User.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = User.swift; sourceTree = "<group>"; };
 		CF0C3F042066F57D0033ECCA /* MatchAnimation.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = MatchAnimation.json; sourceTree = "<group>"; };
 		CF11E904209EF545007E3D1D /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
@@ -125,7 +125,7 @@
 		CFF3676620AAF4E30092B948 /* PusherManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PusherManager.swift; sourceTree = "<group>"; };
 		CFF450AE20D6380E00A359AE /* Connectivity.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Connectivity.swift; sourceTree = "<group>"; };
 		CFF75A86206FF8E000D1F782 /* DefaultsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DefaultsManager.swift; sourceTree = "<group>"; };
-		DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-LezTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-LezTests/Pods-LezTests.debug.xcconfig"; sourceTree = "<group>"; };
+		F33FC80E34843D888559C645 /* Pods-Lez.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Lez.release.xcconfig"; path = "Pods/Target Support Files/Pods-Lez/Pods-Lez.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -134,8 +134,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				CF321442209B61820035E235 /* SafariServices.framework in Frameworks */,
-				76A37FD28C40794876C735BB /* Pods_Lez.framework in Frameworks */,
 				CFC4E8FE207232BB00D8B8FA /* StoreKit.framework in Frameworks */,
+				2CF97BDA0B35E2AC2A8D5D2D /* Pods_Lez.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -143,7 +143,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				45DBE120DB2CF8134A7D2A64 /* Pods_LezTests.framework in Frameworks */,
+				F5499322BA88768D95906C50 /* Pods_LezTests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -151,13 +151,26 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				4A69DF7863C96848F113BED7 /* Pods_LezUITests.framework in Frameworks */,
+				E9D7FFFDCEAEF01F4F185E7F /* Pods_LezUITests.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		C16DD1FB87469D73CF41D997 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				6F497C3FC76F2570DAF9A63C /* Pods-Lez.debug.xcconfig */,
+				F33FC80E34843D888559C645 /* Pods-Lez.release.xcconfig */,
+				995FD6F90C26925180360E10 /* Pods-LezTests.debug.xcconfig */,
+				79A1C20A816427E1E920B6D5 /* Pods-LezTests.release.xcconfig */,
+				6CAD6F3612BC20F2CE4285E3 /* Pods-LezUITests.debug.xcconfig */,
+				B63A1FFF353B55FEA2A71D8E /* Pods-LezUITests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 		CF2DF1FA203C13170054CC1A = {
 			isa = PBXGroup;
 			children = (
@@ -165,8 +178,8 @@
 				CF2DF21A203C13180054CC1A /* LezTests */,
 				CF2DF225203C13180054CC1A /* LezUITests */,
 				CF2DF204203C13170054CC1A /* Products */,
-				FA0C79B57EDC3F3B603E17B2 /* Pods */,
 				D0CF37AAC26CFC2A18C5A98F /* Frameworks */,
+				C16DD1FB87469D73CF41D997 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -288,24 +301,11 @@
 			children = (
 				CF321441209B61820035E235 /* SafariServices.framework */,
 				CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */,
-				1DE15551B494E8923BB00C37 /* Pods_Lez.framework */,
-				5479534E8388BF74902A4ED8 /* Pods_LezTests.framework */,
-				3C3787C470D6FE1A11C36B5D /* Pods_LezUITests.framework */,
+				1E58B31568E10AADEA24CBA8 /* Pods_Lez.framework */,
+				C134B7012B644B9A2F191F92 /* Pods_LezTests.framework */,
+				8B7D2F85208A120AD5A7981C /* Pods_LezUITests.framework */,
 			);
 			name = Frameworks;
-			sourceTree = "<group>";
-		};
-		FA0C79B57EDC3F3B603E17B2 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				8DF45BE7B5A2CA91BE149655 /* Pods-Lez.debug.xcconfig */,
-				BE9A5EDDC73AC30B43C2E7F1 /* Pods-Lez.release.xcconfig */,
-				DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */,
-				0CEEFFD2B876F695EC5904DC /* Pods-LezTests.release.xcconfig */,
-				6289310B6DFC1BDE0DC30898 /* Pods-LezUITests.debug.xcconfig */,
-				BC9ED1411460FBB7A8608D91 /* Pods-LezUITests.release.xcconfig */,
-			);
-			name = Pods;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -315,13 +315,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF2DF22B203C13180054CC1A /* Build configuration list for PBXNativeTarget "Lez" */;
 			buildPhases = (
-				5B6B181FEAA1AE7C548057B1 /* [CP] Check Pods Manifest.lock */,
+				658CEF3C52C2BD2EF0409815 /* [CP] Check Pods Manifest.lock */,
 				CF2DF1FF203C13170054CC1A /* Sources */,
 				CF2DF200203C13170054CC1A /* Frameworks */,
 				CF2DF201203C13170054CC1A /* Resources */,
-				C25547941FA7A89D98F58EEB /* [CP] Embed Pods Frameworks */,
-				B615843F6B279E3ABB85A8CA /* [CP] Copy Pods Resources */,
+				CFEC6D42211B1880001E373D /* ShellScript */,
 				CF682BE720B97C0500D3107E /* ShellScript */,
+				493183BB0385D6B5A6597ECC /* [CP] Embed Pods Frameworks */,
+				0A80870BBAE590E82E4520E8 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -336,7 +337,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF2DF22E203C13180054CC1A /* Build configuration list for PBXNativeTarget "LezTests" */;
 			buildPhases = (
-				6E7912947BA80633995C7269 /* [CP] Check Pods Manifest.lock */,
+				D2F332E2687B28554C691DDB /* [CP] Check Pods Manifest.lock */,
 				CF2DF213203C13180054CC1A /* Sources */,
 				CF2DF214203C13180054CC1A /* Frameworks */,
 				CF2DF215203C13180054CC1A /* Resources */,
@@ -355,7 +356,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = CF2DF231203C13180054CC1A /* Build configuration list for PBXNativeTarget "LezUITests" */;
 			buildPhases = (
-				15FC2768116E9FE27E5A42D8 /* [CP] Check Pods Manifest.lock */,
+				41EFD20DD8E42D7FFB8CDEFA /* [CP] Check Pods Manifest.lock */,
 				CF2DF21E203C13180054CC1A /* Sources */,
 				CF2DF21F203C13180054CC1A /* Frameworks */,
 				CF2DF220203C13180054CC1A /* Resources */,
@@ -457,61 +458,7 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		15FC2768116E9FE27E5A42D8 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-LezUITests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		5B6B181FEAA1AE7C548057B1 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Lez-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		6E7912947BA80633995C7269 /* [CP] Check Pods Manifest.lock */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
-			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-LezTests-checkManifestLockResult.txt",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
-			showEnvVarsInLog = 0;
-		};
-		B615843F6B279E3ABB85A8CA /* [CP] Copy Pods Resources */ = {
+		0A80870BBAE590E82E4520E8 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -529,7 +476,25 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		C25547941FA7A89D98F58EEB /* [CP] Embed Pods Frameworks */ = {
+		41EFD20DD8E42D7FFB8CDEFA /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LezUITests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		493183BB0385D6B5A6597ECC /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -549,10 +514,11 @@
 				"${BUILT_PRODUCTS_DIR}/FacebookCore/FacebookCore.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookLogin/FacebookLogin.framework",
 				"${BUILT_PRODUCTS_DIR}/FacebookShare/FacebookShare.framework",
+				"${BUILT_PRODUCTS_DIR}/Flurry-iOS-SDK/Flurry_iOS_SDK.framework",
 				"${BUILT_PRODUCTS_DIR}/GBDeviceInfo/GBDeviceInfo.framework",
 				"${BUILT_PRODUCTS_DIR}/GTMSessionFetcher/GTMSessionFetcher.framework",
 				"${BUILT_PRODUCTS_DIR}/GooglePlacesRow/GooglePlacesRow.framework",
-				"${BUILT_PRODUCTS_DIR}/GoogleToolboxForMac/GoogleToolboxForMac.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
 				"${BUILT_PRODUCTS_DIR}/ImageSlideshow/ImageSlideshow.framework",
 				"${BUILT_PRODUCTS_DIR}/JGProgressHUD/JGProgressHUD.framework",
 				"${BUILT_PRODUCTS_DIR}/Jelly/Jelly.framework",
@@ -596,10 +562,11 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookCore.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookLogin.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/FacebookShare.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Flurry_iOS_SDK.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GBDeviceInfo.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GTMSessionFetcher.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GooglePlacesRow.framework",
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleToolboxForMac.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/ImageSlideshow.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/JGProgressHUD.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/Jelly.framework",
@@ -633,7 +600,40 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-Lez/Pods-Lez-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
+		658CEF3C52C2BD2EF0409815 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Lez-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		CF682BE720B97C0500D3107E /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"$(BUILT_PRODUCTS_DIR)/$(INFOPLIST_PATH)",
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Fabric/run\"\n";
+			showEnvVarsInLog = 0;
+		};
+		CFEC6D42211B1880001E373D /* ShellScript */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -644,7 +644,25 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Fabric/run\"";
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\n${PODS_ROOT}/Appsee/Appsee.framework/build\n";
+		};
+		D2F332E2687B28554C691DDB /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-LezTests-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -845,12 +863,12 @@
 		};
 		CF2DF22C203C13180054CC1A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 8DF45BE7B5A2CA91BE149655 /* Pods-Lez.debug.xcconfig */;
+			baseConfigurationReference = 6F497C3FC76F2570DAF9A63C /* Pods-Lez.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Lez/Lez.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = WNU245KFYF;
 				INFOPLIST_FILE = Lez/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -865,12 +883,12 @@
 		};
 		CF2DF22D203C13180054CC1A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BE9A5EDDC73AC30B43C2E7F1 /* Pods-Lez.release.xcconfig */;
+			baseConfigurationReference = F33FC80E34843D888559C645 /* Pods-Lez.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_ENTITLEMENTS = Lez/Lez.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 40;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = WNU245KFYF;
 				INFOPLIST_FILE = Lez/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
@@ -885,7 +903,7 @@
 		};
 		CF2DF22F203C13180054CC1A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = DDD5AB7B098BD955DE95703C /* Pods-LezTests.debug.xcconfig */;
+			baseConfigurationReference = 995FD6F90C26925180360E10 /* Pods-LezTests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -903,7 +921,7 @@
 		};
 		CF2DF230203C13180054CC1A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 0CEEFFD2B876F695EC5904DC /* Pods-LezTests.release.xcconfig */;
+			baseConfigurationReference = 79A1C20A816427E1E920B6D5 /* Pods-LezTests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				BUNDLE_LOADER = "$(TEST_HOST)";
@@ -921,7 +939,7 @@
 		};
 		CF2DF232203C13180054CC1A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 6289310B6DFC1BDE0DC30898 /* Pods-LezUITests.debug.xcconfig */;
+			baseConfigurationReference = 6CAD6F3612BC20F2CE4285E3 /* Pods-LezUITests.debug.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;
@@ -938,7 +956,7 @@
 		};
 		CF2DF233203C13180054CC1A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = BC9ED1411460FBB7A8608D91 /* Pods-LezUITests.release.xcconfig */;
+			baseConfigurationReference = B63A1FFF353B55FEA2A71D8E /* Pods-LezUITests.release.xcconfig */;
 			buildSettings = {
 				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				CODE_SIGN_STYLE = Automatic;

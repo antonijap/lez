@@ -62,7 +62,6 @@ open class _GooglePlacesRow<Cell: GooglePlacesCell>: FieldRow<Cell>, GooglePlace
         super.init(tag: tag)
         placeFilter = GMSAutocompleteFilter()
         placeFilter?.type = .city
-        
         displayValueFor = { place in
             guard let place = place else {
                 return nil

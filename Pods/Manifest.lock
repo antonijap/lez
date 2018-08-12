@@ -3,113 +3,144 @@ PODS:
   - AlamofireImage (3.3.1):
     - Alamofire (~> 4.5)
   - Alertift (3.2)
+  - Appsee (2.4.3)
   - Bolts (1.9.0):
     - Bolts/AppLinks (= 1.9.0)
     - Bolts/Tasks (= 1.9.0)
   - Bolts/AppLinks (1.9.0):
     - Bolts/Tasks
   - Bolts/Tasks (1.9.0)
-  - BoringSSL (10.0.5):
-    - BoringSSL/Implementation (= 10.0.5)
-    - BoringSSL/Interface (= 10.0.5)
-  - BoringSSL/Implementation (10.0.5):
-    - BoringSSL/Interface (= 10.0.5)
-  - BoringSSL/Interface (10.0.5)
+  - BoringSSL (10.0.6):
+    - BoringSSL/Implementation (= 10.0.6)
+    - BoringSSL/Interface (= 10.0.6)
+  - BoringSSL/Implementation (10.0.6):
+    - BoringSSL/Interface (= 10.0.6)
+  - BoringSSL/Interface (10.0.6)
   - Crashlytics (3.10.5):
     - Fabric (~> 1.7.9)
   - CryptoSwift (0.9.0)
   - Eureka (4.2.0)
   - Fabric (1.7.9)
-  - FacebookCore (0.3.1):
+  - FacebookCore (0.3.2):
     - Bolts (~> 1.8)
-    - FBSDKCoreKit (~> 4.33)
-  - FacebookLogin (0.3.1):
+    - FBSDKCoreKit (~> 4.35)
+  - FacebookLogin (0.3.2):
     - Bolts (~> 1.8)
-    - FacebookCore (~> 0.3.1)
-    - FBSDKCoreKit (~> 4.33)
-    - FBSDKLoginKit (~> 4.33)
-  - FacebookShare (0.3.1):
+    - FacebookCore (~> 0.3.2)
+    - FBSDKCoreKit (~> 4.35)
+    - FBSDKLoginKit (~> 4.35)
+  - FacebookShare (0.3.2):
     - Bolts (~> 1.8)
-    - FacebookCore (~> 0.3.1)
-    - FBSDKCoreKit (~> 4.33)
-    - FBSDKShareKit (~> 4.33)
+    - FacebookCore (~> 0.3.2)
+    - FBSDKCoreKit (~> 4.35)
+    - FBSDKShareKit (~> 4.35)
   - FBSDKCoreKit (4.35.0):
     - Bolts (~> 1.7)
   - FBSDKLoginKit (4.35.0):
     - FBSDKCoreKit
   - FBSDKShareKit (4.35.0):
     - FBSDKCoreKit (~> 4.35.0)
-  - Firebase/Auth (5.4.1):
+  - Firebase/Auth (5.5.0):
     - Firebase/CoreOnly
-    - FirebaseAuth (= 5.0.2)
-  - Firebase/Core (5.4.1):
+    - FirebaseAuth (= 5.0.3)
+  - Firebase/Core (5.5.0):
     - Firebase/CoreOnly
-    - FirebaseAnalytics (= 5.0.1)
-  - Firebase/CoreOnly (5.4.1):
-    - FirebaseCore (= 5.0.6)
-  - Firebase/Firestore (5.4.1):
+    - FirebaseAnalytics (= 5.1.0)
+  - Firebase/CoreOnly (5.5.0):
+    - FirebaseCore (= 5.1.0)
+  - Firebase/Firestore (5.5.0):
     - Firebase/CoreOnly
-    - FirebaseFirestore (= 0.12.6)
-  - Firebase/Storage (5.4.1):
+    - FirebaseFirestore (= 0.13.0)
+  - Firebase/Storage (5.5.0):
     - Firebase/CoreOnly
     - FirebaseStorage (= 3.0.0)
-  - FirebaseAnalytics (5.0.1):
-    - FirebaseCore (~> 5.0)
-    - FirebaseInstanceID (~> 3.0)
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
+  - FirebaseAnalytics (5.1.0):
+    - FirebaseCore (~> 5.1)
+    - FirebaseInstanceID (~> 3.2)
+    - GoogleAppMeasurement (~> 5.1)
+    - GoogleUtilities/AppDelegateSwizzler (~> 5.2.0)
+    - GoogleUtilities/MethodSwizzler (~> 5.2.0)
+    - GoogleUtilities/Network (~> 5.2)
+    - "GoogleUtilities/NSData+zlib (~> 5.2)"
     - nanopb (~> 0.3)
-  - FirebaseAuth (5.0.2):
+  - FirebaseAuth (5.0.3):
+    - FirebaseAuthInterop (~> 1.0)
     - FirebaseCore (~> 5.0)
+    - GoogleUtilities/Environment (~> 5.2)
     - GTMSessionFetcher/Core (~> 1.1)
-  - FirebaseCore (5.0.6):
-    - "GoogleToolboxForMac/NSData+zlib (~> 2.1)"
-  - FirebaseFirestore (0.12.6):
+  - FirebaseAuthInterop (1.0.0)
+  - FirebaseCore (5.1.0):
+    - GoogleUtilities/Logger (~> 5.2)
+  - FirebaseFirestore (0.13.0):
+    - FirebaseAuthInterop (~> 1.0)
     - FirebaseCore (~> 5.0)
-    - FirebaseFirestore/abseil-cpp (= 0.12.6)
+    - FirebaseFirestore/abseil-cpp (= 0.13.0)
     - gRPC-ProtoRPC (~> 1.0)
     - leveldb-library (~> 1.18)
     - nanopb (~> 0.3.8)
     - Protobuf (~> 3.1)
-  - FirebaseFirestore/abseil-cpp (0.12.6):
+  - FirebaseFirestore/abseil-cpp (0.13.0):
+    - FirebaseAuthInterop (~> 1.0)
     - FirebaseCore (~> 5.0)
     - gRPC-ProtoRPC (~> 1.0)
     - leveldb-library (~> 1.18)
     - nanopb (~> 0.3.8)
     - Protobuf (~> 3.1)
-  - FirebaseInstanceID (3.1.1):
-    - FirebaseCore (~> 5.0)
+  - FirebaseInstanceID (3.2.0):
+    - FirebaseCore (~> 5.1)
+    - GoogleUtilities/Environment (~> 5.2)
   - FirebaseStorage (3.0.0):
     - FirebaseCore (~> 5.0)
     - GTMSessionFetcher/Core (~> 1.1)
+  - Flurry-iOS-SDK/FlurrySDK (9.0.0)
   - GBDeviceInfo (5.2.0):
     - GBDeviceInfo/Core (= 5.2.0)
   - GBDeviceInfo/Core (5.2.0)
+  - GoogleAppMeasurement (5.1.0):
+    - GoogleUtilities/AppDelegateSwizzler (~> 5.2.0)
+    - GoogleUtilities/MethodSwizzler (~> 5.2.0)
+    - GoogleUtilities/Network (~> 5.2)
+    - "GoogleUtilities/NSData+zlib (~> 5.2)"
+    - nanopb (~> 0.3)
   - GooglePlacesRow (3.0.0):
     - Eureka (~> 4.0)
-  - GoogleToolboxForMac/Defines (2.1.4)
-  - "GoogleToolboxForMac/NSData+zlib (2.1.4)":
-    - GoogleToolboxForMac/Defines (= 2.1.4)
-  - gRPC (1.13.0):
-    - gRPC-RxLibrary (= 1.13.0)
-    - gRPC/Main (= 1.13.0)
-  - gRPC-Core (1.13.0):
-    - gRPC-Core/Implementation (= 1.13.0)
-    - gRPC-Core/Interface (= 1.13.0)
-  - gRPC-Core/Implementation (1.13.0):
+  - GoogleUtilities/AppDelegateSwizzler (5.2.2):
+    - GoogleUtilities/Environment
+    - GoogleUtilities/Logger
+    - GoogleUtilities/Network
+  - GoogleUtilities/Environment (5.2.2)
+  - GoogleUtilities/Logger (5.2.2):
+    - GoogleUtilities/Environment
+  - GoogleUtilities/MethodSwizzler (5.2.2):
+    - GoogleUtilities/Logger
+  - GoogleUtilities/Network (5.2.2):
+    - GoogleUtilities/Logger
+    - "GoogleUtilities/NSData+zlib"
+    - GoogleUtilities/Reachability
+  - "GoogleUtilities/NSData+zlib (5.2.2)"
+  - GoogleUtilities/Reachability (5.2.2):
+    - GoogleUtilities/Logger
+  - gRPC (1.14.1):
+    - gRPC-RxLibrary (= 1.14.1)
+    - gRPC/Main (= 1.14.1)
+  - gRPC-Core (1.14.1):
+    - gRPC-Core/Implementation (= 1.14.1)
+    - gRPC-Core/Interface (= 1.14.1)
+  - gRPC-Core/Implementation (1.14.1):
     - BoringSSL (~> 10.0)
-    - gRPC-Core/Interface (= 1.13.0)
+    - gRPC-Core/Interface (= 1.14.1)
     - nanopb (~> 0.3)
-  - gRPC-Core/Interface (1.13.0)
-  - gRPC-ProtoRPC (1.13.0):
-    - gRPC-ProtoRPC/Main (= 1.13.0)
-  - gRPC-ProtoRPC/Main (1.13.0):
-    - gRPC (= 1.13.0)
-    - gRPC-RxLibrary (= 1.13.0)
+  - gRPC-Core/Interface (1.14.1)
+  - gRPC-ProtoRPC (1.14.1):
+    - gRPC-ProtoRPC/Main (= 1.14.1)
+  - gRPC-ProtoRPC/Main (1.14.1):
+    - gRPC (= 1.14.1)
+    - gRPC-RxLibrary (= 1.14.1)
     - Protobuf (~> 3.0)
-  - gRPC-RxLibrary (1.13.0)
-  - gRPC/Main (1.13.0):
-    - gRPC-Core (= 1.13.0)
-    - gRPC-RxLibrary (= 1.13.0)
+  - gRPC-RxLibrary (1.14.1)
+  - gRPC/Main (1.14.1):
+    - gRPC-Core (= 1.14.1)
+    - gRPC-RxLibrary (= 1.14.1)
   - GTMSessionFetcher/Core (1.2.0)
   - ImageSlideshow (1.6.1):
     - ImageSlideshow/Core (= 1.6.1)
@@ -125,13 +156,13 @@ PODS:
   - PromisesObjC (1.2.3)
   - PromisesSwift (1.2.3):
     - PromisesObjC (= 1.2.3)
-  - Protobuf (3.6.0)
+  - Protobuf (3.6.1)
   - PusherSwift (6.1.0):
     - CryptoSwift (~> 0.9.0)
     - ReachabilitySwift (~> 4.1.0)
     - Starscream (~> 3.0.5)
     - TaskQueue (~> 1.1.1)
-  - PushNotifications (0.10.12)
+  - PushNotifications (1.0.0)
   - RangeSeekSlider (1.8.0)
   - ReachabilitySwift (4.1.0)
   - SDWebImage (4.4.2):
@@ -153,8 +184,9 @@ DEPENDENCIES:
   - Alamofire (~> 4.7)
   - AlamofireImage (~> 3.3)
   - Alertift (~> 3.0)
-  - Crashlytics (~> 3.10.2)
-  - Fabric (~> 1.7.7)
+  - Appsee
+  - Crashlytics (~> 3.10.5)
+  - Fabric (~> 1.7.9)
   - FacebookCore
   - FacebookLogin
   - FacebookShare
@@ -162,6 +194,7 @@ DEPENDENCIES:
   - Firebase/Core
   - Firebase/Firestore
   - Firebase/Storage
+  - Flurry-iOS-SDK/FlurrySDK
   - GBDeviceInfo
   - GooglePlacesRow
   - ImageSlideshow (~> 1.5)
@@ -185,6 +218,7 @@ SPEC REPOS:
     - Alamofire
     - AlamofireImage
     - Alertift
+    - Appsee
     - Bolts
     - BoringSSL
     - Crashlytics
@@ -200,13 +234,16 @@ SPEC REPOS:
     - Firebase
     - FirebaseAnalytics
     - FirebaseAuth
+    - FirebaseAuthInterop
     - FirebaseCore
     - FirebaseFirestore
     - FirebaseInstanceID
     - FirebaseStorage
+    - Flurry-iOS-SDK
     - GBDeviceInfo
+    - GoogleAppMeasurement
     - GooglePlacesRow
-    - GoogleToolboxForMac
+    - GoogleUtilities
     - gRPC
     - gRPC-Core
     - gRPC-ProtoRPC
@@ -253,32 +290,36 @@ SPEC CHECKSUMS:
   Alamofire: c7287b6e5d7da964a70935e5db17046b7fde6568
   AlamofireImage: 3b35b586853abaf94ca1250f4e94cff3c21a4c0d
   Alertift: df0df24a557e47360180092f5f3fceb675c96b51
+  Appsee: f0ed48d4a1cbf7f76b4b02edd03acc59df4d2e24
   Bolts: ac6567323eac61e203f6a9763667d0f711be34c8
-  BoringSSL: cf3f1793eb6e3c445c4d150456341f149c268a35
+  BoringSSL: e10f92a27043805c01071fe815a5cd98ae8212e7
   Crashlytics: 7f2e38d302d9da96475b3d64d86fb29e31a542b7
   CryptoSwift: bca8c5b653dcc2d9734409242a070ff53bafac86
   Eureka: 0748c7bbb2560130e43c7bfa83e99c98854a1f42
   Fabric: a2917d3895e4c1569b9c3170de7320ea1b1e6661
-  FacebookCore: 33078ef1d7d76b73f7e8c990dca7d3ea6db8d22f
-  FacebookLogin: 6f15bf4fefd7a8865abbfa8fcd7f3dfd87aa275f
-  FacebookShare: c9ee8e5399d961fda00ded9befccacfe04fccf93
+  FacebookCore: fe93222bb70346730ef33b061d493e9e7a7cb1f5
+  FacebookLogin: a4e225974791c82836765a294582b4778baffc07
+  FacebookShare: 5319f2655d53d20c595745a68dae8476027b8bae
   FBSDKCoreKit: 1a5b2e3ceb5ca827a53c54aa5f4a3480efff80d2
   FBSDKLoginKit: 00a3d65d1226852f9d76dcddff01981e5e6d9c38
   FBSDKShareKit: 2ddbd7e6432023fff957af62e23a3671b84319f7
-  Firebase: 355bd535bfdacaa82a7fe8d9784115edefd6fc03
-  FirebaseAnalytics: b3628aea54c50464c32c393fb2ea032566e7ecc2
-  FirebaseAuth: 096e457cdd4274412a66c4a35874787e411f5a03
-  FirebaseCore: 4c28e3b9708ba48a765e76515f913a71596eb5dd
-  FirebaseFirestore: d4a3a7787624e612298a320da95935b8dc036c1d
-  FirebaseInstanceID: f3f0657372592ecdfdfe2cac604a5a75758376a6
+  Firebase: 8c957f9cb3852b519180fb378801b7eeeba4d288
+  FirebaseAnalytics: d4a260c114aec0d765ab5b9c404ac63de1d29381
+  FirebaseAuth: 657a25e4be044d2d333663ebf515a861c5a59cd7
+  FirebaseAuthInterop: 0ffa57668be100582bb7643d4fcb7615496c41fc
+  FirebaseCore: ee4b35cf8c8e781da296cc7c15125e4608bb954d
+  FirebaseFirestore: 0a6e4b9256ae39ed41258aa46213975c93908a74
+  FirebaseInstanceID: 8cd2c6cfe7b9ab65ce7e248f6da7f26f6775b9be
   FirebaseStorage: 7ca4bb7b58a25fa647b04f524033fc7cb7eb272b
+  Flurry-iOS-SDK: 58e48e417fee667154e4d240040b270b3734d28a
   GBDeviceInfo: 2c65ceb9404f9079264d4c238f5b81916fdfc5e2
+  GoogleAppMeasurement: e785bdb86d3d280abc778156cec323a975f11d1d
   GooglePlacesRow: c0bb6bc0acf8b2ab690986ef5c5ecb1085dd1d9e
-  GoogleToolboxForMac: 91c824d21e85b31c2aae9bb011c5027c9b4e738f
-  gRPC: 81b990caa01d7c32605d300c2ffd1b5ba0ef9e49
-  gRPC-Core: a56b086a8ef5ced6f6ba5be5bc0a63fca185015a
-  gRPC-ProtoRPC: 842797fbe05dfcf891afb4a5048e5ccf5f06ef86
-  gRPC-RxLibrary: fa6852f98d6ec0b73c0ec2f6406c26943099d501
+  GoogleUtilities: 06b66f9567769a7958db20a92f0128b2843e49d5
+  gRPC: 65fa2a50c4fd61940b76f4962d75c239c92c6a8d
+  gRPC-Core: e3ace1e1161e75903135de8d8231bb69c9d35721
+  gRPC-ProtoRPC: 78f976fc6a1eafc0e1f4965c255c313aa0859b1e
+  gRPC-RxLibrary: c4c826507ad3c8c8fab6887f153938eb04b86d59
   GTMSessionFetcher: 0c4baf0a73acd0041bf9f71ea018deedab5ea84e
   ImageSlideshow: f0f33e1a20668e83d77f5fb7729e4ae4437c0759
   Jelly: 70e542dd201460211f0f20042bc2c2d31ae239a1
@@ -287,9 +328,9 @@ SPEC CHECKSUMS:
   nanopb: 5601e6bca2dbf1ed831b519092ec110f66982ca3
   PromisesObjC: a3a4263d8a9260214267e0b3788d0f83466ad449
   PromisesSwift: f7f45c21986419e85f7c5b645ed8c6a2c10c04b4
-  Protobuf: 0fc0ad8bec688b2a3017a139953e01374fedbd5f
+  Protobuf: 1eb9700044745f00181c136ef21b8ff3ad5a0fd5
   PusherSwift: 6f2535d616cf0d6867a58bee501999995ad37999
-  PushNotifications: 1c75fbe833c53f0410de0379d7727a8239a1899a
+  PushNotifications: 49de9d8d15761d8280b28f66b693f7c089af4ead
   RangeSeekSlider: 650b11fa1edcb92e1e0ede797669d98622570fb5
   ReachabilitySwift: 6849231cd4e06559f3b9ef4a97a0a0f96d41e09f
   SDWebImage: 624d6e296c69b244bcede364c72ae0430ac14681
@@ -304,6 +345,6 @@ SPEC CHECKSUMS:
   TwitterCore: 8cbc9ad34d91c63a0035ea05bfbfc0d7ca72a28c
   TwitterKit: bc7bd086b9b724a1d888745a054e1d0b1ecc4f3f
 
-PODFILE CHECKSUM: a1303c24556c8218779db45409d1c3471cd62115
+PODFILE CHECKSUM: 8554968d41a6bd50cbddad8317885aa9bedcb4a0
 
 COCOAPODS: 1.5.3

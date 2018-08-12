@@ -91,6 +91,7 @@ extension UIViewController: UIActionSheetDelegate {
         let action2 = UIAlertAction(title: CTA, style: .destructive) { (action) in
             do {
                 try Auth.auth().signOut()
+                DefaultsManager.shared.saveLoggedInInformation(value: false)
                 self.tabBarController?.selectedIndex = 0
                 let registerViewController = RegisterViewController()
                 let navigationController = UINavigationController(rootViewController: registerViewController)
