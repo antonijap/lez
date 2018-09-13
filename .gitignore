@@ -86,3 +86,4 @@ Lez/Util/Config.swift
 Lez/Util/GoogleService-Info.plist
 Lez/Util/GoogleService-Info DEVELOPMENT.plist
 Lez/Util/GoogleService-Info PRODUCTION.plist
+*.txt
