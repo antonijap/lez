@@ -44,6 +44,7 @@
 		CFBA29D620CDCAAF004D9D5F /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = CFBA29D520CDCAAF004D9D5F /* GoogleService-Info.plist */; };
 		CFC4E8F82070EBD900D8B8FA /* FirestoreManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */; };
 		CFC4E8FE207232BB00D8B8FA /* StoreKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */; };
+		CFCBD96F214A3CE300175404 /* Config.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFCBD96E214A3CE300175404 /* Config.swift */; };
 		CFDAE34F20B8647A0084A845 /* DeleteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFDAE34E20B8647A0084A845 /* DeleteCell.swift */; };
 		CFE0BD672073DD810055FC73 /* CustomCells.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE0BD662073DD810055FC73 /* CustomCells.swift */; };
 		CFE1E4ED206EB95A00A51D7A /* RegisterViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */; };
@@ -119,6 +120,7 @@
 		CFC4E8F72070EBD900D8B8FA /* FirestoreManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirestoreManager.swift; sourceTree = "<group>"; };
 		CFC4E8FC207232B200D8B8FA /* Lez.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Lez.entitlements; sourceTree = "<group>"; };
 		CFC4E8FD207232BB00D8B8FA /* StoreKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = StoreKit.framework; path = System/Library/Frameworks/StoreKit.framework; sourceTree = SDKROOT; };
+		CFCBD96E214A3CE300175404 /* Config.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Config.swift; sourceTree = "<group>"; };
 		CFDAE34E20B8647A0084A845 /* DeleteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeleteCell.swift; sourceTree = "<group>"; };
 		CFE0BD662073DD810055FC73 /* CustomCells.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomCells.swift; sourceTree = "<group>"; };
 		CFE1E4EC206EB95A00A51D7A /* RegisterViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterViewController.swift; sourceTree = "<group>"; };
@@ -277,6 +279,7 @@
 				CFDAE34E20B8647A0084A845 /* DeleteCell.swift */,
 				CFA7842D20A9FC3F000DA074 /* CustomUIElements.swift */,
 				A562B95E20EB834F0006AA22 /* UIViewController+Utility.swift */,
+				CFCBD96E214A3CE300175404 /* Config.swift */,
 			);
 			path = Util;
 			sourceTree = "<group>";
@@ -700,6 +703,7 @@
 				CF360B3E2100896000785124 /* EmailLoginViewController.swift in Sources */,
 				CF8C5DFE2094C08C00538C67 /* MessagesViewController.swift in Sources */,
 				CF04FAE3204161A7001CB034 /* User.swift in Sources */,
+				CFCBD96F214A3CE300175404 /* Config.swift in Sources */,
 				CFA7842E20A9FC3F000DA074 /* CustomUIElements.swift in Sources */,
 				CF1A78AC20C32FD2001245B3 /* Constants.swift in Sources */,
 			);

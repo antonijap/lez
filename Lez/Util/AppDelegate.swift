@@ -74,20 +74,20 @@ final class AppDelegate: UIResponder, UIApplicationDelegate {
             window.makeKeyAndVisible()
         }
 
-        let apiKey = "***REMOVED***"
+        let apiKey = googleKey
         GMSPlacesClient.provideAPIKey(apiKey)
         
-        TWTRTwitter.sharedInstance().start(withConsumerKey:"***REMOVED***",
-                                           consumerSecret:"***REMOVED***")
+        TWTRTwitter.sharedInstance().start(withConsumerKey:twitterKey,
+                                           consumerSecret:twitterConsumerSecret)
 
-        pushNotifications.start(instanceId: "***REMOVED***")
+        pushNotifications.start(instanceId: pusherKey)
         pushNotifications.registerForRemoteNotifications()
 
         completeIAPTransactions()
         
         Appsee.start()
         
-        Flurry.startSession("***REMOVED***", with: FlurrySessionBuilder
+        Flurry.startSession(flurryKey, with: FlurrySessionBuilder
             .init()
             .withCrashReporting(true)
             .withLogLevel(FlurryLogLevelAll))

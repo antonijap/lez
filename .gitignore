@@ -68,3 +68,19 @@ fastlane/report.xml
 fastlane/Preview.html
 fastlane/screenshots
 fastlane/test_output
+
+# Secrets
+
+*.p12
+*.pem
+*.ipa
+*.zip
+*.pkey
+
+Info.plist
+
+Lez/Util/Config.swift
+Lez/Util/Config.swift
+Lez/Util/GoogleService-Info.plist
+Lez/Util/GoogleService-Info DEVELOPMENT.plist
+Lez/Util/GoogleService-Info PRODUCTION.plist
