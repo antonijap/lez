@@ -79,7 +79,7 @@ fastlane/test_output
 
 Info.plist
 
-cloud-functions
+cloud-functions/
 
 Lez/Util/Config.swift
 Lez/Util/Config.swift

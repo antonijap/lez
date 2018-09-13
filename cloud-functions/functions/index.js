@@ -3,7 +3,7 @@ const PushNotifications = require('@pusher/push-notifications-server');
 var Pusher = require('pusher');
 
 let pushNotifications = new PushNotifications({
-  instanceId: '***REMOVED***',
+  instanceId: '8fdd0318-52a9-4cc1-8b0d-f08a3b681477',
   secretKey: 'D647B8574B72AB131F50D5CEF5D760D'
 });
 
