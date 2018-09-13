@@ -176,6 +176,11 @@ final class GetPremiumViewController: UIViewController {
                     AnalyticsManager.shared.facebookLogPurchase(uid: self.user.uid, email: self.user.email, price: 2.99, valueToSum: 2.99)
                     AnalyticsManager.shared.logEvent(name: .userPurchasedPremium, user: self.user)
                 }
+            case .cancel:
+                print("Mark: user canceled purchasing")
+                self.dismiss(animated: true) {
+                    AnalyticsManager.shared.logEvent(name: .userCanceledPurchase, user: self.user)
+                }
             }
         }
     }

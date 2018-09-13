@@ -43,7 +43,6 @@ final class FirestoreManager {
 
     func fetchPotentialMatches(for user: User) -> Promise<[User]> {
         return Promise { fulfill, reject in
-            print("Mark: \(Date().toString(dateFormat: "hh:mm:ss"))")
             let from = user.preferences.ageRange.from
             let to = user.preferences.ageRange.to
 //            let suitableAges = Set(from...to)
@@ -80,8 +79,6 @@ final class FirestoreManager {
                 guard let currentUser = Auth.auth().currentUser else { return }
                 guard error == nil else { print("Error getting documents: \(error.debugDescription)"); return }
                 guard let snapshot = querySnapshot else { print("Error with snapshot"); return }
-
-                print("Mark final document \(snapshot.documents)")
 
                 for document in snapshot.documents {
                     group.enter()
@@ -124,7 +121,6 @@ final class FirestoreManager {
 
     func checkIfUserExists(uid: String) -> Promise<Bool> {
         return Promise { fulfill, reject in
-            print(uid)
             let docRef = self.db.collection("users").document(uid)
             docRef.getDocument { document, error in
                 guard let document = document else { print("Document does not exist"); fulfill(false); return }

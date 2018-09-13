@@ -28,7 +28,7 @@ final class ProfileViewController: UIViewController, ProfileViewControllerDelega
     private let sections: [MenuSections] = [.profileImages, .headerCell, .titleWithDescription,
                                             .titleWithDescription, .titleWithDescription,
                                             .titleWithDescription, .simpleMenu, .simpleMenu,
-                                            .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
+                                            .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu, .simpleMenu]
     private var user: User?
     private let tabBar = UITabBar()
     private let hud = JGProgressHUD(style: .dark)
@@ -232,26 +232,18 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 guard let user = user else { return UITableViewCell() }
                 let simpleMenuCell = tableView.dequeueReusableCell(withIdentifier: SimpleMenuCell.reuseID) as! SimpleMenuCell
                 if indexPath.section == 6 {
-                    if user.isPremium || user.isManuallyPromoted {
-                        simpleMenuCell.titleLabel.text = "You are Premium"
-                    } else {
-                        simpleMenuCell.titleLabel.text = "Get Premium"
-                    }
-                    simpleMenuCell.isUserInteractionEnabled = true
-                    simpleMenuCell.titleLabel.textColor = .black
-                } else if indexPath.section == 7 {
                     simpleMenuCell.titleLabel.text = "Edit Profile"
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.isUserInteractionEnabled = true
-                } else if indexPath.section == 8 {
+                } else if indexPath.section == 7 {
                     simpleMenuCell.titleLabel.text = "Edit Images"
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.isUserInteractionEnabled = true
-                } else if indexPath.section == 9 {
+                } else if indexPath.section == 8 {
                     simpleMenuCell.titleLabel.text = "Tracking for Analytics"
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.isUserInteractionEnabled = true
-                } else if indexPath.section == 10 {
+                } else if indexPath.section == 9 {
                     if user.isPremium || user.isManuallyPromoted {
                         simpleMenuCell.titleLabel.text = "Restore Subscription"
                         simpleMenuCell.titleLabel.textColor = .lightGray
@@ -261,7 +253,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                         simpleMenuCell.titleLabel.textColor = .black
                         simpleMenuCell.isUserInteractionEnabled = true
                     }
-                } else if indexPath.section == 11 {
+                } else if indexPath.section == 10 {
                     guard let currentUser = Auth.auth().currentUser else { return UITableViewCell() }
                     for provider in currentUser.providerData {
                         if provider.providerID == "password" {
@@ -271,15 +263,15 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                             break
                         }
                     }
-                } else if indexPath.section == 12 {
+                } else if indexPath.section == 11 {
                     simpleMenuCell.titleLabel.text = "Report Issue"
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.isUserInteractionEnabled = true
-                } else if indexPath.section == 13 {
+                } else if indexPath.section == 12 {
                     simpleMenuCell.titleLabel.text = "Rate Lez"
                     simpleMenuCell.titleLabel.textColor = .black
                     simpleMenuCell.isUserInteractionEnabled = true
-                } else if indexPath.section == 14 {
+                } else if indexPath.section == 13 {
                     simpleMenuCell.titleLabel.text = "Sign out"
                     simpleMenuCell.titleLabel.textColor = .red
                     simpleMenuCell.titleLabel.font = UIFont.systemFont(ofSize: 16, weight: .regular)
@@ -294,21 +286,6 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath == [6, 0] {
-            if let user = user {
-                if !user.isPremium {
-                    PurchaseManager.purchase("premium") { (outcome) in
-                        switch outcome {
-                        case .failed:
-                            self.view.makeToast("Purchase failed", duration: 2.0, position: .bottom)
-                        case .success:
-                            self.view.makeToast("Purchase successful", duration: 2.0, position: .bottom)
-                        }
-                    }
-                }
-            }
-            highlightCell(indexPath: indexPath)
-        }
-        if indexPath == [7, 0] {
             let userProfileFormViewController = UserProfileFormViewController()
             guard let user = user else { return }
             userProfileFormViewController.user = user
@@ -317,7 +294,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(userProfileFormViewController, animated: true)
             highlightCell(indexPath: indexPath)
         }
-        if indexPath == [8, 0] {
+        if indexPath == [7, 0] {
             let imageGalleryViewController = ImagesViewController()
             guard let user = user else { return }
             imageGalleryViewController.user = user
@@ -326,7 +303,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             navigationController?.pushViewController(imageGalleryViewController, animated: true)
             highlightCell(indexPath: indexPath)
         }
-        if indexPath == [9, 0] {
+        if indexPath == [8, 0] {
             if DefaultsManager.shared.userWantsTracking() {
                 Alertift.actionSheet(title: nil, message: "New GDPR law allows you to opt-out from analtytics tracking. You previously opted-out, you can change your mind if you want.")
                     .action(.destructive("Opt-in")) { action, int in
@@ -345,7 +322,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             
             highlightCell(indexPath: indexPath)
         }
-        if indexPath == [10, 0] {
+        if indexPath == [9, 0] {
             PurchaseManager.restorePurchase { outcome in
                 switch outcome {
                     case .failed:
@@ -360,7 +337,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             }
             highlightCell(indexPath: indexPath)
         }
-        if indexPath == [11, 0] {
+        if indexPath == [10, 0] {
             Alertift.alert(title: "Opt-out from Social Login", message: "If you want to login only with email, and remove previously used Facebook or Twitter login please proceed.")
                 .action(.default("Proceed")) { _, _, _ in
                     guard let currentUser = Auth.auth().currentUser else { return }
@@ -374,7 +351,7 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
             .show(on: self, completion: nil)
             highlightCell(indexPath: indexPath)
         }
-        if indexPath == [12, 0] {
+        if indexPath == [11, 0] {
             Alertift.alert(title: "Report Issue", message: "If you encounter a bug or any inconsistency, please don't hesitate to get in touch with us.")
                 .action(.default("Report")) { (action, int, text) in
                     UIApplication.shared.open(
@@ -386,11 +363,11 @@ extension ProfileViewController: UITableViewDelegate, UITableViewDataSource {
                 .show(on: self, completion: nil)
             highlightCell(indexPath: indexPath)
         }
-        if indexPath == [13, 0] {
+        if indexPath == [12, 0] {
             SKStoreReviewController.requestReview()
             highlightCell(indexPath: indexPath)
         }
-        if indexPath == [14, 0] {
+        if indexPath == [13, 0] {
             self.showSignoutAlert(CTA: "Sign out")
             highlightCell(indexPath: indexPath)
         }

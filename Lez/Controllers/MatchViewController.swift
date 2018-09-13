@@ -113,14 +113,14 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         if !DefaultsManager.shared.ifTrackingPreferenceExists() {
             DefaultsManager.shared.saveTrackingPreference(value: true)
         }
-        if !DefaultsManager.shared.loggedInInformationExists() {
-            DefaultsManager.shared.saveLoggedInInformation(value: true)
-            do {
-                try Auth.auth().signOut()
-            } catch let signOutError as NSError {
-                print ("Error signing out: %@", signOutError)
-            }
-        }
+//        if !DefaultsManager.shared.loggedInInformationExists() {
+//            DefaultsManager.shared.saveLoggedInInformation(value: true)
+//            do {
+//                try Auth.auth().signOut()
+//            } catch let signOutError as NSError {
+//                print ("Error signing out: %@", signOutError)
+//            }
+//        }
         
         setupTableView()
         setupNavigationBar()
@@ -137,6 +137,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         
         handle = Auth.auth().addStateDidChangeListener { auth, user in
             guard let user = user else { self.presentRegisterViewController(); return }
+            print("MARK: Will check for connectivity and fetch users.")
             self.checkConnectivity(uid: user.uid)
         }
         
@@ -176,6 +177,7 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     
     private func checkConnectivity(uid: String) {
         if Connectivity.isConnectedToInternet {
+            print("MARK: There is Internet connection.")
             hideRefreshButton()
             showTableView()
             fetchUsers(for: uid)
@@ -330,13 +332,15 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         startSpinner()
         runLikesWidget(uid: uid)
         refreshControl.endRefreshing()
+        print("MARK: Will fetch user and potential matches now.")
         FirestoreManager.shared.fetchUser(uid: uid).then { user in
             self.user = user
+            print("MARK: Ok, I have user.")
             self.showAlertIfUserBanned(user: user) // Show alert for banned users
-            print("Antonija")
-            print(user)
+            print("MARK: Now off to potential matches.")
             FirestoreManager.shared.fetchPotentialMatches(for: user).then({ users in
                 self.users = users
+                print("MARK: Users fetched")
                 if users.count > 0 {
                     self.stopSpinner()
                     self.showLikesWidget()
@@ -355,7 +359,6 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
         stopTimer()
         let timeUntilNewLikesUnlock = cooldownTime.add(components: 24.hours)
         let differenceBetweenNowAndTimeUntilNewLikesUnlock = timeUntilNewLikesUnlock.timeIntervalSinceNow
-        print("Difference \(differenceBetweenNowAndTimeUntilNewLikesUnlock)")
         seconds = Int(differenceBetweenNowAndTimeUntilNewLikesUnlock)
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: (#selector(self.updateTimer)), userInfo: nil, repeats: true)
     }
@@ -367,7 +370,6 @@ final class MatchViewController: UIViewController, MatchViewControllerDelegate, 
     // Ovo ne diraj
     @objc func updateTimer() {
         if seconds <= 0 {
-            print("Sekunde su manje od nule. Resetirat cu sve.")
             guard let user = user else { print("No user detected."); return }
             AnalyticsManager.shared.logEvent(name: AnalyticsEvents.userCounterReset, user: user)
             timer.invalidate()

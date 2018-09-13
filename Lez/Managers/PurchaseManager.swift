@@ -1,4 +1,4 @@
-//
+ //
 //  PurchaseManager.swift
 //  Lez
 //
@@ -27,6 +27,7 @@ typealias ProductID = String
 enum PurchaseOutcomes {
     case failed
     case success
+    case cancel
 }
 
 enum RestoreOutcomes {
@@ -64,8 +65,14 @@ struct PurchaseManager {
             case .success:
                 completion(.success); self.markUserAsPremium()
             case let .error(error):
-                completion(.failed); self.deactivatePremiumInFirestore()
-                handleError(error)
+                print("MARK: \(error)")
+                if error.code.rawValue == 2 {
+                    completion(.cancel); self.deactivatePremiumInFirestore()
+                    handleError(error)
+                } else {
+                    completion(.failed); self.deactivatePremiumInFirestore()
+                    handleError(error)
+                }
             }
         }
     }
@@ -148,6 +155,7 @@ struct PurchaseManager {
             if isRestore { completion!(.success) }
             markUserAsPremium()
         case .expired:
+            print("MARK: Expired subscription.")
             if isRestore { completion!(.expired) }
             deactivatePremiumInFirestore()
             guard let currentUser = Auth.auth().currentUser else { return }
@@ -191,7 +199,7 @@ extension PurchaseManager {
         guard let currentUser = Auth.auth().currentUser else { return }
         FirestoreManager.shared.fetchUser(uid: currentUser.uid).then { user in
             // Determine if there should be a cooldown widget before deleting shit in Firestore.
-            guard user.cooldownTime == nil else { return }
+            guard user.cooldownTime != nil else { print("Mark: cooldown is NIL"); return }
             let timeUntilNewLikesUnlock = user.cooldownTime!.add(components: 24.hours)
             guard !timeUntilNewLikesUnlock.isInFuture else { return } // Clock should run don't delete anything
             let data: [String: Any] = ["isPremium": false,

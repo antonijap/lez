@@ -28,6 +28,7 @@ enum AnalyticsEvents: String {
     case userSubscriptionEnded = "user_subscription_ended"
     case userOptedOutFromSocialLogin = "user_opted_out_from_social_login"
     case userChangedLocationPreference = "user_changed_location_preference"
+    case userCanceledPurchase = "user_canceled_purchase"
 }
 
 final class AnalyticsManager {
