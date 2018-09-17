@@ -72,9 +72,9 @@ final class ProfileViewController: UIViewController, ProfileViewControllerDelega
     
     func addUserToMailchimp() {
         
-        let apiKey: String = "d3f213d04cc25ce70c086f4edde057c1-us17"
-        let baseUrl: String = "https://us17.api.mailchimp.com/3.0"
-        let listId: String = "e7997c039b"
+        let apiKey: String = mailchimpKey
+        let baseUrl: String = mailchimpbaseUrl
+        let listId: String = mailchimpListId
         
         let url = "\(baseUrl)/lists/\(listId)/members"
         
